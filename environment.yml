@@ -1,0 +1,23 @@
+name: triangulax
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - matplotlib
+  - numpy
+  - scipy
+  - jupyter
+  - tqdm
+  - jax
+  - jaxlib
+  - jaxtyping
+  - beartype
+  - equinox
+  - lineax
+  - optimistix
+  - diffrax
+  - optax
+  - pip
+  - pip:
+      - libigl==2.6.1
