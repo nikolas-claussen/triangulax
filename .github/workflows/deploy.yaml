@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 permissions:
   contents: write
-  pages: write
+  pages: write git branch
 
 on:
   push:
