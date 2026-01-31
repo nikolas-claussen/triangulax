@@ -1,9 +1,0 @@
-project:
-  output-dir: _docs
-
-website:
-  title: "triangulax"
-  site-url: "https://nikolas-claussen.github.io/triangulax"
-  description: "JAX-compatible triangular meshes and triangular-mesh-based simulations"
-  repo-branch: main
-  repo-url: "https://github.com/nikolas-claussen/triangulax"
