@@ -1,5 +1,5 @@
-_docs/
-#_proc/
+#_docs/
+_proc/
 
 *.bak
 .gitattributes
