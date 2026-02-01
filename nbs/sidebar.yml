@@ -2,5 +2,6 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 00_triangulation_datastructure.ipynb
-      - 01_test_simulations.ipynb
+      - 00_trigonometry.ipynb
+      - 01_triangulation_datastructure.ipynb
+      - 02_test_simulations.ipynb

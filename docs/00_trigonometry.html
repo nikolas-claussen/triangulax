@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 
-<title>triangulax</title>
+<title>trigonometry – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -136,7 +135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">triangulax</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00_trigonometry.html">Basic trigonometry</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -150,13 +149,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">triangulax</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./00_trigonometry.html" class="sidebar-item-text sidebar-link">
+  <a href="./00_trigonometry.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Basic trigonometry</span></a>
   </div>
 </li>
@@ -182,108 +181,125 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#developer-guide" id="toc-developer-guide" class="nav-link active" data-scroll-target="#developer-guide">Developer Guide</a>
+  <li><a href="#basic-trigonometry" id="toc-basic-trigonometry" class="nav-link active" data-scroll-target="#basic-trigonometry">Basic trigonometry</a>
   <ul class="collapse">
-  <li><a href="#install-triangulax-in-development-mode" id="toc-install-triangulax-in-development-mode" class="nav-link" data-scroll-target="#install-triangulax-in-development-mode">Install triangulax in Development mode</a></li>
+  <li><a href="#coding-style-notes" id="toc-coding-style-notes" class="nav-link" data-scroll-target="#coding-style-notes">Coding style notes</a></li>
+  <li><a href="#jax" id="toc-jax" class="nav-link" data-scroll-target="#jax">JAX</a></li>
+  <li><a href="#get_rot_mat" id="toc-get_rot_mat" class="nav-link" data-scroll-target="#get_rot_mat">get_rot_mat</a></li>
+  <li><a href="#get_angle_between_vectors" id="toc-get_angle_between_vectors" class="nav-link" data-scroll-target="#get_angle_between_vectors">get_angle_between_vectors</a></li>
+  <li><a href="#get_voronoi_corner_area" id="toc-get_voronoi_corner_area" class="nav-link" data-scroll-target="#get_voronoi_corner_area">get_voronoi_corner_area</a></li>
+  <li><a href="#get_polygon_area" id="toc-get_polygon_area" class="nav-link" data-scroll-target="#get_polygon_area">get_polygon_area</a></li>
+  <li><a href="#get_circumcenter" id="toc-get_circumcenter" class="nav-link" data-scroll-target="#get_circumcenter">get_circumcenter</a></li>
   </ul></li>
-  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a>
-  <ul class="collapse">
-  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation">Documentation</a></li>
-  </ul></li>
-  <li><a href="#how-to-use" id="toc-how-to-use" class="nav-link" data-scroll-target="#how-to-use">How to use</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="00_trigonometry.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">triangulax</h1>
-</div>
-
-<div>
-  <div class="description">
-    JAX-compatible triangular meshes and triangular-mesh-based simulations
-  </div>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<p>This package provides data-structures for triangular meshes and functions for geometry processing based on JAX and fully compatible with JAX’s just-in-time compilation and automatic differentiation.</p>
-<p>The current use case is to create a simulation framework for the mechanics of 2D tissues (<a href="https://www.pnas.org/doi/10.1073/pnas.2321928121">Active tension networks</a>, <a href="https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011">area-perimeter vertex model</a>, non-confluent tissues like in <a href="https://www.nature.com/articles/s41567-021-01215-1">Kim, 2021</a>) compatible with automatic differentiation/JAX. The ultimate goal is to use gradient-based optimization to identify models for tissue dynamics that produce certain behaviors of interest.</p>
-<section id="developer-guide" class="level2">
-<h2 class="anchored" data-anchor-id="developer-guide">Developer Guide</h2>
-<p>This package is developed based on jupyter notebooks, which are converted into python modules using <code>nbdev</code>.</p>
-<section id="install-triangulax-in-development-mode" class="level3">
-<h3 class="anchored" data-anchor-id="install-triangulax-in-development-mode">Install triangulax in Development mode</h3>
-<ol type="1">
-<li>Clone the github repository</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone https://github.com/nikolas-claussen/triangulax.git</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="2" type="1">
-<li>Create a conda environment with all Python dependencies</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda env create <span class="at">-n</span> triangulax <span class="at">-f</span> triangulax.yml</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda activate triangulax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="3" type="1">
-<li>Install the <code>triangulax</code> package</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure triangulax package is installed in development mode</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install <span class="at">-e</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="4" type="1">
-<li>If necessary, edit the package notebooks and export</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make changes under nbs/ directory</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># compile to have changes apply to triangulax</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nbdev_prepare</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="465aee96-fe0c-4994-97a5-d3ba628df4cf" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_enable_x64"</span>, <span class="va">True</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_debug_nans"</span>, <span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="2c3e67cf" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jaxtyping</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="basic-trigonometry" class="level2">
+<h2 class="anchored" data-anchor-id="basic-trigonometry">Basic trigonometry</h2>
+<p>For example, the circumcenter of a triangle, which is the position of the dual Voronoi vertex.</p>
+<section id="coding-style-notes" class="level3">
+<h3 class="anchored" data-anchor-id="coding-style-notes">Coding style notes</h3>
+<p>Throughout, we will (attempt to) provide a type signature for all functions. To do so for array-based functions, we use <a href="https://docs.kidger.site/jaxtyping">jaxtyping</a>.</p>
 </section>
+<section id="jax" class="level3">
+<h3 class="anchored" data-anchor-id="jax">JAX</h3>
+<p>The aim is to create a triangulation datastructure compatible with the JAX library for automatic differentiation and numerical computing. In practice, this means that we use <code>jnp</code> (=<code>jax.numpy</code>) instead of <code>numpy</code>, and make sure our code follows JAX’s functional programming paradigm (see <a href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html">JAX- the sharp bits</a>). There is also some extra legwork to register any new classes with JAX.</p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L73" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="usage" class="level2">
-<h2 class="anchored" data-anchor-id="usage">Usage</h2>
-<section id="documentation" class="level3">
-<h3 class="anchored" data-anchor-id="documentation">Documentation</h3>
-<p>Documentation can be found hosted on this GitHub <a href="https://github.com/nikolas-claussen/triangulax">repository</a>’s <a href="https://nikolas-claussen.github.io/triangulax/">pages</a>.</p>
+<section id="get_rot_mat" class="level3">
+<h3 class="anchored" data-anchor-id="get_rot_mat">get_rot_mat</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_rot_mat(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    theta:<span class="bu">float</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'2 2'</span>]:</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Get rotation matrix from angle in radians.</em></p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L67" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
+<section id="get_angle_between_vectors" class="level3">
+<h3 class="anchored" data-anchor-id="get_angle_between_vectors">get_angle_between_vectors</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_angle_between_vectors(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Angle between two vectors</em></p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="how-to-use" class="level2">
-<h2 class="anchored" data-anchor-id="how-to-use">How to use</h2>
-<p>Currently, only the <code>mesh</code> module is complete. It contains a half-edge data structure for triangular meshes compatible with JAX.</p>
-<div id="7a002233" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh <span class="im">as</span> msh</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load example mesh and convert to half-edge mesh</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>vertices, _, _, faces, _, _ <span class="op">=</span> igl.readOBJ(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(vertices.shape[<span class="dv">0</span>], faces)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># with the half-edge mesh, you can carry out various operations, like computing the coordination number by summing incoming half-edges per vertex</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> jnp.zeros(hemesh.n_vertices)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>coord_number.at[hemesh.dest].add(jnp.ones(hemesh.n_hes))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<pre><code>2</code></pre>
+<section id="get_voronoi_corner_area" class="level3">
+<h3 class="anchored" data-anchor-id="get_voronoi_corner_area">get_voronoi_corner_area</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_corner_area(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>], c:Float[Array, <span class="st">'2'</span>], epsilon:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-06</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Compute Voronoi area at corner a of triangle abc. Returns zero for a degenerate triangle.</em></p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L54" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_polygon_area" class="level3">
+<h3 class="anchored" data-anchor-id="get_polygon_area">get_polygon_area</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_polygon_area(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    pts:Float[Array, <span class="st">'n_vertices 2'</span>]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Area of 2D polygon assuming no self-intersection.</em></p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_circumcenter" class="level3">
+<h3 class="anchored" data-anchor-id="get_circumcenter">get_circumcenter</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_circumcenter(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>], c:Float[Array, <span class="st">'2'</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'2'</span>]:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Return circumcenter coordinates of triangle with vertices a, b, c</em></p>
+<div id="b7fb9419-37ca-4e80-870f-bcc96536f8d1" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>get_polygon_area(jnp.array([[<span class="fl">0.</span>,<span class="fl">0.</span>], [<span class="fl">0.</span>,<span class="fl">1.</span>], [<span class="fl">1.</span>,<span class="fl">0.</span>]]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>Array(0.5, dtype=float64)</code></pre>
+</div>
+</div>
+<div id="b08f86bc-05ea-4843-b4d6-d7a6bfc7ca0e" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>get_voronoi_corner_area(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>Array(-0.25, dtype=float64)</code></pre>
+</div>
+</div>
+<div id="73f2dc1d-072d-4c22-9785-282078793ca1" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>Array([0.5, 0.5], dtype=float64)</code></pre>
+</div>
+</div>
+<div id="16894cb9-04e7-4ed0-bef9-eddca16e61ba" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]),  jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>Array([nan, nan], dtype=float64)</code></pre>
 </div>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

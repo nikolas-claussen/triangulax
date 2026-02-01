@@ -8,7 +8,18 @@ jax.config.update("jax_debug_nans", False)
 jax.config.update('jax_log_compiles', False) # use this to log JAX JIT compilations.
 ```
 
-## Data-structure for 2D tissue mechanics simulation
+``` python
+import jaxtyping
+```
+
+``` python
+# %load_ext jaxtyping 
+# %jaxtyping.typechecker beartype.beartype
+
+# enables type checking. does not work for some cells (vmapping and loading/saving)
+```
+
+## JAX-compatible data structure triangulations
 
 First, we need to create a suitable data structure to describe cell
 arrays. We will represent cell tilings by 2D Voronoi tessellations and
@@ -50,7 +61,7 @@ the dual Voronoi vertex.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L68"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L73"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_rot_mat
@@ -68,7 +79,7 @@ def get_rot_mat(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L62"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L67"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_between_vectors
@@ -77,7 +88,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_angle_between_vectors(
     a:Float[Array, 'dim'], b:Float[Array, 'dim']
-)->Float[Array, '1']:
+)->Float[Array, '']:
 
 ```
 
@@ -86,7 +97,7 @@ def get_angle_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L53"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L58"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_area
@@ -95,7 +106,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_voronoi_corner_area(
     a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], epsilon:float=1e-06
-)->Float[Array, '1']:
+)->Float[Array, '']:
 
 ```
 
@@ -105,7 +116,7 @@ degenerate triangle.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L49"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L54"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_polygon_area
@@ -114,7 +125,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_polygon_area(
     pts:Float[Array, 'n_vertices 2']
-)->Float[Array, '1']:
+)->Float[Array, '']:
 
 ```
 
@@ -123,7 +134,7 @@ def get_polygon_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L39"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L44"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_circumcenter
@@ -139,25 +150,25 @@ def get_circumcenter(
 *Return circumcenter coordinates of triangle with vertices a, b, c*
 
 ``` python
-get_polygon_area(jnp.array([[0,0], [0,1], [1,0]]) )
+get_polygon_area(jnp.array([[0.,0.], [0.,1.], [1.,0.]]) )
 ```
 
     Array(0.5, dtype=float64)
 
 ``` python
-get_voronoi_corner_area(jnp.array([0,0]), jnp.array([0,1]),  jnp.array([1,0]))
+get_voronoi_corner_area(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
 ```
 
     Array(-0.25, dtype=float64)
 
 ``` python
-get_circumcenter(np.array([0,0]), jnp.array([0,1]),  jnp.array([1,0]))
+get_circumcenter(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
 ```
 
     Array([0.5, 0.5], dtype=float64)
 
 ``` python
-get_circumcenter(np.array([1,0]), jnp.array([1,0]),  jnp.array([0,1]))
+get_circumcenter(jnp.array([1.,0.]), jnp.array([1.,0.]),  jnp.array([0.,1.]))
 ```
 
     Array([nan, nan], dtype=float64)
@@ -194,7 +205,7 @@ vertices/faces/edges are *ordered*.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L74"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L79"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TriMesh
@@ -202,7 +213,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def TriMesh(
-    vertices:Float[Array, 'n_vertices dim'], faces:Int[Array, 'n_faces 3'], face_positions:type=None
+    vertices:Float[Array, 'n_vertices dim'], faces:Int[Array, 'n_faces 3'], face_positions:Union=None
 )->None:
 
 ```
@@ -299,7 +310,7 @@ Some functions for plotting meshes:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L216"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L221"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_triangular_lattice
@@ -318,7 +329,7 @@ points.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L208"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L213"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_poisson_points
@@ -337,7 +348,7 @@ def generate_poisson_points(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L199"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L204"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_ginibre_points
@@ -357,7 +368,7 @@ to unit disk.*
 #points = generate_triangular_lattice(10, 10)
 
 points = generate_ginibre_points(100)
-mesh = TriMesh(vertices=points, faces=spatial.Delaunay(points).simplices)
+mesh = TriMesh(vertices=points, faces=jnp.array(spatial.Delaunay(points).simplices))
 
 plt.triplot(*points.T, mesh.faces)
 
@@ -365,19 +376,19 @@ plt.scatter(*points.T)
 plt.axis("equal")
 ```
 
-    (np.float64(-1.64480693026874),
-     np.float64(1.7587032394949658),
-     np.float64(-1.6934760386400838),
-     np.float64(1.5982535031597624))
+    (np.float64(-1.6315276371405518),
+     np.float64(1.6191872290800107),
+     np.float64(-1.4880190145409438),
+     np.float64(1.7089872695623352))
 
-![](00_triangulation_datastructure_files/figure-commonmark/cell-20-output-2.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-21-output-2.png)
 
 ### Elementary book-keeping using list-of-triangles data structure
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L230"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L235"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_adjacent_vertex_indices
@@ -386,7 +397,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_adjacent_vertex_indices(
     faces:Int[Array, 'n_faces 3'], n_vertices:int
-)->List:
+)->list:
 
 ```
 
@@ -430,9 +441,9 @@ vertex positions, face positions, and vertex/half-edge/face attributes.
 The latter are packaged into a
 [`GeomMesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#geommesh)
 class. Together, the pair `(GeomMesh, HeMesh)` describes a mesh (like
-vertices/faces). (We can even create a named tuple, something like
-[`Mesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#mesh),
-that comines the two).
+vertices/faces pair). A named tuple
+[`Mesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#mesh)
+comines the two.
 
 The first task is to create a helper function to plot mesh connectivity,
 and to create the half-edge connectivity matrices from the more
@@ -441,7 +452,7 @@ conventional list-of-triangles format. The latter is somewhat involved.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L240"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L245"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### label_plot
@@ -449,8 +460,8 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def label_plot(
-    vertices:Float[Array, 'n_vertices 2'], faces:Int[Array, 'n_faces 3'], hemesh:type=None, vertex_labels:bool=True,
-    face_labels:bool=True, ax:type=None, fontsize:type=None
+    vertices:Float[Array, 'n_vertices 2'], faces:Int[Array, 'n_faces 3'], hemesh:Union=None, vertex_labels:bool=True,
+    face_labels:bool=True, ax:Union=None, fontsize:Union=None
 )->None:
 
 ```
@@ -475,12 +486,12 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](00_triangulation_datastructure_files/figure-commonmark/cell-24-output-3.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-25-output-3.png)
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L266"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L271"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_half_edge_arrays
@@ -489,7 +500,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_half_edge_arrays(
     n_vertices:int, faces:Int[Array, 'n_faces 3']
-)->List:
+)->list:
 
 ```
 
@@ -553,7 +564,7 @@ simulation as static.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L303"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L308"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HeMesh
@@ -561,9 +572,9 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def HeMesh(
-    incident:Int[Array, 'n_vertices'], orig:Int[Array, 'n_hes'], dest:Int[Array, 'n_hes'], twin:Int[Array, 'n_hes'],
-    nxt:Int[Array, 'n_hes'], prv:Int[Array, 'n_hes'], heface:Int[Array, 'n_hes'],
-    face_incident:Int[Array, 'n_faces'], inf_vertices:Tuple=()
+    incident:Int[Array, '*batch n_vertices'], orig:Int[Array, '*batch n_hes'], dest:Int[Array, '*batch n_hes'],
+    twin:Int[Array, '*batch n_hes'], nxt:Int[Array, '*batch n_hes'], prv:Int[Array, '*batch n_hes'],
+    heface:Int[Array, '*batch n_hes'], face_incident:Int[Array, '*batch n_faces'], inf_vertices:Union=()
 )->None:
 
 ```
@@ -622,7 +633,7 @@ heface : Int\[jax.Array, “n_hes”\]
 
 face_incident : Int\[jax.Array, “n_faces”\]
 
-inf_vertices : Tuple\[Int\]
+inf_vertices : tuple\[Int\]
 
 **Property methods (use like attributes)**
 
@@ -632,7 +643,7 @@ n_hes : int
 
 n_faces : int
 
-n_items : Tuple\[int, int, int\]
+n_items : tuple\[int, int, int\]
 
 faces : Int\[jax.Array, “n_faces 3”\]
 
@@ -652,7 +663,7 @@ is_bdry : Bool\[jax.Array, “n_vertices”\]
 
 **Static methods**
 
-from_triangles : Tuple\[int, Int\[jax.Array, “n_faces 3”\],
+from_triangles : tuple\[int, Int\[jax.Array, “n_faces 3”\],
 Int\[jax.Array, “n_boundaries”\] -\> HeMesh
 
 **Class methods**
@@ -704,7 +715,7 @@ hemesh.dest[hemesh.iterate_around_vertex(69)], hemesh.orig[hemesh.iterate_around
 hemesh.is_bdry_he[187], hemesh.is_bdry_he[541], hemesh.heface[541]
 ```
 
-    (Array(True, dtype=bool), Array(False, dtype=bool))
+    (Array(True, dtype=bool), Array(False, dtype=bool), Array(145, dtype=int64))
 
 ``` python
 # to model mesh boundaries, we can add an "infinity" vertex. Not done here, see below
@@ -726,7 +737,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](00_triangulation_datastructure_files/figure-commonmark/cell-33-output-2.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-34-output-2.png)
 
 ``` python
 # here is how you would do mesh traversal with jax.lax. The issues is that the output size needs to be fixed
@@ -749,36 +760,34 @@ So far, our mesh representations
 and
 [`HeMesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#hemesh)
 work for triangular meshes with and without boundary. Boundary
-half-edges are assigned to a fictitious `-1` face.
+half-edges are assigned to a fictitious `-1` face. This convention has a
+downside. It is not possible to modify the boundary loop of the mesh by
+edge flips - doing so would result in an invalid state. In a simulation,
+this artificially limits the mesh’s ability to deform. Instead, we can
+add “vertices at infinity” and connect al edges in a given boundary to
+∞. This turns the mesh into a topological sphere. Now, one can flip
+boundary edges without the overall number of half-edges changing (so the
+array shape stays the same). Multiple boundaries are also supported.
+Each boundary corresponds to a distinct ∞-vertex (for example, 2 for a
+cylinder)/
 
-This convention has a downside. It is not possible to modify the
-boundary loop of the mesh by edge flips - doing so would result in an
-invalid state. In a simulation, this artificially limits the mesh’s
-ability to deform. Instead, we can add a “vertex at infinity” and
-connect all boundary edges to ∞. This turns the mesh from a topological
-disk into a topological sphere. Now, one can flip boundary edges without
-the overall number of half-edges changing (so the array shape stays the
-same).
-
-The vertex coordinates of the fictitious face are set to
-`[np.inf, np.inf]` by convention. The boundary is found by iterating
-around ∞. By convention, ∞, if it exists, is the final vertex of the
+The coordinates of the fictitious vertices are set to `[np.inf, np.inf]`
+by convention. The boundary is found by iterating around ∞. By
+convention, ∞-vertices, if they exists, are the final vertices of the
 mesh (don’t rely on this - implementation detail).
 
 We generally assume that the mesh has only a single connected component.
 
 The
 [`HeMesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#hemesh)
-class can deal with both the -1-face and the ∞-vertex conventions.
-Multiple boundaries are also supported. Each boundary corresponds to a
-distinct ∞-vertex (for example, 2 for a cylinder), which are listed in
-the `inf_vertices` attribute of a
+class can deal with both the -1-face and the ∞-vertices conventions. The
+latter are listed in the `inf_vertices` attribute of a
 [`HeMesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#hemesh).
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L527"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L532"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### connect_boundary_to_infinity
@@ -786,15 +795,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def connect_boundary_to_infinity(
-    vertices:Float[Array, 'n_vertices 2'], faces:Int[Array, 'n_faces 2']
-)->Tuple:
+    vertices:Float[Array, 'n_vertices 2'], # Vertex positions.
+    faces:Int[Array, 'n_faces 3'], # Faces (triangles) as list of vertex indices.
+)->tuple: # Vertex positions with infinity vertices appended.
+One infinity vertex per boundary loop.
 
 ```
 
-*Connect boundary loop to infinity. New vertex is at final position and
-has coordinates \[np.inf, np.inf\].*
+*Connect boundary loop(s) to infinity.*
 
-This function assumes the mesh has exactly one boundary.
+New vertices are appeneded to the end of vertex array and have
+coordinates \[np.inf, np.inf\].
 
 ``` python
 mesh = TriMesh.read_obj("test_meshes/disk.obj")
@@ -805,9 +816,10 @@ hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
       o flat_tri_ecmc
 
 ``` python
-mesh_infty = TriMesh(*connect_boundary_to_infinity(mesh.vertices, mesh.faces))
+new_vertices, new_faces, infinity_vertices = connect_boundary_to_infinity(mesh.vertices, mesh.faces)
+mesh_infty = TriMesh(vertices=new_vertices, faces=new_faces)
 hemesh_infty = HeMesh.from_triangles(mesh_infty.vertices.shape[0], mesh_infty.faces,
-                                     inf_vertices=(mesh_infty.vertices.shape[0]-1,))
+                                     inf_vertices=infinity_vertices)
 ```
 
 ``` python
@@ -869,7 +881,7 @@ JAX)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L553"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L584"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### FaceAttribs
@@ -887,7 +899,7 @@ def FaceAttribs(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L550"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L581"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HeAttribs
@@ -905,7 +917,7 @@ def HeAttribs(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L546"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L577"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### VertexAttribs
@@ -932,7 +944,7 @@ HeAttribs.EDGE_TENSION, HeAttribs(1), HeAttribs['EDGE_TENSION'], HeAttribs.EDGE_
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L563"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L594"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GeomMesh
@@ -940,9 +952,9 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def GeomMesh(
-    n_vertices:int, n_hes:int, n_faces:int, vertices:Float[Array, 'n_vertices dim'],
-    face_positions:Float[Array, 'n_faces 3']=<factory>, vertex_attribs:Dict=<factory>, he_attribs:Dict=<factory>,
-    face_attribs:Dict=<factory>
+    n_vertices:int, n_hes:int, n_faces:int, vertices:Float[Array, '*batch n_vertices dim'],
+    face_positions:Float[Array, '*batch n_faces 2']=<factory>, vertex_attribs:dict=<factory>,
+    he_attribs:dict=<factory>, face_attribs:dict=<factory>
 )->None:
 
 ```
@@ -968,15 +980,15 @@ vertices : Float\[jax.Array, “n_vertices 2”\]
 
 face_positions : Float\[jax.Array, “n_faces 2”\]
 
-vertex_attribs : Dict\[IntEnum, Float\[jax.Array, “n_vertices \*”\]\]
+vertex_attribs : dict\[IntEnum, Float\[jax.Array, “n_vertices \*”\]\]
 
-he_attribs : Dict\[IntEnum, Float\[jax.Array, “n_hes \*”\]\]
+he_attribs : dict\[IntEnum, Float\[jax.Array, “n_hes \*”\]\]
 
-face_attribs : Dict\[IntEnum, Float\[jax.Array, “n_faces \*”\]\]
+face_attribs : dict\[IntEnum, Float\[jax.Array, “n_faces \*”\]\]
 
 **Property methods (use like attributes)**
 
-n_items : Tuple\[int, int, int\]
+n_items : tuple\[int, int, int\]
 
 dim : int
 
@@ -991,7 +1003,7 @@ load : str -\> GeomHeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L693"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L724"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### set_voronoi_face_positions
@@ -1010,7 +1022,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L699"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L730"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -1057,7 +1069,7 @@ geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L705"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L736"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -1065,9 +1077,8 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def cellplot(
-    hemesh:HeMesh, face_positions:Float[Array, 'n_faces 2'], cell_colors:type=None,
-    mpl_polygon_kwargs:GenericAlias=type, ax:type=None
-)->List:
+    hemesh:HeMesh, face_positions:Float[Array, 'n_faces 2'], cell_colors:Union=None, mpl_polygon_kwargs:Union=None
+)->PatchCollection:
 
 ```
 
@@ -1078,9 +1089,11 @@ rgba values. Only interior cells are plotted.
 
 ``` python
 plt.triplot(*geommesh.vertices.T, hemesh.faces)
+polygons = cellplot(hemesh, geommesh.face_positions,
+                    cell_colors=np.array([0,0,1,0.5]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
 ax = plt.gca()
-p = cellplot(hemesh, geommesh.face_positions,
-             ax=ax, cell_colors=(0,0,1,0.5), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
+ax.add_collection(polygons)
+
 plt.axis("equal")
 ```
 
@@ -1089,7 +1102,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](00_triangulation_datastructure_files/figure-commonmark/cell-55-output-2.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-56-output-2.png)
 
 ### Adding some vertex/half-edge/face properties
 
@@ -1112,9 +1125,13 @@ geommmesh.vertex_attribs
 ``` python
 # set some attributes
 
-geommmesh = dataclasses.replace(geommmesh, vertex_attribs={VertexAttribs.TARGET_AREA: np.random.normal(size=geommmesh.n_vertices),
-                                                           VertexAttribs.TARGET_PERIMETER: np.random.normal(size=geommmesh.n_vertices)})
-geommmesh = dataclasses.replace(geommmesh, he_attribs={HeAttribs.EDGE_TENSION: np.random.normal(size=geommmesh.n_hes)})
+key1 = jax.random.key(0)
+_, key2 = jax.random.split(key1)
+_, key3 = jax.random.split(key2)
+
+geommmesh = dataclasses.replace(geommmesh, vertex_attribs={VertexAttribs.TARGET_AREA: jax.random.normal(key=key1, shape=geommmesh.n_vertices),
+                                                           VertexAttribs.TARGET_PERIMETER: jax.random.normal(key=key2, shape=geommmesh.n_vertices)})
+geommmesh = dataclasses.replace(geommmesh, he_attribs={HeAttribs.EDGE_TENSION: jax.random.normal(key=key3, shape=geommmesh.n_hes)})
 ```
 
 ``` python
@@ -1140,7 +1157,7 @@ tools](https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-py
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L743"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L771"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -1149,7 +1166,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def tree_unstack(
     xb:PyTree, axis:int=0
-)->List:
+)->list:
 
 ```
 
@@ -1158,7 +1175,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L739"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L767"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack
@@ -1166,7 +1183,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def tree_stack(
-    xs:List, axis:int=0
+    xs:list, axis:int=0
 )->PyTree:
 
 ```
@@ -1202,7 +1219,7 @@ def test_function(geommesh: GeomMesh, hemesh: HeMesh) -> Float[jax.Array, " n_ve
 
 try:
     jax.vmap(test_function)(batch_geom, batch_he)
-except ValueError as e:
+except (ValueError, TypeError) as e:
     print("Expected error:", e)
 ```
 
@@ -1220,6 +1237,11 @@ batch_geom_array, batch_geom_array.vertices.shape
 ```
 
     (GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), (3, 131, 2))
+
+``` python
+```
+
+    The jaxtyping extension is not loaded.
 
 ``` python
 # now it works! The result is a single object with batch axis
@@ -1256,7 +1278,7 @@ https://jerryyin.info/geometry-processing-algorithms/half-edge/.
 
 <figure>
 <img
-src="00_triangulation_datastructure_files/figure-commonmark/1b16caba-387e-4705-b2ea-e0adcdd61ca6-1-84d03218-dec8-4992-9150-5054fdbf5dec.png"
+src="01_triangulation_datastructure_files/figure-commonmark/1b16caba-387e-4705-b2ea-e0adcdd61ca6-1-84d03218-dec8-4992-9150-5054fdbf5dec.png"
 alt="image.png" />
 <figcaption aria-hidden="true">image.png</figcaption>
 </figure>
@@ -1265,7 +1287,7 @@ alt="image.png" />
 
 <figure>
 <img
-src="00_triangulation_datastructure_files/figure-commonmark/1b16caba-387e-4705-b2ea-e0adcdd61ca6-2-86f67a10-6db4-41e8-b111-1d355d7fb2a6.png"
+src="01_triangulation_datastructure_files/figure-commonmark/1b16caba-387e-4705-b2ea-e0adcdd61ca6-2-86f67a10-6db4-41e8-b111-1d355d7fb2a6.png"
 alt="image.png" />
 <figcaption aria-hidden="true">image.png</figcaption>
 </figure>
@@ -1273,7 +1295,7 @@ alt="image.png" />
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L754"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L782"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_edge
@@ -1281,7 +1303,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def flip_edge(
-    hemesh:HeMesh, e:int, check_boundary:bool=False
+    hemesh:HeMesh, e:Int[Array, ''], check_boundary:bool=False
 )->HeMesh:
 
 ```
@@ -1296,7 +1318,7 @@ a new HeMesh, does not modify in-place.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L791"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L819"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_signed_dual_he_length
@@ -1325,7 +1347,9 @@ geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 plt.triplot(*geommesh.vertices.T, hemesh.faces)
 ax = plt.gca()
 p = cellplot(hemesh, geommesh.face_positions,
-             ax=ax, cell_colors=(0,0,0,0.1), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
+             cell_colors=np.array([0,0,0,0.1]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
+plt.gca().add_collection(p)
+
 plt.axis("equal")
 ```
 
@@ -1334,7 +1358,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](00_triangulation_datastructure_files/figure-commonmark/cell-71-output-2.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-73-output-2.png)
 
 ``` python
 # edges and dual edges should be orthogonal since we are using circumcenters
@@ -1356,6 +1380,12 @@ jnp.where((signed_squared_length < -0.0) & ~hemesh.is_bdry_edge )[0]
 ```
 
     Array([  9, 185, 191, 335, 363, 539, 545, 689], dtype=int64)
+
+``` python
+isinstance(335, int)
+```
+
+    True
 
 ``` python
 # flip edge and recompute face positions
@@ -1381,16 +1411,18 @@ plt.triplot(*geommesh.vertices.T, hemesh.faces)
 plt.triplot(*flipped_geommesh.vertices.T, flipped_hemesh.faces)
 
 ax = plt.gca()
-cellplot(hemesh, geommesh.face_positions,
-         ax=ax, cell_colors=(0,0,0,0), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
-cellplot(flipped_hemesh, flipped_geommesh.face_positions,
-         ax=ax, cell_colors=(0,0,0,0), mpl_polygon_kwargs={"lw": 1, "ec": "tab:orange"})
+p1 = cellplot(hemesh, geommesh.face_positions,
+         cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
+p2 = cellplot(flipped_hemesh, flipped_geommesh.face_positions,
+              cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "tab:orange"})
+ax.add_collection(p1)
+ax.add_collection(p2)
 plt.axis("equal")
 
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](00_triangulation_datastructure_files/figure-commonmark/cell-76-output-1.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-79-output-1.png)
 
 #### Repeated flips
 
@@ -1432,7 +1464,7 @@ flipped_hemesh, _ = jax.lax.scan(lambda h, e: (flip_edge(h, e), None) , init=hem
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L803"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L831"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_all
@@ -1469,16 +1501,19 @@ plt.triplot(*geommesh.vertices.T, hemesh.faces)
 plt.triplot(*flipped_geommesh.vertices.T, flipped_hemesh.faces)
 
 ax = plt.gca()
-cellplot(hemesh, geommesh.face_positions,
-         ax=ax, cell_colors=(0,0,0,0), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
-cellplot(flipped_hemesh, flipped_geommesh.face_positions,
-         ax=ax, cell_colors=(0,0,0,0), mpl_polygon_kwargs={"lw": 1, "ec": "tab:orange"})
+ax = plt.gca()
+p1 = cellplot(hemesh, geommesh.face_positions,
+         cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
+p2 = cellplot(flipped_hemesh, flipped_geommesh.face_positions,
+              cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "tab:orange"})
+ax.add_collection(p1)
+ax.add_collection(p2)
 plt.axis("equal")
 
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](00_triangulation_datastructure_files/figure-commonmark/cell-84-output-1.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-87-output-1.png)
 
 ## Adjacency-like operators on half-edge meshes
 
@@ -1498,7 +1533,7 @@ all the same length. This is cumbersome.
 Instead, let us split all “cell-based” quantities into contributions
 from “corners”, i.e., half-edges, like this:
 
-![image.png](00_triangulation_datastructure_files/figure-commonmark/35104309-d38f-4e0f-b64a-de86a49efa0d-1-e1bd53c0-c2f2-4413-af9d-a74a1592993a.png)
+![image.png](01_triangulation_datastructure_files/figure-commonmark/35104309-d38f-4e0f-b64a-de86a49efa0d-1-e1bd53c0-c2f2-4413-af9d-a74a1592993a.png)
 Source:
 [CGAL](https://doc.cgal.org/latest/Weights/group__PkgWeightsRefVoronoiRegionWeights.html)
 
@@ -1509,7 +1544,7 @@ using gather/scatter operations.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L826"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L854"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### sum_he_to_vertex_opposite
@@ -1529,7 +1564,7 @@ hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L814"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L842"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### sum_he_to_vertex_incoming
@@ -1563,7 +1598,7 @@ geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L839"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L867"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cell_areas

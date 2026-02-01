@@ -2,11 +2,12 @@
 
 
 Let’s start with a simple test case to see whether the technology
-developed so far actually works. The goal is to move the vertices of
-triangulation so all triangle edge lengths are as close to some
-ℓ<sub>0</sub> as possible. We specify a pseudo-energy $E=\_{ij}
-(|\_i-\_j| - \_0)^2 $, and then minimize it using the JAX-provided
-gradients w.r.t the vertex positions.
+developed so far actually works. The goal is to move the vertices
+**v**<sub>*i*</sub> of triangulation so all triangle edge lengths are as
+close to some ℓ<sub>0</sub> as possible. We specify a pseudo-energy
+*E* = ∑<sub>*i**j*</sub>(|**v**<sub>*i*</sub> − **v**<sub>*j*</sub>| − ℓ<sub>0</sub>)<sup>2</sup>,
+and then minimize it using the JAX-provided gradients w.r.t the vertex
+positions.
 
 This defines the “forward pass” of our “dynamical” model. In a second
 step, we can optimize over the model parameters, like ℓ<sub>0</sub>, to
@@ -16,7 +17,7 @@ make the dynamics return some desired shape, for examlpe.
 
 ``` python
 import numpy as np
-import matplotlib as mpl
+#import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 import copy
@@ -36,9 +37,9 @@ jax.config.update('jax_log_compiles', False)
 ```
 
 ``` python
-from jaxtyping import Float, Int, Bool, PyTree 
-from typing import Any, Iterable, List, Dict, Tuple, NamedTuple
-from enum import IntEnum
+#from jaxtyping import Float, Int, Bool, PyTree 
+from typing import Tuple #Any, Iterable, List, Dict, Tuple, NamedTuple
+#from enum import IntEnum
 
 import dataclasses
 
@@ -47,6 +48,7 @@ import functools
 
 ``` python
 # import previously defined modules
+from triangulax import trigonometry as trig
 from triangulax import mesh as msh
 from triangulax.mesh import TriMesh, HeMesh, GeomMesh
 ```
@@ -87,7 +89,7 @@ plt.triplot(*geommesh.vertices.T, mesh.faces)
 plt.axis("equal");
 ```
 
-![](01_test_simulations_files/figure-commonmark/cell-9-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-10-output-1.png)
 
 ``` python
 lengths = jnp.linalg.norm(geommesh.vertices[hemesh.orig]-geommesh.vertices[hemesh.dest], axis=1)
@@ -187,7 +189,7 @@ fig = plt.figure(figsize=(4, 3))
 plt.plot(losses)
 ```
 
-![](01_test_simulations_files/figure-commonmark/cell-17-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-18-output-1.png)
 
 ``` python
 fig = plt.figure(figsize=(4, 4))
@@ -196,7 +198,7 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](01_test_simulations_files/figure-commonmark/cell-18-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-19-output-1.png)
 
 ``` python
 lengths_optimized = jnp.linalg.norm(geommesh_optimized.vertices[hemesh_optimized.orig]
@@ -234,7 +236,7 @@ def relax_energy(initial_geommesh: GeomMesh, initial_hemesh: HeMesh, ell_0: floa
     # use a jax.lax.fori_loop loop for training. Much faster JIT-compilation than a Python for loop.
     loss = 0
     init = (initial_geommesh, initial_hemesh, loss)
-    loop_fun = lambda i, carry: make_step(carry[0], carry[1], ell_0=ell_0, step_size=step_size) 
+    def loop_fun(i, carry): return make_step(carry[0], carry[1], ell_0=ell_0, step_size=step_size) 
     geommesh_optimized, hemesh_optimized, loss = jax.lax.fori_loop(0, N_steps, loop_fun, init, unroll=None)
     
     return (geommesh_optimized, hemesh_optimized), loss
@@ -254,7 +256,7 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](01_test_simulations_files/figure-commonmark/cell-22-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-23-output-1.png)
 
 ``` python
 ```
@@ -279,7 +281,7 @@ class RelaxationDynamics(eqx.Module): # we create a model wrapping our relaxatio
 
     def __call__(self, initial_geommesh: GeomMesh, initial_hemesh: HeMesh) -> Tuple[GeomMesh, HeMesh]:
         init = (initial_geommesh, initial_hemesh, 0)
-        loop_fun = lambda i, carry: make_step(carry[0], carry[1], ell_0=self.ell_0, step_size=self.step_size)
+        def loop_fun(i, carry): return make_step(carry[0], carry[1], ell_0=self.ell_0, step_size=self.step_size)
         geommesh_optimized, hemesh_optimized, loss = jax.lax.fori_loop(0, N_steps, loop_fun, init, unroll=None)
         return geommesh_optimized, hemesh_optimized
 ```
@@ -322,7 +324,7 @@ plt.triplot(*geommesh_trained.vertices.T, hemesh_trained.faces)
 plt.axis("equal");
 ```
 
-![](01_test_simulations_files/figure-commonmark/cell-27-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-28-output-1.png)
 
 #### Batching
 
@@ -383,7 +385,7 @@ plt.triplot(*batch_geom_out[i].vertices.T, batch_he_out[i].faces)
 plt.axis("equal");
 ```
 
-![](01_test_simulations_files/figure-commonmark/cell-32-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-33-output-1.png)
 
 ``` python
 # the batches are not identical, which is good.

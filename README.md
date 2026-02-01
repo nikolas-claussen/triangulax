@@ -61,10 +61,7 @@ $ nbdev_prepare
 
 Documentation can be found hosted on this GitHub
 [repository](https://github.com/nikolas-claussen/triangulax)’s
-[pages](https://nikolas-claussen.github.io/triangulax/). Additionally
-you can find package manager specific guidelines on
-[conda](https://anaconda.org/nikolas-claussen/triangulax) and
-[pypi](https://pypi.org/project/triangulax/) respectively.
+[pages](https://nikolas-claussen.github.io/triangulax/).
 
 ## How to use
 
@@ -72,6 +69,20 @@ Currently, only the `mesh` module is complete. It contains a half-edge
 data structure for triangular meshes compatible with JAX.
 
 ``` python
+import igl
+import numpy as np
+import jax.numpy as jnp
+from triangulax import mesh as msh
+
+
+# load example mesh and convert to half-edge mesh
+vertices, _, _, faces, _, _ = igl.readOBJ("test_meshes/disk.obj")
+hemesh = msh.HeMesh.from_triangles(vertices.shape[0], faces)
+
+# with the half-edge mesh, you can carry out various operations, like computing the coordination number by summing incoming half-edges per vertex
+
+coord_number = jnp.zeros(hemesh.n_vertices)
+coord_number.at[hemesh.dest].add(jnp.ones(hemesh.n_hes))
 ```
 
     2

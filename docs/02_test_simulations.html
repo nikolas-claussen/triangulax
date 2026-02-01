@@ -141,13 +141,13 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="Simulation test case - optimize mesh to make triangles equilateral – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/01_test_simulations_files/figure-html/cell-9-output-1.png">
+<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/02_test_simulations_files/figure-html/cell-10-output-1.png">
 <meta property="og:site_name" content="triangulax">
 <meta property="og:image:height" content="351">
 <meta property="og:image:width" content="382">
 <meta name="twitter:title" content="Simulation test case - optimize mesh to make triangles equilateral – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/01_test_simulations_files/figure-html/cell-9-output-1.png">
+<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/02_test_simulations_files/figure-html/cell-10-output-1.png">
 <meta name="twitter:image-height" content="351">
 <meta name="twitter:image-width" content="382">
 <meta name="twitter:card" content="summary_large_image">
@@ -174,7 +174,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01_test_simulations.html">Simulation test case - optimize mesh to make triangles equilateral</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_test_simulations.html">Simulation test case - optimize mesh to make triangles equilateral</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -194,13 +194,19 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./00_triangulation_datastructure.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data-structure for 2D tissue mechanics simulation</span></a>
+  <a href="./00_trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Basic trigonometry</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01_test_simulations.html" class="sidebar-item-text sidebar-link active">
+  <a href="./01_triangulation_datastructure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">JAX-compatible data structure triangulations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_test_simulations.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
   </div>
 </li>
@@ -219,7 +225,7 @@ window.Quarto = {
   <li><a href="#outer-optimization" id="toc-outer-optimization" class="nav-link" data-scroll-target="#outer-optimization">Outer optimization</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="01_test_simulations.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="02_test_simulations.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -243,12 +249,12 @@ window.Quarto = {
 </header>
 
 
-<p>Let’s start with a simple test case to see whether the technology developed so far actually works. The goal is to move the vertices of triangulation so all triangle edge lengths are as close to some <span class="math inline">\(\ell_0\)</span> as possible. We specify a pseudo-energy $E=_{ij} (|_i-_j| - _0)^2 $, and then minimize it using the JAX-provided gradients w.r.t the vertex positions.</p>
+<p>Let’s start with a simple test case to see whether the technology developed so far actually works. The goal is to move the vertices <span class="math inline">\(\mathbf{v}_i\)</span> of triangulation so all triangle edge lengths are as close to some <span class="math inline">\(\ell_0\)</span> as possible. We specify a pseudo-energy <span class="math inline">\(E=\sum_{ij} (|\mathbf{v}_i-\mathbf{v}_j| - \ell_0)^2\)</span>, and then minimize it using the JAX-provided gradients w.r.t the vertex positions.</p>
 <p>This defines the “forward pass” of our “dynamical” model. In a second step, we can optimize over the model parameters, like <span class="math inline">\(\ell_0\)</span>, to make the dynamics return some desired shape, for examlpe.</p>
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 <div id="d159edd4-4456-41f8-b520-8b1b69219c67" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#import matplotlib as mpl</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> copy</span>
@@ -264,19 +270,20 @@ window.Quarto = {
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_debug_nans"</span>, <span class="va">False</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">'jax_log_compiles'</span>, <span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="723a50d1-f5c2-435c-9026-39b6067f426d" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jaxtyping <span class="im">import</span> Float, Int, Bool, PyTree </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Any, Iterable, List, Dict, Tuple, NamedTuple</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> enum <span class="im">import</span> IntEnum</span>
+<div id="723a50d1-f5c2-435c-9026-39b6067f426d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#from jaxtyping import Float, Int, Bool, PyTree </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Tuple <span class="co">#Any, Iterable, List, Dict, Tuple, NamedTuple</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#from enum import IntEnum</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dataclasses</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> functools</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell" data-execution_count="12">
+<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import previously defined modules</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh <span class="im">as</span> msh</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.mesh <span class="im">import</span> TriMesh, HeMesh, GeomMesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> trigonometry <span class="im">as</span> trig</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh <span class="im">as</span> msh</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.mesh <span class="im">import</span> TriMesh, HeMesh, GeomMesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="jax-compatible-scientific-computing-libraries---useful-in-future-steps" class="level4">
 <h4 class="anchored" data-anchor-id="jax-compatible-scientific-computing-libraries---useful-in-future-steps">JAX-compatible scientific computing libraries - useful in future steps</h4>
@@ -315,7 +322,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_test_simulations_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_test_simulations_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -413,7 +420,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_test_simulations_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_test_simulations_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -426,7 +433,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_test_simulations_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_test_simulations_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -445,7 +452,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <h3 class="anchored" data-anchor-id="meta-training">Meta-training</h3>
 <p>Eventually, we aim to learn some dynamical rules for a tissue mechanics model that make the tissue carry out some desired behavior, like making a target shape.</p>
 <p>As a toy example, let’s take the above “dynamics” which minimizes the pseudo-energy to make all triangles equilateral. It depends on the parameter <span class="math inline">\(\ell_0\)</span>. Relaxation of the pseudo-energy for some number of steps defines our “forward pass”. Let’s try to optimize <span class="math inline">\(\ell_0\)</span> so that the tissue, at the end of the energy relaxation, has some target size (of course, a contrived problem, since we know the solution from the start).</p>
-<div id="47b7030f-c6db-4541-82d0-edd1dedd3dea" class="cell" data-execution_count="47">
+<div id="47b7030f-c6db-4541-82d0-edd1dedd3dea" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># package the whole training process into a JITed function</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="at">@functools.partial</span>(jax.jit, static_argnames<span class="op">=</span>[<span class="st">'N_steps'</span>])</span>
@@ -459,7 +466,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use a jax.lax.fori_loop loop for training. Much faster JIT-compilation than a Python for loop.</span></span>
 <span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    init <span class="op">=</span> (initial_geommesh, initial_hemesh, loss)</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    loop_fun <span class="op">=</span> <span class="kw">lambda</span> i, carry: make_step(carry[<span class="dv">0</span>], carry[<span class="dv">1</span>], ell_0<span class="op">=</span>ell_0, step_size<span class="op">=</span>step_size) </span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> loop_fun(i, carry): <span class="cf">return</span> make_step(carry[<span class="dv">0</span>], carry[<span class="dv">1</span>], ell_0<span class="op">=</span>ell_0, step_size<span class="op">=</span>step_size) </span>
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    geommesh_optimized, hemesh_optimized, loss <span class="op">=</span> jax.lax.fori_loop(<span class="dv">0</span>, N_steps, loop_fun, init, unroll<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (geommesh_optimized, hemesh_optimized), loss</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -479,7 +486,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_test_simulations_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_test_simulations_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -502,7 +509,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, initial_geommesh: GeomMesh, initial_hemesh: HeMesh) <span class="op">-&gt;</span> Tuple[GeomMesh, HeMesh]:</span>
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>        init <span class="op">=</span> (initial_geommesh, initial_hemesh, <span class="dv">0</span>)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>        loop_fun <span class="op">=</span> <span class="kw">lambda</span> i, carry: make_step(carry[<span class="dv">0</span>], carry[<span class="dv">1</span>], ell_0<span class="op">=</span><span class="va">self</span>.ell_0, step_size<span class="op">=</span><span class="va">self</span>.step_size)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> loop_fun(i, carry): <span class="cf">return</span> make_step(carry[<span class="dv">0</span>], carry[<span class="dv">1</span>], ell_0<span class="op">=</span><span class="va">self</span>.ell_0, step_size<span class="op">=</span><span class="va">self</span>.step_size)</span>
 <span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>        geommesh_optimized, hemesh_optimized, loss <span class="op">=</span> jax.lax.fori_loop(<span class="dv">0</span>, N_steps, loop_fun, init, unroll<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> geommesh_optimized, hemesh_optimized</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -544,7 +551,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_test_simulations_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_test_simulations_files/figure-html/cell-28-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -607,7 +614,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_test_simulations_files/figure-html/cell-32-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_test_simulations_files/figure-html/cell-33-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>

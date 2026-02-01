@@ -2,14 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/index.html</loc>
-    <lastmod>2026-01-31T02:55:08.753Z</lastmod>
+    <lastmod>2026-02-01T23:23:18.675Z</lastmod>
   </url>
   <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/01_test_simulations.html</loc>
-    <lastmod>2026-01-31T02:55:08.746Z</lastmod>
+    <loc>https://nikolas-claussen.github.io/triangulax/01_triangulation_datastructure.html</loc>
+    <lastmod>2026-02-01T23:23:19.121Z</lastmod>
   </url>
   <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/00_triangulation_datastructure.html</loc>
-    <lastmod>2026-01-31T02:55:09.349Z</lastmod>
+    <loc>https://nikolas-claussen.github.io/triangulax/02_test_simulations.html</loc>
+    <lastmod>2026-02-01T23:23:18.667Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/00_trigonometry.html</loc>
+    <lastmod>2026-02-01T23:23:18.958Z</lastmod>
   </url>
 </urlset>
