@@ -5,3 +5,4 @@ website:
       - 00_trigonometry.ipynb
       - 01_triangulation_datastructure.ipynb
       - 02_test_simulations.ipynb
+      - 03_area_perimeter_model.ipynb

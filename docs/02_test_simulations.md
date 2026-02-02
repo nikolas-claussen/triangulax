@@ -17,7 +17,6 @@ make the dynamics return some desired shape, for examlpe.
 
 ``` python
 import numpy as np
-#import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 import copy
@@ -37,9 +36,7 @@ jax.config.update('jax_log_compiles', False)
 ```
 
 ``` python
-#from jaxtyping import Float, Int, Bool, PyTree 
-from typing import Tuple #Any, Iterable, List, Dict, Tuple, NamedTuple
-#from enum import IntEnum
+from typing import Tuple
 
 import dataclasses
 
@@ -48,7 +45,6 @@ import functools
 
 ``` python
 # import previously defined modules
-from triangulax import trigonometry as trig
 from triangulax import mesh as msh
 from triangulax.mesh import TriMesh, HeMesh, GeomMesh
 ```
@@ -89,7 +85,7 @@ plt.triplot(*geommesh.vertices.T, mesh.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-10-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-9-output-1.png)
 
 ``` python
 lengths = jnp.linalg.norm(geommesh.vertices[hemesh.orig]-geommesh.vertices[hemesh.dest], axis=1)
@@ -189,7 +185,7 @@ fig = plt.figure(figsize=(4, 3))
 plt.plot(losses)
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-18-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-17-output-1.png)
 
 ``` python
 fig = plt.figure(figsize=(4, 4))
@@ -198,7 +194,7 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-19-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-18-output-1.png)
 
 ``` python
 lengths_optimized = jnp.linalg.norm(geommesh_optimized.vertices[hemesh_optimized.orig]
@@ -207,6 +203,88 @@ jnp.abs(lengths_optimized-ell_0).mean(), lengths_optimized.mean()
 ```
 
     (Array(0.03342644, dtype=float64), Array(0.50208086, dtype=float64))
+
+#### Using an ODE solver - `diffrax`
+
+Above, we implemented “gradient descent” for the pseudo-energy, or,
+equivalently, a basic forward-Euler scheme for the ODE
+∂<sub>*t*</sub>**v**<sub>*i*</sub> = −∇<sub>**v**<sub>*i*</sub></sub>*E*.
+For more complicated models, and to minimize coding effort, it makes
+sense to use a pre-made ODE solver instead. The `diffrax` library
+implements ODE and SDE solvers in JAX and is compatible with autodiff
+(you can differentiate through the solver), since it was designed for
+neural differential equations.
+
+For “adiabatic” dynamics, which involve mimizing an energy at every
+timestep, we can use the “optimistix” library.
+
+The below is based on the [Stepping through a
+solver](https://docs.kidger.site/diffrax/usage/manual-stepping/)
+tutorial in `diffrax`. The reason we want to step through the solver
+one-by-one is to carry out T1s (in future simulations).
+
+``` python
+import diffrax
+```
+
+``` python
+# load example mesh
+mesh = TriMesh.read_obj("test_meshes/disk.obj")
+hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
+geommesh = GeomMesh(*hemesh.n_items, vertices=mesh.vertices)
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+
+``` python
+# define the RHS for the ODE solver
+@jax.jit
+def vector_field(t, y, args):
+    return jax.tree_util.tree_map(lambda x: -1*x, jax.grad(energy_function)(y, *args))
+term = diffrax.ODETerm(vector_field)
+
+# define time parameters and initial condition
+dt = 0.05
+t0 = 0.0
+t1 = 1000.0
+step_times = jnp.arange(t0, t1, dt)
+
+y0 = geommesh
+args = (hemesh, 0.5)
+```
+
+``` python
+# go step by step
+
+solver = diffrax.Tsit5()
+y = y0
+state = solver.init(term, t0, t0+dt, y0, args)
+
+def scan_fun(carry, t):
+    state, y, tprev = carry 
+    y, _, _, state, _ = solver.step(term, tprev, t, y, args, state, made_jump=False)
+    return (state, y, t), None
+
+init = (state, y0, t0)
+(state, y, t), _ = jax.lax.scan(scan_fun, init, step_times[1:])
+
+# equivalent to:
+
+#for tprev, tnext in tqdm(zip(step_times[:-1], step_times[1:])):
+#    y, _, _, state, _ = solver.step(term, tprev, tnext, y, args, state, made_jump=False)
+#    tprev = tnext
+#    tnext = min(tprev + dt0, t1)
+```
+
+``` python
+fig = plt.figure(figsize=(4, 4))
+plt.triplot(*y0.vertices.T, hemesh.faces)
+plt.triplot(*y.vertices.T, hemesh.faces)
+plt.axis("equal");
+```
+
+![](02_test_simulations_files/figure-commonmark/cell-24-output-1.png)
 
 ### Meta-training
 
@@ -256,12 +334,12 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-23-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-27-output-1.png)
 
 ``` python
 ```
 
-    28.9 ms ± 285 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+    UsageError: Line magic function `%%timeit` not found.
 
 #### Define Meta-training loss
 
@@ -324,18 +402,12 @@ plt.triplot(*geommesh_trained.vertices.T, hemesh_trained.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-28-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-32-output-1.png)
 
 #### Batching
 
 To evaluate the loss, we want to average over a bunch of initial
 conditions. These are analogous to *batches* in a normal ML problem.
-
-``` python
-geommesh
-```
-
-    GeomMesh(D=2,N_V=131, N_HE=708, N_F=224)
 
 ``` python
 ## Let us create a bunch of meshes with different initial positions and see if we can batch over them using vmap
@@ -385,7 +457,7 @@ plt.triplot(*batch_geom_out[i].vertices.T, batch_he_out[i].faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-33-output-1.png)
+![](02_test_simulations_files/figure-commonmark/cell-36-output-1.png)
 
 ``` python
 # the batches are not identical, which is good.
@@ -429,12 +501,12 @@ batched_meta_loss_jit = jax.jit(batched_meta_loss)
 ## Let's do a short profiling run - how much does JIT-compilation save? I guess a little!
 ```
 
-    364 ms ± 2.93 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    372 ms ± 3.23 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 ``` python
 ```
 
-    466 ms ± 6.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    474 ms ± 4.09 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 ``` python
 # hyper-parameters for the outer learning step.

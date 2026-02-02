@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>trigonometry – triangulax</title>
+<title>Area-perimeter self-propelled Voronoi model – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,41 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -104,12 +69,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="triangulax">
+<meta property="og:title" content="Area-perimeter self-propelled Voronoi model – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta property="og:site_name" content="triangulax">
-<meta name="twitter:title" content="triangulax">
+<meta name="twitter:title" content="Area-perimeter self-propelled Voronoi model – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta name="twitter:card" content="summary">
 </head>
@@ -135,7 +129,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00_trigonometry.html">Basic trigonometry</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_area_perimeter_model.html">Area-perimeter self-propelled Voronoi model</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -155,7 +149,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./00_trigonometry.html" class="sidebar-item-text sidebar-link active">
+  <a href="./00_trigonometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Basic trigonometry</span></a>
   </div>
 </li>
@@ -173,7 +167,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03_area_perimeter_model.html" class="sidebar-item-text sidebar-link">
+  <a href="./03_area_perimeter_model.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
   </div>
 </li>
@@ -183,164 +177,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#basic-trigonometry" id="toc-basic-trigonometry" class="nav-link active" data-scroll-target="#basic-trigonometry">Basic trigonometry</a>
-  <ul class="collapse">
-  <li><a href="#coding-style-notes" id="toc-coding-style-notes" class="nav-link" data-scroll-target="#coding-style-notes">Coding style notes</a></li>
-  <li><a href="#jax" id="toc-jax" class="nav-link" data-scroll-target="#jax">JAX</a></li>
-  <li><a href="#get_rot_mat" id="toc-get_rot_mat" class="nav-link" data-scroll-target="#get_rot_mat">get_rot_mat</a></li>
-  <li><a href="#get_angle_between_vectors" id="toc-get_angle_between_vectors" class="nav-link" data-scroll-target="#get_angle_between_vectors">get_angle_between_vectors</a></li>
-  <li><a href="#get_voronoi_corner_area" id="toc-get_voronoi_corner_area" class="nav-link" data-scroll-target="#get_voronoi_corner_area">get_voronoi_corner_area</a></li>
-  <li><a href="#get_polygon_area" id="toc-get_polygon_area" class="nav-link" data-scroll-target="#get_polygon_area">get_polygon_area</a></li>
-  <li><a href="#get_triangle_area" id="toc-get_triangle_area" class="nav-link" data-scroll-target="#get_triangle_area">get_triangle_area</a></li>
-  <li><a href="#get_circumcenter" id="toc-get_circumcenter" class="nav-link" data-scroll-target="#get_circumcenter">get_circumcenter</a></li>
-  </ul></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="00_trigonometry.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
-    </div>
+        
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="03_area_perimeter_model.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Area-perimeter self-propelled Voronoi model</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
 
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>After the toy example of notebook 02, let’s try to implement a slightly more complicated model, the self-propelled Voronoi area-perimeter Voronoi (VAP) model of <a href="https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011">Bi et al., 2016</a>. This 2D model comprises most of the ingredients we will see in more general simulations, from a coding perspective.</p>
+<p>In brief, in the VAP, cells are modeled as the Voronoi tesselation for a series of centroids <span class="math inline">\(\mathbf{v}_i\)</span> (our triangulation vertices). Their overdamped dynamics comprises two terms: self-propulsion and relaxation of an elastic energy: <span class="math display">\[\partial_t \mathbf{v}_i = -\nabla_{\mathbf{v}_i} E_{AP} + v_0 \hat{\mathbf{n}}_i\]</span> For each cell <span class="math inline">\(i\)</span>, <span class="math inline">\(\hat{\mathbf{n}}_i\)</span> is a unit vector (so we will represent it by an angle <span class="math inline">\(\theta_i\)</span>) that determines the direction of motion. Units of time are chosen so that the coefficient of <span class="math inline">\(\nabla E_{AP}\)</span> is <span class="math inline">\(1\)</span>. The energy is defined in terms of the Voronoi area <span class="math inline">\(a_i\)</span> and Voronoi perimeter <span class="math inline">\(p_i\)</span> of each cell: <span class="math display">\[E_{AP} = \sum_i k_a(a_i-a_0)^2 + k_p(p_i-p_0)^2 \]</span> where <span class="math inline">\(k_a, k_p\)</span> are elastic constants, and <span class="math inline">\(a_0, p_0\)</span> are the target area and perimeter. They define the “shape index” <span class="math inline">\(s_0= p_0/\sqrt{a_0}\)</span>. The key physics is that above a critical shape index <span class="math inline">\(s_0^*\)</span>, the model has a degenerate set of ground states, since for a large <span class="math inline">\(p_0\)</span>, there are many polygons with the given target area and perimeter (think floppy balloon).</p>
+<p>The orientation <span class="math inline">\(\theta_i\)</span> of each cell is also dynamic. It undergoes rotational diffusion: <span class="math display">\[d\theta_i = D_\theta dW_{t, i} \]</span> where <span class="math inline">\(dW_{t,i}\)</span> is Brownian motion, independent for each cell <span class="math inline">\(i\)</span>, and <span class="math inline">\(D_\theta\)</span> is the diffusion constant.</p>
+<section id="numerics" class="level4">
+<h4 class="anchored" data-anchor-id="numerics">Numerics</h4>
+<p>The cell array connectivity will be represented by a <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#hemesh"><code>HeMesh</code></a> (see notebook 01). The geometry is fully described by the triangulation vertex positions, the Voronoi cell centroids. We also need a scalar vertex attribute for the angle <span class="math inline">\(\theta_i\)</span>.</p>
+<p>To numerically calculate the energy <span class="math inline">\(E_{AP}\)</span>, we can obtain Voronoi area and perimeter for each mesh “corner” using the <code>triangulax.trigonometry</code> module. Then we can use the gather/scatter operation <code>triangulax.meshsum_he_to_vertex_opposite</code> to sum all corners belonging to a cell (see notebook 01, “Computing cell areas, perimeters, etc via corners”). Boundary cells can be handled by “mirroring”, i.e., all corners count twice when computing the area/perimeter. Given the energy, JAX autodiff gives us the gradients.</p>
+<p>To time-evolve the mesh geometry, we can use <code>diffrax</code>, like in notebook 02. <code>diffrax</code> can also deal with SDEs, like the Langevin equation for cell angles. After each timestep, we need to check if the Voronoi edge lengths are below some threshold (the edge lengths can be computed on the fly), and, if so, we need to carry out edge flips. See notebook 01. We need to ensure that we do not immidiately “re-flip” an edge. This could be done, for example, via “cool down” period (an edge flipped at step <span class="math inline">\(t\)</span> cannot be flipped again for the next few steps), or by calculating if the edge is shrinking or growing.</p>
+<p>It would also be great to generate some visualizations of the time evolution of the mesh using the <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#cellplot"><code>cellplot</code></a> function, maybe with a user-controlled slider to show the different time steps.</p>
+<p>The code should respect the coding style (JAX-compatibility, type hints, etc) used in previous notebooks. To start, let’s define the energy and check that relaxation of the energy leads to a state where the <span class="math inline">\(a_i=a_0\)</span> and <span class="math inline">\(p_i=p_0\)</span> constraints are fullfilled (as good as possible).</p>
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="basic-trigonometry" class="level2">
-<h2 class="anchored" data-anchor-id="basic-trigonometry">Basic trigonometry</h2>
-<p>For example, the circumcenter of a triangle, which is the position of the dual Voronoi vertex.</p>
-<section id="coding-style-notes" class="level3">
-<h3 class="anchored" data-anchor-id="coding-style-notes">Coding style notes</h3>
-<p>Throughout, we will (attempt to) provide a type signature for all functions. To do so for array-based functions, we use <a href="https://docs.kidger.site/jaxtyping">jaxtyping</a>.</p>
-</section>
-<section id="jax" class="level3">
-<h3 class="anchored" data-anchor-id="jax">JAX</h3>
-<p>The aim is to create a triangulation datastructure compatible with the JAX library for automatic differentiation and numerical computing. In practice, this means that we use <code>jnp</code> (=<code>jax.numpy</code>) instead of <code>numpy</code>, and make sure our code follows JAX’s functional programming paradigm (see <a href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html">JAX- the sharp bits</a>). There is also some extra legwork to register any new classes with JAX.</p>
-<hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L52" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="get_rot_mat" class="level3">
-<h3 class="anchored" data-anchor-id="get_rot_mat">get_rot_mat</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_rot_mat(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    theta:<span class="bu">float</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'2 2'</span>]:</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Get rotation matrix from angle in radians.</em></p>
-<hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="get_angle_between_vectors" class="level3">
-<h3 class="anchored" data-anchor-id="get_angle_between_vectors">get_angle_between_vectors</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_angle_between_vectors(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Angle between two vectors</em></p>
-<hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L37" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="get_voronoi_corner_area" class="level3">
-<h3 class="anchored" data-anchor-id="get_voronoi_corner_area">get_voronoi_corner_area</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_corner_area(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>], c:Float[Array, <span class="st">'2'</span>], epsilon:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-06</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Compute Voronoi area at corner a of triangle abc. Returns zero for a degenerate triangle. 2d only atm.</em></p>
-<hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L33" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="get_polygon_area" class="level3">
-<h3 class="anchored" data-anchor-id="get_polygon_area">get_polygon_area</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_polygon_area(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    pts:Float[Array, <span class="st">'n_vertices 2'</span>]</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Area of 2D polygon assuming no self-intersection.</em></p>
-<hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L27" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="get_triangle_area" class="level3">
-<h3 class="anchored" data-anchor-id="get_triangle_area">get_triangle_area</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_area(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Area of triangle with vertices a, b, c.&nbsp;Works in any dimension &gt;=2.</em></p>
-<hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L17" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="get_circumcenter" class="level3">
-<h3 class="anchored" data-anchor-id="get_circumcenter">get_circumcenter</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_circumcenter(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]:</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Return circumcenter coordinates of triangle with vertices a, b, c</em></p>
-<div id="e9613bc6" class="cell" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_corner_perimeter(a: Float[jax.Array, <span class="st">"2"</span>],</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                                 b: Float[jax.Array, <span class="st">"2"</span>],</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                 c: Float[jax.Array, <span class="st">"2"</span>], epsilon: <span class="bu">float</span><span class="op">=</span><span class="fl">1e-6</span>) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">""</span>]:</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute contribution to Voronoi perimeter at corner a of triangle abc. Can be negative! 2d only atm."""</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> get_circumcenter(a, b, c)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    e1 <span class="op">=</span> u <span class="op">-</span> (a <span class="op">+</span> b) <span class="op">/</span> <span class="dv">2</span>    <span class="co"># Voronoi edges are midpoints of triangle edges</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    e2 <span class="op">=</span> u <span class="op">-</span> (a <span class="op">+</span> c) <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    n1 <span class="op">=</span> (b<span class="op">-</span>a)<span class="op">/</span>jnp.linalg.norm(b<span class="op">-</span>a)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    n2 <span class="op">=</span> (a<span class="op">-</span>c)<span class="op">/</span>jnp.linalg.norm(a<span class="op">-</span>c)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.cross(n1, e1) <span class="op">+</span> jnp.cross(n2, e2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="15cc68ce" class="cell" data-execution_count="31">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>get_voronoi_corner_perimeter(jnp.array([<span class="fl">0.</span>, <span class="fl">0.</span>]), jnp.array([<span class="fl">1.</span>, <span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>, <span class="fl">1.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
-<pre><code>Array(1., dtype=float64)</code></pre>
-</div>
-</div>
-<div id="b7fb9419-37ca-4e80-870f-bcc96536f8d1" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>get_polygon_area(jnp.array([[<span class="fl">0.</span>,<span class="fl">0.</span>], [<span class="fl">0.</span>,<span class="fl">1.</span>], [<span class="fl">1.</span>,<span class="fl">0.</span>]]) ), get_triangle_area(<span class="op">*</span>jnp.array([[<span class="fl">0.</span>,<span class="fl">0.</span>], [<span class="fl">0.</span>,<span class="fl">1.</span>], [<span class="fl">1.</span>,<span class="fl">0.</span>]]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>(Array(0.5, dtype=float64), Array(0.5, dtype=float64))</code></pre>
-</div>
-</div>
-<div id="b08f86bc-05ea-4843-b4d6-d7a6bfc7ca0e" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>get_voronoi_corner_area(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>Array(-0.25, dtype=float64)</code></pre>
-</div>
-</div>
-<div id="73f2dc1d-072d-4c22-9785-282078793ca1" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>Array([0.5, 0.5], dtype=float64)</code></pre>
-</div>
-</div>
-<div id="16894cb9-04e7-4ed0-bef9-eddca16e61ba" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]),  jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>Array([nan, nan], dtype=float64)</code></pre>
-</div>
-</div>
-<div id="2b1a23a4" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>jnp.cross(jnp.array([<span class="dv">1</span>,<span class="dv">0</span>]), jnp.array([<span class="dv">0</span>, <span class="dv">1</span>]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
-<pre><code>Array(1, dtype=int64)</code></pre>
-</div>
-</div>
-<div id="311f0da7" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>jnp.cross(jnp.array([<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>]), jnp.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
-<pre><code>Array([0, 0, 1], dtype=int64)</code></pre>
-</div>
-</div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -749,4 +622,4 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
