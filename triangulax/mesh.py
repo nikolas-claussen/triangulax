@@ -4,9 +4,9 @@
 __all__ = ['TriMesh', 'generate_ginibre_points', 'generate_poisson_points', 'generate_triangular_lattice',
            'get_adjacent_vertex_indices', 'label_plot', 'get_half_edge_arrays', 'HeMesh',
            'connect_boundary_to_infinity', 'VertexAttribs', 'HeAttribs', 'FaceAttribs', 'GeomMesh',
-           'set_voronoi_face_positions', 'Mesh', 'cellplot', 'tree_stack', 'tree_unstack', 'flip_edge',
-           'get_signed_dual_he_length', 'flip_all', 'sum_he_to_vertex_incoming', 'sum_he_to_vertex_opposite',
-           'get_cell_areas']
+           'get_voronoi_face_positions', 'set_voronoi_face_positions', 'Mesh', 'cellplot', 'tree_stack', 'tree_unstack',
+           'flip_edge', 'get_signed_dual_he_length', 'flip_all', 'sum_he_to_vertex_incoming',
+           'sum_he_to_vertex_opposite', 'get_cell_areas']
 
 # %% ../nbs/01_triangulation_datastructure.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -683,9 +683,15 @@ class GeomMesh:
                                                                  jax.tree_util.tree_flatten(other)[0]))
 
 # %% ../nbs/01_triangulation_datastructure.ipynb #a3a0cf80
+def get_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh
+                               ) -> Float[jax.Array, "n_faces 2"]:
+    """Get face positions of geommesh to the circumcenters of the faces defined by hemesh."""
+    face_positions = jax.vmap(trig.get_circumcenter)(*vertices[hemesh.faces].transpose((1,0,2)))
+    return face_positions
+
 def set_voronoi_face_positions(geommesh: GeomMesh, hemesh: HeMesh) -> GeomMesh:
     """Set face positions of geommesh to the circumcenters of the faces defined by hemesh."""
-    face_positions = jax.vmap(trig.get_circumcenter)(*geommesh.vertices[hemesh.faces].transpose((1,0,2)))
+    face_positions = get_voronoi_face_positions(geommesh.vertices, hemesh)
     return dataclasses.replace(geommesh, face_positions=face_positions)
 
 # %% ../nbs/01_triangulation_datastructure.ipynb #504fefa9-e469-4056-a6b9-a5496b3f6ff3
@@ -778,14 +784,15 @@ def flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""], check_boundary: bool = Fals
     return HeMesh(incident, orig, dest, jnp.copy(hemesh.twin), nxt, prv, heface, face_incident, hemesh.inf_vertices)
 
 # %% ../nbs/01_triangulation_datastructure.ipynb #a5bb78ce-454d-492c-b95e-797d1ed1f2aa
-def get_signed_dual_he_length(geommesh: GeomMesh, hemesh: HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Compute lengths of dual edges. Boundary dual edges get length np.nan. Negative sign = flipped edge."""
-    edges = geommesh.vertices[hemesh.orig]-geommesh.vertices[hemesh.dest]
-    dual_edges = (geommesh.face_positions[hemesh.heface]
-                 -geommesh.face_positions[hemesh.heface[hemesh.twin]])
+def get_signed_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
+                              face_positions: Float[jax.Array, "n_hes 2"],
+                              hemesh: HeMesh) -> Float[jax.Array, " n_hes"]:
+    """Compute lengths of dual edges. Boundary dual edges get length jnp.nan. Negative sign = flipped edge."""
+    edges = vertices[hemesh.orig]-vertices[hemesh.dest]
+    dual_edges = face_positions[hemesh.heface]-face_positions[hemesh.heface[hemesh.twin]]
     signed_squared_length = jnp.einsum('vi,vi->v', edges, dual_edges @ trig.get_rot_mat(np.pi/2))
-    signed_length = jnp.sign(signed_squared_length) * jnp.sqrt(np.abs(signed_squared_length))
-    signed_length = signed_length.at[hemesh.is_bdry_edge].set(jnp.nan)
+    signed_length = jnp.sign(signed_squared_length) * jnp.sqrt(jnp.abs(signed_squared_length))
+    signed_length = jnp.where(hemesh.is_bdry_edge, jnp.nan, signed_length)
     return signed_length
 
 # %% ../nbs/01_triangulation_datastructure.ipynb #242d6ee1-d553-45fc-852f-a80fbb4a589a
