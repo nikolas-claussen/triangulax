@@ -18,7 +18,6 @@ However, the library is intended to be (eventually) be more general-purpose and 
 - Follow standard **PEP8** style guidelines. Lint with `ruff`.
 - Where possible, use a **functional programming style**: avoid mutable state, side effects, and in-place modifications.
 - Develoment is done in **Jupyter Notebooks** (see below). Separate cells for defining functions/classes and for running code. Below a cell that defines a function/class, include a test cell that runs basic tests or examples of usage.
-- If you need example or test data, use the `nbs/test_meshes/` directory. Request me if you need extra test data.
 
 ## External libraries
 
@@ -40,3 +39,4 @@ However, the library is intended to be (eventually) be more general-purpose and 
 - Prefer vectorized JAX operations. Use `jax.numpy` instead of standard `numpy` where possible.
 - Use `jax.vmap` for batching operations over data points or other dimensions.
 - Instead of in-place array modifications, use JAX's `x = x.at[idx].set(y)` syntax.
+- If you need example or test data, use the `nbs/test_meshes/` directory. Request me if you need extra test data.
