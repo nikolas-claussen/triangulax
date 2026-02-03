@@ -70,7 +70,6 @@ data structure for triangular meshes compatible with JAX.
 
 ``` python
 import igl
-import numpy as np
 import jax.numpy as jnp
 from triangulax import mesh as msh
 

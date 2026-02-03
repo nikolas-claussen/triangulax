@@ -26,7 +26,7 @@ There is also some extra legwork to register any new classes with JAX.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L52"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L63"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_rot_mat
@@ -44,7 +44,7 @@ def get_rot_mat(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L57"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_between_vectors
@@ -58,6 +58,25 @@ def get_angle_between_vectors(
 ```
 
 *Angle between two vectors*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_voronoi_corner_perimeter
+
+``` python
+
+def get_voronoi_corner_perimeter(
+    a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], epsilon:float=1e-06
+)->Float[Array, '']:
+
+```
+
+*Compute contribution to Voronoi perimeter at corner a of triangle abc.
+Can be negative! 2d only atm.*
 
 ------------------------------------------------------------------------
 
@@ -131,19 +150,6 @@ def get_circumcenter(
 ```
 
 *Return circumcenter coordinates of triangle with vertices a, b, c*
-
-``` python
-def get_voronoi_corner_perimeter(a: Float[jax.Array, "2"],
-                                 b: Float[jax.Array, "2"],
-                                 c: Float[jax.Array, "2"], epsilon: float=1e-6) -> Float[jax.Array, ""]:
-    """Compute contribution to Voronoi perimeter at corner a of triangle abc. Can be negative! 2d only atm."""
-    u = get_circumcenter(a, b, c)
-    e1 = u - (a + b) / 2    # Voronoi edges are midpoints of triangle edges
-    e2 = u - (a + c) / 2
-    n1 = (b-a)/jnp.linalg.norm(b-a)
-    n2 = (a-c)/jnp.linalg.norm(a-c)
-    return jnp.cross(n1, e1) + jnp.cross(n2, e2)
-```
 
 ``` python
 get_voronoi_corner_perimeter(jnp.array([0., 0.]), jnp.array([1., 0.]), jnp.array([0., 1.]))

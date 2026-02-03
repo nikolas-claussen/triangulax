@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -102,10 +137,16 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="Area-perimeter self-propelled Voronoi model – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
+<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/03_area_perimeter_model_files/figure-html/cell-8-output-1.png">
 <meta property="og:site_name" content="triangulax">
+<meta property="og:image:height" content="351">
+<meta property="og:image:width" content="384">
 <meta name="twitter:title" content="Area-perimeter self-propelled Voronoi model – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/03_area_perimeter_model_files/figure-html/cell-8-output-1.png">
+<meta name="twitter:image-height" content="351">
+<meta name="twitter:image-width" content="384">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-sidebar floating nav-fixed quarto-light">
@@ -177,8 +218,27 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="03_area_perimeter_model.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#read-in-test-data" id="toc-read-in-test-data" class="nav-link" data-scroll-target="#read-in-test-data">Read in test data</a></li>
+  <li><a href="#voronoi-cell-geometry-area-perimeter" id="toc-voronoi-cell-geometry-area-perimeter" class="nav-link" data-scroll-target="#voronoi-cell-geometry-area-perimeter">Voronoi cell geometry (area &amp; perimeter)</a></li>
+  <li><a href="#energy-relaxation-no-self-propulsion" id="toc-energy-relaxation-no-self-propulsion" class="nav-link" data-scroll-target="#energy-relaxation-no-self-propulsion">Energy relaxation (no self-propulsion)</a>
+  <ul class="collapse">
+  <li><a href="#relaxation-with-t1s" id="toc-relaxation-with-t1s" class="nav-link" data-scroll-target="#relaxation-with-t1s">Relaxation with T1s</a></li>
+  </ul></li>
+  <li><a href="#this-is-the-simulation-as-a-simple-for-loop" id="toc-this-is-the-simulation-as-a-simple-for-loop" class="nav-link" data-scroll-target="#this-is-the-simulation-as-a-simple-for-loop">this is the simulation as a simple for loop:</a>
+  <ul class="collapse">
+  <li><a href="#overdamped-dynamics-with-self-propulsion-deterministic" id="toc-overdamped-dynamics-with-self-propulsion-deterministic" class="nav-link" data-scroll-target="#overdamped-dynamics-with-self-propulsion-deterministic">Overdamped dynamics with self-propulsion (deterministic)</a>
+  <ul class="collapse">
+  <li><a href="#stochastic-orientation-t1-flips-step-by-step" id="toc-stochastic-orientation-t1-flips-step-by-step" class="nav-link" data-scroll-target="#stochastic-orientation-t1-flips-step-by-step">Stochastic orientation + T1 flips (step-by-step)</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="03_area_perimeter_model.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -212,8 +272,506 @@ window.Quarto = {
 <p>It would also be great to generate some visualizations of the time evolution of the mesh using the <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#cellplot"><code>cellplot</code></a> function, maybe with a user-controlled slider to show the different time steps.</p>
 <p>The code should respect the coding style (JAX-compatibility, type hints, etc) used in previous notebooks. To start, let’s define the energy and check that relaxation of the energy leads to a state where the <span class="math inline">\(a_i=a_0\)</span> and <span class="math inline">\(p_i=p_0\)</span> constraints are fullfilled (as good as possible).</p>
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+</section>
+<section id="setup" class="level3">
+<h3 class="anchored" data-anchor-id="setup">Setup</h3>
+<div id="1d083aaf" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> copy</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dataclasses</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Tuple</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jaxtyping <span class="im">import</span> Float, Bool, Int</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> diffrax</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.notebook <span class="im">import</span> tqdm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="2c0347f1" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_enable_x64"</span>, <span class="va">True</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_debug_nans"</span>, <span class="va">False</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_log_compiles"</span>, <span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="2d5d7225" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh <span class="im">as</span> msh</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.mesh <span class="im">import</span> TriMesh, HeMesh, GeomMesh</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> trigonometry <span class="im">as</span> trig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="b8f7383e" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> importlib <span class="im">import</span> <span class="bu">reload</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="4ada9b11" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">reload</span>(msh)<span class="op">;</span> <span class="bu">reload</span>(trig)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>&lt;module 'triangulax.trigonometry' from '/Users/nc1333/Documents/Princeton/Coding/triangulax/triangulax/trigonometry.py'&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="read-in-test-data" class="level3">
+<h3 class="anchored" data-anchor-id="read-in-test-data">Read in test data</h3>
+<div id="68c8a57e" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, vertices<span class="op">=</span>mesh.vertices)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> msh.set_voronoi_face_positions(geommesh, hemesh)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>hemesh, geommesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: readOBJ() ignored non-comment line 3:
+  o flat_tri_ecmc</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>(HeMesh(N_V=131, N_HE=708, N_F=224), GeomMesh(D=2,N_V=131, N_HE=708, N_F=224))</code></pre>
+</div>
+</div>
+<div id="43e37541" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax.add_collection(msh.cellplot(hemesh, geommesh.face_positions,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                               cell_colors<span class="op">=</span>np.array([<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">0.4</span>]),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                               mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>}))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">"equal"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>ax.autoscale_view()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_area_perimeter_model_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="voronoi-cell-geometry-area-perimeter" class="level2">
+<h2 class="anchored" data-anchor-id="voronoi-cell-geometry-area-perimeter">Voronoi cell geometry (area &amp; perimeter)</h2>
+<p>We compute areas from corner contributions and perimeters from dual-edge lengths, using gather/scatter operations on the half-edge mesh. Boundary cells are handled by mirroring (doubling the area/perimeter).</p>
+<div id="10c377f6" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_cell_geometry(geommesh: GeomMesh, hemesh: HeMesh</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                          ) <span class="op">-&gt;</span> Tuple[Float[jax.Array, <span class="st">" n_vertices"</span>],</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                     Float[jax.Array, <span class="st">" n_vertices"</span>]]:</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute Voronoi areas and perimeters for each cell."""</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> hemesh.dest[hemesh.nxt]</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> hemesh.dest[hemesh.prv]</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> hemesh.dest</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    corner_areas <span class="op">=</span> jax.vmap(trig.get_voronoi_corner_area)(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> msh.sum_he_to_vertex_opposite(hemesh, corner_areas)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> jnp.where(hemesh.is_bdry, <span class="fl">2.0</span> <span class="op">*</span> cell_areas, cell_areas)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#face_positions = msh.get_voronoi_face_positions(geommesh.vertices, hemesh)</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">#dual_lengths = msh.get_signed_dual_he_length(face_positions, hemesh)</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">#dual_lengths = jnp.nan_to_num(dual_lengths, nan=0.0)</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">#cell_perimeters = msh.sum_he_to_vertex_incoming(hemesh, dual_lengths)</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    corner_perims <span class="op">=</span> jax.vmap(trig.get_voronoi_corner_perimeter)(</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    corner_perims <span class="op">=</span> jnp.clip(corner_perims, <span class="dv">0</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    cell_perims <span class="op">=</span> msh.sum_he_to_vertex_opposite(hemesh, corner_perims)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    cell_perims <span class="op">=</span> jnp.where(hemesh.is_bdry, <span class="fl">2.0</span> <span class="op">*</span> cell_perims, cell_perims)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cell_areas, cell_perims</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> energy_ap(geommesh: GeomMesh, hemesh: HeMesh, a0: <span class="bu">float</span>, p0: <span class="bu">float</span>,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>              k_a: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span>, k_p: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span>) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">""</span>]:</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Area-perimeter energy for Voronoi cells."""</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    cell_areas, cell_perimeters <span class="op">=</span> compute_cell_geometry(geommesh, hemesh)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean(k_a <span class="op">*</span> (cell_areas <span class="op">-</span> a0) <span class="op">**</span> <span class="dv">2</span> <span class="op">+</span> k_p <span class="op">*</span> (cell_perimeters <span class="op">-</span> p0) <span class="op">**</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="25181d08" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cell_areas, cell_perimeters <span class="op">=</span> compute_cell_geometry(geommesh, hemesh)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>a_mean, p_mean <span class="op">=</span> (cell_areas[<span class="op">~</span>hemesh.is_bdry].mean(), cell_perimeters[<span class="op">~</span>hemesh.is_bdry].mean())</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>a_mean, p_mean, p_mean<span class="op">/</span>np.sqrt(a_mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>(Array(0.02756258, dtype=float64),
+ Array(0.63463959, dtype=float64),
+ Array(3.82267399, dtype=float64))</code></pre>
+</div>
+</div>
+<div id="e26f514c" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># double check against "manual" area and "perimeter" computation using mesh traversal</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="energy-relaxation-no-self-propulsion" class="level2">
+<h2 class="anchored" data-anchor-id="energy-relaxation-no-self-propulsion">Energy relaxation (no self-propulsion)</h2>
+<p>We first relax the area–perimeter energy to verify that the constraints are satisfied.</p>
+<div id="a8c29ab0" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> relax_energy_step(geommesh: GeomMesh, hemesh: HeMesh,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>              a0: <span class="bu">float</span>, p0: <span class="bu">float</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>              step_size: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>              k_a: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span>, k_p: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span>) <span class="op">-&gt;</span> Tuple[GeomMesh, Float[jax.Array, <span class="st">""</span>]]:</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    loss, grad <span class="op">=</span> jax.value_and_grad(energy_ap)(geommesh, hemesh, a0, p0, k_a, k_p)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    updated_vertices <span class="op">=</span> geommesh.vertices <span class="op">-</span> step_size <span class="op">*</span> grad.vertices</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    geommesh_updated <span class="op">=</span> dataclasses.replace(geommesh, vertices<span class="op">=</span>updated_vertices)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> geommesh_updated, loss</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># energy parameters</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>a0 <span class="op">=</span> a_mean</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>s0 <span class="op">=</span> <span class="fl">3.5</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>p0 <span class="op">=</span> s0<span class="op">*</span>jnp.sqrt(a0)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co"># relaxation parameters</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>step_size <span class="op">=</span> <span class="fl">0.02</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>geommesh_relaxed <span class="op">=</span> copy.copy(geommesh)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>losses <span class="op">=</span> []</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_steps):</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    geommesh_relaxed, loss <span class="op">=</span> relax_energy_step(geommesh_relaxed, hemesh, a0, p0, step_size<span class="op">=</span>step_size)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    losses.append(loss)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>losses <span class="op">=</span> jnp.array(losses)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="b1b98f9f" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">3</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>plt.plot(np.asarray(losses))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"step"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"energy"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_area_perimeter_model_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="2ad03dd6" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>geommesh_relaxed <span class="op">=</span> msh.set_voronoi_face_positions(geommesh_relaxed, hemesh)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>ax.add_collection(msh.cellplot(hemesh, geommesh.face_positions,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                               cell_colors<span class="op">=</span>np.array([<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">0.2</span>]),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                               mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"tab:blue"</span>}))</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>ax.add_collection(msh.cellplot(hemesh, geommesh_relaxed.face_positions,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                               cell_colors<span class="op">=</span>np.array([<span class="fl">0.9</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>, <span class="fl">0.2</span>]),</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                               mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"tab:red"</span>}))</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">"equal"</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>ax.autoscale_view()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_area_perimeter_model_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="8017886f" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>areas_relaxed, perim_relaxed <span class="op">=</span> compute_cell_geometry(geommesh_relaxed, hemesh)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>jnp.<span class="bu">abs</span>(areas_relaxed <span class="op">-</span> a0)[hemesh.is_bdry].mean(), jnp.<span class="bu">abs</span>(perim_relaxed <span class="op">-</span> p0)[hemesh.is_bdry].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>(Array(0.06599055, dtype=float64), Array(0.00919191, dtype=float64))</code></pre>
+</div>
+</div>
+<section id="relaxation-with-t1s" class="level3">
+<h3 class="anchored" data-anchor-id="relaxation-with-t1s">Relaxation with T1s</h3>
+<p>Next, let’s allow T1s. To ensure we don’t flip the same edge multiple times, let’s use a cooldown period.</p>
+<div id="318b34d2" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>cooldown_steps <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>l_min_T1 <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>cooldown_counter <span class="op">=</span> jnp.zeros(hemesh.n_hes)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>sim_steps <span class="op">=</span> jnp.arange(n_steps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="this-is-the-simulation-as-a-simple-for-loop" class="level1">
+<h1>this is the simulation as a simple for loop:</h1>
+<p>hemesh_relaxed = copy.copy(hemesh) geommesh_relaxed = copy.copy(geommesh) losses = [] flip_count = [] for _ in tqdm(sim_steps): # step energy geommesh_relaxed, loss = relax_energy_step(geommesh_relaxed, hemesh_relaxed, a0, p0, step_size=step_size) # compute signed edge lengths, flip, and update cooldown counter face_positions = msh.get_voronoi_face_positions(geommesh_relaxed.vertices, hemesh_relaxed) edge_lengths = msh.get_signed_dual_he_length(geommesh_relaxed.vertices, face_positions, hemesh_relaxed) to_flip = (edge_lengths &lt; l_min_T1) &amp; (cooldown_counter == 0) hemesh_relaxed = msh.flip_all(hemesh_relaxed, to_flip) cooldown_counter = jnp.where(to_flip, cooldown_steps, jnp.clip(cooldown_counter-1, 0)) losses.append(loss) flip_count.append(to_flip.sum())</p>
+<p>losses = jnp.array(losses) flip_count = jnp.array(flip_count)</p>
+<div id="12fd847a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># package simulation time step into a function for jax.lax.scan</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan_fun(carry: Tuple[GeomMesh,HeMesh, Int[jax.Array, <span class="st">" n_steps"</span>]], x: Float[jax.Array, <span class="st">" n_steps"</span>]):</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    geommesh_relaxed, hemesh_relaxed, cooldown_counter <span class="op">=</span> carry</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># step energy</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    geommesh_relaxed, loss <span class="op">=</span> relax_energy_step(geommesh_relaxed, hemesh_relaxed, a0, p0, step_size<span class="op">=</span>step_size)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute signed edge lengths, flip, and update cooldown counter</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    face_positions <span class="op">=</span> msh.get_voronoi_face_positions(geommesh_relaxed.vertices, hemesh_relaxed)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    edge_lengths <span class="op">=</span> msh.get_signed_dual_he_length(geommesh_relaxed.vertices, face_positions, hemesh_relaxed)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    to_flip <span class="op">=</span> (edge_lengths <span class="op">&lt;</span> l_min_T1) <span class="op">&amp;</span> (cooldown_counter <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    hemesh_relaxed <span class="op">=</span> msh.flip_all(hemesh_relaxed, to_flip)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># update cooldown counter</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    cooldown_counter <span class="op">=</span> jnp.where(to_flip, cooldown_steps, jnp.clip(cooldown_counter<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (geommesh_relaxed, hemesh_relaxed, cooldown_counter), jnp.array([loss, to_flip.<span class="bu">sum</span>()])</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>(geommesh_relaxed, hemesh_relaxed, _), return_arr <span class="op">=</span> jax.lax.scan(scan_fun, (geommesh, hemesh, cooldown_counter), sim_steps) </span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>losses, flip_count <span class="op">=</span> return_arr.T</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="54ce349e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">3</span>))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>plt.plot(losses[::<span class="bu">int</span>(n_steps<span class="op">/</span><span class="dv">1000</span>)])</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"step"</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"energy"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># add a twin y axis that shows the cummulative number of flips</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> plt.gca().twinx()</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>ax2.plot(jnp.cumsum(flip_count)[::<span class="bu">int</span>(n_steps<span class="op">/</span><span class="dv">1000</span>)], color<span class="op">=</span><span class="st">"orange"</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>ax2.set_ylabel(<span class="st">"cumulative flips"</span>, color<span class="op">=</span><span class="st">"orange"</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>ax2.set_ylim([<span class="dv">0</span>,flip_count.<span class="bu">sum</span>()<span class="op">+</span><span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_area_perimeter_model_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="74980c78" class="cell" data-execution_count="45">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>geommesh_relaxed <span class="op">=</span> msh.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>ax.add_collection(msh.cellplot(hemesh, geommesh.face_positions,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                               cell_colors<span class="op">=</span>np.array([<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">0.2</span>]),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                               mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"tab:blue"</span>}))</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>ax.add_collection(msh.cellplot(hemesh_relaxed, geommesh_relaxed.face_positions,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                               cell_colors<span class="op">=</span>np.array([<span class="fl">0.9</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>, <span class="fl">0.2</span>]),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>                               mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"tab:red"</span>}))</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">"equal"</span>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>ax.autoscale_view()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_area_perimeter_model_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="e1047da1" class="cell" data-execution_count="46">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>areas_relaxed, perim_relaxed <span class="op">=</span> compute_cell_geometry(geommesh_relaxed, hemesh)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>jnp.<span class="bu">abs</span>(areas_relaxed <span class="op">-</span> a0)[hemesh.is_bdry].mean(), jnp.<span class="bu">abs</span>(perim_relaxed <span class="op">-</span> p0)[hemesh.is_bdry].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="46">
+<pre><code>(Array(0.06731324, dtype=float64), Array(0.0121022, dtype=float64))</code></pre>
+</div>
+</div>
+<p>[AI generated content below]</p>
+<section id="overdamped-dynamics-with-self-propulsion-deterministic" class="level2">
+<h2 class="anchored" data-anchor-id="overdamped-dynamics-with-self-propulsion-deterministic">Overdamped dynamics with self-propulsion (deterministic)</h2>
+<p>We integrate <span class="math inline">\(\partial_t \mathbf{v}_i = -\nabla_{\mathbf{v}_i} E_{AP} + v_0\hat{\mathbf{n}}_i\)</span> with fixed orientations.</p>
+<div id="229523d0" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.tree_util.register_dataclass</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclasses.dataclass</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> VAPState:</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""State for VAP dynamics."""</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    geommesh: GeomMesh</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    theta: Float[jax.Array, <span class="st">" n_vertices"</span>]</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vap_vector_field(t: <span class="bu">float</span>, state: VAPState, args: Tuple) <span class="op">-&gt;</span> VAPState:</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    hemesh, a0, p0, v0, k_a, k_p <span class="op">=</span> args</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    grad_geom <span class="op">=</span> jax.grad(energy_ap)(state.geommesh, hemesh, a0, p0, k_a, k_p)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    n_hat <span class="op">=</span> jnp.stack([jnp.cos(state.theta), jnp.sin(state.theta)], axis<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    velocity <span class="op">=</span> <span class="op">-</span>grad_geom.vertices <span class="op">+</span> v0 <span class="op">*</span> n_hat</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    dgeom <span class="op">=</span> dataclasses.replace(</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>        state.geommesh,</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>        vertices<span class="op">=</span>velocity,</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>        face_positions<span class="op">=</span>jnp.zeros_like(state.geommesh.face_positions),</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>    dtheta <span class="op">=</span> jnp.zeros_like(state.theta)</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> VAPState(geommesh<span class="op">=</span>dgeom, theta<span class="op">=</span>dtheta)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="154b8246" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>theta0 <span class="op">=</span> jax.random.uniform(key, shape<span class="op">=</span>(hemesh.n_vertices,), minval<span class="op">=</span><span class="fl">0.0</span>, maxval<span class="op">=</span><span class="dv">2</span> <span class="op">*</span> np.pi)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>state0 <span class="op">=</span> VAPState(geommesh<span class="op">=</span>geommesh_relaxed, theta<span class="op">=</span>theta0)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (hemesh, a0, p0, <span class="fl">0.02</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>term <span class="op">=</span> diffrax.ODETerm(vap_vector_field)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> diffrax.Tsit5()</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>dt <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>step_times <span class="op">=</span> jnp.arange(t0, t1 <span class="op">+</span> dt, dt)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> state0</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>solver_state <span class="op">=</span> solver.init(term, t0, t0 <span class="op">+</span> dt, state0, args)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan_fun(carry, t):</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    solver_state, state, tprev <span class="op">=</span> carry</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    state, _, _, solver_state, _ <span class="op">=</span> solver.step(term, tprev, t, state, args, solver_state, made_jump<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (solver_state, state, t), state</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>init <span class="op">=</span> (solver_state, state0, t0)</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>(_, state_final, _), traj <span class="op">=</span> jax.lax.scan(scan_fun, init, step_times[<span class="dv">1</span>:])</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>state_final</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+<pre><code>VAPState(geommesh=GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), theta=Array([2.62924358, 1.35902442, 6.06529362, 3.60969331, 3.34407765,
+       2.22993501, 5.54810903, 3.97449415, 3.3539648 , 1.20419685,
+       5.36695019, 0.37346808, 4.04254935, 6.24593336, 3.78256938,
+       2.43986234, 1.86427401, 4.04350545, 2.65350913, 5.86673077,
+       3.28952069, 3.49530224, 3.61134731, 3.25868309, 0.49483695,
+       2.65597033, 5.44847081, 0.0815077 , 1.80236259, 3.88571405,
+       0.78212587, 3.1742906 , 5.65305943, 0.03552294, 1.03057226,
+       0.49984771, 0.75858611, 5.28357365, 2.11062344, 4.08461608,
+       1.90394486, 3.08182229, 4.11747439, 0.32242419, 2.87977266,
+       1.64838549, 3.99764578, 3.02082432, 3.96065204, 0.80522438,
+       0.14948794, 4.84820085, 1.01252678, 3.03934314, 6.23419932,
+       1.30784405, 0.92344992, 0.65224909, 1.43848565, 1.87620624,
+       3.94727408, 3.32947945, 6.09053058, 4.85059338, 0.60390009,
+       3.62798414, 5.91464415, 6.20134698, 0.90452161, 5.37227617,
+       4.70125311, 0.24225895, 3.14981522, 5.74799062, 3.75328237,
+       1.98555718, 3.83604906, 6.08376748, 1.12812114, 3.94329588,
+       5.96146155, 3.15743965, 5.36572252, 1.38305247, 4.21158314,
+       0.62448226, 6.25140285, 0.33132314, 3.30349371, 3.39250697,
+       1.7903447 , 4.70071342, 1.13107472, 4.34020999, 4.681111  ,
+       4.28852299, 2.95713743, 4.17502547, 1.74408207, 0.86079415,
+       0.03538471, 5.83681193, 3.85763446, 4.26437849, 3.3072995 ,
+       1.56063907, 3.22774219, 4.08125906, 0.64092348, 2.81884839,
+       4.07437153, 2.24100076, 2.23559404, 0.50889602, 4.35402081,
+       2.82450091, 4.864591  , 4.59168174, 4.33505167, 0.25874837,
+       0.19473722, 3.43090963, 0.91323554, 3.28793035, 1.75618521,
+       1.60907037, 2.34992684, 0.07139381, 5.80785391, 0.42435074,
+       4.72387567], dtype=float64))</code></pre>
+</div>
+</div>
+<div id="b0ff4868" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>geommesh_final <span class="op">=</span> msh.set_voronoi_face_positions(state_final.geommesh, hemesh)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>ax.add_collection(msh.cellplot(hemesh, geommesh_relaxed.face_positions,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                               cell_colors<span class="op">=</span>np.array([<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">0.2</span>]),</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                               mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"tab:blue"</span>}))</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>ax.add_collection(msh.cellplot(hemesh, geommesh_final.face_positions,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>                               cell_colors<span class="op">=</span>np.array([<span class="fl">0.9</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>, <span class="fl">0.2</span>]),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                               mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"tab:red"</span>}))</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">"equal"</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>ax.autoscale_view()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_area_perimeter_model_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="stochastic-orientation-t1-flips-step-by-step" class="level3">
+<h3 class="anchored" data-anchor-id="stochastic-orientation-t1-flips-step-by-step">Stochastic orientation + T1 flips (step-by-step)</h3>
+<p>We now include rotational diffusion for <span class="math inline">\(\theta_i\)</span> and perform edge flips when Voronoi dual edges fall below a threshold. A short cooldown avoids immediate re-flips.</p>
+<div id="95b50103" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_velocity(geommesh: GeomMesh, hemesh: HeMesh, theta: Float[jax.Array, <span class="st">" n_vertices"</span>],</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                     a0: <span class="bu">float</span>, p0: <span class="bu">float</span>, v0: <span class="bu">float</span>, k_a: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span>, k_p: <span class="bu">float</span> <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                     ) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">"n_vertices 2"</span>]:</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Overdamped velocity with self-propulsion."""</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    grad_geom <span class="op">=</span> jax.grad(energy_ap)(geommesh, hemesh, a0, p0, k_a, k_p)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    n_hat <span class="op">=</span> jnp.stack([jnp.cos(theta), jnp.sin(theta)], axis<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>grad_geom.vertices <span class="op">+</span> v0 <span class="op">*</span> n_hat</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> step_with_diffrax(state: VAPState, solver_state: diffrax.AbstractSolverState,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>                      tprev: <span class="bu">float</span>, tnext: <span class="bu">float</span>, args: Tuple, key: jax.Array,</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>                      d_theta: <span class="bu">float</span>) <span class="op">-&gt;</span> Tuple[VAPState, diffrax.AbstractSolverState, jax.Array]:</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""One ODE step with diffrax + Euler-Maruyama update for angles."""</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>    term <span class="op">=</span> diffrax.ODETerm(vap_vector_field)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> diffrax.Tsit5()</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    state, _, _, solver_state, _ <span class="op">=</span> solver.step(term, tprev, tnext, state, args, solver_state, made_jump<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    key, subkey <span class="op">=</span> jax.random.split(key)</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    dt <span class="op">=</span> tnext <span class="op">-</span> tprev</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>    noise <span class="op">=</span> jax.random.normal(subkey, shape<span class="op">=</span>state.theta.shape)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> state.theta <span class="op">+</span> jnp.sqrt(<span class="fl">2.0</span> <span class="op">*</span> d_theta <span class="op">*</span> dt) <span class="op">*</span> noise</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    state <span class="op">=</span> VAPState(geommesh<span class="op">=</span>state.geommesh, theta<span class="op">=</span>theta)</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> state, solver_state, key</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply_t1_flips(geommesh: GeomMesh, hemesh: HeMesh, cooldown: jax.Array,</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>                   l_min: <span class="bu">float</span>, cooldown_steps: <span class="bu">int</span></span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>                   ) <span class="op">-&gt;</span> Tuple[GeomMesh, HeMesh, jax.Array, Bool[jax.Array, <span class="st">"n_hes"</span>]]:</span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Flip short edges with a cooldown to avoid immediate re-flips."""</span></span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>    geommesh <span class="op">=</span> msh.set_voronoi_face_positions(geommesh, hemesh)</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>    dual_lengths <span class="op">=</span> jnp.<span class="bu">abs</span>(msh.get_signed_dual_he_length(geommesh, hemesh))</span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>    dual_lengths <span class="op">=</span> jnp.nan_to_num(dual_lengths, nan<span class="op">=</span>jnp.inf)</span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>    eligible <span class="op">=</span> (dual_lengths <span class="op">&lt;</span> l_min) <span class="op">&amp;</span> hemesh.is_unique <span class="op">&amp;</span> (<span class="op">~</span>hemesh.is_bdry_edge)</span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>    eligible <span class="op">=</span> eligible <span class="op">&amp;</span> (cooldown <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>    hemesh_new <span class="op">=</span> msh.flip_all(hemesh, eligible)</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>    cooldown <span class="op">=</span> jnp.maximum(cooldown <span class="op">-</span> <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>    flipped <span class="op">=</span> eligible <span class="op">|</span> eligible[hemesh.twin]</span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>    cooldown <span class="op">=</span> cooldown.at[flipped].<span class="bu">set</span>(cooldown_steps)</span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>    geommesh_new <span class="op">=</span> msh.set_voronoi_face_positions(geommesh, hemesh_new)</span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> geommesh_new, hemesh_new, cooldown, flipped</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="17a4caba" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulation parameters</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>dt <span class="op">=</span> <span class="fl">0.02</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">200</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>save_every <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>v0 <span class="op">=</span> <span class="fl">0.03</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>d_theta <span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>l_min <span class="op">=</span> <span class="fl">0.02</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>cooldown_steps <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>geommesh_sim <span class="op">=</span> copy.copy(geommesh_relaxed)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>hemesh_sim <span class="op">=</span> copy.copy(hemesh)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> jax.random.uniform(jax.random.key(<span class="dv">1</span>), shape<span class="op">=</span>(hemesh_sim.n_vertices,), minval<span class="op">=</span><span class="fl">0.0</span>, maxval<span class="op">=</span><span class="dv">2</span> <span class="op">*</span> np.pi)</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> VAPState(geommesh<span class="op">=</span>geommesh_sim, theta<span class="op">=</span>theta)</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>cooldown <span class="op">=</span> jnp.zeros(hemesh_sim.n_hes, dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.key(<span class="dv">2</span>)</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>term <span class="op">=</span> diffrax.ODETerm(vap_vector_field)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> diffrax.Tsit5()</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>traj <span class="op">=</span> []</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>tprev <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(n_steps):</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>    tnext <span class="op">=</span> tprev <span class="op">+</span> dt</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> (hemesh_sim, a0, p0, v0, <span class="fl">1.0</span>, <span class="fl">1.0</span>)</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>    solver_state <span class="op">=</span> solver.init(term, tprev, tnext, state, args)</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>    state, solver_state, key <span class="op">=</span> step_with_diffrax(state, solver_state, tprev, tnext, args, key, d_theta)</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>    geommesh_sim, hemesh_sim, cooldown, flipped <span class="op">=</span> apply_t1_flips(</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>        state.geommesh, hemesh_sim, cooldown, l_min, cooldown_steps</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>    state <span class="op">=</span> VAPState(geommesh<span class="op">=</span>geommesh_sim, theta<span class="op">=</span>state.theta)</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (step <span class="op">%</span> save_every) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>        traj.append((dataclasses.replace(geommesh_sim), copy.copy(hemesh_sim)))</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>    tprev <span class="op">=</span> tnext</span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(traj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<pre><code>40</code></pre>
+</div>
+</div>
+<div id="b913b666" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_state(idx: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    geom, hem <span class="op">=</span> traj[idx]</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    ax.add_collection(msh.cellplot(hem, geom.face_positions,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                                   cell_colors<span class="op">=</span>np.array([<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">0.4</span>]),</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                                   mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="fl">0.5</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>}))</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    ax.set_aspect(<span class="st">"equal"</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    ax.autoscale_view()</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"frame </span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>plot_state(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="b4827c0a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> ipywidgets <span class="im">as</span> widgets</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> IPython.display <span class="im">import</span> display</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    slider <span class="op">=</span> widgets.IntSlider(value<span class="op">=</span><span class="dv">0</span>, <span class="bu">min</span><span class="op">=</span><span class="dv">0</span>, <span class="bu">max</span><span class="op">=</span><span class="bu">len</span>(traj) <span class="op">-</span> <span class="dv">1</span>, step<span class="op">=</span><span class="dv">1</span>, description<span class="op">=</span><span class="st">"frame"</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    widgets.interact(plot_state, idx<span class="op">=</span>slider)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> exc:</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"ipywidgets unavailable (</span><span class="sc">{</span>exc<span class="sc">}</span><span class="ss">). Showing last frame instead."</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    plot_state(<span class="bu">len</span>(traj) <span class="op">-</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -622,4 +1180,4 @@ window.Quarto = {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

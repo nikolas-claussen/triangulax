@@ -866,7 +866,7 @@ load : str -\> GeomHeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L686"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L692"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### set_voronoi_face_positions
@@ -885,7 +885,26 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L692"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L686"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_voronoi_face_positions
+
+``` python
+
+def get_voronoi_face_positions(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh
+)->Float[Array, 'n_faces 2']:
+
+```
+
+*Get face positions of geommesh to the circumcenters of the faces
+defined by hemesh.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L698"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -932,7 +951,7 @@ geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L698"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L704"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -965,7 +984,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](01_triangulation_datastructure_files/figure-commonmark/cell-44-output-2.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-45-output-2.png)
 
 ### Adding some vertex/half-edge/face properties
 
@@ -1020,7 +1039,7 @@ tools](https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-py
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L733"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L739"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -1038,7 +1057,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L729"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L735"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack
@@ -1158,7 +1177,7 @@ alt="image.png" />
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L744"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L750"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_edge
@@ -1181,7 +1200,7 @@ a new HeMesh, does not modify in-place.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L781"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L787"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_signed_dual_he_length
@@ -1189,12 +1208,12 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_signed_dual_he_length(
-    geommesh:GeomMesh, hemesh:HeMesh
+    vertices:Float[Array, 'n_vertices 2'], face_positions:Float[Array, 'n_hes 2'], hemesh:HeMesh
 )->Float[Array, 'n_hes']:
 
 ```
 
-*Compute lengths of dual edges. Boundary dual edges get length np.nan.
+*Compute lengths of dual edges. Boundary dual edges get length jnp.nan.
 Negative sign = flipped edge.*
 
 ``` python
@@ -1221,7 +1240,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](01_triangulation_datastructure_files/figure-commonmark/cell-61-output-2.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-62-output-2.png)
 
 ``` python
 # edges and dual edges should be orthogonal since we are using circumcenters
@@ -1285,7 +1304,7 @@ plt.axis("equal")
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](01_triangulation_datastructure_files/figure-commonmark/cell-67-output-1.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-68-output-1.png)
 
 #### Repeated flips
 
@@ -1309,7 +1328,7 @@ geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
       o flat_tri_ecmc
 
 ``` python
-dual_lengths = get_signed_dual_he_length(geommesh, hemesh)
+dual_lengths = get_signed_dual_he_length(geommesh.vertices, geommesh.face_positions, hemesh)
 edges = jnp.where((dual_lengths < -0.05) & ~hemesh.is_bdry_edge & hemesh.is_unique)[0]
 # we only want to flip unique hes!
 edges, edges.size
@@ -1327,7 +1346,7 @@ flipped_hemesh, _ = jax.lax.scan(lambda h, e: (flip_edge(h, e), None) , init=hem
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L793"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L800"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_all
@@ -1376,7 +1395,7 @@ plt.axis("equal")
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](01_triangulation_datastructure_files/figure-commonmark/cell-75-output-1.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-76-output-1.png)
 
 ## Adjacency-like operators on half-edge meshes
 
@@ -1407,7 +1426,7 @@ using gather/scatter operations.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L816"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L823"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### sum_he_to_vertex_opposite
@@ -1427,7 +1446,7 @@ hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L804"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L811"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### sum_he_to_vertex_incoming
@@ -1461,7 +1480,7 @@ geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L829"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L836"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cell_areas
