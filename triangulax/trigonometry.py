@@ -8,20 +8,23 @@ __all__ = ['get_circumcenter', 'get_triangle_area', 'get_polygon_area', 'get_vor
 import jax
 import jax.numpy as jnp
 
+import functools
+
 # %% ../nbs/00_trigonometry.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float
 
 # %% ../nbs/00_trigonometry.ipynb #7f22d2ad-1ddb-4cf3-b782-ef29639cb724
 ## trig functions - we can use vmap to vectorize them
 
+@functools.partial(jax.jit, static_argnames=['zero_clip'])
 def get_circumcenter(a: Float[jax.Array, " dim"],
                      b: Float[jax.Array, " dim"],
-                     c: Float[jax.Array, " dim"]) -> Float[jax.Array, " dim"]:
+                     c: Float[jax.Array, " dim"], zero_clip: float = 1e-10) -> Float[jax.Array, " dim"]:
     """Return circumcenter coordinates of triangle with vertices a, b, c"""    
     # compute using barycentric coordinates. Start by computing the edge lengths:
     la, lb, lc = (jnp.linalg.norm(b-c), jnp.linalg.norm(c-a), jnp.linalg.norm(a-b,))
     ba, bb, bc = (la**2*(lb**2+lc**2-la**2), lb**2*(lc**2+la**2-lb**2), lc**2*(la**2+lb**2-lc**2))
-    u = (ba*a+bb*b+bc*c)/(ba+bb+bc)
+    u = (ba*a+bb*b+bc*c)/jnp.clip(ba+bb+bc, zero_clip)  # avoid div by zero for degenerate triangles
     return u
 
 def get_triangle_area(a: Float[jax.Array, " dim"],
@@ -34,9 +37,10 @@ def get_polygon_area(pts: Float[jax.Array, "n_vertices 2"]) -> Float[jax.Array, 
     """Area of 2D polygon assuming no self-intersection."""
     return jnp.sum(pts[:,0]*jnp.roll(pts[:,1], 1) - jnp.roll(pts[:,0], 1)*pts[:,1])/2
 
+@functools.partial(jax.jit, static_argnames=['zero_clip'])
 def get_voronoi_corner_area(a: Float[jax.Array, "2"],
                             b: Float[jax.Array, "2"],
-                            c: Float[jax.Array, "2"], epsilon: float=1e-6) -> Float[jax.Array, ""]:
+                            c: Float[jax.Array, "2"], zero_clip: float=1e-10) -> Float[jax.Array, ""]:
     """
     Compute Voronoi area at corner a of triangle abc. Returns zero for a degenerate triangle. 2d only atm.
     
@@ -45,17 +49,18 @@ def get_voronoi_corner_area(a: Float[jax.Array, "2"],
     u = get_circumcenter(a, b, c)
     a_corner = get_polygon_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0)) # Voronoi edges are midpoints of triangle edges
     a_triangle = get_polygon_area(jnp.stack([a, b, c], axis=0))
-    return jnp.where(jnp.abs(a_triangle) > epsilon, a_corner, 0.0)
+    return jnp.where(jnp.abs(a_triangle) > zero_clip, a_corner, 0.0)
 
+@functools.partial(jax.jit, static_argnames=['zero_clip'])
 def get_voronoi_corner_perimeter(a: Float[jax.Array, "2"],
                                  b: Float[jax.Array, "2"],
-                                 c: Float[jax.Array, "2"], epsilon: float=1e-6) -> Float[jax.Array, ""]:
+                                 c: Float[jax.Array, "2"], zero_clip: float=1e-10) -> Float[jax.Array, ""]:
     """Compute contribution to Voronoi perimeter at corner a of triangle abc. Can be negative! 2d only atm."""
     u = get_circumcenter(a, b, c)
     e1 = u - (a + b) / 2    # Voronoi edges are midpoints of triangle edges
     e2 = u - (a + c) / 2
-    n1 = (b-a)/jnp.linalg.norm(b-a)
-    n2 = (a-c)/jnp.linalg.norm(a-c)
+    n1 = (b-a)/jnp.clip(jnp.linalg.norm(b-a), zero_clip)
+    n2 = (a-c)/jnp.clip(jnp.linalg.norm(a-c), zero_clip)
     return jnp.cross(n1, e1) + jnp.cross(n2, e2)
     
 def get_angle_between_vectors(a: Float[jax.Array, " dim"],

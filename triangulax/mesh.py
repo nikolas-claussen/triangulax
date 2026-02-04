@@ -824,6 +824,8 @@ def sum_he_to_vertex_opposite(hemesh: HeMesh, he_field: Float[jax.Array, "n_hes 
     """
     Sum a half-edge field onto opposite vertices.
 
+    Attention: can include boundary half-edges!
+
     hemesh: connectivity information
     he_field: (n_hes,) or (n_hes, d) array
     """

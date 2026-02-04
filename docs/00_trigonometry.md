@@ -26,7 +26,7 @@ There is also some extra legwork to register any new classes with JAX.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L63"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L72"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_rot_mat
@@ -44,7 +44,7 @@ def get_rot_mat(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L57"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L66"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_between_vectors
@@ -62,7 +62,7 @@ def get_angle_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L55"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_perimeter
@@ -70,7 +70,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_voronoi_corner_perimeter(
-    a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], epsilon:float=1e-06
+    a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], zero_clip:float=1e-10
 )->Float[Array, '']:
 
 ```
@@ -81,7 +81,7 @@ Can be negative! 2d only atm.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L37"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L41"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_area
@@ -89,7 +89,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_voronoi_corner_area(
-    a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], epsilon:float=1e-06
+    a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], zero_clip:float=1e-10
 )->Float[Array, '']:
 
 ```
@@ -97,10 +97,13 @@ def get_voronoi_corner_area(
 *Compute Voronoi area at corner a of triangle abc. Returns zero for a
 degenerate triangle. 2d only atm.*
 
+TO DO: does this yield *correct* results for self-intersecting corner
+slices (circumcenter outside of triangle)?
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L33"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L36"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_polygon_area
@@ -118,7 +121,7 @@ def get_polygon_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L27"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L30"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_area
@@ -136,7 +139,7 @@ def get_triangle_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L17"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L20"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_circumcenter
@@ -144,7 +147,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_circumcenter(
-    a:Float[Array, 'dim'], b:Float[Array, 'dim'], c:Float[Array, 'dim']
+    a:Float[Array, 'dim'], b:Float[Array, 'dim'], c:Float[Array, 'dim'], zero_clip:float=1e-10
 )->Float[Array, 'dim']:
 
 ```
@@ -179,7 +182,7 @@ get_circumcenter(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
 get_circumcenter(jnp.array([1.,0.]), jnp.array([1.,0.]),  jnp.array([0.,1.]))
 ```
 
-    Array([nan, nan], dtype=float64)
+    Array([0., 0.], dtype=float64)
 
 ``` python
 jnp.cross(jnp.array([1,0]), jnp.array([0, 1]) )

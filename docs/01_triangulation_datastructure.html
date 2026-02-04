@@ -1091,7 +1091,7 @@ window.Quarto = {
 <span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], face_positions:Float[Array, <span class="st">'n_hes 2'</span>], hemesh:HeMesh</span>
 <span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_hes'</span>]:</span>
 <span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Compute lengths of dual edges. Boundary dual edges get length jnp.nan. Negative sign = flipped edge.</em></p>
+<p><em>Compute lengths of dual edges. Boundary dual edges get length 1. Negative sign = flipped edge.</em></p>
 <div id="51a6342f-fd8c-44d4-8f68-f4bbee5c2fd2" class="cell" data-execution_count="65">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
@@ -1287,6 +1287,7 @@ window.Quarto = {
 <span id="cb118-4"><a href="#cb118-4" aria-hidden="true" tabindex="-1"></a>):</span>
 <span id="cb118-5"><a href="#cb118-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sum a half-edge field onto opposite vertices.</em></p>
+<p>Attention: can include boundary half-edges!</p>
 <p>hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array</p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L811" target="_blank" style="float:right; font-size:smaller">source</a></p>
@@ -1314,7 +1315,7 @@ window.Quarto = {
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L836" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L838" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_cell_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_cell_areas">get_cell_areas</h3>

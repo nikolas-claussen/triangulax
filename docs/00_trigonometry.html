@@ -220,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="jax">JAX</h3>
 <p>The aim is to create a triangulation datastructure compatible with the JAX library for automatic differentiation and numerical computing. In practice, this means that we use <code>jnp</code> (=<code>jax.numpy</code>) instead of <code>numpy</code>, and make sure our code follows JAX’s functional programming paradigm (see <a href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html">JAX- the sharp bits</a>). There is also some extra legwork to register any new classes with JAX.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L63" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L72" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_rot_mat" class="level3">
 <h3 class="anchored" data-anchor-id="get_rot_mat">get_rot_mat</h3>
@@ -231,7 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Get rotation matrix from angle in radians.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L57" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L66" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_angle_between_vectors" class="level3">
 <h3 class="anchored" data-anchor-id="get_angle_between_vectors">get_angle_between_vectors</h3>
@@ -242,29 +242,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Angle between two vectors</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L55" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_voronoi_corner_perimeter" class="level3">
 <h3 class="anchored" data-anchor-id="get_voronoi_corner_perimeter">get_voronoi_corner_perimeter</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_corner_perimeter(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>], c:Float[Array, <span class="st">'2'</span>], epsilon:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-06</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>], c:Float[Array, <span class="st">'2'</span>], zero_clip:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-10</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute contribution to Voronoi perimeter at corner a of triangle abc. Can be negative! 2d only atm.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L37" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L41" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_voronoi_corner_area" class="level3">
 <h3 class="anchored" data-anchor-id="get_voronoi_corner_area">get_voronoi_corner_area</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_corner_area(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>], c:Float[Array, <span class="st">'2'</span>], epsilon:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-06</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>], c:Float[Array, <span class="st">'2'</span>], zero_clip:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-10</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute Voronoi area at corner a of triangle abc. Returns zero for a degenerate triangle. 2d only atm.</em></p>
+<p>TO DO: does this yield <em>correct</em> results for self-intersecting corner slices (circumcenter outside of triangle)?</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L33" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L36" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_polygon_area" class="level3">
 <h3 class="anchored" data-anchor-id="get_polygon_area">get_polygon_area</h3>
@@ -275,7 +276,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Area of 2D polygon assuming no self-intersection.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L27" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L30" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_triangle_area" class="level3">
 <h3 class="anchored" data-anchor-id="get_triangle_area">get_triangle_area</h3>
@@ -286,55 +287,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Area of triangle with vertices a, b, c.&nbsp;Works in any dimension &gt;=2.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L17" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L20" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_circumcenter" class="level3">
 <h3 class="anchored" data-anchor-id="get_circumcenter">get_circumcenter</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_circumcenter(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>], zero_clip:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-10</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]:</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Return circumcenter coordinates of triangle with vertices a, b, c</em></p>
-<div id="15cc68ce" class="cell" data-execution_count="31">
+<div id="15cc68ce" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>get_voronoi_corner_perimeter(jnp.array([<span class="fl">0.</span>, <span class="fl">0.</span>]), jnp.array([<span class="fl">1.</span>, <span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>, <span class="fl">1.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
+<div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>Array(1., dtype=float64)</code></pre>
 </div>
 </div>
-<div id="b7fb9419-37ca-4e80-870f-bcc96536f8d1" class="cell" data-execution_count="14">
+<div id="b7fb9419-37ca-4e80-870f-bcc96536f8d1" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>get_polygon_area(jnp.array([[<span class="fl">0.</span>,<span class="fl">0.</span>], [<span class="fl">0.</span>,<span class="fl">1.</span>], [<span class="fl">1.</span>,<span class="fl">0.</span>]]) ), get_triangle_area(<span class="op">*</span>jnp.array([[<span class="fl">0.</span>,<span class="fl">0.</span>], [<span class="fl">0.</span>,<span class="fl">1.</span>], [<span class="fl">1.</span>,<span class="fl">0.</span>]]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>(Array(0.5, dtype=float64), Array(0.5, dtype=float64))</code></pre>
 </div>
 </div>
-<div id="b08f86bc-05ea-4843-b4d6-d7a6bfc7ca0e" class="cell" data-execution_count="9">
+<div id="b08f86bc-05ea-4843-b4d6-d7a6bfc7ca0e" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>get_voronoi_corner_area(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>Array(-0.25, dtype=float64)</code></pre>
 </div>
 </div>
-<div id="73f2dc1d-072d-4c22-9785-282078793ca1" class="cell" data-execution_count="10">
+<div id="73f2dc1d-072d-4c22-9785-282078793ca1" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>Array([0.5, 0.5], dtype=float64)</code></pre>
 </div>
 </div>
-<div id="16894cb9-04e7-4ed0-bef9-eddca16e61ba" class="cell" data-execution_count="11">
+<div id="16894cb9-04e7-4ed0-bef9-eddca16e61ba" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]),  jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>Array([nan, nan], dtype=float64)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>Array([0., 0.], dtype=float64)</code></pre>
 </div>
 </div>
-<div id="2b1a23a4" class="cell" data-execution_count="15">
+<div id="2b1a23a4" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>jnp.cross(jnp.array([<span class="dv">1</span>,<span class="dv">0</span>]), jnp.array([<span class="dv">0</span>, <span class="dv">1</span>]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>Array(1, dtype=int64)</code></pre>
 </div>
 </div>
-<div id="311f0da7" class="cell" data-execution_count="16">
+<div id="311f0da7" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>jnp.cross(jnp.array([<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>]), jnp.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>Array([0, 0, 1], dtype=int64)</code></pre>
 </div>
 </div>

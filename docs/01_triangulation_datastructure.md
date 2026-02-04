@@ -1213,7 +1213,7 @@ def get_signed_dual_he_length(
 
 ```
 
-*Compute lengths of dual edges. Boundary dual edges get length jnp.nan.
+*Compute lengths of dual edges. Boundary dual edges get length 1.
 Negative sign = flipped edge.*
 
 ``` python
@@ -1441,6 +1441,8 @@ def sum_he_to_vertex_opposite(
 
 *Sum a half-edge field onto opposite vertices.*
 
+Attention: can include boundary half-edges!
+
 hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array
 
 ------------------------------------------------------------------------
@@ -1480,7 +1482,7 @@ geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L836"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L838"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cell_areas
