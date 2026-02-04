@@ -37,7 +37,11 @@ def get_polygon_area(pts: Float[jax.Array, "n_vertices 2"]) -> Float[jax.Array, 
 def get_voronoi_corner_area(a: Float[jax.Array, "2"],
                             b: Float[jax.Array, "2"],
                             c: Float[jax.Array, "2"], epsilon: float=1e-6) -> Float[jax.Array, ""]:
-    """Compute Voronoi area at corner a of triangle abc. Returns zero for a degenerate triangle. 2d only atm."""
+    """
+    Compute Voronoi area at corner a of triangle abc. Returns zero for a degenerate triangle. 2d only atm.
+    
+    TO DO: does this yield _correct_ results for self-intersecting corner slices (circumcenter outside of triangle)?
+    """
     u = get_circumcenter(a, b, c)
     a_corner = get_polygon_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0)) # Voronoi edges are midpoints of triangle edges
     a_triangle = get_polygon_area(jnp.stack([a, b, c], axis=0))

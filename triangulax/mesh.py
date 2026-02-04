@@ -787,12 +787,12 @@ def flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""], check_boundary: bool = Fals
 def get_signed_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
                               face_positions: Float[jax.Array, "n_hes 2"],
                               hemesh: HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Compute lengths of dual edges. Boundary dual edges get length jnp.nan. Negative sign = flipped edge."""
+    """Compute lengths of dual edges. Boundary dual edges get length 1. Negative sign = flipped edge."""
     edges = vertices[hemesh.orig]-vertices[hemesh.dest]
     dual_edges = face_positions[hemesh.heface]-face_positions[hemesh.heface[hemesh.twin]]
     signed_squared_length = jnp.einsum('vi,vi->v', edges, dual_edges @ trig.get_rot_mat(np.pi/2))
     signed_length = jnp.sign(signed_squared_length) * jnp.sqrt(jnp.abs(signed_squared_length))
-    signed_length = jnp.where(hemesh.is_bdry_edge, jnp.nan, signed_length)
+    signed_length = jnp.where(hemesh.is_bdry_edge, 1, signed_length)
     return signed_length
 
 # %% ../nbs/01_triangulation_datastructure.ipynb #242d6ee1-d553-45fc-852f-a80fbb4a589a
