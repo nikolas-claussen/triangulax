@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 
-<title>triangulax</title>
+<title>Coding in JAX – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,10 +106,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="triangulax">
+<meta property="og:title" content="Coding in JAX – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta property="og:site_name" content="triangulax">
-<meta name="twitter:title" content="triangulax">
+<meta name="twitter:title" content="Coding in JAX – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta name="twitter:card" content="summary">
 </head>
@@ -136,7 +135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">triangulax</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_coding_in_JAX_notes.html">Coding in JAX</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -150,7 +149,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">triangulax</span></a>
   </div>
 </li>
@@ -168,7 +167,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02_coding_in_JAX_notes.html" class="sidebar-item-text sidebar-link">
+  <a href="./02_coding_in_JAX_notes.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Coding in JAX</span></a>
   </div>
 </li>
@@ -206,31 +205,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#developer-guide" id="toc-developer-guide" class="nav-link active" data-scroll-target="#developer-guide">Developer Guide</a>
-  <ul class="collapse">
-  <li><a href="#install-triangulax-in-development-mode" id="toc-install-triangulax-in-development-mode" class="nav-link" data-scroll-target="#install-triangulax-in-development-mode">Install triangulax in Development mode</a></li>
-  </ul></li>
-  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a>
-  <ul class="collapse">
-  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation">Documentation</a></li>
-  </ul></li>
-  <li><a href="#how-to-use" id="toc-how-to-use" class="nav-link" data-scroll-target="#how-to-use">How to use</a></li>
+  <li><a href="#pytrees" id="toc-pytrees" class="nav-link active" data-scroll-target="#pytrees">PyTrees</a></li>
+  <li><a href="#control-flow" id="toc-control-flow" class="nav-link" data-scroll-target="#control-flow">Control flow</a></li>
+  <li><a href="#static-array-shapes" id="toc-static-array-shapes" class="nav-link" data-scroll-target="#static-array-shapes">Static array shapes</a></li>
+  <li><a href="#batching" id="toc-batching" class="nav-link" data-scroll-target="#batching">Batching</a></li>
+  <li><a href="#simulation-loops-with-jax.lax.scan" id="toc-simulation-loops-with-jax.lax.scan" class="nav-link" data-scroll-target="#simulation-loops-with-jax.lax.scan">Simulation loops with <code>jax.lax.scan</code></a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="02_coding_in_JAX_notes.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">triangulax</h1>
+<h1 class="title">Coding in JAX</h1>
 </div>
 
-<div>
-  <div class="description">
-    JAX-compatible triangular meshes and triangular-mesh-based simulations
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
@@ -245,66 +235,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<p>This package provides data-structures for triangular meshes and functions for geometry processing based on JAX and fully compatible with JAX’s just-in-time compilation and automatic differentiation.</p>
-<p>The current use case is to create a simulation framework for the mechanics of 2D tissues (<a href="https://www.pnas.org/doi/10.1073/pnas.2321928121">Active tension networks</a>, <a href="https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011">area-perimeter vertex model</a>, non-confluent tissues like in <a href="https://www.nature.com/articles/s41567-021-01215-1">Kim, 2021</a>) compatible with automatic differentiation/JAX. The ultimate goal is to use gradient-based optimization to identify models for tissue dynamics that produce certain behaviors of interest.</p>
-<section id="developer-guide" class="level2">
-<h2 class="anchored" data-anchor-id="developer-guide">Developer Guide</h2>
-<p>This package is developed based on jupyter notebooks, which are converted into python modules using <code>nbdev</code>.</p>
-<section id="install-triangulax-in-development-mode" class="level3">
-<h3 class="anchored" data-anchor-id="install-triangulax-in-development-mode">Install triangulax in Development mode</h3>
+<p><code>triangulax</code> aims to create a triangulation datastructure compatible with the JAX library for automatic differentiation and numerical computing (see <a href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html">JAX- the sharp bits</a>). What does this mean in practice?</p>
 <ol type="1">
-<li>Clone the github repository</li>
+<li>Use <code>jnp</code> (=<code>jax.numpy</code>) instead of <code>numpy</code>.</li>
+<li>Use a <em>functional programming</em> paradigm (pure functions, no side-effects). Avoid dynamically changing array shapes. For example, insead of in-place array modifications, use JAX’s <code>x = x.at[idx].set(y)</code>.</li>
+<li>Use JAX idioms for <a href="https://docs.jax.dev/en/latest/control-flow.html">control flow</a></li>
+<li><em>Register</em> any new classes, so JAX knows how to handle them during gradient-computation and just-in-time compilation. See <a href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html#using-jax-jit-with-class-methods">here</a> and <a href="https://docs.jax.dev/en/latest/custom_pytrees.html">here</a>.</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone https://github.com/nikolas-claussen/triangulax.git</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="2" type="1">
-<li>Create a conda environment with all Python dependencies</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda env create <span class="at">-n</span> triangulax <span class="at">-f</span> triangulax.yml</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda activate triangulax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="3" type="1">
-<li>Install the <code>triangulax</code> package</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure triangulax package is installed in development mode</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install <span class="at">-e</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="4" type="1">
-<li>If necessary, edit the package notebooks and export</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make changes under nbs/ directory</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># compile to have changes apply to triangulax</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nbdev_prepare</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To provide type signatures for all functions (what are the inputs? what do the array dimensions mean?), we use <a href="https://docs.kidger.site/jaxtyping">jaxtyping</a>. Lateron, we will alsop use the <code>equinox</code> library, which adds a few useful tools to JAX.</p>
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="pytrees" class="level3">
+<h3 class="anchored" data-anchor-id="pytrees">PyTrees</h3>
+<p>JAX supports not only arrays as inputs/outputs/intermediate variables, but also <a href="https://docs.jax.dev/en/latest/pytrees.html">pytrees</a>. Pytrees are nested structures (dicts, lists-of-lists, etc) whose leaves are “elementary” objects like arrays. Fortunately, our triangulation datastructure classes are already a lot like a pytree - it is a collection of arrays. For JAX to understand this, we need to register our classes as a <a href="https://docs.jax.dev/en/latest/custom_pytrees.html#pytrees-custom-pytree-nodes">custom pytree node</a> via <code>jax.tree_util.register_dataclass</code>.</p>
+<p>Sidenote: Neural networks, in libraries like Flax or Equinox, are basically very similar. They are dataclass-like classes which hold all the arrays associated with a NN (the different weights, and maybe some parameters) with class methods like <code>__call__</code> specifying the forward pass through the NN. Equinox automatically registers your NN as a pytree by inheriting from the <code>equinox.Module</code> class.</p>
 </section>
+<section id="control-flow" class="level3">
+<h3 class="anchored" data-anchor-id="control-flow"><a href="https://docs.jax.dev/en/latest/control-flow.html">Control flow</a></h3>
+<p>For just-in-time compilation, JAX distinguishes two types of variables: dynamic and static. Control flow cannot depend on the <em>value</em> of dynamic variables, only on their shape.</p>
+<p>Upshots: 1. replace <code>if</code> with <code>jax.lax.cond</code> / <code>jnp.where</code> (full autodiff compatible), and <code>while</code> with <code>jax.lax.while_loop</code> (forward autodiff only). 2. mark variables which are not going to change during simulation as static.</p>
 </section>
-<section id="usage" class="level2">
-<h2 class="anchored" data-anchor-id="usage">Usage</h2>
-<section id="documentation" class="level3">
-<h3 class="anchored" data-anchor-id="documentation">Documentation</h3>
-<p>Documentation can be found hosted on this GitHub <a href="https://github.com/nikolas-claussen/triangulax">repository</a>’s <a href="https://nikolas-claussen.github.io/triangulax/">pages</a>.</p>
+<section id="static-array-shapes" class="level3">
+<h3 class="anchored" data-anchor-id="static-array-shapes">Static array shapes</h3>
+<p>JAX works best if the <em>shapes</em> of arrays do not change during the computation. For this reason, we (first) focus on triangulations where the number of vertices does not change. Topological modifications (like edge flips) are nevertheless possible, as long as they do not change the number of mesh elements (vertices, edges, and faces).</p>
 </section>
+<section id="batching" class="level3">
+<h3 class="anchored" data-anchor-id="batching">Batching</h3>
+<p>In simulations, we may want to “batch” over several initial conditions/random seeds/etc (analogous to batching over training data in normal ML). In JAX, one can efficiently and concisely vectorize operations over such “batch axes” with <code>jax.vmap</code>.</p>
+<p>To batch over our custom data structures, we need to pull a small trick - convert a list of instances into a single mesh with a batch axis for the various arrays. Luckily, this can be <a href="https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees">done using JAX’s pytree tools</a>.</p>
 </section>
-<section id="how-to-use" class="level2">
-<h2 class="anchored" data-anchor-id="how-to-use">How to use</h2>
-<p>Currently, only the <code>mesh</code> module is complete. It contains a half-edge data structure for triangular meshes compatible with JAX.</p>
-<div id="49099f4f" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh <span class="im">as</span> msh</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># load example mesh and convert to half-edge mesh</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>vertices, _, _, faces, _, _ <span class="op">=</span> igl.readOBJ(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(vertices.shape[<span class="dv">0</span>], faces)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># with the half-edge mesh, you can carry out various operations, like computing the coordination number by summing incoming half-edges per vertex</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> jnp.zeros(hemesh.n_vertices)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>coord_number.at[hemesh.dest].add(jnp.ones(hemesh.n_hes))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<pre><code>2</code></pre>
-</div>
-</div>
+<section id="simulation-loops-with-jax.lax.scan" class="level2">
+<h2 class="anchored" data-anchor-id="simulation-loops-with-jax.lax.scan">Simulation loops with <code>jax.lax.scan</code></h2>
+<p>In simulations, we generally start with an initial state (call it <code>init</code>), do a series of timesteps (via a function <code>make_step(state)</code>), and record some “measurement” at each timestep (via a <code>measure(state)</code> function). As a result, we get a timeseries of measurements, and the final simulation state. In normal python, you would do that with a <code>for</code> loop. When working with JAX, we need to <a href="https://docs.jax.dev/en/latest/control-flow.html">replace control-flow operations like <code>for</code> with their JAX pendant</a>. For for loops, this is <code>jax.lax.scan(f, init, xs)</code>, which is equivalent to the python code</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan(f, init, xs):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  carry <span class="op">=</span> init</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  ys <span class="op">=</span> []</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x <span class="kw">in</span> xs:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    carry, y <span class="op">=</span> f(carry, x)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ys.append(y)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> carry, np.stack(ys)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In our pattern, <code>xs</code> is the vector of time-points <code>timepoints</code>, and the “scanning-function” <code>f</code> is generally comprised of two parts, a time-step and a measurement/logging step (above, we logged energy and T1 count):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(carry, t):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    new_state <span class="op">=</span> make_step(carry, t)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    measurements <span class="op">=</span> measure(new_state)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_state, measurements</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>carry</code> variable contains all information about the state of the simulation. Typically, <code>carry</code> is also composed of multiple pieces (the, the physical state <code>physical_state</code>, as well as ancilliary variables like the ODE solver state <code>solver_state</code>). To keep things organized, it can make sense to define dataclasses for the simulation state and the measurements, like this (schematic) example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.tree_util.register_dataclass</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimState:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    physical_state: jax.Array</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    solver_state: <span class="bu">dict</span>  <span class="co"># or another PyTree</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    current_time: jax.Array</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.tree_util.register_dataclass</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Log:</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    energy: <span class="bu">float</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan_function(carry: SimState, next_time: jax.Array) <span class="op">-&gt;</span> <span class="bu">tuple</span>[SimState, Log]:</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    physical_state, solver_state <span class="op">=</span> make_step(carry.physical_state, carry.solver_state,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                                             carry.current_time, next_time)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    log <span class="op">=</span> Log(energy<span class="op">=</span>compute_energy(physical_state))</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SimState(physical_state, solver_state), log</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>timepoints <span class="op">=</span> jnp.arange(t0, t1, dt)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>init <span class="op">=</span> ... <span class="co"># define initial condition</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>final_state, measurements <span class="op">=</span> jax.lax.scan(scan_function, init, timepoints) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>

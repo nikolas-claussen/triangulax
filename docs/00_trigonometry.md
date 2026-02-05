@@ -26,7 +26,25 @@ There is also some extra legwork to register any new classes with JAX.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L72"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L91"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_perp_2d
+
+``` python
+
+def get_perp_2d(
+    x:Float[Array, '... 2']
+)->Float[Array, '... 2']:
+
+```
+
+*Get perpendicular vector.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L86"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_rot_mat
@@ -39,12 +57,30 @@ def get_rot_mat(
 
 ```
 
-*Get rotation matrix from angle in radians.*
+*Get 2D rotation matrix from angle in radians.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L66"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L81"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_cot_between_vectors
+
+``` python
+
+def get_cot_between_vectors(
+    a:Float[Array, 'dim'], b:Float[Array, 'dim']
+)->Float[Array, '']:
+
+```
+
+*Cotangent of angle between two vectors*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L75"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_between_vectors
@@ -62,7 +98,7 @@ def get_angle_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L55"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L64"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_perimeter
@@ -81,7 +117,7 @@ Can be negative! 2d only atm.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L41"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_area
@@ -103,7 +139,7 @@ slices (circumcenter outside of triangle)?
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L36"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L41"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_polygon_area
@@ -121,7 +157,7 @@ def get_polygon_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L30"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L35"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_area
@@ -139,7 +175,7 @@ def get_triangle_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L20"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L25"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_circumcenter
@@ -155,22 +191,19 @@ def get_circumcenter(
 *Return circumcenter coordinates of triangle with vertices a, b, c*
 
 ``` python
-get_voronoi_corner_perimeter(jnp.array([0., 0.]), jnp.array([1., 0.]), jnp.array([0., 1.]))
+a = jnp.array([1., 0])
+b = jnp.array([1., 0.5])
+angle = get_angle_between_vectors(a, b)
+1/jnp.tan(angle), get_cot_between_vectors(a, b)
 ```
 
-    Array(1., dtype=float64)
+    (Array(2., dtype=float64), Array(2., dtype=float64))
 
 ``` python
 get_polygon_area(jnp.array([[0.,0.], [0.,1.], [1.,0.]]) ), get_triangle_area(*jnp.array([[0.,0.], [0.,1.], [1.,0.]]) )
 ```
 
     (Array(0.5, dtype=float64), Array(0.5, dtype=float64))
-
-``` python
-get_voronoi_corner_area(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
-```
-
-    Array(-0.25, dtype=float64)
 
 ``` python
 get_circumcenter(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
@@ -185,6 +218,24 @@ get_circumcenter(jnp.array([1.,0.]), jnp.array([1.,0.]),  jnp.array([0.,1.]))
     Array([0., 0.], dtype=float64)
 
 ``` python
+get_circumcenter(jnp.array([1.,0.]), jnp.array([2.,0.]),  jnp.array([1.,0.]))
+```
+
+    Array([0., 0.], dtype=float64)
+
+``` python
+get_voronoi_corner_area(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
+```
+
+    Array(0.25, dtype=float64)
+
+``` python
+get_voronoi_corner_perimeter(jnp.array([0., 0.]), jnp.array([1., 0.]), jnp.array([0., 1.]))
+```
+
+    Array(1., dtype=float64)
+
+``` python
 jnp.cross(jnp.array([1,0]), jnp.array([0, 1]) )
 ```
 
@@ -195,3 +246,91 @@ jnp.cross(jnp.array([1,0,0]), jnp.array([0, 1, 0]) )
 ```
 
     Array([0, 0, 1], dtype=int64)
+
+### Normals and rotation matrices in 3D
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L109"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_triangle_normal
+
+``` python
+
+def get_triangle_normal(
+    a:Float[Array, '3'], b:Float[Array, '3'], c:Float[Array, '3']
+)->Float[Array, '3']:
+
+```
+
+*Compute unit normal vector of triangle abc.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L97"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### quaternion_to_rot_max
+
+``` python
+
+def quaternion_to_rot_max(
+    q:Float[Array, '4']
+)->Float[Array, '3 3']:
+
+```
+
+*Convert unit quaternion into a 3d rotation matrix.*
+
+See
+https://fr.wikipedia.org/wiki/Quaternions_et_rotation_dans_l%27espace
+
+### Barycentric coordinates
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L119"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_barycentric_coordinates
+
+``` python
+
+def get_barycentric_coordinates(
+    point:Float[Array, 'dim'], a:Float[Array, 'dim'], b:Float[Array, 'dim'], c:Float[Array, 'dim'],
+    zero_clip:float=1e-10, normalize:bool=True
+)->Float[Array, '3']:
+
+```
+
+*Compute barycentric coordinates of point with respect to triangle abc.*
+
+``` python
+vertices = jnp.array([[0., 0 ], [0., 1.], [1., 0.]])
+point1 = jnp.array([0.5, 0.2])
+
+get_barycentric_coordinates(point1, *vertices, normalize=False)
+```
+
+    Array([0. , 0.2, 0.5], dtype=float64)
+
+``` python
+vertices2 = jnp.array([[0., 0, 0], [0., 1., 0], [1., 0., 0]])
+point2 = jnp.array([0.5, 0.2, 0.])
+
+get_barycentric_coordinates(point2, *vertices2, normalize=False)
+```
+
+    Array([0. , 0.2, 0.5], dtype=float64)
+
+``` python
+point3 = jnp.array([0.5, 0.2, 1.])
+
+get_barycentric_coordinates(point3, *vertices2, normalize=False)
+```
+
+    Array([0. , 0.2, 0.5], dtype=float64)

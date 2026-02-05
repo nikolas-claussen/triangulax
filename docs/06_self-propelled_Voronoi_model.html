@@ -141,13 +141,13 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="Area-perimeter self-propelled Voronoi model – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/03_area_perimeter_model_files/figure-html/cell-7-output-1.png">
+<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/06_self-propelled_Voronoi_model_files/figure-html/cell-7-output-1.png">
 <meta property="og:site_name" content="triangulax">
 <meta property="og:image:height" content="351">
 <meta property="og:image:width" content="384">
 <meta name="twitter:title" content="Area-perimeter self-propelled Voronoi model – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/03_area_perimeter_model_files/figure-html/cell-7-output-1.png">
+<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/06_self-propelled_Voronoi_model_files/figure-html/cell-7-output-1.png">
 <meta name="twitter:image-height" content="351">
 <meta name="twitter:image-width" content="384">
 <meta name="twitter:card" content="summary_large_image">
@@ -174,7 +174,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_area_perimeter_model.html">Area-perimeter self-propelled Voronoi model</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06_self-propelled_Voronoi_model.html">Area-perimeter self-propelled Voronoi model</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -200,19 +200,37 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01_triangulation_datastructure.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">JAX-compatible data structure triangulations</span></a>
+  <a href="./01_triangular_meshes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Loading, processing, and saving triangular meshes</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02_test_simulations.html" class="sidebar-item-text sidebar-link">
+  <a href="./02_coding_in_JAX_notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Coding in JAX</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_halfedge_datastructure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Half-edge meshes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_linear_operators_on_meshes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_example_simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03_area_perimeter_model.html" class="sidebar-item-text sidebar-link active">
+  <a href="./06_self-propelled_Voronoi_model.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
   </div>
 </li>
@@ -244,7 +262,7 @@ window.Quarto = {
   </ul></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="03_area_perimeter_model.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="06_self-propelled_Voronoi_model.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -273,10 +291,10 @@ window.Quarto = {
 <p>The orientation <span class="math inline">\(\theta_i\)</span> of each cell is also dynamic. It undergoes rotational diffusion: <span class="math display">\[d\theta_i = D_\theta dW_{t, i} \]</span> where <span class="math inline">\(dW_{t,i}\)</span> is Brownian motion, independent for each cell <span class="math inline">\(i\)</span>, and <span class="math inline">\(D_\theta\)</span> is the diffusion constant.</p>
 <section id="numerics" class="level4">
 <h4 class="anchored" data-anchor-id="numerics">Numerics</h4>
-<p>The cell array connectivity will be represented by a <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#hemesh"><code>HeMesh</code></a> (see notebook 01). The geometry is fully described by the triangulation vertex positions, the Voronoi cell centroids. We also need a scalar vertex attribute for the angle <span class="math inline">\(\theta_i\)</span>.</p>
+<p>The cell array connectivity will be represented by a <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> (see notebook 01). The geometry is fully described by the triangulation vertex positions, the Voronoi cell centroids. We also need a scalar vertex attribute for the angle <span class="math inline">\(\theta_i\)</span>.</p>
 <p>To numerically calculate the energy <span class="math inline">\(E_{AP}\)</span>, we can obtain Voronoi area and perimeter for each mesh “corner” using the <code>triangulax.trigonometry</code> module. Then we can use the gather/scatter operation <code>triangulax.meshsum_he_to_vertex_opposite</code> to sum all corners belonging to a cell (see notebook 01, “Computing cell areas, perimeters, etc via corners”). Boundary cells can be handled by “mirroring”, i.e., all corners count twice when computing the area/perimeter. Given the energy, JAX autodiff gives us the gradients.</p>
 <p>To time-evolve the mesh geometry, we can use <code>diffrax</code>, like in notebook 02. <code>diffrax</code> can also deal with SDEs, like the Langevin equation for cell angles. After each timestep, we need to check if the Voronoi edge lengths are below some threshold (the edge lengths can be computed on the fly), and, if so, we need to carry out edge flips. See notebook 01. We need to ensure that we do not immidiately “re-flip” an edge. This could be done, for example, via “cool down” period (an edge flipped at step <span class="math inline">\(t\)</span> cannot be flipped again for the next few steps), or by calculating if the edge is shrinking or growing.</p>
-<p>It would also be great to generate some visualizations of the time evolution of the mesh using the <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#cellplot"><code>cellplot</code></a> function, maybe with a user-controlled slider to show the different time steps.</p>
+<p>It would also be great to generate some visualizations of the time evolution of the mesh using the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#cellplot"><code>cellplot</code></a> function, maybe with a user-controlled slider to show the different time steps.</p>
 <p>The code should respect the coding style (JAX-compatibility, type hints, etc) used in previous notebooks. To start, let’s define the energy and check that relaxation of the energy leads to a state where the <span class="math inline">\(a_i=a_0\)</span> and <span class="math inline">\(p_i=p_0\)</span> constraints are fullfilled (as good as possible).</p>
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 </section>
@@ -359,7 +377,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -480,7 +498,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -500,7 +518,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -565,7 +583,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -585,7 +603,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -716,7 +734,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-26-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-26-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -736,7 +754,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -744,7 +762,7 @@ window.Quarto = {
 </section>
 <section id="overdamped-dynamics-with-self-propulsion-deterministic" class="level2">
 <h2 class="anchored" data-anchor-id="overdamped-dynamics-with-self-propulsion-deterministic">Overdamped dynamics with self-propulsion (deterministic)</h2>
-<p>Next, let’s add the self-propulsion term. We initialize the angles <span class="math inline">\(\theta_i\)</span> at random. We can store the angles as an extra <code>vertex_attrib</code> in our <code>geommesh</code>, using the functionality of the <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#geommesh"><code>GeomMesh</code></a> dataclass. We already have an <code>IntEnum</code> which we can use as keys to the <code>vertex_attrib</code> dictionary, like described in notebook 01.</p>
+<p>Next, let’s add the self-propulsion term. We initialize the angles <span class="math inline">\(\theta_i\)</span> at random. We can store the angles as an extra <code>vertex_attrib</code> in our <code>geommesh</code>, using the functionality of the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> dataclass. We already have an <code>IntEnum</code> which we can use as keys to the <code>vertex_attrib</code> dictionary, like described in notebook 01.</p>
 <p>As a first step, we can keep the orientations fixed and just integrate <span class="math inline">\(\partial_t \mathbf{v}_i = -\nabla_{\mathbf{v}_i} E_{AP} + v_0\hat{\mathbf{n}}_i\)</span>, like in the above example. We only simulate for a couple of steps.</p>
 <div id="0a4ba227" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> VertexAttribs(IntEnum):</span>
@@ -885,7 +903,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-38-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-38-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1139,7 +1157,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-46-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-46-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1151,7 +1169,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-47-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-47-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1161,7 +1179,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-48-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-48-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1197,7 +1215,7 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03_area_perimeter_model_files/figure-html/cell-50-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="06_self-propelled_Voronoi_model_files/figure-html/cell-50-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>

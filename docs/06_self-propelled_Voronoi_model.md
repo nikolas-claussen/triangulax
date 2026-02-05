@@ -37,7 +37,7 @@ cell *i*, and *D*<sub>*θ*</sub> is the diffusion constant.
 #### Numerics
 
 The cell array connectivity will be represented by a
-[`HeMesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#hemesh)
+[`HeMesh`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh)
 (see notebook 01). The geometry is fully described by the triangulation
 vertex positions, the Voronoi cell centroids. We also need a scalar
 vertex attribute for the angle *θ*<sub>*i*</sub>.
@@ -63,7 +63,7 @@ calculating if the edge is shrinking or growing.
 
 It would also be great to generate some visualizations of the time
 evolution of the mesh using the
-[`cellplot`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#cellplot)
+[`cellplot`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#cellplot)
 function, maybe with a user-controlled slider to show the different time
 steps.
 
@@ -153,7 +153,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-7-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-7-output-1.png)
 
 ## Voronoi cell geometry (area & perimeter)
 
@@ -276,7 +276,7 @@ plt.xlabel("step")
 plt.ylabel("energy");
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-13-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-13-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh)
@@ -292,7 +292,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-14-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-14-output-1.png)
 
 ``` python
 areas_relaxed, perim_relaxed = (get_cell_area(geommesh, hemesh), get_cell_perimeter(geommesh, hemesh))
@@ -371,7 +371,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,flip_count.sum()+1])
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-19-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-19-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)
@@ -387,7 +387,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-20-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-20-output-1.png)
 
 ``` python
 areas_relaxed, perim_relaxed = (get_cell_area(geommesh, hemesh), get_cell_perimeter(geommesh, hemesh))
@@ -550,7 +550,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0, flip_count.sum() + 1])
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-26-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-26-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)
@@ -566,14 +566,14 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-27-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-27-output-1.png)
 
 ## Overdamped dynamics with self-propulsion (deterministic)
 
 Next, let’s add the self-propulsion term. We initialize the angles
 *θ*<sub>*i*</sub> at random. We can store the angles as an extra
 `vertex_attrib` in our `geommesh`, using the functionality of the
-[`GeomMesh`](https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#geommesh)
+[`GeomMesh`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh)
 dataclass. We already have an `IntEnum` which we can use as keys to the
 `vertex_attrib` dictionary, like described in notebook 01.
 
@@ -726,7 +726,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-38-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-38-output-1.png)
 
 ### Stochastic orientation + T1 flips (step-by-step)
 
@@ -994,7 +994,7 @@ np.linalg.norm(geommesh_traj_sde[0].vertices-geommesh_traj_sde[-1].vertices, axi
 plt.plot(jnp.cumsum(flip_counts_sde))
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-46-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-46-output-1.png)
 
 ``` python
 cell_id = 50
@@ -1002,13 +1002,13 @@ cell_id = 50
 plt.plot(logs_sde.geommesh.vertex_attribs[VertexAttribs.SELF_PROPULSION_ORIENTATION][:, cell_id])
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-47-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-47-output-1.png)
 
 ``` python
 plt.plot(energies_sde)
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-48-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-48-output-1.png)
 
 ``` python
 msh.set_voronoi_face_positions(geommesh_traj_sde[-1], hemesh_traj_sde[-1])
@@ -1040,7 +1040,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-50-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-50-output-1.png)
 
 ``` python
 def plot_traj_step(step_idx: int) -> None:

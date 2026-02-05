@@ -23,11 +23,6 @@ import functools
 from jaxtyping import Float 
 
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #cef3ff0a
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path("..").resolve()))
-
 from . import trigonometry as trig
 from .triangular import TriMesh
 from . import mesh as msh

@@ -47,6 +47,8 @@ import functools
 # import previously defined modules
 from triangulax import mesh as msh
 from triangulax.mesh import TriMesh, HeMesh, GeomMesh
+
+from triangulax import trigonometry as trg
 ```
 
 #### JAX-compatible scientific computing libraries - useful in future steps
@@ -85,11 +87,11 @@ plt.triplot(*geommesh.vertices.T, mesh.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-9-output-1.png)
+![](05_example_simulation_files/figure-commonmark/cell-9-output-1.png)
 
 ``` python
 lengths = jnp.linalg.norm(geommesh.vertices[hemesh.orig]-geommesh.vertices[hemesh.dest], axis=1)
-tri_areas = -jax.vmap(msh.get_polygon_area)(geommesh.vertices[hemesh.faces])
+tri_areas = -jax.vmap(trg.get_polygon_area)(geommesh.vertices[hemesh.faces])
 
 lengths.mean(), tri_areas.mean()
 ```
@@ -108,7 +110,7 @@ def energy_function(geommesh: GeomMesh, hemesh: HeMesh, ell_0: float=1):
     edge_energy = jnp.mean((edge_lengths/ell_0-1)**2) # this way, term is "auto-normalized"
     # let's add a term for the triangle areas
     a_0 = (np.sqrt(3)/4) * ell_0**2 # area of equilateral triangle
-    tri_area = -jax.vmap(msh.get_polygon_area)(geommesh.vertices[hemesh.faces])
+    tri_area = -jax.vmap(trg.get_polygon_area)(geommesh.vertices[hemesh.faces])
     area_energy = jnp.mean((tri_area/a_0-1)**2)
     #jax.debug.print("E_l: {E_l}, E_a: {E_a}",  E_l=edge_energy, E_a=area_energy)
     # this is how you can print inside a JITed-function
@@ -185,7 +187,7 @@ fig = plt.figure(figsize=(4, 3))
 plt.plot(losses)
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-17-output-1.png)
+![](05_example_simulation_files/figure-commonmark/cell-17-output-1.png)
 
 ``` python
 fig = plt.figure(figsize=(4, 4))
@@ -194,7 +196,7 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-18-output-1.png)
+![](05_example_simulation_files/figure-commonmark/cell-18-output-1.png)
 
 ``` python
 lengths_optimized = jnp.linalg.norm(geommesh_optimized.vertices[hemesh_optimized.orig]
@@ -255,11 +257,21 @@ args = (hemesh, 0.5)
 ```
 
 ``` python
-# go step by step
+# initialize the solver
 
 solver = diffrax.Tsit5()
 y = y0
 state = solver.init(term, t0, t0+dt, y0, args)
+```
+
+``` python
+state
+```
+
+    (Array(True, dtype=bool), GeomMesh(D=2,N_V=131, N_HE=708, N_F=224))
+
+``` python
+# go step by step
 
 def scan_fun(carry, t):
     state, y, tprev = carry 
@@ -284,7 +296,7 @@ plt.triplot(*y.vertices.T, hemesh.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-24-output-1.png)
+![](05_example_simulation_files/figure-commonmark/cell-26-output-1.png)
 
 ### Meta-training
 
@@ -334,7 +346,7 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-27-output-1.png)
+![](05_example_simulation_files/figure-commonmark/cell-29-output-1.png)
 
 ``` python
 ```
@@ -402,7 +414,7 @@ plt.triplot(*geommesh_trained.vertices.T, hemesh_trained.faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-32-output-1.png)
+![](05_example_simulation_files/figure-commonmark/cell-34-output-1.png)
 
 #### Batching
 
@@ -457,7 +469,7 @@ plt.triplot(*batch_geom_out[i].vertices.T, batch_he_out[i].faces)
 plt.axis("equal");
 ```
 
-![](02_test_simulations_files/figure-commonmark/cell-36-output-1.png)
+![](05_example_simulation_files/figure-commonmark/cell-38-output-1.png)
 
 ``` python
 # the batches are not identical, which is good.
