@@ -12,11 +12,9 @@ import jax.numpy as jnp
 import functools
 
 import numpy as np
-import igl
 
 # %% ../nbs/00_trigonometry.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float
-import functools
 
 # %% ../nbs/00_trigonometry.ipynb #7f22d2ad-1ddb-4cf3-b782-ef29639cb724
 ## trig functions - we can use vmap to vectorize them

@@ -3,17 +3,16 @@
 # %% auto #0
 __all__ = ['average_vertices_to_faces', 'average_faces_to_vertices', 'sum_he_to_vertex_incoming', 'sum_he_to_vertex_opposite',
            'get_cell_areas', 'get_coordination_number', 'compute_cotan_laplace', 'compute_gradient_2d',
-           'compute_gradient_3d']
+           'compute_gradient_3d', 'linear_op_to_sparse']
 
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
-import matplotlib.pyplot as plt
-
 import igl
 
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
 import jax.numpy as jnp
+import jax.experimental.sparse as jsparse
 
 import lineax
 
@@ -186,3 +185,49 @@ def compute_gradient_3d(hemesh: msh.HeMesh, vertices: Float[jax.Array, "n_vertic
     grads = jnp.stack([grad_phi0, grad_phi1, grad_phi2], axis=1)
     vals = vertex_field[faces]
     return jnp.einsum("fvd,fv...->fd...", grads, vals)
+
+# %% ../nbs/04_linear_operators_on_meshes.ipynb #3d9366df
+def linear_op_to_sparse(op: callable,
+                        in_shape: tuple[int, ...],
+                        out_shape: tuple[int, ...],
+                        dtype: jnp.dtype | None = None,
+                        chunk_size: int = 64,
+                        ) -> jsparse.BCOO:
+    """Build a sparse matrix for a linear map using batched one-hot probes."""
+    if len(in_shape) != 1 or len(out_shape) != 1:
+        raise ValueError("Only 1D input/output supported for now.")
+    n_in = in_shape[0]
+    n_out = out_shape[0]
+    if dtype is None:
+        dtype = jnp.result_type(op(jnp.zeros((n_in,))))
+
+    n_chunks = (n_in + chunk_size - 1) // chunk_size
+
+    def scan_fun(carry, chunk_idx):
+        start = chunk_idx * chunk_size
+        idx = start + jnp.arange(chunk_size)
+        valid = idx < n_in
+        idx_safe = jnp.where(valid, idx, 0)
+
+        basis = jax.nn.one_hot(idx_safe, n_in, dtype=dtype)
+        cols = jax.vmap(op)(basis)
+
+        cols_flat = cols.reshape(-1)
+        row_idx = jnp.tile(jnp.arange(n_out), chunk_size)
+        col_idx = jnp.repeat(idx_safe, n_out)
+        valid_rows = jnp.repeat(valid, n_out)
+
+        data = cols_flat * valid_rows
+        indices = jnp.stack([row_idx, col_idx], axis=1)
+        return carry, (data, indices)
+
+    _, packed = jax.lax.scan(scan_fun, None, jnp.arange(n_chunks))
+    data_all, indices_all = packed
+
+    data_flat = data_all.reshape(-1)
+    indices_flat = indices_all.reshape(-1, 2)
+    mask = data_flat != 0
+
+    data = data_flat[mask]
+    indices = indices_flat[mask]
+    return jsparse.BCOO((data, indices), shape=(n_out, n_in))
