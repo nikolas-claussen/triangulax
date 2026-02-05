@@ -2,7 +2,8 @@
 
 # %% auto #0
 __all__ = ['get_circumcenter', 'get_triangle_area', 'get_polygon_area', 'get_voronoi_corner_area', 'get_voronoi_corner_perimeter',
-           'get_angle_between_vectors', 'get_rot_mat']
+           'get_angle_between_vectors', 'get_cot_between_vectors', 'get_rot_mat', 'get_perp_2d',
+           'quaternion_to_rot_max', 'get_triangle_normal', 'get_barycentric_coordinates']
 
 # %% ../nbs/00_trigonometry.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -10,8 +11,12 @@ import jax.numpy as jnp
 
 import functools
 
+import numpy as np
+import igl
+
 # %% ../nbs/00_trigonometry.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float
+import functools
 
 # %% ../nbs/00_trigonometry.ipynb #7f22d2ad-1ddb-4cf3-b782-ef29639cb724
 ## trig functions - we can use vmap to vectorize them
@@ -47,7 +52,11 @@ def get_voronoi_corner_area(a: Float[jax.Array, "2"],
     TO DO: does this yield _correct_ results for self-intersecting corner slices (circumcenter outside of triangle)?
     """
     u = get_circumcenter(a, b, c)
-    a_corner = get_polygon_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0)) # Voronoi edges are midpoints of triangle edges
+    # Voronoi edges are midpoints of triangle edges. the corner area splits into two triangles:
+    #     a_corner1 = get_triangle_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0)) 
+    a_corner1 = get_triangle_area(a, (a-b)/2, u) 
+    a_corner2 = get_triangle_area(a, u, (a-c)/2)
+    a_corner = a_corner1 + a_corner2
     a_triangle = get_polygon_area(jnp.stack([a, b, c], axis=0))
     return jnp.where(jnp.abs(a_triangle) > zero_clip, a_corner, 0.0)
 
@@ -69,6 +78,51 @@ def get_angle_between_vectors(a: Float[jax.Array, " dim"],
     inner = a.dot(b) / (jnp.linalg.norm(a) * jnp.linalg.norm(b))
     return jnp.arccos(jnp.clip(inner, -1, 1))
 
+def get_cot_between_vectors(a: Float[jax.Array, " dim"],
+                              b: Float[jax.Array, " dim"]) -> Float[jax.Array, ""]:
+    """Cotangent of angle between two vectors"""
+    return jnp.dot(a, b) / jnp.linalg.norm(jnp.cross(a, b))
+
 def get_rot_mat(theta: float) -> Float[jax.Array, "2 2"]:
-    """Get rotation matrix from angle in radians."""
+    """Get 2D rotation matrix from angle in radians."""
     return jnp.array([[jnp.cos(theta), jnp.sin(theta)],[-jnp.sin(theta), jnp.cos(theta)]])
+
+
+def get_perp_2d(x: Float[jax.Array, "... 2"]) -> Float[jax.Array, "... 2"]:
+    """Get perpendicular vector."""
+    return jnp.stack([x[..., 1], -x[..., 0]], axis=-1)
+
+
+# %% ../nbs/00_trigonometry.ipynb #f5fabd40
+def quaternion_to_rot_max(q: Float[jax.Array, "4"]) -> Float[jax.Array, "3 3"]:
+    """
+    Convert unit quaternion into a 3d rotation matrix.
+    
+    See https://fr.wikipedia.org/wiki/Quaternions_et_rotation_dans_l%27espace
+    """
+    a, b, c, d = q / jnp.linalg.norm(q)
+    return jnp.array([[a**2+b**2-c**2-d**2, 2*b*c-2*a*d, 2*a*c+2*b*d],
+                      [2*a*d+2*b*c, a**2-b**2+c**2-d**2, 2*c*d-2*a*b],
+                      [2*b*d-2*a*c, 2*a*b+2*c*d, a**2-b**2-c**2+d**2]])
+
+
+def get_triangle_normal(a: Float[jax.Array, "3"],
+                        b: Float[jax.Array, "3"],
+                        c: Float[jax.Array, "3"]) -> Float[jax.Array, "3"]:
+    """Compute unit normal vector of triangle abc."""
+    n = jnp.cross(b - a, c - a)
+    return n / jnp.linalg.norm(n)
+
+
+# %% ../nbs/00_trigonometry.ipynb #8f94dd08
+@functools.partial(jax.jit, static_argnames=['zero_clip', 'normalize'])
+def get_barycentric_coordinates(point: Float[jax.Array, " dim"],
+                                a: Float[jax.Array, " dim"],
+                                b: Float[jax.Array, " dim"],
+                                c: Float[jax.Array, " dim"],
+                                zero_clip: float = 1e-10, normalize: bool = True) -> Float[jax.Array, "3"]:
+    """Compute barycentric coordinates of point with respect to triangle abc."""
+    bary, _, _, _ = jnp.linalg.lstsq(jnp.stack([a,b,c], axis=1), point)
+    if normalize:
+        bary = bary / jnp.clip(bary.sum(), zero_clip)
+    return bary
