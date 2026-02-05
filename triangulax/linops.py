@@ -2,8 +2,9 @@
 
 # %% auto #0
 __all__ = ['average_vertices_to_faces', 'average_faces_to_vertices', 'sum_he_to_vertex_incoming', 'sum_he_to_vertex_opposite',
-           'get_cell_areas', 'get_coordination_number', 'compute_cotan_laplace', 'compute_gradient_2d',
-           'compute_gradient_3d', 'linear_op_to_sparse']
+           'get_cell_areas', 'get_coordination_number', 'get_triangle_areas', 'get_cell_area', 'get_cell_perimeter',
+           'compute_cotan_laplace', 'cotan_laplace_sparse', 'compute_gradient_2d', 'compute_gradient_3d',
+           'scipy_to_bcoo', 'diag_jsparse', 'linear_op_to_sparse']
 
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -111,6 +112,37 @@ def get_cell_areas(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Arra
 def get_coordination_number(hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
     return sum_he_to_vertex_incoming(hemesh, jnp.ones(hemesh.n_hes))
 
+# %% ../nbs/04_linear_operators_on_meshes.ipynb #ab0ceffd
+def get_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) ->Float[jax.Array, " n_faces"]:
+    """Compute triangle areas in a mesh."""
+    a = hemesh.dest[hemesh.nxt]
+    b = hemesh.dest[hemesh.prv]
+    c = hemesh.dest
+    return jax.vmap(trig.get_triangle_area)(
+        vertices[a], vertices[b], vertices[c])
+
+def get_cell_area(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) ->Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi area for each vertex."""
+    a = hemesh.dest[hemesh.nxt]
+    b = hemesh.dest[hemesh.prv]
+    c = hemesh.dest
+    corner_areas = jax.vmap(trig.get_voronoi_corner_area)(
+        vertices[a], vertices[b], vertices[c])
+    corner_areas = jnp.where(hemesh.is_bdry_he, 0, corner_areas)
+    cell_areas = msh.sum_he_to_vertex_opposite(hemesh, corner_areas)
+    return cell_areas
+
+def get_cell_perimeter(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi perimeters for each vertex."""
+    a = hemesh.dest[hemesh.nxt]
+    b = hemesh.dest[hemesh.prv]
+    c = hemesh.dest
+    corner_perims = jax.vmap(trig.get_voronoi_corner_perimeter)(
+        vertices[a], vertices[b], vertices[c])
+    corner_perims = jnp.where(hemesh.is_bdry_he, 0, corner_perims)
+    cell_perims = msh.sum_he_to_vertex_opposite(hemesh, corner_perims)
+    return cell_perims
+
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #66b2e04f
 def compute_cotan_laplace(hemesh: msh.HeMesh, vertices: Float[jax.Array, "n_vertices dim"],
                           vertex_field: Float[jax.Array, "n_vertices ..."]
@@ -137,6 +169,35 @@ def compute_cotan_laplace(hemesh: msh.HeMesh, vertices: Float[jax.Array, "n_vert
     out_shape = (hemesh.n_vertices,) + vertex_field.shape[1:]
     lap = jnp.zeros(out_shape, dtype=vertex_field.dtype)
     return lap.at[hemesh.orig].add(weighted_diff)
+
+# %% ../nbs/04_linear_operators_on_meshes.ipynb #b9c6f5cc
+def cotan_laplace_sparse(hemesh: msh.HeMesh,
+                         vertices: Float[jax.Array, "n_vertices dim"],
+                         ) -> jsparse.BCOO:
+    """Assemble cotangent Laplacian as a sparse matrix (BCOO)."""
+    v_orig = vertices[hemesh.orig]
+    v_dest = vertices[hemesh.dest]
+    v_opp = vertices[hemesh.dest[hemesh.nxt]]
+
+    vec1 = v_orig - v_opp
+    vec2 = v_dest - v_opp
+    cot = jax.vmap(trig.get_cot_between_vectors)(vec1, vec2)
+    cot = jnp.where(hemesh.heface == -1, 0.0, cot)
+
+    w_edge = 0.5 * (cot + cot[hemesh.twin])
+    unique = hemesh.is_unique
+
+    i = hemesh.orig[unique]
+    j = hemesh.dest[unique]
+    w = w_edge[unique]
+
+    rows = jnp.concatenate([i, j, i, j])
+    cols = jnp.concatenate([j, i, i, j])
+    data = jnp.concatenate([w, w, -w, -w])
+
+    mat = jsparse.BCOO((data, jnp.stack([rows, cols], axis=1)),
+                       shape=(hemesh.n_vertices, hemesh.n_vertices))
+    return mat.sum_duplicates()
 
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #e2587568
 def compute_gradient_2d(hemesh: msh.HeMesh, vertices: Float[jax.Array, "n_vertices 2"],
@@ -186,14 +247,55 @@ def compute_gradient_3d(hemesh: msh.HeMesh, vertices: Float[jax.Array, "n_vertic
     vals = vertex_field[faces]
     return jnp.einsum("fvd,fv...->fd...", grads, vals)
 
+# %% ../nbs/04_linear_operators_on_meshes.ipynb #16986532
+def scipy_to_bcoo(A) -> jsparse.BCOO:
+    """
+    Convert a SciPy sparse matrix (CSC or CSR) to a JAX BCOO sparse matrix
+    without converting to dense.
+
+    Parameters
+    ----------
+    A : scipy.sparse.spmatrix
+        Input sparse matrix (CSR or CSC recommended)
+
+    Returns
+    -------
+    B : jax.experimental.sparse.BCOO
+        Equivalent JAX sparse matrix
+    """
+    # Convert to COO
+    Acoo = A.tocoo()
+
+    # COO format gives us row, col, data arrays directly
+    rows = jnp.array(Acoo.row, dtype=jnp.int32)
+    cols = jnp.array(Acoo.col, dtype=jnp.int32)
+    data = jnp.array(Acoo.data)
+    return jsparse.BCOO((data, jnp.stack([rows, cols], axis=1)), shape=Acoo.shape)
+
+
+def diag_jsparse(v : Float[jax.Array, " N"], k: int =0) -> jsparse.BCOO:
+    """Construct a diagonal jax.sparse array. Plugin replacement for np.diag"""
+    N  = v.shape[0] + jnp.abs(k)
+    if k >=0:
+        row_inds = jnp.arange(k, N, dtype=jnp.int32)
+    else:
+        row_inds = jnp.arange(0, N+k, dtype=jnp.int32)
+    return jsparse.BCOO((v, jnp.stack([row_inds-k, row_inds,], axis=1)), shape=(N, N))
+
+
+
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #3d9366df
 def linear_op_to_sparse(op: callable,
                         in_shape: tuple[int, ...],
                         out_shape: tuple[int, ...],
                         dtype: jnp.dtype | None = None,
-                        chunk_size: int = 64,
+                        chunk_size: int = 256,
+                        tol: float = 0.0,
                         ) -> jsparse.BCOO:
-    """Build a sparse matrix for a linear map using batched one-hot probes."""
+    """Build a sparse matrix for a linear map using batched one-hot probes.
+
+    Note: this function is general, but not necessarily very efficient for large matrix sizes.
+    """
     if len(in_shape) != 1 or len(out_shape) != 1:
         raise ValueError("Only 1D input/output supported for now.")
     n_in = in_shape[0]
@@ -201,33 +303,38 @@ def linear_op_to_sparse(op: callable,
     if dtype is None:
         dtype = jnp.result_type(op(jnp.zeros((n_in,))))
 
-    n_chunks = (n_in + chunk_size - 1) // chunk_size
+    data_list: list[np.ndarray] = []
+    row_list: list[np.ndarray] = []
+    col_list: list[np.ndarray] = []
 
-    def scan_fun(carry, chunk_idx):
-        start = chunk_idx * chunk_size
-        idx = start + jnp.arange(chunk_size)
-        valid = idx < n_in
-        idx_safe = jnp.where(valid, idx, 0)
+    for start in range(0, n_in, chunk_size):
+        end = min(start + chunk_size, n_in)
+        idx = np.arange(start, end, dtype=np.int64)
+        basis = jax.nn.one_hot(jnp.array(idx), n_in, dtype=dtype)
+        cols = jax.vmap(op)(basis)  # (chunk, n_out)
+        cols_np = np.asarray(cols)
 
-        basis = jax.nn.one_hot(idx_safe, n_in, dtype=dtype)
-        cols = jax.vmap(op)(basis)
+        if tol > 0:
+            mask = np.abs(cols_np) > tol
+        else:
+            mask = cols_np != 0
 
-        cols_flat = cols.reshape(-1)
-        row_idx = jnp.tile(jnp.arange(n_out), chunk_size)
-        col_idx = jnp.repeat(idx_safe, n_out)
-        valid_rows = jnp.repeat(valid, n_out)
+        col_in_batch, row_out = np.nonzero(mask)
+        if col_in_batch.size == 0:
+            continue
 
-        data = cols_flat * valid_rows
-        indices = jnp.stack([row_idx, col_idx], axis=1)
-        return carry, (data, indices)
+        data_list.append(cols_np[col_in_batch, row_out])
+        row_list.append(row_out)
+        col_list.append(idx[col_in_batch])
 
-    _, packed = jax.lax.scan(scan_fun, None, jnp.arange(n_chunks))
-    data_all, indices_all = packed
+    if len(data_list) == 0:
+        data = jnp.array([], dtype=dtype)
+        indices = jnp.zeros((0, 2), dtype=jnp.int32)
+    else:
+        data = jnp.array(np.concatenate(data_list))
+        rows = np.concatenate(row_list)
+        cols = np.concatenate(col_list)
+        indices = jnp.stack([jnp.array(rows, dtype=jnp.int32),
+                             jnp.array(cols, dtype=jnp.int32)], axis=1)
 
-    data_flat = data_all.reshape(-1)
-    indices_flat = indices_all.reshape(-1, 2)
-    mask = data_flat != 0
-
-    data = data_flat[mask]
-    indices = indices_flat[mask]
     return jsparse.BCOO((data, indices), shape=(n_out, n_in))

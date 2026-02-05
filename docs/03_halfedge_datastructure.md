@@ -105,10 +105,83 @@ def get_half_edge_arrays(
 
 Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident
 
+``` python
+mesh_high_res = TriMesh.read_obj("test_meshes/torus_high_resolution.obj")
+mesh = TriMesh.read_obj("test_meshes/disk.obj")
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o Torus
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+
+``` python
+results = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
+```
+
+    61.8 ms ± 496 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L98"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L96"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_half_edge_arrays_vectorized
+
+``` python
+
+def get_half_edge_arrays_vectorized(
+    n_vertices:int, faces:Int[Array, 'n_faces 3']
+)->list:
+
+```
+
+*Get half-edge data structure arrays from faces (vectorized).*
+
+Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident
+
+``` python
+# test faster vs reference for two meshes
+
+mesh = TriMesh.read_obj("test_meshes/disk.obj")
+ref = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
+fast = get_half_edge_arrays_vectorized(mesh.vertices.shape[0], mesh.faces)
+
+print("Equal?", all([jnp.array_equal(a, b) for a, b in zip(ref, fast)]))
+
+mesh = TriMesh.read_obj("test_meshes/sphere.obj")
+ref = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
+fast = get_half_edge_arrays_vectorized(mesh.vertices.shape[0], mesh.faces)
+
+print("Equal?", all([jnp.array_equal(a, b) for a, b in zip(ref, fast)]))
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+    Warning: readOBJ() ignored non-comment line 3:
+      o Icosphere
+
+    Equal? True
+    Equal? True
+
+``` python
+fast = get_half_edge_arrays_vectorized(mesh.vertices.shape[0], mesh.faces)
+```
+
+    776 μs ± 13.8 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+
+``` python
+fast = get_half_edge_arrays_vectorized(mesh_high_res.vertices.shape[0], mesh_high_res.faces)
+```
+
+    CPU times: user 228 ms, sys: 12.7 ms, total: 240 ms
+    Wall time: 233 ms
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L178"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HeMesh
@@ -281,7 +354,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-12-output-2.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-18-output-2.png)
 
 ``` python
 # here is how you would do mesh traversal with jax.lax. The issues is that the output size needs to be fixed
@@ -332,7 +405,7 @@ latter are listed in the `inf_vertices` attribute of a
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L321"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L401"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### connect_boundary_to_infinity
@@ -413,7 +486,7 @@ class, the
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L365"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L445"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GeomMesh
@@ -472,7 +545,7 @@ load : str -\> GeomHeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L507"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L587"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### set_voronoi_face_positions
@@ -491,7 +564,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L501"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L581"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_face_positions
@@ -510,7 +583,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L513"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L593"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -554,7 +627,7 @@ geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L519"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L599"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -587,7 +660,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-30-output-2.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-36-output-2.png)
 
 ### Vertex, half-edge, and face properties
 
@@ -680,7 +753,7 @@ The resulting meshes have an extra “batch” axis in all their array.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L554"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L634"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -698,7 +771,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L550"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L630"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack
@@ -816,7 +889,7 @@ alt="image.png" />
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L565"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L645"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_edge
@@ -839,7 +912,7 @@ a new HeMesh, does not modify in-place.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L602"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L682"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_signed_dual_he_length
@@ -879,7 +952,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-50-output-2.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-56-output-2.png)
 
 ``` python
 # edges and dual edges should be orthogonal since we are using circumcenters
@@ -943,7 +1016,7 @@ plt.axis("equal")
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-56-output-1.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-62-output-1.png)
 
 #### Repeated flips
 
@@ -978,7 +1051,7 @@ edges, edges.size
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L615"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L695"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_all
@@ -1027,7 +1100,7 @@ plt.axis("equal")
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-63-output-1.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-69-output-1.png)
 
 ## Saving to disk
 

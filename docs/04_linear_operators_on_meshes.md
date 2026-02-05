@@ -37,7 +37,7 @@ There is no need to explicitly instantiate a matrix for the operators.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L41"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L40"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### average_faces_to_vertices
@@ -55,7 +55,7 @@ def average_faces_to_vertices(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L33"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L32"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### average_vertices_to_faces
@@ -125,7 +125,7 @@ using gather/scatter operations.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L78"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L77"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### sum_he_to_vertex_opposite
@@ -147,7 +147,7 @@ hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L65"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L64"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### sum_he_to_vertex_incoming
@@ -167,7 +167,7 @@ hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L94"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L93"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cell_areas
@@ -207,7 +207,7 @@ np.abs(cell_areas_iterative-cell_areas_corner).max() # works!
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L112"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L111"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_coordination_number
@@ -249,7 +249,7 @@ defined for each face *i**j**k*, like so:
 where ∇*ϕ*<sub>*α*</sub> is the gradient of a linear finite element test
 function and takes the value
 $$
-    \nabla\phi_i = \tfrac{1}{2a\_{ijk}} (\mathbf{v}\_k-\mathbf{v}\_j)^\perp
+    \nabla\phi_i = \frac{1}{2a\_{ijk}} (\mathbf{v}\_k-\mathbf{v}\_j)^\perp
 $$
 plus cyclic permutations. Here, *a*<sub>*i**j**k*</sub> is the triangle
 area, **v**<sub>*i*</sub> are the vertex positions, and ()<sup>⟂</sup>
@@ -271,7 +271,7 @@ using the test mesh and some random test fields.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L116"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L115"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_cotan_laplace
@@ -286,6 +286,24 @@ def compute_cotan_laplace(
 
 *Compute cotangent laplacian of a per-vertex field (natural boundary
 conditions).*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L142"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### cotan_laplace_sparse
+
+``` python
+
+def cotan_laplace_sparse(
+    hemesh:HeMesh, vertices:Float[Array, 'n_vertices dim']
+)->BCOO:
+
+```
+
+*Assemble cotangent Laplacian as a sparse matrix (BCOO).*
 
 ``` python
 # Test against libigl cotmatrix (natural boundary conditions)
@@ -311,10 +329,25 @@ print("vector field rel. error:", rel_err_vec)
     scalar field rel. error: 1.8132090493215958e-16
     vector field rel. error: 2.0011748826180605e-16
 
+``` python
+# test sparse cotan Laplacian vs apply function
+key = jax.random.PRNGKey(0)
+u_test = jax.random.normal(key, (hemesh.n_vertices,))
+
+L_sparse = cotan_laplace_sparse(hemesh, geommesh.vertices)
+lap_sparse = L_sparse @ u_test
+lap_apply = compute_cotan_laplace(hemesh, geommesh.vertices, u_test)
+
+rel_err_sparse = jnp.linalg.norm(lap_sparse - lap_apply) / jnp.linalg.norm(lap_apply)
+print("cotan sparse vs apply rel. error:", rel_err_sparse)
+```
+
+    cotan sparse vs apply rel. error: 1.3520071722257924e-16
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L167"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L195"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_3d
@@ -332,7 +365,7 @@ def compute_gradient_3d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L143"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L171"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_2d
@@ -397,6 +430,53 @@ can *wrap*
 as a linear operator, which allows us to pass it into iterative linear
 algebra algorithms.
 
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L244"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### diag_jsparse
+
+``` python
+
+def diag_jsparse(
+    v:Float[Array, 'N'], k:int=0
+)->BCOO:
+
+```
+
+*Construct a diagonal jax.sparse array. Plugin replacement for np.diag*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L219"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### scipy_to_bcoo
+
+``` python
+
+def scipy_to_bcoo(
+    A, # Input sparse matrix (CSR or CSC recommended)
+)->BCOO: # Equivalent JAX sparse matrix
+
+```
+
+*Convert a SciPy sparse matrix (CSC or CSR) to a JAX BCOO sparse matrix*
+without converting to dense.
+
+``` python
+mesh = TriMesh.read_obj("test_meshes/disk.obj")
+
+hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
+geommesh = msh.GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+
 ``` python
 # "bake in" the connectivity and vertex positions
 
@@ -409,4 +489,83 @@ _ = laplace_op(u)
 
 laplace_op_lx = lineax.FunctionLinearOperator(laplace_op,
                                               input_structure=jax.eval_shape(laplace_op, u))
+
+# now you can use the linear operator to compute matrix representations, solve linear systems, etc.
+mat = laplace_op_lx.as_matrix()
+mat.shape
 ```
+
+    (131, 131)
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L256"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### linear_op_to_sparse
+
+``` python
+
+def linear_op_to_sparse(
+    op:callable, in_shape:tuple, out_shape:tuple, dtype:Union=None, chunk_size:int=256, tol:float=0.0
+)->BCOO:
+
+```
+
+*Build a sparse matrix for a linear map using batched one-hot probes.*
+
+Note: this function is general, but not necessarily very efficient for
+large matrix sizes.
+
+``` python
+# compare sparse construction to lineax dense matrix (small meshes only)
+if hemesh.n_vertices <= 2000:
+    laplace_op_local = functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices)
+    laplace_op_lx_local = lineax.FunctionLinearOperator(laplace_op_local,
+                                                        input_structure=jax.eval_shape(laplace_op_local, u))
+    sp_mat = linear_op_to_sparse(laplace_op_local, (hemesh.n_vertices,), (hemesh.n_vertices,))
+    mat_dense = laplace_op_lx_local.as_matrix()
+    rel_err_sparse = jnp.linalg.norm(sp_mat.todense() - mat_dense) / jnp.linalg.norm(mat_dense)
+    print("sparse vs lineax rel. error:", rel_err_sparse)
+else:
+    print("Skipping dense comparison for large mesh.")
+```
+
+    sparse vs lineax rel. error: 0.0
+
+``` python
+## now let's try with a large mesh
+
+mesh = TriMesh.read_obj("test_meshes/torus_high_resolution.obj")
+hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
+geommesh = msh.GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
+
+laplace_op = jax.jit(functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices))
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o Torus
+
+``` python
+hemesh
+```
+
+    HeMesh(N_V=36864, N_HE=221184, N_F=73728)
+
+``` python
+sparse_laplace_op =  linear_op_to_sparse(laplace_op, (hemesh.n_vertices,), (hemesh.n_vertices,))
+```
+
+``` python
+sparse_laplace_op.shape
+```
+
+    (36864, 36864)
+
+``` python
+igl.cotmatrix(geommesh.vertices, hemesh.faces)
+```
+
+    <Compressed Sparse Column sparse matrix of dtype 'float64'
+        with 258048 stored elements and shape (36864, 36864)>

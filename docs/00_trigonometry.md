@@ -26,7 +26,7 @@ There is also some extra legwork to register any new classes with JAX.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L91"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L89"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_perp_2d
@@ -44,7 +44,7 @@ def get_perp_2d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L86"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L84"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_rot_mat
@@ -62,7 +62,7 @@ def get_rot_mat(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L81"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L79"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cot_between_vectors
@@ -80,7 +80,7 @@ def get_cot_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L75"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L73"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_between_vectors
@@ -98,7 +98,7 @@ def get_angle_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L64"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L62"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_perimeter
@@ -117,7 +117,7 @@ Can be negative! 2d only atm.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L44"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_area
@@ -139,7 +139,7 @@ slices (circumcenter outside of triangle)?
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L41"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L39"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_polygon_area
@@ -157,7 +157,7 @@ def get_polygon_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L35"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L33"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_area
@@ -175,7 +175,7 @@ def get_triangle_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L25"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L23"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_circumcenter
@@ -252,7 +252,7 @@ jnp.cross(jnp.array([1,0,0]), jnp.array([0, 1, 0]) )
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L109"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L107"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_normal
@@ -270,7 +270,7 @@ def get_triangle_normal(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L97"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L95"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### quaternion_to_rot_max
@@ -293,7 +293,7 @@ https://fr.wikipedia.org/wiki/Quaternions_et_rotation_dans_l%27espace
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L119"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L117"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_barycentric_coordinates
