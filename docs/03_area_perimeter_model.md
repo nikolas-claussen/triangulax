@@ -84,7 +84,9 @@ import dataclasses
 from typing import Tuple
 
 import numpy as np
+
 import matplotlib.pyplot as plt
+import ipywidgets as widgets
 
 import jax
 import jax.numpy as jnp
@@ -92,6 +94,7 @@ import jax.numpy as jnp
 import functools
 
 import diffrax
+import lineax
 
 from jaxtyping import Float, Bool, Int
 from enum import IntEnum
@@ -136,6 +139,11 @@ hemesh, geommesh
 
     (HeMesh(N_V=131, N_HE=708, N_F=224), GeomMesh(D=2,N_V=131, N_HE=708, N_F=224))
 
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+
+    (HeMesh(N_V=131, N_HE=708, N_F=224), GeomMesh(D=2,N_V=131, N_HE=708, N_F=224))
+
 ``` python
 fig, ax = plt.subplots(figsize=(4, 4))
 ax.add_collection(msh.cellplot(hemesh, geommesh.face_positions,
@@ -154,41 +162,54 @@ lengths, using gather/scatter operations on the half-edge mesh. Boundary
 cells are handled by mirroring (doubling the area/perimeter).
 
 ``` python
-@functools.partial(jax.jit, static_argnames=['clip_max'])
-def get_cell_area(geommesh: GeomMesh, hemesh: HeMesh, clip_max: float = 10) ->Float[jax.Array, " n_vertices"]:
-    """Compute Voronoi area for each cell. Clips corner values for stability."""
+@jax.jit
+def get_triangle_area(geommesh: GeomMesh, hemesh: HeMesh) ->Float[jax.Array, " n_faces"]:
+    """Compute triangle areas."""
+    a = hemesh.dest[hemesh.nxt]
+    b = hemesh.dest[hemesh.prv]
+    c = hemesh.dest
+    return jax.vmap(trig.get_triangle_area)(
+        geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])
+
+@jax.jit
+def get_cell_area(geommesh: GeomMesh, hemesh: HeMesh) ->Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi area for each cell."""
     a = hemesh.dest[hemesh.nxt]
     b = hemesh.dest[hemesh.prv]
     c = hemesh.dest
     corner_areas = jax.vmap(trig.get_voronoi_corner_area)(
         geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])
     corner_areas = jnp.where(hemesh.is_bdry_he, 0, corner_areas)
-    #corner_areas = jnp.clip(corner_areas, -clip_max, clip_max)
     cell_areas = msh.sum_he_to_vertex_opposite(hemesh, corner_areas)
     cell_areas = jnp.where(hemesh.is_bdry, 2.0 * cell_areas, cell_areas)
     return cell_areas
 
-@functools.partial(jax.jit, static_argnames=['clip_max'])
-def get_cell_perimeter(geommesh: GeomMesh, hemesh: HeMesh, clip_max: float = 10) -> Float[jax.Array, " n_vertices"]:
-    """Compute Voronoi perimeters for each cell. Clips corner values for stability."""
+@jax.jit
+def get_cell_perimeter(geommesh: GeomMesh, hemesh: HeMesh) -> Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi perimeters for each cell."""
     a = hemesh.dest[hemesh.nxt]
     b = hemesh.dest[hemesh.prv]
     c = hemesh.dest
     corner_perims = jax.vmap(trig.get_voronoi_corner_perimeter)(
         geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])
     corner_perims = jnp.where(hemesh.is_bdry_he, 0, corner_perims)
-    #corner_perims = jnp.clip(corner_perims, 0, clip_max)
     cell_perims = msh.sum_he_to_vertex_opposite(hemesh, corner_perims)
     cell_perims = jnp.where(hemesh.is_bdry, 2.0 * cell_perims, cell_perims)
     return cell_perims
 
 @jax.jit
 def energy_ap(geommesh: GeomMesh, hemesh: HeMesh, a0: float, p0: float,
-              k_a: float = 1.0, k_p: float = 1.0) -> Float[jax.Array, ""]:
-    """Area-perimeter energy for Voronoi cells."""
+              k_a: float = 1.0, k_p: float = 1.0, k_penalty: float=10) -> Float[jax.Array, ""]:
+    """Area-perimeter energy for Voronoi cells.
+    Adds small penalty for triangles with negative area.
+    """
     cell_areas = get_cell_area(geommesh, hemesh)    
     cell_perimeters = get_cell_perimeter(geommesh, hemesh)
-    return jnp.mean(k_a * (cell_areas - a0) ** 2 + k_p * (cell_perimeters - p0) ** 2)
+    tri_areas = get_triangle_area(geommesh, hemesh)
+    a_min = 0.25*(a0/2)
+    penality = k_penalty*jnp.where(tri_areas < a_min, k_a * (tri_areas-a_min)**2, 0.0).mean()
+
+    return jnp.mean(k_a * (cell_areas-a0)**2 + k_p * (cell_perimeters-p0)**2) + penality
 ```
 
 ``` python
@@ -198,66 +219,15 @@ a_mean, p_mean = (cell_areas[~hemesh.is_bdry].mean(), cell_perimeters[~hemesh.is
 a_mean, p_mean, p_mean/np.sqrt(a_mean)
 ```
 
-    NonConcreteBooleanIndexError: Array boolean indices must be concrete; got bool[708]
+    (Array(0.02756258, dtype=float64),
+     Array(0.63463959, dtype=float64),
+     Array(3.82267399, dtype=float64))
 
-    See https://docs.jax.dev/en/latest/errors.html#jax.errors.NonConcreteBooleanIndexError
-    [31m---------------------------------------------------------------------------[39m
-    [31mNonConcreteBooleanIndexError[39m              Traceback (most recent call last)
-    [36mCell[39m[36m [39m[32mIn[288][39m[32m, line 1[39m
-    [32m----> [39m[32m1[39m cell_areas, cell_perimeters = ([43mget_cell_area[49m[43m([49m[43mgeommesh[49m[43m,[49m[43m [49m[43mhemesh[49m[43m)[49m, get_cell_perimeter(geommesh, hemesh))
-    [32m      3[39m a_mean, p_mean = (cell_areas[~hemesh.is_bdry].mean(), cell_perimeters[~hemesh.is_bdry].mean())
-    [32m      4[39m a_mean, p_mean, p_mean/np.sqrt(a_mean)
+``` python
+get_triangle_area(geommesh, hemesh).mean()*2, a_mean
+```
 
-        [31m[... skipping hidden 15 frame][39m
-
-    [36mCell[39m[36m [39m[32mIn[287][39m[32m, line 9[39m, in [36mget_cell_area[39m[34m(geommesh, hemesh, clip_max)[39m
-    [32m      6[39m c = hemesh.dest
-    [32m      7[39m corner_areas = jax.vmap(trig.get_voronoi_corner_area)(
-    [32m      8[39m     geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])
-    [32m----> [39m[32m9[39m corner_areas = [43mcorner_areas[49m[43m.[49m[43mat[49m[43m[[49m[43mhemesh[49m[43m.[49m[43mis_bdry_he[49m[43m][49m[43m.[49m[43mset[49m[43m([49m[32;43m0.0[39;49m[43m)[49m
-    [32m     10[39m [38;5;66;03m#corner_areas = jnp.clip(corner_areas, -clip_max, clip_max)[39;00m
-    [32m     11[39m cell_areas = msh.sum_he_to_vertex_opposite(hemesh, corner_areas)
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/numpy/array_methods.py:854[39m, in [36m_IndexUpdateRef.set[39m[34m(self, values, indices_are_sorted, unique_indices, mode, out_sharding, wrap_negative_indices)[39m
-    [32m    852[39m   [38;5;28;01massert[39;00m [38;5;28misinstance[39m(out_sharding, (NamedSharding, PartitionSpec))
-    [32m    853[39m   out_sharding = canonicalize_sharding(out_sharding, [33m'[39m[33m.set[39m[33m'[39m)
-    [32m--> [39m[32m854[39m [38;5;28;01mreturn[39;00m [43mscatter[49m[43m.[49m[43m_scatter_update[49m[43m([49m
-    [32m    855[39m [43m    [49m[38;5;28;43mself[39;49m[43m.[49m[43marray[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[43m.[49m[43mindex[49m[43m,[49m[43m [49m[43mvalues[49m[43m,[49m[43m [49m[43mlax_slicing[49m[43m.[49m[43mscatter[49m[43m,[49m
-    [32m    856[39m [43m    [49m[43mindices_are_sorted[49m[43m=[49m[43mindices_are_sorted[49m[43m,[49m[43m [49m[43munique_indices[49m[43m=[49m[43munique_indices[49m[43m,[49m
-    [32m    857[39m [43m    [49m[43mmode[49m[43m=[49m[43mmode[49m[43m,[49m[43m [49m[43mout_sharding[49m[43m=[49m[43mout_sharding[49m[43m,[49m[43m  [49m[38;5;66;43;03m# type: ignore[39;49;00m
-    [32m    858[39m [43m    [49m[43mnormalize_indices[49m[43m=[49m[43mwrap_negative_indices[49m[43m)[49m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/ops/scatter.py:81[39m, in [36m_scatter_update[39m[34m(x, idx, y, scatter_op, indices_are_sorted, unique_indices, mode, normalize_indices, out_sharding)[39m
-    [32m     77[39m   y = jnp.asarray(y)
-    [32m     79[39m [38;5;66;03m# XLA gathers and scatters are very similar in structure; the scatter logic[39;00m
-    [32m     80[39m [38;5;66;03m# is more or less a transpose of the gather equivalent.[39;00m
-    [32m---> [39m[32m81[39m treedef, static_idx, dynamic_idx = [43mindexing[49m[43m.[49m[43msplit_index_for_jit[49m[43m([49m[43midx[49m[43m,[49m[43m [49m[43mx[49m[43m.[49m[43mshape[49m[43m)[49m
-    [32m     83[39m internal_scatter = partial(
-    [32m     84[39m     _scatter_impl, scatter_op=scatter_op, treedef=treedef,
-    [32m     85[39m     static_idx=static_idx, indices_are_sorted=indices_are_sorted,
-    [32m     86[39m     unique_indices=unique_indices, mode=mode,
-    [32m     87[39m     normalize_indices=normalize_indices)
-    [32m     88[39m [38;5;28;01mif[39;00m out_sharding [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m:
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/numpy/indexing.py:755[39m, in [36msplit_index_for_jit[39m[34m(idx, shape)[39m
-    [32m    751[39m   [38;5;28;01mraise[39;00m [38;5;167;01mTypeError[39;00m([33mf[39m[33m"[39m[33mJAX does not support string indexing; got [39m[38;5;132;01m{[39;00midx[38;5;132;01m=}[39;00m[33m"[39m)
-    [32m    753[39m [38;5;66;03m# Expand any (concrete) boolean indices. We can then use advanced integer[39;00m
-    [32m    754[39m [38;5;66;03m# indexing logic to handle them.[39;00m
-    [32m--> [39m[32m755[39m idx = [43m_expand_bool_indices[49m[43m([49m[43midx[49m[43m,[49m[43m [49m[43mshape[49m[43m)[49m
-    [32m    757[39m leaves, treedef = tree_flatten(idx)
-    [32m    758[39m dynamic = [[38;5;28;01mNone[39;00m] * [38;5;28mlen[39m(leaves)
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/numpy/indexing.py:1092[39m, in [36m_expand_bool_indices[39m[34m(idx, shape)[39m
-    [32m   1088[39m   abstract_i = core.get_aval(i)
-    [32m   1090[39m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m core.is_concrete(i):
-    [32m   1091[39m   [38;5;66;03m# TODO(mattjj): improve this error by tracking _why_ the indices are not concrete[39;00m
-    [32m-> [39m[32m1092[39m   [38;5;28;01mraise[39;00m errors.NonConcreteBooleanIndexError(abstract_i)
-    [32m   1093[39m [38;5;28;01melif[39;00m np.ndim(i) == [32m0[39m:
-    [32m   1094[39m   out.append([38;5;28mbool[39m(i))
-
-    [31mNonConcreteBooleanIndexError[39m: Array boolean indices must be concrete; got bool[708]
-
-    See https://docs.jax.dev/en/latest/errors.html#jax.errors.NonConcreteBooleanIndexError
+    (Array(0.02669562, dtype=float64), Array(0.02756258, dtype=float64))
 
 ``` python
 # double check against "manual" area and "perimeter" computation using mesh traversal
@@ -282,7 +252,7 @@ def relax_energy_step(geommesh: GeomMesh, hemesh: HeMesh,
 
 # energy parameters
 a0 = a_mean
-s0 = 3.5
+s0 = 3
 p0 = s0*jnp.sqrt(a0)
 
 # relaxation parameters
@@ -306,7 +276,7 @@ plt.xlabel("step")
 plt.ylabel("energy");
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-12-output-1.png)
+![](03_area_perimeter_model_files/figure-commonmark/cell-13-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh)
@@ -322,14 +292,14 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-13-output-1.png)
+![](03_area_perimeter_model_files/figure-commonmark/cell-14-output-1.png)
 
 ``` python
 areas_relaxed, perim_relaxed = (get_cell_area(geommesh, hemesh), get_cell_perimeter(geommesh, hemesh))
 jnp.abs(areas_relaxed - a0)[hemesh.is_bdry].mean(), jnp.abs(perim_relaxed - p0)[hemesh.is_bdry].mean()
 ```
 
-    (Array(0.09000695, dtype=float64), Array(0.04928358, dtype=float64))
+    (Array(0.00400013, dtype=float64), Array(0.12046733, dtype=float64))
 
 ### Relaxation with T1s
 
@@ -338,7 +308,7 @@ times, let’s use a cooldown period.
 
 ``` python
 cooldown_steps = 5
-l_min_T1 = -0.01
+l_min_T1 = 0.0
 
 n_steps = 10000
 cooldown_counter = jnp.zeros(hemesh.n_hes)
@@ -379,8 +349,11 @@ def scan_fun(carry: Tuple[GeomMesh,HeMesh, Int[jax.Array, " n_steps"]], x: Float
     # update cooldown counter
     cooldown_counter = jnp.where(to_flip, cooldown_steps, jnp.clip(cooldown_counter-1, 0))
     return (geommesh_relaxed, hemesh_relaxed, cooldown_counter), jnp.array([loss, to_flip.sum()])
+```
 
-(geommesh_relaxed, hemesh_relaxed, _), return_arr = jax.lax.scan(scan_fun, (geommesh, hemesh, cooldown_counter), sim_steps) 
+``` python
+init = (geommesh, hemesh, cooldown_counter)
+(geommesh_relaxed, hemesh_relaxed, _), return_arr = jax.lax.scan(scan_fun, init, sim_steps) 
 
 losses, flip_count = return_arr.T
 ```
@@ -398,7 +371,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,flip_count.sum()+1])
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-17-output-1.png)
+![](03_area_perimeter_model_files/figure-commonmark/cell-19-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)
@@ -414,14 +387,83 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-18-output-1.png)
+![](03_area_perimeter_model_files/figure-commonmark/cell-20-output-1.png)
 
 ``` python
 areas_relaxed, perim_relaxed = (get_cell_area(geommesh, hemesh), get_cell_perimeter(geommesh, hemesh))
 jnp.abs(areas_relaxed - a0)[~hemesh.is_bdry].mean()/a0, jnp.abs(perim_relaxed - p0)[~hemesh.is_bdry].mean()/p0
 ```
 
-    (Array(0.09045905, dtype=float64), Array(0.09506297, dtype=float64))
+    (Array(0.09045905, dtype=float64), Array(0.27422466, dtype=float64))
+
+### Simulation loops with `jax.lax.scan`
+
+In our simulations, we generally start with an initial state (call it
+`init`), do a series of timesteps (via a function `make_step(state)`),
+and record some “measurement” at each timestep (via a `measure(state)`
+function). As a result, we get a timeseries of measurements, and the
+final simulation state. In normal python, you would do that with a `for`
+loop. When working with JAX, we need to [replace control-flow operations
+like `for` with their JAX
+pendant](https://docs.jax.dev/en/latest/control-flow.html). For for
+loops, this is `jax.lax.scan(f, init, xs)`, which is equivalent to the
+python code
+
+``` python
+def scan(f, init, xs):
+  carry = init
+  ys = []
+  for x in xs:
+    carry, y = f(carry, x)
+    ys.append(y)
+  return carry, np.stack(ys)
+```
+
+In our pattern, `xs` is the vector of time-points `timepoints`, and the
+“scanning-function” `f` is generally comprised of two parts, a time-step
+and a measurement/logging step (above, we logged energy and T1 count):
+
+``` python
+def f(carry, t):
+    new_state = make_step(carry, t)
+    measurements = measure(new_state)
+    return new_state, measurements
+```
+
+The `carry` variable contains all information about the state of the
+simulation. Typically, `carry` is also composed of multiple pieces
+(above, the physical state `geommesh_relaxed, hemesh_relaxed`, as well
+as ancilliary variables like `cooldown_counter`, or the ODE solver
+state). In order to keep things organized, it can make sense to define
+dataclasses for the simulation state and the measurements, like this
+(schematic) example:
+
+``` python
+@jax.tree_util.register_dataclass
+@dataclass
+class SimState:
+    g: msh.GeomMesh
+    h: msh.HeMesh
+    solver_state: dict  # or another PyTree
+    current_time: jax.Array
+
+@jax.tree_util.register_dataclass
+@dataclass
+class Log:
+    energy: float
+    T1_count: int
+
+
+def scan_function(carry: SimState, next_time: jax.Array) -> tuple[SimState, Log]:
+    g, h, solver_state = make_step(carry.g, carry.h, carry.solver_state,
+                                   carry.current_time, next_time)
+    log = Log(energy=compute_energy(g, h), area=detect_T1s(h))
+    return SimState(g, h, solver_state), log
+
+timepoints = jnp.arange(t0, t1, dt)
+init = ... # define initial condition
+final_state, measurements = jax.lax.scan(scan_function, init, timepoints) 
+```
 
 ### Using a `diffrax` solver
 
@@ -508,7 +550,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0, flip_count.sum() + 1])
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-24-output-1.png)
+![](03_area_perimeter_model_files/figure-commonmark/cell-26-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)
@@ -524,7 +566,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-25-output-1.png)
+![](03_area_perimeter_model_files/figure-commonmark/cell-27-output-1.png)
 
 ## Overdamped dynamics with self-propulsion (deterministic)
 
@@ -551,7 +593,8 @@ jax.config.update("jax_disable_jit", False)
 ``` python
 # initialize orientations and store as a vertex attribute
 key = jax.random.key(0)
-theta0 = jax.random.uniform(key, shape=(hemesh.n_vertices,), minval=0.0, maxval=2 * jnp.pi)
+theta0 = jax.random.uniform(key, shape=(hemesh.n_vertices,), minval=0.0, maxval=2*jnp.pi)
+#theta0 = theta0 + 0.3 * 2*jnp.pi*jnp.ones(hemesh.n_vertices)
 
 geommesh_sp = copy.copy(geommesh)
 geommesh_sp = dataclasses.replace(
@@ -570,7 +613,7 @@ def ap_selfprop_vector_field(
     theta = y.vertex_attribs[VertexAttribs.SELF_PROPULSION_ORIENTATION]
     grad = jax.grad(energy_ap)(y, hemesh, a0, p0, k_a, k_p)
     n_hat = jnp.stack([jnp.cos(theta), jnp.sin(theta)], axis=-1)
-    velocity = -grad.vertices + v0 * n_hat
+    velocity = -grad.vertices + jnp.where(hemesh.is_bdry[:,None], 0, v0 * n_hat)
     zero_vertex_attribs = {key: jnp.zeros_like(val) for key, val in y.vertex_attribs.items()}
     return dataclasses.replace(
         y,
@@ -579,14 +622,14 @@ def ap_selfprop_vector_field(
     )
 
 term_sp = diffrax.ODETerm(ap_selfprop_vector_field)
-solver_sp = diffrax.Tsit5()
+solver_sp = diffrax.Euler() #Tsit5
 
-dt_sp = 0.02
-n_steps_sp = 20 # begins to fail at 24. degenerate triang at 21
-v0_sp = 0.05
+dt_sp = 0.01
+n_steps_sp = 20000 # begins to fail at some point
+v0_sp = 0.001
 step_times_sp = dt_sp * jnp.arange(n_steps_sp + 1)
 
-cooldown_steps = 5
+cooldown_steps = 2
 ```
 
 ``` python
@@ -598,29 +641,24 @@ sp0 = v0_sp*jnp.stack([jnp.cos(theta0), jnp.sin(theta0)], axis=-1)
 jnp.linalg.norm(sp0, axis=-1).mean() / jnp.linalg.norm(grad0, axis=-1).mean()
 ```
 
-    Array(11.22962167, dtype=float64)
+    Array(0.31473995, dtype=float64)
 
 ``` python
 @jax.jit
 def scan_fun_selfprop(
-    carry: Tuple[
-        GeomMesh,
-        HeMesh,
-        Float[jax.Array, " n_hes"],
-        Float[jax.Array, ""],
-        object,
-    ],
+    carry: Tuple[GeomMesh,
+                 HeMesh,
+                 Float[jax.Array, " n_hes"],
+                 Float[jax.Array, ""],
+                 object,],
     tnext: Float[jax.Array, ""],
 ) -> Tuple[
-    Tuple[
-        GeomMesh,
-        HeMesh,
-        Float[jax.Array, " n_hes"],
-        Float[jax.Array, ""],
-        object,
-    ],
-    GeomMesh,
-    ]:
+    Tuple[GeomMesh,
+          HeMesh,
+          Float[jax.Array, " n_hes"],
+          Float[jax.Array, ""],
+          object,],
+    GeomMesh]:
     geommesh_curr, hemesh_curr, cooldown_counter, tprev, solver_state = carry
     args = (hemesh_curr, a0, p0, v0_sp, 1.0, 1.0)
     geommesh_next, _, _, solver_state, _ = solver_sp.step(
@@ -637,121 +675,43 @@ def scan_fun_selfprop(
 ``` python
 cooldown_counter_sp = jnp.zeros(hemesh.n_hes)
 init_solver_state_sp = solver_sp.init(
-    term_sp, step_times_sp[0], step_times_sp[1], geommesh_sp, (hemesh, a0, p0, v0_sp, 1.0, 1.0)
- )
+    term_sp, step_times_sp[0], step_times_sp[1], geommesh_sp, (hemesh, a0, p0, v0_sp, 1.0, 1.0))
 init = (geommesh_sp, hemesh, cooldown_counter_sp, step_times_sp[0], init_solver_state_sp)
 ```
 
 ``` python
-(geommesh_final, hemesh_final, _, _, _), traj = jax.lax.scan(scan_fun_selfprop, init, step_times_sp[1:])
+(geommesh_final, hemesh_final, cooldown, _, _), traj = jax.lax.scan(scan_fun_selfprop, init, step_times_sp[1:])
 ```
 
 ``` python
-jnp.isnan(geommesh_final.vertices).any()
+# unpack the trajectory
+traj = msh.tree_unstack(traj)
+len(traj)
 ```
 
-    Array(False, dtype=bool)
-
-``` python
-grad = jax.grad(energy_ap)(geommesh_final, hemesh_final, a0, p0, k_a=1, k_p=0)
-grad_mag = jnp.linalg.norm(grad.vertices, axis=-1)
-```
-
-``` python
-# not good! the problem comes from the area term. and it comes from the boundary vertex
-# looks like the areas of the boundry cells are very large and seemingly incorrect.
-
-jnp.median(grad_mag), jnp.max(grad_mag), jnp.argmax(grad_mag)
-```
-
-    (Array(0.00014209, dtype=float64),
-     Array(0.14037264, dtype=float64),
-     Array(121, dtype=int64))
-
-``` python
-areas = get_cell_area(geommesh_final, hemesh_final)
-
-jnp.median(areas),  areas[121], jnp.median(areas[hemesh_final.is_bdry]), jnp.median(areas[~hemesh_final.is_bdry])
-```
-
-    (Array(0.02915907, dtype=float64),
-     Array(0.21465219, dtype=float64),
-     Array(0.12569305, dtype=float64),
-     Array(0.02772169, dtype=float64))
-
-``` python
-## let's see if there is an issue with the corner areas.
-
-a = hemesh_final.dest[hemesh_final.nxt]
-b = hemesh_final.dest[hemesh_final.prv]
-c = hemesh_final.dest
-corner_areas = jax.vmap(trig.get_voronoi_corner_area)(
-    geommesh_final.vertices[a], geommesh_final.vertices[b], geommesh_final.vertices[c])
-```
-
-``` python
-corner_areas[hemesh_final.is_bdry_he].mean(), corner_areas[~hemesh_final.is_bdry_he].mean()
-```
-
-    (Array(0.05089609, dtype=float64), Array(0.00460842, dtype=float64))
-
-``` python
-# do the boundary corners contribute to the cell areas? they should not!
-
-corner_areas_bdry = corner_areas.at[~hemesh_final.is_bdry_he].set(0.0)
-```
-
-``` python
-msh.sum_he_to_vertex_opposite(hemesh_final, corner_areas_bdry)
-```
-
-    Array([0.02517454, 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.0487042 ,
-           0.08644553, 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.06499988, 0.02339914, 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.04013333, 0.05692478, 0.04495243,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.05362868, 0.05776412, 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.04366292, 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.04170987,
-           0.07925454, 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.03237783, 0.        , 0.        , 0.        , 0.        ,
-           0.05462124, 0.02364952, 0.        , 0.        , 0.        ,
-           0.        , 0.07522129, 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.05750567,
-           0.0249209 , 0.        , 0.        , 0.        , 0.        ,
-           0.        , 0.        , 0.02230205, 0.07650705, 0.        ,
-           0.02905593, 0.04757567, 0.03389725, 0.07936265, 0.07846599,
-           0.02125864, 0.05127288, 0.07437767, 0.02547047, 0.02517226,
-           0.09122537, 0.09751292, 0.05873222, 0.06936521, 0.        ,
-           0.        , 0.        , 0.        , 0.        , 0.        ,
-           0.01565448], dtype=float64)
-
-``` python
-plt.hist(corner_areas[~hemesh_final.is_bdry_he], bins=100); # outliers; likely from boundary
-```
-
-![](03_area_perimeter_model_files/figure-commonmark/cell-42-output-1.png)
+    20000
 
 ``` python
 geommesh_sp = msh.set_voronoi_face_positions(geommesh_sp, hemesh)
 geommesh_final = msh.set_voronoi_face_positions(geommesh_final, hemesh_final)
 
+areas = get_cell_area(geommesh_final, hemesh_final)
+edge_lengths = msh.get_signed_dual_he_length(geommesh_final.vertices, geommesh_final.face_positions, hemesh_final)
+```
+
+``` python
+edge_lengths.min(), areas.min()
+```
+
+    (Array(0.01135076, dtype=float64), Array(0.01023393, dtype=float64))
+
+``` python
 fig, ax = plt.subplots(figsize=(4, 4))
 
-#plt.triplot(*geommesh_sp.vertices.T, hemesh.faces)
-
-
+# plt.triplot(*geommesh_sp.vertices.T, hemesh.faces)
 
 plt.triplot(*geommesh_final.vertices.T, hemesh_final.faces)
-plt.scatter(*geommesh_final.vertices.T, c=areas, cmap="viridis", s=20, vmin=0)
-
+#plt.scatter(*geommesh_final.vertices.T, c=areas, cmap="viridis", s=20, vmin=0)
 
 #ax.add_collection(msh.cellplot(hemesh, geommesh_sp.face_positions,
 #                               cell_colors=np.array([0.7, 0.7, 0.9, 0.2]),
@@ -766,15 +726,353 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_area_perimeter_model_files/figure-commonmark/cell-44-output-1.png)
+![](03_area_perimeter_model_files/figure-commonmark/cell-38-output-1.png)
 
 ### Stochastic orientation + T1 flips (step-by-step)
 
 We now include rotational diffusion for *θ*<sub>*i*</sub> and perform
-edge flips when Voronoi dual edges fall below a threshold. A short
-cooldown avoids immediate re-flips.
+edge flips when Voronoi dual edges fall below a threshold. Like before,
+a short cooldown avoids immediate re-flips. We can use `diffrax` to
+solve the stochastic differential equation for the orientations, like in
+[this
+tutorial](https://docs.kidger.site/diffrax/usage/getting-started/#stochastic-differential-equations-sdes).
+Let’s also implement the “pattern” for simulation loops with
+`jax.lax.scan`. We need to make sure that the timestepping for the SDE
+and the relaxational dynamics for the vertices is consistent.
+
+Note that the simulation generally diverges if the self-propulsion term
+is too strong, due to effects at the boundaries. A more carefull
+handling of the boundaries (adding T1s on the boundaries, or using
+periodic BCs) is beyond the scope of this notebook.
+
+``` python
+# minimal example for solving an SDE, from diffrax tutorial
+
+t0, t1 = 0, 3
+dt = 0.05
+y0 = 1.0
+
+args = None
+drift = lambda t, y, args: -y
+diffusion = lambda t, y, args: 0.1 * t
+
+
+brownian_motion =  diffrax.VirtualBrownianTree(t0, t1, tol=1e-3, shape=(), key=jax.random.PRNGKey(0))
+terms = diffrax.MultiTerm(diffrax.ODETerm(drift),  diffrax.ControlTerm(diffusion, brownian_motion))
+solver = diffrax.Euler()
+saveat = diffrax.SaveAt(dense=True)
+```
+
+``` python
+sol = diffrax.diffeqsolve(terms, solver, t0, t1, dt0=dt, y0=y0, saveat=saveat)
+print(sol.evaluate(1.1))  # DeviceArray(0.89436394)
+```
+
+    0.27087012958157025
+
+``` python
+# stepping thru the solve one-by-one
+state = solver.init(terms, t0, t0+dt, y0, args)
+@jax.jit
+def sde_step():
+    return solver.step(terms, t0, t0+dt, y0, args, state, made_jump=False)
+_ = sde_step()
+```
+
+``` python
+# handling of theta_term is not ideal yet, should be passed somehow as a argument.
+# maybe we should use equinox for this, so we can still JIT-compile.
+
+@jax.jit
+def apply_t1_flips(
+    geommesh: GeomMesh,
+    hemesh: HeMesh,
+    cooldown_counter: Int[jax.Array, " n_hes"],
+    l_min_T1: float,
+    cooldown_steps: int,) -> Tuple[HeMesh, Int[jax.Array, " n_hes"], Bool[jax.Array, " n_hes"],]:
+    """Apply T1 flips with a per-edge cooldown."""
+    face_positions = msh.get_voronoi_face_positions(geommesh.vertices, hemesh)
+    edge_lengths = msh.get_signed_dual_he_length(geommesh.vertices, face_positions, hemesh)
+    to_flip = (edge_lengths < l_min_T1) & (cooldown_counter == 0)
+    hemesh_next = msh.flip_all(hemesh, to_flip)
+    cooldown_counter = jnp.where(
+        to_flip,
+        cooldown_steps,
+        jnp.clip(cooldown_counter - 1, 0),)
+    return hemesh_next, cooldown_counter, to_flip
+
+
+@jax.jit
+def theta_drift(
+    t: Float[jax.Array, ""],
+    theta: Float[jax.Array, " n_vertices"],
+    args: Float[jax.Array, ""],) -> Float[jax.Array, " n_vertices"]:
+    """Drift for orientation angles (zero drift)."""
+    return jnp.zeros_like(theta)
+
+
+@jax.jit
+def theta_diffusion(
+    t: Float[jax.Array, ""],
+    theta: Float[jax.Array, " n_vertices"],
+    args: Float[jax.Array, ""],) -> lineax.AbstractLinearOperator:
+    """Diffusion operator for orientations (diagonal noise)."""
+    d_theta = args
+    diagonal = d_theta * jnp.ones_like(theta)
+    return lineax.DiagonalLinearOperator(diagonal)
+
+
+theta_solver = diffrax.EulerHeun()
+d_theta: Float[jax.Array, ""] = jnp.asarray(0.5)
+
+
+def step_theta_sde(
+    theta: Float[jax.Array, " n_vertices"],
+    tprev: Float[jax.Array, ""],
+    tnext: Float[jax.Array, ""],
+    d_theta: Float[jax.Array, ""],
+    theta_solver_state: object,) -> Tuple[Float[jax.Array, " n_vertices"], object,]:
+    """Single SDE step for orientations using diffrax (step-based)."""
+    theta_next, _, _, theta_solver_state, _ = theta_solver.step(
+        theta_term,
+        tprev,
+        tnext,
+        theta,
+        d_theta,
+        theta_solver_state,
+        made_jump=False,)
+    return theta_next, theta_solver_state
+
+
+@jax.tree_util.register_dataclass
+@dataclasses.dataclass
+class SDEState:
+    geommesh: GeomMesh
+    hemesh: HeMesh
+    cooldown_counter: Int[jax.Array, " n_hes"]
+    tprev: Float[jax.Array, ""]
+    solver_state: object
+    theta: Float[jax.Array, " n_vertices"]
+    theta_solver_state: object
+
+
+@jax.tree_util.register_dataclass
+@dataclasses.dataclass
+class SDELog:
+    geommesh: GeomMesh
+    hemesh: HeMesh
+    energy: Float[jax.Array, ""]
+    t1_count: Int[jax.Array, ""]
+
+v0_sp = 0.005
+
+@jax.jit
+def scan_fun_selfprop_sde(
+    state: SDEState,
+    tnext: Float[jax.Array, ""],) -> tuple[SDEState, SDELog]:
+    # time-step SDE for self-propulsion orientation
+    theta_next, theta_solver_state = step_theta_sde(
+        state.theta,
+        state.tprev,
+        tnext,
+        d_theta,
+        state.theta_solver_state,)
+    geommesh_curr = dataclasses.replace(
+        state.geommesh,
+        vertex_attribs={VertexAttribs.SELF_PROPULSION_ORIENTATION: theta_next,},)
+    args = (state.hemesh, a0, p0, v0_sp, 1.0, 1.0,)
+    # relaxational dynamics for vertices
+    geommesh_next, _, _, solver_state, _ = solver_sp.step(
+        term_sp,
+        state.tprev,
+        tnext,
+        geommesh_curr,
+        args,
+        state.solver_state,
+        made_jump=False,)
+    # T1 transitions for connectivity
+    hemesh_next, cooldown_counter, to_flip = apply_t1_flips(
+        geommesh_next,
+        state.hemesh,
+        state.cooldown_counter,
+        l_min_T1,
+        cooldown_steps,)
+    # make measurements for log
+    energy = energy_ap(geommesh_next, hemesh_next, a0, p0)
+    log = SDELog(
+        geommesh=geommesh_next,
+        hemesh=hemesh_next,
+        energy=energy,
+        t1_count=to_flip.sum(),)
+    next_state = SDEState(
+        geommesh=geommesh_next,
+        hemesh=hemesh_next,
+        cooldown_counter=cooldown_counter,
+        tprev=tnext,
+        solver_state=solver_state,
+        theta=theta_next,
+        theta_solver_state=theta_solver_state,)
+    return next_state, log
+```
+
+``` python
+brownian.t0, brownian.t1
+```
+
+    (Array(0., dtype=float64, weak_type=True),
+     Array(150.01, dtype=float64, weak_type=True))
+
+``` python
+dt_sde = 0.01
+n_steps_sde = 8000
+step_times_sde = dt_sde * jnp.arange(n_steps_sde + 1)
+
+cooldown_counter_sde = jnp.zeros(hemesh.n_hes, dtype=jnp.int32)
+theta_init = geommesh_sp.vertex_attribs[VertexAttribs.SELF_PROPULSION_ORIENTATION]
+key_sde = jax.random.key(1)
+
+init_solver_state_sde = solver_sp.init(
+    term_sp,
+    step_times_sde[0],
+    step_times_sde[1],
+    geommesh_sp,
+    (hemesh, a0, p0, v0_sp, 1.0, 1.0,),)
+brownian = diffrax.VirtualBrownianTree(
+    step_times_sde[0],
+    step_times_sde[-1] + dt_sde,
+    tol=1e-3,
+    shape=theta_init.shape,
+    key=key_sde,)
+theta_term = diffrax.MultiTerm(
+    diffrax.ODETerm(theta_drift),
+    diffrax.ControlTerm(theta_diffusion, brownian),)
+theta_solver_state = theta_solver.init(
+    theta_term,
+    step_times_sde[0],
+    step_times_sde[1],
+    theta_init,
+    d_theta,)
+init_sde = SDEState(
+    geommesh=geommesh_sp,
+    hemesh=hemesh,
+    cooldown_counter=cooldown_counter_sde,
+    tprev=step_times_sde[0],
+    solver_state=init_solver_state_sde,
+    theta=theta_init,
+    theta_solver_state=theta_solver_state,)
+
+# Time stepping: scan advances (tprev -> tnext) for both theta and vertex dynamics.
+final_state_sde, logs_sde = jax.lax.scan(
+    scan_fun_selfprop_sde,
+    init_sde,
+    step_times_sde[1:],)
+geommesh_final_sde = final_state_sde.geommesh
+hemesh_final_sde = final_state_sde.hemesh
+theta_final_sde = final_state_sde.theta
+
+# Measurements logged at each step: geometry, energy, and T1 flip counts.
+geommesh_traj_sde = msh.tree_unstack(logs_sde.geommesh)
+hemesh_traj_sde = msh.tree_unstack(logs_sde.hemesh)
+flip_counts_sde = logs_sde.t1_count
+energies_sde = logs_sde.energy
+
+traj_sde = list(zip(geommesh_traj_sde, hemesh_traj_sde,))
+```
 
 ### Visualize trajectory
 
 Let’s add an `ipywidget`-based slider plot that allows us to visualize
 the trajectory of the mesh’s time evolution.
+
+``` python
+np.linalg.norm(geommesh_traj_sde[0].vertices-geommesh_traj_sde[-1].vertices, axis=-1).mean() # avg displacement
+```
+
+    np.float64(0.10620549370268782)
+
+``` python
+plt.plot(jnp.cumsum(flip_counts_sde))
+```
+
+![](03_area_perimeter_model_files/figure-commonmark/cell-46-output-1.png)
+
+``` python
+cell_id = 50
+
+plt.plot(logs_sde.geommesh.vertex_attribs[VertexAttribs.SELF_PROPULSION_ORIENTATION][:, cell_id])
+```
+
+![](03_area_perimeter_model_files/figure-commonmark/cell-47-output-1.png)
+
+``` python
+plt.plot(energies_sde)
+```
+
+![](03_area_perimeter_model_files/figure-commonmark/cell-48-output-1.png)
+
+``` python
+msh.set_voronoi_face_positions(geommesh_traj_sde[-1], hemesh_traj_sde[-1])
+```
+
+    GeomMesh(D=2,N_V=131, N_HE=708, N_F=224)
+
+``` python
+fig, ax = plt.subplots(figsize=(4, 4))
+
+#plt.triplot(*geommesh_traj_sde[0].vertices.T, hemesh_traj_sde[0].faces)
+
+#plt.triplot(*geommesh_traj_sde[-1].vertices.T, hemesh_traj_sde[-1].faces)
+#plt.scatter(*geommesh_final.vertices.T, c=areas, cmap="viridis", s=20, vmin=0)
+
+
+geommesh_traj_sde[-1] = msh.set_voronoi_face_positions(geommesh_traj_sde[-1], hemesh_traj_sde[-1])
+
+ax.add_collection(msh.cellplot(hemesh_traj_sde[0], geommesh_traj_sde[0].face_positions,
+                               cell_colors=np.array([0.7, 0.7, 0.9, 0.2]),
+                               mpl_polygon_kwargs={"lw": 0.5, "ec": "tab:blue"}))
+ax.add_collection(msh.cellplot(hemesh_traj_sde[-1], geommesh_traj_sde[-1].face_positions,
+                               cell_colors=np.array([0.9, 0.6, 0.6, 0.2]),
+                               mpl_polygon_kwargs={"lw": 0.5, "ec": "tab:red"}))
+
+
+
+ax.set_aspect("equal")
+ax.autoscale_view();
+```
+
+![](03_area_perimeter_model_files/figure-commonmark/cell-50-output-1.png)
+
+``` python
+def plot_traj_step(step_idx: int) -> None:
+    geommesh_i, hemesh_i = traj_sde[step_idx]
+    face_positions = msh.get_voronoi_face_positions(geommesh_i.vertices, hemesh_i)
+    fig, ax = plt.subplots(figsize=(4, 4))
+    ax.add_collection(
+        msh.cellplot(
+            hemesh_i,
+            face_positions,
+            cell_colors=np.array([0.7, 0.7, 0.9, 0.25]),
+            mpl_polygon_kwargs={"lw": 0.5, "ec": "k"},
+        ),
+    )
+    ax.set_aspect("equal")
+    ax.autoscale_view();
+```
+
+``` python
+widgets.interact(
+    plot_traj_step,
+    step_idx=widgets.IntSlider(
+        value=0,
+        min=0,
+        max=len(traj_sde) - 1,
+        step=1,
+        description="step",
+        continuous_update=False,
+    ),
+    )
+```
+
+    interactive(children=(IntSlider(value=0, continuous_update=False, description='step', max=9999), Output()), _d…
+
+    <function __main__.plot_traj_step(step_idx: int) -> None>

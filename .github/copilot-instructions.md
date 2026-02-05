@@ -13,11 +13,24 @@ However, the library is intended to be (eventually) be more general-purpose and 
 ## Coding standards (applies to all Python)
 
 - Use **Python 3.10+**.
+- Where possible, use a **functional programming style**: avoid mutable state, side effects, and in-place modifications.
+- Develoment is done in **Jupyter Notebooks** (see below). Separate cells for defining functions/classes and for running code. Below a cell that defines a function/class, include a test cell that runs basic tests or examples of usage.
+- Prefe **concise** code; avoid boiler-plate, and unccessary helper variables and functions.
+
+### Style guidelines
+
 - Always include **type hints** on function signatures and variables where practical. Use `jaxtyping` for array type hints (include informative names for array dimensions).
 - Use **docstrings** (NumPy style). Include units and parameter domains when relevant.
 - Follow standard **PEP8** style guidelines. Lint with `ruff`.
-- Where possible, use a **functional programming style**: avoid mutable state, side effects, and in-place modifications.
-- Develoment is done in **Jupyter Notebooks** (see below). Separate cells for defining functions/classes and for running code. Below a cell that defines a function/class, include a test cell that runs basic tests or examples of usage.
+- Bracketing style: format long lists and function arguments like this, closing bracket on the _same_ line, instead of the next line:
+```
+my_list = [1, 2, 3,
+           4, 5, 6,]
+my_function(arg1, arg2,
+            arg3, arg4,)
+```
+
+
 
 ## External libraries
 

@@ -25,7 +25,7 @@ import jax.numpy as jnp
 
 # %% ../nbs/01_triangulation_datastructure.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float, Int, Bool, PyTree 
-from typing import Any, Iterable, NamedTuple
+from typing import Any, Iterable, NamedTuple, no_type_check
 from pathlib import Path
 from enum import IntEnum
 
@@ -114,7 +114,7 @@ class TriMesh:
         vertices, _, normals, faces, _, _ = igl.readOBJ(filename)
         if read_face_positions:
             return TriMesh(jnp.array(vertices[:,:dim]), jnp.array(faces), face_positions=jnp.array(normals[:,:dim]))
-        mesh = TriMesh(jnp.array(vertices[:,:dim]), jnp.array(faces), face_positions=None)
+        mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)
         mesh.set_voronoi()
         return mesh
         

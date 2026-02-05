@@ -128,6 +128,7 @@ write_obj : str -\> None
 
 ``` python
 # test reading a mesh
+
 mesh = TriMesh.read_obj("test_meshes/disk.obj")
 ```
 
@@ -239,10 +240,10 @@ plt.scatter(*points.T)
 plt.axis("equal")
 ```
 
-    (np.float64(-1.6315276371405518),
-     np.float64(1.6191872290800107),
-     np.float64(-1.4880190145409438),
-     np.float64(1.7089872695623352))
+    (np.float64(-1.6160936031859818),
+     np.float64(1.6663027893805307),
+     np.float64(-1.5740075126550974),
+     np.float64(1.5548492050761231))
 
 ![](01_triangulation_datastructure_files/figure-commonmark/cell-9-output-2.png)
 
@@ -1101,7 +1102,7 @@ def test_function(geommesh: GeomMesh, hemesh: HeMesh) -> Float[jax.Array, " n_ve
 
 try:
     jax.vmap(test_function)(batch_geom, batch_he)
-except (ValueError, TypeError) as e:
+except ValueError as e:
     print("Expected error:", e)
 ```
 
@@ -1121,14 +1122,9 @@ batch_geom_array, batch_geom_array.vertices.shape
     (GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), (3, 131, 2))
 
 ``` python
-```
-
-    The jaxtyping extension is not loaded.
-
-``` python
 # now it works! The result is a single object with batch axis
 
-batch_out = jax.vmap(test_function)(batch_geom_array, batch_he_array) 
+batch_out =jax.vmap(test_function)(batch_geom_array, batch_he_array)
 batch_out.shape
 ```
 
@@ -1240,7 +1236,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](01_triangulation_datastructure_files/figure-commonmark/cell-62-output-2.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-63-output-2.png)
 
 ``` python
 # edges and dual edges should be orthogonal since we are using circumcenters
@@ -1304,7 +1300,7 @@ plt.axis("equal")
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](01_triangulation_datastructure_files/figure-commonmark/cell-68-output-1.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-69-output-1.png)
 
 #### Repeated flips
 
@@ -1395,7 +1391,7 @@ plt.axis("equal")
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](01_triangulation_datastructure_files/figure-commonmark/cell-76-output-1.png)
+![](01_triangulation_datastructure_files/figure-commonmark/cell-77-output-1.png)
 
 ## Adjacency-like operators on half-edge meshes
 

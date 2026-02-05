@@ -337,25 +337,26 @@ window.Quarto = {
 <p>read_obj : str -&gt; TriMesh</p>
 <p><strong>Methods</strong></p>
 <p>write_obj : str -&gt; None</p>
-<div id="c92469ca-bcb7-424f-ab1a-57391c5c955a" class="cell" data-execution_count="13">
+<div id="c92469ca-bcb7-424f-ab1a-57391c5c955a" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test reading a mesh</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="bef6e5d3-ea7d-49de-92ac-ba58c4a08c96" class="cell" data-execution_count="14">
+<div id="bef6e5d3-ea7d-49de-92ac-ba58c4a08c96" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test computing the circumcenter of each face. should be equidistant to all vertex points</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dists <span class="op">=</span> jnp.stack([jnp.linalg.norm(mesh.vertices[mesh.faces[:,i]]<span class="op">-</span>mesh.face_positions, axis<span class="op">=</span><span class="dv">1</span>) <span class="cf">for</span> i <span class="kw">in</span> [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>]], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>jnp.allclose(dists[:,<span class="dv">0</span>], dists[:,<span class="dv">1</span>]) <span class="kw">and</span> jnp.allclose(dists[:,<span class="dv">1</span>], dists[:,<span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>Array(True, dtype=bool)</code></pre>
 </div>
 </div>
-<div id="3adefefb-2b1a-4c44-b6c0-8a5e78cdb053" class="cell" data-execution_count="15">
+<div id="3adefefb-2b1a-4c44-b6c0-8a5e78cdb053" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test writing face positions to vn entries</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
@@ -414,7 +415,7 @@ window.Quarto = {
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices 2'</span>]:</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sample n_vertices points from the Ginibre ensemble. Points are scaled to unit disk.</em></p>
-<div id="da57dbe6-026e-4dab-82be-0691e6037d71" class="cell" data-execution_count="17">
+<div id="da57dbe6-026e-4dab-82be-0691e6037d71" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#points = generate_triangular_lattice(10, 10)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>points <span class="op">=</span> generate_ginibre_points(<span class="dv">100</span>)</span>
@@ -424,11 +425,11 @@ window.Quarto = {
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>plt.scatter(<span class="op">*</span>points.T)</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>(np.float64(-1.6315276371405518),
- np.float64(1.6191872290800107),
- np.float64(-1.4880190145409438),
- np.float64(1.7089872695623352))</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>(np.float64(-1.6160936031859818),
+ np.float64(1.6663027893805307),
+ np.float64(-1.5740075126550974),
+ np.float64(1.5548492050761231))</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -452,7 +453,7 @@ window.Quarto = {
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">list</span>:</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>For each vertex, get the indices of the adjacent vertices in correct order.</em> For boundary vertices, this list contains the vertex itself.</p>
-<div id="7d5a6c59-59ff-4f56-b743-bc591edd70fd" class="cell" data-execution_count="19">
+<div id="7d5a6c59-59ff-4f56-b743-bc591edd70fd" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>neighbors <span class="op">=</span> get_adjacent_vertex_indices(mesh.faces, n_vertices<span class="op">=</span>mesh.vertices.shape[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -484,7 +485,7 @@ window.Quarto = {
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="va">None</span>:</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>For debugging purposes. Plot triangular mesh with face/vertex labels in black/blue.</em> If hemesh is not None, the connectivity info from it is used to plot the half-edge labels.</p>
-<div id="4b8abf3e-57c3-4210-9b7a-50ded06d7118" class="cell" data-scrolled="true" data-execution_count="21">
+<div id="4b8abf3e-57c3-4210-9b7a-50ded06d7118" class="cell" data-scrolled="true" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>mesh.vertices.T, mesh.faces)</span>
@@ -494,7 +495,7 @@ window.Quarto = {
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
  np.float64(-1.09934025),
@@ -591,7 +592,7 @@ window.Quarto = {
 <p>save : str -&gt; None:</p>
 <p><strong>Static methods</strong></p>
 <p>load : str -&gt; HeMesh</p>
-<div id="5fe4070e-5447-4716-b0da-38adca86b921" class="cell" data-execution_count="24">
+<div id="5fe4070e-5447-4716-b0da-38adca86b921" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -599,53 +600,53 @@ window.Quarto = {
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="b05bdc43-7033-420b-bbdf-0daf113ed228" class="cell" data-execution_count="25">
+<div id="b05bdc43-7033-420b-bbdf-0daf113ed228" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hemeshes can be compared for equali and are registered as py-trees</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>leafs, ts <span class="op">=</span> jax.tree_util.tree_flatten(hemesh)</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>hemesh, hemesh <span class="op">==</span> hemesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
+<div class="cell-output cell-output-display" data-execution_count="22">
 <pre><code>(HeMesh(N_V=131, N_HE=708, N_F=224), True)</code></pre>
 </div>
 </div>
-<div id="5363c9ed" class="cell" data-execution_count="26">
+<div id="5363c9ed" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test iteration around vertex</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>hemesh.dest[hemesh.iterate_around_vertex(<span class="dv">69</span>)], hemesh.orig[hemesh.iterate_around_vertex(<span class="dv">56</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>(Array([80, 68, 56, 46], dtype=int64),
  Array([56, 56, 56, 56, 56, 56, 56], dtype=int64))</code></pre>
 </div>
 </div>
-<div id="e19181b5" class="cell" data-execution_count="27">
+<div id="e19181b5" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># boundary in cc-wise order</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>(hemesh.orig[<span class="dv">187</span>], hemesh.dest[<span class="dv">187</span>]), hemesh.heface[<span class="dv">187</span>], hemesh.is_bdry_he[<span class="dv">187</span>],</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="24">
 <pre><code>((Array(58, dtype=int64), Array(70, dtype=int64)),
  Array(-1, dtype=int64),
  Array(True, dtype=bool))</code></pre>
 </div>
 </div>
-<div id="6525ab64" class="cell" data-execution_count="28">
+<div id="6525ab64" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>hemesh.is_bdry_he[<span class="dv">187</span>], hemesh.is_bdry_he[<span class="dv">541</span>], hemesh.heface[<span class="dv">541</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
+<div class="cell-output cell-output-display" data-execution_count="25">
 <pre><code>(Array(True, dtype=bool), Array(False, dtype=bool), Array(145, dtype=int64))</code></pre>
 </div>
 </div>
-<div id="e6f9df51" class="cell" data-execution_count="29">
+<div id="e6f9df51" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to model mesh boundaries, we can add an "infinity" vertex. Not done here, see below</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>hemesh.has_inf_vertex, hemesh.inf_vertices</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div class="cell-output cell-output-display" data-execution_count="26">
 <pre><code>(False, ())</code></pre>
 </div>
 </div>
-<div id="e5c1c05d" class="cell" data-execution_count="30">
+<div id="e5c1c05d" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>,<span class="dv">14</span>))</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>mesh.vertices.T, hemesh.faces)</span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>label_plot(mesh.vertices, hemesh.faces, fontsize<span class="op">=</span><span class="dv">10</span>, hemesh<span class="op">=</span>hemesh, face_labels<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div class="cell-output cell-output-display" data-execution_count="27">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
  np.float64(-1.09934025),
@@ -659,7 +660,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="9ffe63d8-0da6-4c74-bef7-c35727d76ff9" class="cell" data-execution_count="31">
+<div id="9ffe63d8-0da6-4c74-bef7-c35727d76ff9" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here is how you would do mesh traversal with jax.lax. The issues is that the output size needs to be fixed</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ahead of time, so </span></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -669,7 +670,7 @@ window.Quarto = {
 <span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>initial <span class="op">=</span> jnp.hstack([jnp.array([<span class="va">self</span>.incident[v]]), <span class="op">-</span><span class="dv">1</span><span class="op">*</span>jnp.ones(max_valence<span class="op">-</span><span class="dv">1</span>, dtype<span class="op">=</span><span class="bu">int</span>)])</span>
 <span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>jax.lax.fori_loop(<span class="dv">1</span>, max_valence, <span class="kw">lambda</span> i, x: x.at[i].<span class="bu">set</span>(<span class="va">self</span>.twin[x[i<span class="op">-</span><span class="dv">1</span>]]), initial)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>Array([ 47, 401,  47, 401,  47, 401,  47, 401,  47, 401], dtype=int64)</code></pre>
 </div>
 </div>
@@ -694,7 +695,7 @@ window.Quarto = {
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Connect boundary loop(s) to infinity.</em></p>
 <p>New vertices are appeneded to the end of vertex array and have coordinates [np.inf, np.inf].</p>
-<div id="0f81dc06" class="cell" data-execution_count="33">
+<div id="0f81dc06" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -702,21 +703,21 @@ window.Quarto = {
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="8a429fcb" class="cell" data-execution_count="34">
+<div id="8a429fcb" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>new_vertices, new_faces, infinity_vertices <span class="op">=</span> connect_boundary_to_infinity(mesh.vertices, mesh.faces)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>mesh_infty <span class="op">=</span> TriMesh(vertices<span class="op">=</span>new_vertices, faces<span class="op">=</span>new_faces)</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>hemesh_infty <span class="op">=</span> HeMesh.from_triangles(mesh_infty.vertices.shape[<span class="dv">0</span>], mesh_infty.faces,</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                                     inf_vertices<span class="op">=</span>infinity_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="7db747fb" class="cell" data-execution_count="35">
+<div id="7db747fb" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>igl.is_edge_manifold(mesh_infty.faces)[<span class="dv">0</span>], igl.is_vertex_manifold(mesh_infty.faces)[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="35">
+<div class="cell-output cell-output-display" data-execution_count="32">
 <pre><code>(True, np.True_)</code></pre>
 </div>
 </div>
-<div id="7877f979" class="cell" data-execution_count="36">
+<div id="7877f979" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>hemesh_infty.dest[hemesh_infty.iterate_around_vertex(<span class="op">-</span><span class="dv">1</span>)], igl.boundary_loop(mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="36">
+<div class="cell-output cell-output-display" data-execution_count="33">
 <pre><code>(Array([  0,  10,  21,  34,  47,  58,  70,  86,  91, 100, 108, 113, 114,
         110, 111, 112, 107,  99,  85,  80,  69,  46,  33,  32,  20,   9,
         130, 121, 120, 119, 118, 117, 116, 115, 123, 122], dtype=int64),
@@ -725,20 +726,20 @@ window.Quarto = {
         108, 100,  91,  86,  70,  58,  47,  34,  21,  10], dtype=int64))</code></pre>
 </div>
 </div>
-<div id="3f091294" class="cell" data-execution_count="37">
+<div id="3f091294" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>hemesh_infty.dest[hemesh_infty.iterate_around_vertex(<span class="dv">0</span>)], hemesh.dest[hemesh.iterate_around_vertex(<span class="dv">0</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="37">
+<div class="cell-output cell-output-display" data-execution_count="34">
 <pre><code>(Array([  1,  11,  10, 131, 122], dtype=int64),
  Array([  1,  11,  10, 122], dtype=int64))</code></pre>
 </div>
 </div>
-<div id="a644a364" class="cell" data-execution_count="38">
+<div id="a644a364" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>(hemesh.is_bdry <span class="op">==</span> (hemesh_infty.is_bdry[:<span class="op">-</span><span class="dv">1</span>] <span class="op">&gt;</span><span class="dv">0</span>)).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="38">
+<div class="cell-output cell-output-display" data-execution_count="35">
 <pre><code>Array(True, dtype=bool)</code></pre>
 </div>
 </div>
-<div id="e2505ce7" class="cell" data-execution_count="39">
+<div id="e2505ce7" class="cell" data-execution_count="36">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to get back the original faces/vertices, do this:</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> hemesh_infty.faces[<span class="op">~</span>hemesh_infty.is_inf_face]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -784,9 +785,9 @@ window.Quarto = {
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>):</span>
 <span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Enum where members are also (and must be) ints</em></p>
-<div id="97f8169c" class="cell" data-execution_count="41">
+<div id="97f8169c" class="cell" data-execution_count="38">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>HeAttribs.EDGE_TENSION, HeAttribs(<span class="dv">1</span>), HeAttribs[<span class="st">'EDGE_TENSION'</span>], HeAttribs.EDGE_TENSION.name</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="41">
+<div class="cell-output cell-output-display" data-execution_count="38">
 <pre><code>(&lt;HeAttribs.EDGE_TENSION: 1&gt;,
  &lt;HeAttribs.EDGE_TENSION: 1&gt;,
  &lt;HeAttribs.EDGE_TENSION: 1&gt;,
@@ -855,7 +856,7 @@ window.Quarto = {
 <span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>):</span>
 <span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Combine geometric and connectivity info into a single object.</em></p>
-<div id="c78f0f4a-6bea-40e5-baf3-628f777b1d0f" class="cell" data-execution_count="45">
+<div id="c78f0f4a-6bea-40e5-baf3-628f777b1d0f" class="cell" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -864,23 +865,23 @@ window.Quarto = {
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="88381eed-c22c-49cd-8606-c62500eb28a7" class="cell" data-scrolled="true" data-execution_count="46">
+<div id="88381eed-c22c-49cd-8606-c62500eb28a7" class="cell" data-scrolled="true" data-execution_count="43">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>combined_mesh <span class="op">=</span> Mesh(geommesh, hemesh)</span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>combined_mesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="46">
+<div class="cell-output cell-output-display" data-execution_count="43">
 <pre><code>Mesh(geommesh=GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), hemesh=HeMesh(N_V=131, N_HE=708, N_F=224))</code></pre>
 </div>
 </div>
-<div id="fc035cf3-bf00-42e9-a2f3-103c240e3fe0" class="cell" data-execution_count="47">
+<div id="fc035cf3-bf00-42e9-a2f3-103c240e3fe0" class="cell" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>leafs, ts <span class="op">=</span> jax.tree_util.tree_flatten(geommesh) <span class="co"># also a pytree</span></span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>ts</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="47">
+<div class="cell-output cell-output-display" data-execution_count="44">
 <pre><code>PyTreeDef(CustomNode(GeomMesh[(131, 708, 224)], [*, *, {}, {}, {}]))</code></pre>
 </div>
 </div>
-<div id="c006504e-0193-4831-9ade-5c7cec6b3d47" class="cell" data-execution_count="48">
+<div id="c006504e-0193-4831-9ade-5c7cec6b3d47" class="cell" data-execution_count="45">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibility(hemesh), geommesh <span class="op">==</span> geommesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="48">
+<div class="cell-output cell-output-display" data-execution_count="45">
 <pre><code>(GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), 131, (131, 2), True, True)</code></pre>
 </div>
 </div>
@@ -896,7 +897,7 @@ window.Quarto = {
 <span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Plot a cell tesselation.</em></p>
 <p>cell_colors can be either a single color (for all cells) or a vector of rgba values. Only interior cells are plotted.</p>
-<div id="b4496688-152b-43d0-b66f-b1b11718c849" class="cell" data-execution_count="50">
+<div id="b4496688-152b-43d0-b66f-b1b11718c849" class="cell" data-execution_count="47">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>polygons <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
 <span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>                    cell_colors<span class="op">=</span>np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.5</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
@@ -904,7 +905,7 @@ window.Quarto = {
 <span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>ax.add_collection(polygons)</span>
 <span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="50">
+<div class="cell-output cell-output-display" data-execution_count="47">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
  np.float64(-1.09934025),
@@ -921,7 +922,7 @@ window.Quarto = {
 </section>
 <section id="adding-some-vertexhalf-edgeface-properties" class="level3">
 <h3 class="anchored" data-anchor-id="adding-some-vertexhalf-edgeface-properties">Adding some vertex/half-edge/face properties</h3>
-<div id="452cebbe" class="cell" data-execution_count="51">
+<div id="452cebbe" class="cell" data-execution_count="48">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>geommmesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -930,14 +931,14 @@ window.Quarto = {
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="c78e5b0b" class="cell" data-execution_count="52">
+<div id="c78e5b0b" class="cell" data-execution_count="49">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># at initialization, a HeMesh's attribute dictionaries are empty</span></span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>geommmesh.vertex_attribs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="52">
+<div class="cell-output cell-output-display" data-execution_count="49">
 <pre><code>{}</code></pre>
 </div>
 </div>
-<div id="edd75cb5" class="cell" data-execution_count="53">
+<div id="edd75cb5" class="cell" data-execution_count="50">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set some attributes</span></span>
 <span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>key1 <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
@@ -948,9 +949,9 @@ window.Quarto = {
 <span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>                                                           VertexAttribs.TARGET_PERIMETER: jax.random.normal(key<span class="op">=</span>key2, shape<span class="op">=</span>geommmesh.n_vertices)})</span>
 <span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>geommmesh <span class="op">=</span> dataclasses.replace(geommmesh, he_attribs<span class="op">=</span>{HeAttribs.EDGE_TENSION: jax.random.normal(key<span class="op">=</span>key3, shape<span class="op">=</span>geommmesh.n_hes)})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="595f136b" class="cell" data-execution_count="54">
+<div id="595f136b" class="cell" data-execution_count="51">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>geommmesh.he_attribs.keys()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="54">
+<div class="cell-output cell-output-display" data-execution_count="51">
 <pre><code>dict_keys([&lt;HeAttribs.EDGE_TENSION: 1&gt;])</code></pre>
 </div>
 </div>
@@ -981,7 +982,7 @@ window.Quarto = {
 <span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>PyTree:</span>
 <span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Stack a sequence of identical-structure pytrees along a new axis.</em></p>
-<div id="54eb9677" class="cell" data-execution_count="56">
+<div id="54eb9677" class="cell" data-execution_count="53">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let us create a bunch of meshes with different initial positions and see if we can batch over them using vmap</span></span>
 <span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
@@ -995,20 +996,20 @@ window.Quarto = {
 <span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>    batch_geom.append(dataclasses.replace(geommmesh, vertices<span class="op">=</span>geommmesh.vertices<span class="op">+</span>sigma<span class="op">*</span>random_noise))</span>
 <span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>    batch_he.append(copy.copy(hemesh))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="5856c3c5" class="cell" data-execution_count="57">
+<div id="5856c3c5" class="cell" data-execution_count="54">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define a test function to appy over the batch</span></span>
 <span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_function(geommesh: GeomMesh, hemesh: HeMesh) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">" n_vertices"</span>]:</span>
 <span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dummy test function."""</span></span>
 <span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.ones(geommesh.n_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="24cb28d8" class="cell" data-execution_count="58">
+<div id="24cb28d8" class="cell" data-execution_count="57">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># naive batching does not work. JAX needs a "struct-of-arrays", but a list of HeMeshes is an "array-of-structs"</span></span>
 <span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="co"># see https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees</span></span>
 <span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
 <span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>    jax.vmap(test_function)(batch_geom, batch_he)</span>
-<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> (<span class="pp">ValueError</span>, <span class="pp">TypeError</span>) <span class="im">as</span> e:</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
 <span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Expected error:"</span>, e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Expected error: vmap got inconsistent sizes for array axes to be mapped:
@@ -1017,36 +1018,30 @@ window.Quarto = {
   * some axes (6 of them) had size 224, e.g. axis 0 of argument geommesh[0].face_positions of type float64[224,2]</code></pre>
 </div>
 </div>
-<div id="cea01cba" class="cell" data-execution_count="59">
+<div id="cea01cba" class="cell" data-execution_count="58">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># instead, we use a jax.tree.map to "push" the list axis into the underlying arrays.</span></span>
 <span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>batch_he_array <span class="op">=</span> tree_stack(batch_he)</span>
 <span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>batch_geom_array <span class="op">=</span> tree_stack(batch_geom)</span>
 <span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>batch_geom_array, batch_geom_array.vertices.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="59">
+<div class="cell-output cell-output-display" data-execution_count="58">
 <pre><code>(GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), (3, 131, 2))</code></pre>
 </div>
 </div>
-<div id="3196a66a" class="cell" data-execution_count="60">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>The jaxtyping extension is not loaded.</code></pre>
-</div>
-</div>
-<div id="f976d553" class="cell" data-execution_count="61">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now it works! The result is a single object with batch axis</span></span>
-<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>batch_out <span class="op">=</span> jax.vmap(test_function)(batch_geom_array, batch_he_array) </span>
-<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>batch_out.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="61">
+<div id="db9cec51" class="cell" data-execution_count="59">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now it works! The result is a single object with batch axis</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>batch_out <span class="op">=</span>jax.vmap(test_function)(batch_geom_array, batch_he_array)</span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>batch_out.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="59">
 <pre><code>(3, 131)</code></pre>
 </div>
 </div>
-<div id="4efdd241" class="cell" data-execution_count="62">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we can unpack things again into a list of meshes</span></span>
-<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a><span class="bu">isinstance</span>(tree_unstack(batch_out), <span class="bu">list</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="62">
+<div id="4efdd241" class="cell" data-execution_count="61">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we can unpack things again into a list of meshes</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="bu">isinstance</span>(tree_unstack(batch_out), <span class="bu">list</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="61">
 <pre><code>True</code></pre>
 </div>
 </div>
@@ -1074,11 +1069,11 @@ window.Quarto = {
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L750" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="flip_edge" class="level3">
 <h3 class="anchored" data-anchor-id="flip_edge">flip_edge</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb92"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flip_edge(</span>
-<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, e:Int[Array, <span class="st">''</span>], check_boundary:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span></span>
-<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>HeMesh:</span>
-<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb90"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flip_edge(</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, e:Int[Array, <span class="st">''</span>], check_boundary:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span></span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>HeMesh:</span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Flip half-edge e in a half-edge mesh.</em></p>
 <p>See https://jerryyin.info/geometry-processing-algorithms/half-edge/. The algorithm is slightly modified since we keep track of the origin and destination of a half-edge, and use arrays instead of pointers. Returns a new HeMesh, does not modify in-place.</p>
 <hr>
@@ -1086,29 +1081,29 @@ window.Quarto = {
 </section>
 <section id="get_signed_dual_he_length" class="level3">
 <h3 class="anchored" data-anchor-id="get_signed_dual_he_length">get_signed_dual_he_length</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb93"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_signed_dual_he_length(</span>
-<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], face_positions:Float[Array, <span class="st">'n_hes 2'</span>], hemesh:HeMesh</span>
-<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_hes'</span>]:</span>
-<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb91"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_signed_dual_he_length(</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], face_positions:Float[Array, <span class="st">'n_hes 2'</span>], hemesh:HeMesh</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_hes'</span>]:</span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute lengths of dual edges. Boundary dual edges get length 1. Negative sign = flipped edge.</em></p>
 <div id="51a6342f-fd8c-44d4-8f68-f4bbee5c2fd2" class="cell" data-execution_count="65">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
 <div id="d452e19f-c44f-4dd5-96e7-7b8c1f551f39" class="cell" data-scrolled="true" data-execution_count="66">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
-<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
-<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
-<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>             cell_colors<span class="op">=</span>np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
-<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>plt.gca().add_collection(p)</span>
-<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>             cell_colors<span class="op">=</span>np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>plt.gca().add_collection(p)</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="66">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
@@ -1118,74 +1113,74 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_triangulation_datastructure_files/figure-html/cell-62-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="01_triangulation_datastructure_files/figure-html/cell-63-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <div id="55e7cfc0-2d38-4a21-b0fa-a7c47b16135a" class="cell" data-execution_count="67">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># edges and dual edges should be orthogonal since we are using circumcenters</span></span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> geommesh.vertices[hemesh.orig]<span class="op">-</span>geommesh.vertices[hemesh.dest]</span>
-<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>dual_edges <span class="op">=</span> (geommesh.face_positions[hemesh.heface]</span>
-<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>              <span class="op">-</span>geommesh.face_positions[hemesh.heface[hemesh.twin]])</span>
-<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>jnp.allclose(jnp.einsum(<span class="st">'vi,vi-&gt;v'</span>, edges[<span class="op">~</span>hemesh.is_bdry_edge], dual_edges[<span class="op">~</span>hemesh.is_bdry_edge]), <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co"># edges and dual edges should be orthogonal since we are using circumcenters</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> geommesh.vertices[hemesh.orig]<span class="op">-</span>geommesh.vertices[hemesh.dest]</span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>dual_edges <span class="op">=</span> (geommesh.face_positions[hemesh.heface]</span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>              <span class="op">-</span>geommesh.face_positions[hemesh.heface[hemesh.twin]])</span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a>jnp.allclose(jnp.einsum(<span class="st">'vi,vi-&gt;v'</span>, edges[<span class="op">~</span>hemesh.is_bdry_edge], dual_edges[<span class="op">~</span>hemesh.is_bdry_edge]), <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="67">
 <pre><code>Array(True, dtype=bool)</code></pre>
 </div>
 </div>
 <div id="7d39c278-7566-4096-ab99-31f8a01c681d" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computing the signed edge length shows that there are some "flipped" edges.</span></span>
-<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>signed_squared_length <span class="op">=</span> jnp.einsum(<span class="st">'vi,vi-&gt;v'</span>, edges, dual_edges <span class="op">@</span> trig.get_rot_mat(np.pi<span class="op">/</span><span class="dv">2</span>))</span>
-<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>jnp.where((signed_squared_length <span class="op">&lt;</span> <span class="op">-</span><span class="fl">0.0</span>) <span class="op">&amp;</span> <span class="op">~</span>hemesh.is_bdry_edge )[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computing the signed edge length shows that there are some "flipped" edges.</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>signed_squared_length <span class="op">=</span> jnp.einsum(<span class="st">'vi,vi-&gt;v'</span>, edges, dual_edges <span class="op">@</span> trig.get_rot_mat(np.pi<span class="op">/</span><span class="dv">2</span>))</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>jnp.where((signed_squared_length <span class="op">&lt;</span> <span class="op">-</span><span class="fl">0.0</span>) <span class="op">&amp;</span> <span class="op">~</span>hemesh.is_bdry_edge )[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="68">
 <pre><code>Array([  9, 185, 191, 335, 363, 539, 545, 689], dtype=int64)</code></pre>
 </div>
 </div>
 <div id="9eca3b8e" class="cell" data-execution_count="69">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="bu">isinstance</span>(<span class="dv">335</span>, <span class="bu">int</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="bu">isinstance</span>(<span class="dv">335</span>, <span class="bu">int</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="69">
 <pre><code>True</code></pre>
 </div>
 </div>
 <div id="d967f938-a498-49cc-91f7-a392ba5ad068" class="cell" data-execution_count="70">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip edge and recompute face positions</span></span>
-<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>flipped_hemesh <span class="op">=</span> flip_edge(hemesh, e<span class="op">=</span><span class="dv">335</span>)</span>
-<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a>flipped_geommesh <span class="op">=</span> set_voronoi_face_positions(geommesh, flipped_hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip edge and recompute face positions</span></span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>flipped_hemesh <span class="op">=</span> flip_edge(hemesh, e<span class="op">=</span><span class="dv">335</span>)</span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>flipped_geommesh <span class="op">=</span> set_voronoi_face_positions(geommesh, flipped_hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="9b047482-87c1-4607-bb44-f13ab9beb0af" class="cell" data-execution_count="71">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co"># connectivity is still valid</span></span>
-<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>igl.is_edge_manifold(hemesh.faces)[<span class="dv">0</span>], igl.is_edge_manifold(flipped_hemesh.faces)[<span class="dv">0</span>], flipped_hemesh.iterate_around_vertex(<span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="co"># connectivity is still valid</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>igl.is_edge_manifold(hemesh.faces)[<span class="dv">0</span>], igl.is_edge_manifold(flipped_hemesh.faces)[<span class="dv">0</span>], flipped_hemesh.iterate_around_vertex(<span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="71">
 <pre><code>(True, True, Array([298, 299, 630, 632], dtype=int64))</code></pre>
 </div>
 </div>
 <div id="998a6c7e-cc30-4bcf-924f-1701ce93b1f3" class="cell" data-execution_count="72">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="co"># you can see the flipped edge in the plot below - it's where the blue mesh forms a "bow-tie"</span></span>
-<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
-<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
-<span id="cb107-6"><a href="#cb107-6" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>flipped_geommesh.vertices.T, flipped_hemesh.faces)</span>
-<span id="cb107-7"><a href="#cb107-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb107-8"><a href="#cb107-8" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
-<span id="cb107-9"><a href="#cb107-9" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
-<span id="cb107-10"><a href="#cb107-10" aria-hidden="true" tabindex="-1"></a>         cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
-<span id="cb107-11"><a href="#cb107-11" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> cellplot(flipped_hemesh, flipped_geommesh.face_positions,</span>
-<span id="cb107-12"><a href="#cb107-12" aria-hidden="true" tabindex="-1"></a>              cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"tab:orange"</span>})</span>
-<span id="cb107-13"><a href="#cb107-13" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p1)</span>
-<span id="cb107-14"><a href="#cb107-14" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p2)</span>
-<span id="cb107-15"><a href="#cb107-15" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span>
-<span id="cb107-16"><a href="#cb107-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb107-17"><a href="#cb107-17" aria-hidden="true" tabindex="-1"></a>label_plot(geommesh.vertices, hemesh.faces, fontsize<span class="op">=</span><span class="dv">10</span>, face_labels<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co"># you can see the flipped edge in the plot below - it's where the blue mesh forms a "bow-tie"</span></span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
+<span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-5"><a href="#cb105-5" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
+<span id="cb105-6"><a href="#cb105-6" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>flipped_geommesh.vertices.T, flipped_hemesh.faces)</span>
+<span id="cb105-7"><a href="#cb105-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-8"><a href="#cb105-8" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
+<span id="cb105-9"><a href="#cb105-9" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
+<span id="cb105-10"><a href="#cb105-10" aria-hidden="true" tabindex="-1"></a>         cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
+<span id="cb105-11"><a href="#cb105-11" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> cellplot(flipped_hemesh, flipped_geommesh.face_positions,</span>
+<span id="cb105-12"><a href="#cb105-12" aria-hidden="true" tabindex="-1"></a>              cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"tab:orange"</span>})</span>
+<span id="cb105-13"><a href="#cb105-13" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p1)</span>
+<span id="cb105-14"><a href="#cb105-14" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p2)</span>
+<span id="cb105-15"><a href="#cb105-15" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span>
+<span id="cb105-16"><a href="#cb105-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-17"><a href="#cb105-17" aria-hidden="true" tabindex="-1"></a>label_plot(geommesh.vertices, hemesh.faces, fontsize<span class="op">=</span><span class="dv">10</span>, face_labels<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_triangulation_datastructure_files/figure-html/cell-68-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="01_triangulation_datastructure_files/figure-html/cell-69-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1195,28 +1190,28 @@ window.Quarto = {
 <p>In a simulation, we need to carry out edge flips at every timestep. The function <code>flip_edge(hemesh: HeMesh, e: int) -&gt; HeMesh</code> does a single edge flip by modifying the connectivity arrays. Luckily, it is already JAX-compatible (we can JIT-compile it).</p>
 <p>The next goal is to carry out multiple flips. We must be careful: doing multiple flips “simultaneously” risks leaving the mesh in an inconsistent state. Instead, we do the flips in sequence. To make things JAX-compatible, we do a <code>jax.lax.scan</code> scan over all half-edges.</p>
 <div id="69320efd-505e-44af-9b28-f50a00e7fc53" class="cell" data-execution_count="73">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
 <div id="94b30732-54cb-495f-baf7-0faecb9c99f3" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>dual_lengths <span class="op">=</span> get_signed_dual_he_length(geommesh.vertices, geommesh.face_positions, hemesh)</span>
-<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> jnp.where((dual_lengths <span class="op">&lt;</span> <span class="op">-</span><span class="fl">0.05</span>) <span class="op">&amp;</span> <span class="op">~</span>hemesh.is_bdry_edge <span class="op">&amp;</span> hemesh.is_unique)[<span class="dv">0</span>]</span>
-<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a><span class="co"># we only want to flip unique hes!</span></span>
-<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a>edges, edges.size</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>dual_lengths <span class="op">=</span> get_signed_dual_he_length(geommesh.vertices, geommesh.face_positions, hemesh)</span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> jnp.where((dual_lengths <span class="op">&lt;</span> <span class="op">-</span><span class="fl">0.05</span>) <span class="op">&amp;</span> <span class="op">~</span>hemesh.is_bdry_edge <span class="op">&amp;</span> hemesh.is_unique)[<span class="dv">0</span>]</span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a><span class="co"># we only want to flip unique hes!</span></span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>edges, edges.size</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="74">
 <pre><code>(Array([  9, 185, 191, 335], dtype=int64), 4)</code></pre>
 </div>
 </div>
 <div id="b281b408-08b1-4ae2-9c79-8ffbc4db4de4" class="cell" data-scrolled="true" data-execution_count="75">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan over indices of negative-length edges. </span></span>
-<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>flipped_hemesh, _ <span class="op">=</span> jax.lax.scan(<span class="kw">lambda</span> h, e: (flip_edge(h, e), <span class="va">None</span>) , init<span class="op">=</span>hemesh, xs<span class="op">=</span>edges)</span>
-<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a><span class="co"># this scan is over an array whose shape varies. Instead, we can scan over all hes, and flip only if the length is negative (via jax.lax.cond).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan over indices of negative-length edges. </span></span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>flipped_hemesh, _ <span class="op">=</span> jax.lax.scan(<span class="kw">lambda</span> h, e: (flip_edge(h, e), <span class="va">None</span>) , init<span class="op">=</span>hemesh, xs<span class="op">=</span>edges)</span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a><span class="co"># this scan is over an array whose shape varies. Instead, we can scan over all hes, and flip only if the length is negative (via jax.lax.cond).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L800" target="_blank" style="float:right; font-size:smaller">source</a></p>
@@ -1224,44 +1219,44 @@ window.Quarto = {
 </section>
 <section id="flip_all" class="level3">
 <h3 class="anchored" data-anchor-id="flip_all">flip_all</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb113"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flip_all(</span>
-<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, to_flip:Bool[Array, <span class="st">'n_hes'</span>]</span>
-<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>HeMesh:</span>
-<span id="cb113-5"><a href="#cb113-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb111"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flip_all(</span>
+<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, to_flip:Bool[Array, <span class="st">'n_hes'</span>]</span>
+<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>HeMesh:</span>
+<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Flip all (unique) half-edges where to_flip is True in a half-edge mesh. Wraps flip_edge.</em></p>
 <div id="537a9784-2300-468a-9286-276464f97b72" class="cell" data-execution_count="77">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>to_flip <span class="op">=</span> (dual_lengths <span class="op">&lt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> <span class="op">~</span>jnp.isnan(dual_lengths)</span>
-<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb114-3"><a href="#cb114-3" aria-hidden="true" tabindex="-1"></a>flipped_hemesh <span class="op">=</span> flip_all(hemesh, to_flip<span class="op">=</span>to_flip)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>to_flip <span class="op">=</span> (dual_lengths <span class="op">&lt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> <span class="op">~</span>jnp.isnan(dual_lengths)</span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>flipped_hemesh <span class="op">=</span> flip_all(hemesh, to_flip<span class="op">=</span>to_flip)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="0ca16bb5-4865-4f87-ad92-fe5a290f8983" class="cell" data-execution_count="78">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>flipped_hemesh <span class="op">=</span> flip_all(hemesh, to_flip<span class="op">=</span>(dual_lengths<span class="op">&lt;</span><span class="fl">0.02</span>)) <span class="co"># no extra recompile</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>flipped_hemesh <span class="op">=</span> flip_all(hemesh, to_flip<span class="op">=</span>(dual_lengths<span class="op">&lt;</span><span class="fl">0.02</span>)) <span class="co"># no extra recompile</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="9a6c0ce3-b7af-4951-aa50-11613294b86e" class="cell" data-execution_count="79">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>flipped_geommesh <span class="op">=</span> set_voronoi_face_positions(geommesh, flipped_hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>flipped_geommesh <span class="op">=</span> set_voronoi_face_positions(geommesh, flipped_hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="2c38754f-750d-4da6-834e-bf030f2ab086" class="cell" data-execution_count="80">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb117"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
-<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
-<span id="cb117-4"><a href="#cb117-4" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>flipped_geommesh.vertices.T, flipped_hemesh.faces)</span>
-<span id="cb117-5"><a href="#cb117-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb117-6"><a href="#cb117-6" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
-<span id="cb117-7"><a href="#cb117-7" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
-<span id="cb117-8"><a href="#cb117-8" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
-<span id="cb117-9"><a href="#cb117-9" aria-hidden="true" tabindex="-1"></a>         cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
-<span id="cb117-10"><a href="#cb117-10" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> cellplot(flipped_hemesh, flipped_geommesh.face_positions,</span>
-<span id="cb117-11"><a href="#cb117-11" aria-hidden="true" tabindex="-1"></a>              cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"tab:orange"</span>})</span>
-<span id="cb117-12"><a href="#cb117-12" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p1)</span>
-<span id="cb117-13"><a href="#cb117-13" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p2)</span>
-<span id="cb117-14"><a href="#cb117-14" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span>
-<span id="cb117-15"><a href="#cb117-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb117-16"><a href="#cb117-16" aria-hidden="true" tabindex="-1"></a>label_plot(geommesh.vertices, hemesh.faces, fontsize<span class="op">=</span><span class="dv">10</span>, face_labels<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>flipped_geommesh.vertices.T, flipped_hemesh.faces)</span>
+<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
+<span id="cb115-7"><a href="#cb115-7" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
+<span id="cb115-8"><a href="#cb115-8" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
+<span id="cb115-9"><a href="#cb115-9" aria-hidden="true" tabindex="-1"></a>         cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
+<span id="cb115-10"><a href="#cb115-10" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> cellplot(flipped_hemesh, flipped_geommesh.face_positions,</span>
+<span id="cb115-11"><a href="#cb115-11" aria-hidden="true" tabindex="-1"></a>              cell_colors<span class="op">=</span>np.array([<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>,<span class="fl">0.</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"tab:orange"</span>})</span>
+<span id="cb115-12"><a href="#cb115-12" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p1)</span>
+<span id="cb115-13"><a href="#cb115-13" aria-hidden="true" tabindex="-1"></a>ax.add_collection(p2)</span>
+<span id="cb115-14"><a href="#cb115-14" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span>
+<span id="cb115-15"><a href="#cb115-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-16"><a href="#cb115-16" aria-hidden="true" tabindex="-1"></a>label_plot(geommesh.vertices, hemesh.faces, fontsize<span class="op">=</span><span class="dv">10</span>, face_labels<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="01_triangulation_datastructure_files/figure-html/cell-76-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="01_triangulation_datastructure_files/figure-html/cell-77-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1281,11 +1276,11 @@ window.Quarto = {
 </section>
 <section id="sum_he_to_vertex_opposite" class="level3">
 <h3 class="anchored" data-anchor-id="sum_he_to_vertex_opposite">sum_he_to_vertex_opposite</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb118"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_he_to_vertex_opposite(</span>
-<span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, he_field:Float[Array, <span class="st">'n_hes ...'</span>]</span>
-<span id="cb118-4"><a href="#cb118-4" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb118-5"><a href="#cb118-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb116"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_he_to_vertex_opposite(</span>
+<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, he_field:Float[Array, <span class="st">'n_hes ...'</span>]</span>
+<span id="cb116-4"><a href="#cb116-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb116-5"><a href="#cb116-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sum a half-edge field onto opposite vertices.</em></p>
 <p>Attention: can include boundary half-edges!</p>
 <p>hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array</p>
@@ -1294,21 +1289,21 @@ window.Quarto = {
 </section>
 <section id="sum_he_to_vertex_incoming" class="level3">
 <h3 class="anchored" data-anchor-id="sum_he_to_vertex_incoming">sum_he_to_vertex_incoming</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb119"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_he_to_vertex_incoming(</span>
-<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, he_field:Float[Array, <span class="st">'n_hes ...'</span>]</span>
-<span id="cb119-4"><a href="#cb119-4" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb119-5"><a href="#cb119-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb117"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_he_to_vertex_incoming(</span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, he_field:Float[Array, <span class="st">'n_hes ...'</span>]</span>
+<span id="cb117-4"><a href="#cb117-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb117-5"><a href="#cb117-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sum a half-edge field onto destination vertices.</em></p>
 <p>hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array</p>
 <div id="12e6b835-4263-4314-99f4-6974e5fea082" class="cell" data-execution_count="82">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TO DO: implement gradient (vertex -&gt; face) and cotan-Laplacian (vertex -&gt; vertex) using gather/scatter ops like above .</span></span>
-<span id="cb120-2"><a href="#cb120-2" aria-hidden="true" tabindex="-1"></a><span class="co"># compare with igl to check correctness.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TO DO: implement gradient (vertex -&gt; face) and cotan-Laplacian (vertex -&gt; vertex) using gather/scatter ops like above .</span></span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a><span class="co"># compare with igl to check correctness.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="4006c7fb-56a2-445c-9647-017dc017074e" class="cell" data-execution_count="83">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb121"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
@@ -1319,34 +1314,34 @@ window.Quarto = {
 </section>
 <section id="get_cell_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_cell_areas">get_cell_areas</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb123"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_areas(</span>
-<span id="cb123-3"><a href="#cb123-3" aria-hidden="true" tabindex="-1"></a>    geommesh:GeomMesh, hemesh:HeMesh</span>
-<span id="cb123-4"><a href="#cb123-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
-<span id="cb123-5"><a href="#cb123-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb121"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_areas(</span>
+<span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a>    geommesh:GeomMesh, hemesh:HeMesh</span>
+<span id="cb121-4"><a href="#cb121-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
+<span id="cb121-5"><a href="#cb121-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute areas of cells by mesh traversal (don’t use for simulation, inefficient).</em></p>
 <p>Boundary vertices get area 0.</p>
 <div id="5618181e-7193-48af-ac45-c1b3d77c4df3" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb124"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let's use the adjacency matrix to compute the area of all cells. First, compute all corner areas</span></span>
-<span id="cb124-2"><a href="#cb124-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-3"><a href="#cb124-3" aria-hidden="true" tabindex="-1"></a>a, b, c <span class="op">=</span> (hemesh.dest[hemesh.nxt], hemesh.dest[hemesh.prv], hemesh.dest)</span>
-<span id="cb124-4"><a href="#cb124-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-5"><a href="#cb124-5" aria-hidden="true" tabindex="-1"></a>corner_areas <span class="op">=</span> jax.vmap(trig.get_voronoi_corner_area)(geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])</span>
-<span id="cb124-6"><a href="#cb124-6" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> sum_he_to_vertex_opposite(hemesh, corner_areas)</span>
-<span id="cb124-7"><a href="#cb124-7" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> cell_areas_corner.at[hemesh.is_bdry].<span class="bu">set</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let's use the adjacency matrix to compute the area of all cells. First, compute all corner areas</span></span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a>a, b, c <span class="op">=</span> (hemesh.dest[hemesh.nxt], hemesh.dest[hemesh.prv], hemesh.dest)</span>
+<span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-5"><a href="#cb122-5" aria-hidden="true" tabindex="-1"></a>corner_areas <span class="op">=</span> jax.vmap(trig.get_voronoi_corner_area)(geommesh.vertices[a], geommesh.vertices[b], geommesh.vertices[c])</span>
+<span id="cb122-6"><a href="#cb122-6" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> sum_he_to_vertex_opposite(hemesh, corner_areas)</span>
+<span id="cb122-7"><a href="#cb122-7" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> cell_areas_corner.at[hemesh.is_bdry].<span class="bu">set</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="462432a9-100a-400c-9942-9eb1643b05bb" class="cell" data-execution_count="86">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for comparison, compute the areas by mesh traversal</span></span>
-<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a>cell_areas_iterative <span class="op">=</span> <span class="op">-</span><span class="dv">1</span><span class="op">*</span>get_cell_areas(geommesh, hemesh)</span>
-<span id="cb125-4"><a href="#cb125-4" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">abs</span>(cell_areas_iterative<span class="op">-</span>cell_areas_corner).<span class="bu">max</span>() <span class="co"># works!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for comparison, compute the areas by mesh traversal</span></span>
+<span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb123-3"><a href="#cb123-3" aria-hidden="true" tabindex="-1"></a>cell_areas_iterative <span class="op">=</span> <span class="op">-</span><span class="dv">1</span><span class="op">*</span>get_cell_areas(geommesh, hemesh)</span>
+<span id="cb123-4"><a href="#cb123-4" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">abs</span>(cell_areas_iterative<span class="op">-</span>cell_areas_corner).<span class="bu">max</span>() <span class="co"># works!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="86">
 <pre><code>np.float64(4.85722573273506e-17)</code></pre>
 </div>
 </div>
 <div id="64840cc3-641c-4076-bbef-802d67cf3e4c" class="cell" data-execution_count="87">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb127"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using the gather/scatter trick, we can also compute the coordination number</span></span>
-<span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>sum_he_to_vertex_incoming(hemesh, jnp.ones(hemesh.n_hes)).at[hemesh.is_bdry].<span class="bu">set</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using the gather/scatter trick, we can also compute the coordination number</span></span>
+<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a>sum_he_to_vertex_incoming(hemesh, jnp.ones(hemesh.n_hes)).at[hemesh.is_bdry].<span class="bu">set</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="87">
 <pre><code>Array([0., 6., 6., 7., 6., 6., 6., 6., 6., 0., 0., 6., 6., 5., 6., 6., 6.,
        5., 5., 6., 0., 0., 6., 6., 6., 7., 5., 6., 6., 7., 7., 6., 0., 0.,
@@ -1363,42 +1358,42 @@ window.Quarto = {
 <section id="saving-to-disk" class="level2">
 <h2 class="anchored" data-anchor-id="saving-to-disk">Saving to disk</h2>
 <p>We save and load <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#trimesh"><code>TriMesh</code></a> meshes as standard <code>.obj</code> files (with the hack of using <code>vn</code> lines for the face positions). The <a href="https://nikolas-claussen.github.io/triangulax/triangulation_datastructure.html#hemesh"><code>HeMesh</code></a> class is basically a collection of arrays, which we can save to disk using <code>numpy</code>.</p>
-<div id="100dfc0a" class="cell" data-execution_count="88">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb129"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tempfile <span class="im">import</span> TemporaryFile</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="100dfc0a" class="cell" data-execution_count="67">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb127"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tempfile <span class="im">import</span> TemporaryFile</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="7f1a720a-df0e-4a7e-97cb-715bb3ef687b" class="cell" data-execution_count="89">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7f1a720a-df0e-4a7e-97cb-715bb3ef687b" class="cell" data-execution_count="68">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb128"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb128-2"><a href="#cb128-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="900dc102-544f-43a9-ba4b-70338e6b0d71" class="cell" data-execution_count="90">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb132"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is how to use np.savenpz</span></span>
-<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a>outfile <span class="op">=</span> TemporaryFile()</span>
-<span id="cb132-4"><a href="#cb132-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb132-5"><a href="#cb132-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">10</span>)</span>
-<span id="cb132-6"><a href="#cb132-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(x)</span>
-<span id="cb132-7"><a href="#cb132-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb132-8"><a href="#cb132-8" aria-hidden="true" tabindex="-1"></a>np.savez(outfile, x<span class="op">=</span>x, y<span class="op">=</span>y)</span>
-<span id="cb132-9"><a href="#cb132-9" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> outfile.seek(<span class="dv">0</span>) <span class="co"># simulates closing &amp; reopening file</span></span>
-<span id="cb132-10"><a href="#cb132-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb132-11"><a href="#cb132-11" aria-hidden="true" tabindex="-1"></a>npzfile <span class="op">=</span> np.load(outfile)</span>
-<span id="cb132-12"><a href="#cb132-12" aria-hidden="true" tabindex="-1"></a><span class="bu">sorted</span>(npzfile.files), npzfile[<span class="st">'x'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="90">
+<div id="900dc102-544f-43a9-ba4b-70338e6b0d71" class="cell" data-execution_count="69">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is how to use np.savenpz</span></span>
+<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a>outfile <span class="op">=</span> TemporaryFile()</span>
+<span id="cb130-4"><a href="#cb130-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb130-5"><a href="#cb130-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">10</span>)</span>
+<span id="cb130-6"><a href="#cb130-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(x)</span>
+<span id="cb130-7"><a href="#cb130-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb130-8"><a href="#cb130-8" aria-hidden="true" tabindex="-1"></a>np.savez(outfile, x<span class="op">=</span>x, y<span class="op">=</span>y)</span>
+<span id="cb130-9"><a href="#cb130-9" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> outfile.seek(<span class="dv">0</span>) <span class="co"># simulates closing &amp; reopening file</span></span>
+<span id="cb130-10"><a href="#cb130-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb130-11"><a href="#cb130-11" aria-hidden="true" tabindex="-1"></a>npzfile <span class="op">=</span> np.load(outfile)</span>
+<span id="cb130-12"><a href="#cb130-12" aria-hidden="true" tabindex="-1"></a><span class="bu">sorted</span>(npzfile.files), npzfile[<span class="st">'x'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="69">
 <pre><code>(['x', 'y'], array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))</code></pre>
 </div>
 </div>
-<div id="72fd2f37-fd33-4abc-9fba-2f3e67cc4b2b" class="cell" data-scrolled="true" data-execution_count="91">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb134"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a>outfile <span class="op">=</span> TemporaryFile()</span>
-<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a>hemesh.save(outfile)</span>
-<span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> outfile.seek(<span class="dv">0</span>) <span class="co"># simulates closing &amp; reopening file</span></span>
-<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a>npzfile <span class="op">=</span> np.load(outfile)</span>
-<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a>npzfile.files</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="91">
+<div id="72fd2f37-fd33-4abc-9fba-2f3e67cc4b2b" class="cell" data-scrolled="true" data-execution_count="70">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb132"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>outfile <span class="op">=</span> TemporaryFile()</span>
+<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a>hemesh.save(outfile)</span>
+<span id="cb132-4"><a href="#cb132-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> outfile.seek(<span class="dv">0</span>) <span class="co"># simulates closing &amp; reopening file</span></span>
+<span id="cb132-5"><a href="#cb132-5" aria-hidden="true" tabindex="-1"></a>npzfile <span class="op">=</span> np.load(outfile)</span>
+<span id="cb132-6"><a href="#cb132-6" aria-hidden="true" tabindex="-1"></a>npzfile.files</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="70">
 <pre><code>['incident',
  'orig',
  'dest',
@@ -1410,15 +1405,15 @@ window.Quarto = {
  'inf_vertices']</code></pre>
 </div>
 </div>
-<div id="dac3d617-05e8-4293-951c-092530c44832" class="cell" data-execution_count="92">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb136"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a>outfile <span class="op">=</span> TemporaryFile()</span>
-<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>hemesh.save(outfile)</span>
-<span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> outfile.seek(<span class="dv">0</span>) <span class="co"># simulates closing &amp; reopening file</span></span>
-<span id="cb136-5"><a href="#cb136-5" aria-hidden="true" tabindex="-1"></a>reloaded <span class="op">=</span> HeMesh.load(outfile)</span>
-<span id="cb136-6"><a href="#cb136-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb136-7"><a href="#cb136-7" aria-hidden="true" tabindex="-1"></a>np.allclose(reloaded.faces, hemesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="92">
+<div id="dac3d617-05e8-4293-951c-092530c44832" class="cell" data-execution_count="71">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb134"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a>outfile <span class="op">=</span> TemporaryFile()</span>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a>hemesh.save(outfile)</span>
+<span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> outfile.seek(<span class="dv">0</span>) <span class="co"># simulates closing &amp; reopening file</span></span>
+<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a>reloaded <span class="op">=</span> HeMesh.load(outfile)</span>
+<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb134-7"><a href="#cb134-7" aria-hidden="true" tabindex="-1"></a>np.allclose(reloaded.faces, hemesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="71">
 <pre><code>True</code></pre>
 </div>
 </div>
