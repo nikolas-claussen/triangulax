@@ -2,7 +2,7 @@
 
 # %% auto #0
 __all__ = ['average_vertices_to_faces', 'average_faces_to_vertices', 'sum_he_to_vertex_incoming', 'sum_he_to_vertex_opposite',
-           'get_cell_areas', 'get_coordination_number', 'get_triangle_areas', 'get_cell_perimeters',
+           'get_cell_areas_traversal', 'get_coordination_number', 'get_triangle_areas', 'get_voronoi_areas',
            'compute_cotan_laplace', 'cotan_laplace_sparse', 'compute_gradient_2d', 'compute_gradient_3d',
            'scipy_to_bcoo', 'diag_jsparse', 'linear_op_to_sparse']
 
@@ -91,7 +91,7 @@ def sum_he_to_vertex_opposite(hemesh: msh.HeMesh, he_field: Float[jax.Array, "n_
 
 
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #fbebd977-9ea6-4ab9-8188-d833f1bbba60
-def get_cell_areas(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
+def get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
     """
     Compute areas of cells by mesh traversal (don't use for simulation, inefficient).
 
@@ -117,7 +117,7 @@ def get_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh
     """Compute oriented triangle areas in a mesh."""
     return jax.vmap(trig.get_oriented_triangle_area)(*vertices[hemesh.faces.T])
 
-def get_cell_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) ->Float[jax.Array, " n_vertices"]:
+def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) ->Float[jax.Array, " n_vertices"]:
     """Compute Voronoi area for each vertex."""
     a = hemesh.dest[hemesh.nxt]
     b = hemesh.dest[hemesh.prv]
@@ -127,17 +127,6 @@ def get_cell_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeM
     corner_areas = jnp.where(hemesh.is_bdry_he, 0, corner_areas)
     cell_areas = sum_he_to_vertex_opposite(hemesh, corner_areas)
     return cell_areas
-
-def get_cell_perimeters(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
-    """Compute Voronoi perimeters for each vertex."""
-    a = hemesh.dest[hemesh.nxt]
-    b = hemesh.dest[hemesh.prv]
-    c = hemesh.dest
-    corner_perims = jax.vmap(trig.get_voronoi_corner_perimeter)(
-        vertices[a], vertices[b], vertices[c])
-    corner_perims = jnp.where(hemesh.is_bdry_he, 0, corner_perims)
-    cell_perims = sum_he_to_vertex_opposite(hemesh, corner_perims)
-    return cell_perims
 
 # %% ../nbs/04_linear_operators_on_meshes.ipynb #66b2e04f
 def compute_cotan_laplace(hemesh: msh.HeMesh, vertices: Float[jax.Array, "n_vertices dim"],

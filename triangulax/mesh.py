@@ -645,7 +645,7 @@ def flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""], check_boundary: bool = Fals
 
 # %% ../nbs/03_halfedge_datastructure.ipynb #a5bb78ce-454d-492c-b95e-797d1ed1f2aa
 def get_he_length(vertices: Float[jax.Array, "n_vertices dim"],
-                    hemesh: HeMesh) -> Float[jax.Array, " n_hes"]:
+                  hemesh: HeMesh) -> Float[jax.Array, " n_hes"]:
     """Get lengths of half-edges (triangulation/primal edges)."""
     return jnp.linalg.norm(vertices[hemesh.orig]-vertices[hemesh.dest], axis=-1)
 
