@@ -13,11 +13,16 @@ just-in-time compilation and automatic differentiation.
 
 Triangular meshes are ubiquitous in computer graphics and in scientific
 computing. The tools provided by `triangulax` makes it easy to implement
-custom geometry processing operations (in familiar python). But the main
-feature of `triangulax` is compatibility with automatic differentiation.
-Why? Often, one is often interested in deforming/dynamical meshes. For
-example: 1. Flattening or deforming 3D models (computer graphics) 2.
-Simulating thin plates or membranes (mechanics)
+custom geometry processing operations (and in Python, not C++ !).
+`triangulax` complements libraries like the excellent
+[`libigl`](https://libigl.github.io/libigl-python-bindings/) which are
+focused on providing “ready made” geometry processing tools.
+
+But the main feature of `triangulax` is compatibility with automatic
+differentiation. Why? Often, one is often interested in
+deforming/dynamical meshes. For example: 1. Flattening or deforming 3D
+models (computer graphics) 2. Simulating thin plates or membranes
+(mechanics)
 
 This usually requires optimizing some mesh-based “energy” (like the
 [Helfrich
