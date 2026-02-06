@@ -3,7 +3,7 @@
 # %% auto #0
 __all__ = ['label_plot', 'get_half_edge_arrays_vectorized', 'HeMesh', 'connect_boundary_to_infinity', 'GeomMesh',
            'get_voronoi_face_positions', 'set_voronoi_face_positions', 'Mesh', 'cellplot', 'tree_stack', 'tree_unstack',
-           'flip_edge', 'get_signed_dual_he_length', 'flip_by_id', 'flip_all']
+           'flip_edge', 'get_he_length', 'get_signed_dual_he_length', 'flip_by_id', 'flip_all']
 
 # %% ../nbs/03_halfedge_datastructure.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -644,6 +644,11 @@ def flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""], check_boundary: bool = Fals
     return HeMesh(incident, orig, dest, jnp.copy(hemesh.twin), nxt, prv, heface, face_incident, hemesh.inf_vertices)
 
 # %% ../nbs/03_halfedge_datastructure.ipynb #a5bb78ce-454d-492c-b95e-797d1ed1f2aa
+def get_he_length(vertices: Float[jax.Array, "n_vertices dim"],
+                    hemesh: HeMesh) -> Float[jax.Array, " n_hes"]:
+    """Get lengths of half-edges (triangulation/primal edges)."""
+    return jnp.linalg.norm(vertices[hemesh.orig]-vertices[hemesh.dest], axis=-1)
+
 def get_signed_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
                               face_positions: Float[jax.Array, "n_faces 2"],
                               hemesh: HeMesh) -> Float[jax.Array, " n_hes"]:
