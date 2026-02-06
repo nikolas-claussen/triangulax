@@ -1,6 +1,6 @@
 #  Copilot Instructions (Repository-wide)
 
-Generally, be as concise as reasonably possible. Avoid humor or emojis.
+Generally, be as concise as reasonably possible.
 
 ## Project context
 
@@ -37,7 +37,7 @@ my_function(arg1, arg2,
 - Avoid using 3rd party libraries unless necessary beyond the ones already in the project (see `environment.yml`).
 - Use **JAX** for numerical computations. Use `jax.numpy` instead of standard `numpy`.
 - Use **igl** for all geometrry processing not done in JAX (loading and saving meshes etc), and to test that JAX computations are correct (compare to igl results).
-- Use `equinox` for neural network functionality if needed. `diffrax`, `lineax` and `optimistix` for numerics
+- Use `equinox` for neural network functionality if needed. `diffrax`, `lineax` and `optimistix` for numerics.
 
 ## Packaging & docs (nbdev)
 

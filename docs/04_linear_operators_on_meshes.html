@@ -251,8 +251,8 @@ window.Quarto = {
   <li><a href="#sum_he_to_vertex_incoming" id="toc-sum_he_to_vertex_incoming" class="nav-link" data-scroll-target="#sum_he_to_vertex_incoming">sum_he_to_vertex_incoming</a></li>
   <li><a href="#get_cell_areas" id="toc-get_cell_areas" class="nav-link" data-scroll-target="#get_cell_areas">get_cell_areas</a></li>
   <li><a href="#get_coordination_number" id="toc-get_coordination_number" class="nav-link" data-scroll-target="#get_coordination_number">get_coordination_number</a></li>
-  <li><a href="#get_cell_perimeter" id="toc-get_cell_perimeter" class="nav-link" data-scroll-target="#get_cell_perimeter">get_cell_perimeter</a></li>
-  <li><a href="#get_cell_area" id="toc-get_cell_area" class="nav-link" data-scroll-target="#get_cell_area">get_cell_area</a></li>
+  <li><a href="#get_cell_perimeters" id="toc-get_cell_perimeters" class="nav-link" data-scroll-target="#get_cell_perimeters">get_cell_perimeters</a></li>
+  <li><a href="#get_cell_areas-1" id="toc-get_cell_areas-1" class="nav-link" data-scroll-target="#get_cell_areas-1">get_cell_areas</a></li>
   <li><a href="#get_triangle_areas" id="toc-get_triangle_areas" class="nav-link" data-scroll-target="#get_triangle_areas">get_triangle_areas</a></li>
   <li><a href="#finite-element-gradient-and-cotan-laplacian" id="toc-finite-element-gradient-and-cotan-laplacian" class="nav-link" data-scroll-target="#finite-element-gradient-and-cotan-laplacian">Finite-element gradient and cotan-Laplacian</a></li>
   <li><a href="#compute_cotan_laplace" id="toc-compute_cotan_laplace" class="nav-link" data-scroll-target="#compute_cotan_laplace">compute_cotan_laplace</a></li>
@@ -384,7 +384,7 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <p><em>Sum a half-edge field onto destination vertices.</em></p>
 <p>hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L94" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_cell_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_cell_areas">get_cell_areas</h3>
@@ -395,7 +395,7 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute areas of cells by mesh traversal (don’t use for simulation, inefficient).</em></p>
 <p>Boundary vertices get area 0.</p>
-<div id="5618181e-7193-48af-ac45-c1b3d77c4df3" class="cell" data-execution_count="14">
+<div id="5618181e-7193-48af-ac45-c1b3d77c4df3" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let's use the adjacency matrix to compute the area of all cells. First, compute all corner areas</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>a, b, c <span class="op">=</span> (hemesh.dest[hemesh.nxt], hemesh.dest[hemesh.prv], hemesh.dest)</span>
@@ -404,13 +404,13 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> sum_he_to_vertex_opposite(hemesh, corner_areas)</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> cell_areas_corner.at[hemesh.is_bdry].<span class="bu">set</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="462432a9-100a-400c-9942-9eb1643b05bb" class="cell" data-execution_count="15">
+<div id="462432a9-100a-400c-9942-9eb1643b05bb" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for comparison, compute the areas by mesh traversal</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>cell_areas_iterative <span class="op">=</span> <span class="op">-</span><span class="dv">1</span><span class="op">*</span>get_cell_areas(geommesh, hemesh)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>cell_areas_iterative <span class="op">=</span> <span class="op">-</span>get_cell_areas(geommesh, hemesh)</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">abs</span>(cell_areas_iterative<span class="op">-</span>cell_areas_corner).<span class="bu">max</span>() <span class="co"># works!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
-<pre><code>np.float64(0.42505900310931344)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<pre><code>np.float64(4.85722573273506e-17)</code></pre>
 </div>
 </div>
 <hr>
@@ -441,10 +441,10 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L131" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="get_cell_perimeter" class="level3">
-<h3 class="anchored" data-anchor-id="get_cell_perimeter">get_cell_perimeter</h3>
+<section id="get_cell_perimeters" class="level3">
+<h3 class="anchored" data-anchor-id="get_cell_perimeters">get_cell_perimeters</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_perimeter(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_perimeters(</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -452,10 +452,10 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="get_cell_area" class="level3">
-<h3 class="anchored" data-anchor-id="get_cell_area">get_cell_area</h3>
+<section id="get_cell_areas-1" class="level3">
+<h3 class="anchored" data-anchor-id="get_cell_areas-1">get_cell_areas</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_area(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_areas(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -468,9 +468,9 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_areas(</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces'</span>]:</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces ...'</span>]:</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Compute (unsigned) triangle areas in a mesh.</em></p>
+<p><em>Compute oriented triangle areas in a mesh.</em></p>
 </section>
 <section id="finite-element-gradient-and-cotan-laplacian" class="level3">
 <h3 class="anchored" data-anchor-id="finite-element-gradient-and-cotan-laplacian">Finite-element gradient and cotan-Laplacian</h3>

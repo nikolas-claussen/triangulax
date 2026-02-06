@@ -168,7 +168,7 @@ hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L94"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cell_areas
@@ -199,11 +199,11 @@ cell_areas_corner = cell_areas_corner.at[hemesh.is_bdry].set(0)
 ``` python
 # for comparison, compute the areas by mesh traversal
 
-cell_areas_iterative = -1*get_cell_areas(geommesh, hemesh)
+cell_areas_iterative = -get_cell_areas(geommesh, hemesh)
 np.abs(cell_areas_iterative-cell_areas_corner).max() # works!
 ```
 
-    np.float64(0.42505900310931344)
+    np.float64(4.85722573273506e-17)
 
 ------------------------------------------------------------------------
 
@@ -242,11 +242,11 @@ get_coordination_number(hemesh)
 href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L131"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_cell_perimeter
+### get_cell_perimeters
 
 ``` python
 
-def get_cell_perimeter(
+def get_cell_perimeters(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
 )->Float[Array, 'n_vertices']:
 
@@ -260,11 +260,11 @@ def get_cell_perimeter(
 href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_cell_area
+### get_cell_areas
 
 ``` python
 
-def get_cell_area(
+def get_cell_areas(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
 )->Float[Array, 'n_vertices']:
 
@@ -284,11 +284,11 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_triangle_areas(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_faces']:
+)->Float[Array, 'n_faces ...']:
 
 ```
 
-*Compute (unsigned) triangle areas in a mesh.*
+*Compute oriented triangle areas in a mesh.*
 
 ### Finite-element gradient and cotan-Laplacian
 

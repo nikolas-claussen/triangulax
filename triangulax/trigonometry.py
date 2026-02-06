@@ -57,11 +57,8 @@ def get_voronoi_corner_area(a: Float[jax.Array, "2"],
     """
     u = get_circumcenter(a, b, c)
     # Voronoi edges are midpoints of triangle edges. the corner area splits into two triangles:
-    #     a_corner1 = get_triangle_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0)) 
-    a_corner1 = get_triangle_area(a, (a-b)/2, u) 
-    a_corner2 = get_triangle_area(a, u, (a-c)/2)
-    a_corner = a_corner1 + a_corner2
-    a_triangle = get_polygon_area(jnp.stack([a, b, c], axis=0))
+    a_corner = get_polygon_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0))
+    a_triangle = get_triangle_area(a, b, c)
     return jnp.where(jnp.abs(a_triangle) > zero_clip, a_corner, 0.0)
 
 @functools.partial(jax.jit, static_argnames=['zero_clip'])
