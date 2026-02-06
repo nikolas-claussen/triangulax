@@ -112,14 +112,10 @@ def get_cell_areas(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Arra
 def get_coordination_number(hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
     return sum_he_to_vertex_incoming(hemesh, jnp.ones(hemesh.n_hes))
 
-# %% ../nbs/04_linear_operators_on_meshes.ipynb #ab0ceffd
+# %% ../nbs/04_linear_operators_on_meshes.ipynb #f63fe4a4
 def get_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) ->Float[jax.Array, " n_faces"]:
-    """Compute triangle areas in a mesh."""
-    a = hemesh.dest[hemesh.nxt]
-    b = hemesh.dest[hemesh.prv]
-    c = hemesh.dest
-    return jax.vmap(trig.get_triangle_area)(
-        vertices[a], vertices[b], vertices[c])
+    """Compute (unsigned) triangle areas in a mesh."""
+    return jax.vmap(trig.get_triangle_area)(*vertices[hemesh.faces.T])
 
 def get_cell_area(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) ->Float[jax.Array, " n_vertices"]:
     """Compute Voronoi area for each vertex."""
@@ -154,13 +150,9 @@ def compute_cotan_laplace(hemesh: msh.HeMesh, vertices: Float[jax.Array, "n_vert
     v_dest = vertices[hemesh.dest]
     v_opp = vertices[hemesh.dest[hemesh.nxt]]
 
-    vec1 = v_orig - v_opp
-    vec2 = v_dest - v_opp
-    cot = jax.vmap(trig.get_cot_between_vectors)(vec1, vec2)
-    cot = jnp.where(hemesh.heface == -1, 0.0, cot)
-
-    cot_sum = cot + cot[hemesh.twin]
-    w_edge = 0.5 * cot_sum
+    cot = jax.vmap(trig.get_cot_between_vectors)(v_orig - v_opp, v_dest - v_opp)
+    cot = jnp.where(hemesh.is_bdry_he, 0.0, cot)
+    w_edge = 0.5 * (cot + cot[hemesh.twin])
 
     diff = vertex_field[hemesh.dest] - vertex_field[hemesh.orig]
     w_shape = (hemesh.n_hes,) + (1,) * (vertex_field.ndim - 1)
@@ -179,10 +171,8 @@ def cotan_laplace_sparse(hemesh: msh.HeMesh,
     v_dest = vertices[hemesh.dest]
     v_opp = vertices[hemesh.dest[hemesh.nxt]]
 
-    vec1 = v_orig - v_opp
-    vec2 = v_dest - v_opp
-    cot = jax.vmap(trig.get_cot_between_vectors)(vec1, vec2)
-    cot = jnp.where(hemesh.heface == -1, 0.0, cot)
+    cot = jax.vmap(trig.get_cot_between_vectors)(v_orig - v_opp, v_dest - v_opp)
+    cot = jnp.where(hemesh.is_bdry_he, 0.0, cot)
 
     w_edge = 0.5 * (cot + cot[hemesh.twin])
     unique = hemesh.is_unique
@@ -309,32 +299,24 @@ def linear_op_to_sparse(op: callable,
 
     for start in range(0, n_in, chunk_size):
         end = min(start + chunk_size, n_in)
-        idx = np.arange(start, end, dtype=np.int64)
+        idx = jnp.arange(start, end, dtype=jnp.int64)
         basis = jax.nn.one_hot(jnp.array(idx), n_in, dtype=dtype)
         cols = jax.vmap(op)(basis)  # (chunk, n_out)
-        cols_np = np.asarray(cols)
-
-        if tol > 0:
-            mask = np.abs(cols_np) > tol
-        else:
-            mask = cols_np != 0
-
-        col_in_batch, row_out = np.nonzero(mask)
+        #cols = apply_op(basis)
+        mask = jnp.abs(cols) > tol
+        col_in_batch, row_out = jnp.nonzero(mask)
         if col_in_batch.size == 0:
             continue
 
-        data_list.append(cols_np[col_in_batch, row_out])
+        data_list.append(cols[col_in_batch, row_out])
         row_list.append(row_out)
         col_list.append(idx[col_in_batch])
 
     if len(data_list) == 0:
-        data = jnp.array([], dtype=dtype)
-        indices = jnp.zeros((0, 2), dtype=jnp.int32)
-    else:
-        data = jnp.array(np.concatenate(data_list))
-        rows = np.concatenate(row_list)
-        cols = np.concatenate(col_list)
-        indices = jnp.stack([jnp.array(rows, dtype=jnp.int32),
-                             jnp.array(cols, dtype=jnp.int32)], axis=1)
-
+        return jsparse.empty((n_out, n_in)) 
+    data = jnp.concatenate(data_list)
+    rows = jnp.concatenate(row_list)
+    cols = jnp.concatenate(col_list)
+    indices = jnp.stack([jnp.array(rows, dtype=jnp.int32),
+                            jnp.array(cols, dtype=jnp.int32)], axis=1)
     return jsparse.BCOO((data, indices), shape=(n_out, n_in))
