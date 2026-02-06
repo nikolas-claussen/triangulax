@@ -3,7 +3,7 @@
 # %% auto #0
 __all__ = ['label_plot', 'get_half_edge_arrays_vectorized', 'HeMesh', 'connect_boundary_to_infinity', 'GeomMesh',
            'get_voronoi_face_positions', 'set_voronoi_face_positions', 'Mesh', 'cellplot', 'tree_stack', 'tree_unstack',
-           'flip_edge', 'get_signed_dual_he_length', 'flip_all']
+           'flip_edge', 'get_signed_dual_he_length', 'flip_by_id', 'flip_all']
 
 # %% ../nbs/03_halfedge_datastructure.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -656,6 +656,15 @@ def get_signed_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
     return signed_length
 
 # %% ../nbs/03_halfedge_datastructure.ipynb #242d6ee1-d553-45fc-852f-a80fbb4a589a
+@jax.jit
+def flip_by_id(hemesh: HeMesh, ids: Int[jax.Array, " flips"], to_flip: Bool[jax.Array, " flips"]) -> HeMesh:
+    """Flip half-edges from ids array if the to_flip is True. Wraps flip_edge."""
+    def scan_fun(h, x): # flips edge e if its length < 0 and edge is unique. Otherwise, you undo your flips!
+        return jax.lax.cond(x[1], lambda hh: flip_edge(hh, x[0]), lambda hh: hh, h), None
+    xs = jnp.stack([ids, to_flip], axis=1)  
+    flipped_hemesh, _ = jax.lax.scan(scan_fun, init=hemesh, xs=xs)
+    return flipped_hemesh
+
 @jax.jit
 def flip_all(hemesh: HeMesh, to_flip: Bool[jax.Array, " n_hes"]) -> HeMesh:
     """Flip all (unique) half-edges where to_flip is True in a half-edge mesh. Wraps flip_edge."""

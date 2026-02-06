@@ -249,7 +249,6 @@ window.Quarto = {
   <li><a href="#forward-pass---minimize-energy" id="toc-forward-pass---minimize-energy" class="nav-link" data-scroll-target="#forward-pass---minimize-energy">Forward pass - minimize energy</a></li>
   <li><a href="#meta-training" id="toc-meta-training" class="nav-link" data-scroll-target="#meta-training">Meta-training</a></li>
   <li><a href="#meta-optimization" id="toc-meta-optimization" class="nav-link" data-scroll-target="#meta-optimization">Meta-optimization</a></li>
-  <li><a href="#vertex-half-edge-and-face-properties" id="toc-vertex-half-edge-and-face-properties" class="nav-link" data-scroll-target="#vertex-half-edge-and-face-properties">Vertex, half-edge, and face properties</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="05_example_simulation.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
@@ -711,39 +710,6 @@ Step: 18, loss: 0.010471449413490624, param: [0.37924151]</code></pre>
 </div>
 <p>Looks good - the optimizer converges to the correct value of <span class="math inline">\(\ell_0\)</span>.</p>
 </section>
-</section>
-<section id="vertex-half-edge-and-face-properties" class="level3">
-<h3 class="anchored" data-anchor-id="vertex-half-edge-and-face-properties">Vertex, half-edge, and face properties</h3>
-<p>In simulations, we will often want to attach extra information to a mesh’s vertices/edges/faces. In the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> class, these are saved in three dictionaries, <code>vertex_attribs</code>, <code>he_attribs</code>, <code>face_attribs</code>. Each key/value pair represents one property (for example, the cell target area). All values are arrays, and the first axis corresponds to the number of vertices/half-edges/faces, respectively. To keep track of the possible attributes, we use <code>IntEnum</code>’s as keys (this also ensures keys are hashable, as required by JAX)</p>
-<div id="d969b842" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is how you set up an enum. It is important to use IntEnum, so we can _order_ the enums.</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The precise Enum you will use depends on your application.</span></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> VertexAttribs(IntEnum):</span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    TARGET_AREA <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    TARGET_PERIMETER <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> HeAttribs(IntEnum):</span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    EDGE_TENSION <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FaceAttribs(IntEnum):</span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    FACE_AREA <span class="op">=</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<pre><code>([&lt;VertexAttribs.TARGET_AREA: 1&gt;, &lt;VertexAttribs.TARGET_PERIMETER: 2&gt;], 2)</code></pre>
-</div>
-</div>
-<div id="b6db934c" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># you can iterate over enums, and they are hashable. The latter is essential for JAX!</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([a <span class="cf">for</span> a <span class="kw">in</span> VertexAttribs])</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># there are multiple ways to access enum entries:</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="bu">hash</span>(VertexAttribs.TARGET_PERIMETER), HeAttribs.EDGE_TENSION, HeAttribs[<span class="st">'EDGE_TENSION'</span>], HeAttribs.EDGE_TENSION.name</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[&lt;VertexAttribs.TARGET_AREA: 1&gt;, &lt;VertexAttribs.TARGET_PERIMETER: 2&gt;]</code></pre>
-</div>
-<div class="cell-output cell-output-display">
-<pre><code>(2, &lt;HeAttribs.EDGE_TENSION: 1&gt;, &lt;HeAttribs.EDGE_TENSION: 1&gt;, 'EDGE_TENSION')</code></pre>
-</div>
-</div>
 </section>
 <section id="next-steps" class="level3">
 <h3 class="anchored" data-anchor-id="next-steps">Next steps</h3>

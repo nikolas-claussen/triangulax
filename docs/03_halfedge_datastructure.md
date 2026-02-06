@@ -1031,7 +1031,7 @@ edges, edges.size
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L660"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L669"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_all
@@ -1046,6 +1046,25 @@ def flip_all(
 
 *Flip all (unique) half-edges where to_flip is True in a half-edge mesh.
 Wraps flip_edge.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L660"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### flip_by_id
+
+``` python
+
+def flip_by_id(
+    hemesh:HeMesh, ids:Int[Array, 'flips'], to_flip:Bool[Array, 'flips']
+)->HeMesh:
+
+```
+
+*Flip half-edges from ids array if the to_flip is True. Wraps
+flip_edge.*
 
 ``` python
 to_flip = (dual_lengths < 0) & ~jnp.isnan(dual_lengths)
@@ -1080,7 +1099,7 @@ plt.axis("equal")
 label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-68-output-1.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-69-output-1.png)
 
 ## Saving to disk
 

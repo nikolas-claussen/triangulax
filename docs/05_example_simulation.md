@@ -486,47 +486,6 @@ for step in tqdm(range(LEARNING_STEPS)): # in the future, could also iterate ove
 Looks good - the optimizer converges to the correct value of
 ℓ<sub>0</sub>.
 
-### Vertex, half-edge, and face properties
-
-In simulations, we will often want to attach extra information to a
-mesh’s vertices/edges/faces. In the
-[`GeomMesh`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh)
-class, these are saved in three dictionaries, `vertex_attribs`,
-`he_attribs`, `face_attribs`. Each key/value pair represents one
-property (for example, the cell target area). All values are arrays, and
-the first axis corresponds to the number of vertices/half-edges/faces,
-respectively. To keep track of the possible attributes, we use
-`IntEnum`’s as keys (this also ensures keys are hashable, as required by
-JAX)
-
-``` python
-# this is how you set up an enum. It is important to use IntEnum, so we can _order_ the enums.
-# The precise Enum you will use depends on your application.
-
-class VertexAttribs(IntEnum):
-    TARGET_AREA = 1
-    TARGET_PERIMETER = 2
-
-class HeAttribs(IntEnum):
-    EDGE_TENSION = 1
-
-class FaceAttribs(IntEnum):
-    FACE_AREA = 1
-```
-
-    ([<VertexAttribs.TARGET_AREA: 1>, <VertexAttribs.TARGET_PERIMETER: 2>], 2)
-
-``` python
-# you can iterate over enums, and they are hashable. The latter is essential for JAX!
-print([a for a in VertexAttribs])
-# there are multiple ways to access enum entries:
-hash(VertexAttribs.TARGET_PERIMETER), HeAttribs.EDGE_TENSION, HeAttribs['EDGE_TENSION'], HeAttribs.EDGE_TENSION.name
-```
-
-    [<VertexAttribs.TARGET_AREA: 1>, <VertexAttribs.TARGET_PERIMETER: 2>]
-
-    (2, <HeAttribs.EDGE_TENSION: 1>, <HeAttribs.EDGE_TENSION: 1>, 'EDGE_TENSION')
-
 ### Next steps
 
 Success: we can solve this (stupid) toy problem. Our JAX-compatible

@@ -71,6 +71,8 @@ import lineax
 
 from jaxtyping import Float, Bool, Int
 from enum import IntEnum
+
+import functools
 ```
 
 ``` python
@@ -160,7 +162,17 @@ a_mean, p_mean, p_mean/np.sqrt(a_mean)
 energy_ap(geommesh, hemesh, a0=a_mean, p0=3*jnp.sqrt(a_mean))
 ```
 
-    Array(0.01891426, dtype=float64)
+    66.4 μs ± 345 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+
+``` python
+grad_energy = jax.jit(jax.grad(energy_ap))
+```
+
+``` python
+grad_energy(geommesh, hemesh, a0=a_mean, p0=3*jnp.sqrt(a_mean))
+```
+
+    170 μs ± 21.2 μs per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 ### Edge flips
 
@@ -172,18 +184,47 @@ via “cool down” period (an edge flipped at step *t* cannot be flipped
 again for the next few steps).
 
 ``` python
-@jax.jit
+#@functools.partial(jax.jit, static_argnames=['cooldown_steps', 'max_flips'])
 def apply_flips(geommesh: GeomMesh, hemesh: HeMesh, l_min_T1: float, 
-                cooldown_counter: Int[jax.Array, " n_hes"], cooldown_steps: int,
+                cooldown_counter: Int[jax.Array, " n_hes"], cooldown_steps: int, max_flips: int = 10
                 ) -> Tuple[HeMesh, Int[jax.Array, " n_hes"], Bool[jax.Array, " n_hes"],]:
-    """Apply T1 edge flips with a per-edge cooldown."""
+    """
+    Apply T1 edge flips with a per-edge cooldown.
+    
+    Only flips the max_flips shortest edges for efficiency, and only if they are shorter
+    than l_min_T1.
+    """
     face_positions = msh.get_voronoi_face_positions(geommesh.vertices, hemesh)
     edge_lengths = msh.get_signed_dual_he_length(geommesh.vertices, face_positions, hemesh)
-    to_flip = (edge_lengths < l_min_T1) & (cooldown_counter == 0)
-    hemesh_next = msh.flip_all(hemesh, to_flip)
-    cooldown_counter = jnp.where(to_flip, cooldown_steps, jnp.clip(cooldown_counter-1, 0))
-    return hemesh_next, cooldown_counter, to_flip
+    
+    allow_flip = (cooldown_counter == 0) & hemesh.is_unique
+    edge_lengths = jnp.where(allow_flip, edge_lengths, 1000)
+    ids = jnp.argsort(edge_lengths)[:max_flips]
+    
+    hemesh_next = msh.flip_by_id(hemesh, ids, edge_lengths[ids] < l_min_T1)
+    did_flip = (edge_lengths < l_min_T1) & (edge_lengths < edge_lengths[ids[-1]])    
+    cooldown_counter = jnp.where(did_flip, cooldown_steps, jnp.clip(cooldown_counter-1, 0))
+
+    return hemesh_next, cooldown_counter, did_flip
 ```
+
+``` python
+hemesh_next, cooldown_counter, did_flip = apply_flips(geommesh, hemesh, l_min_T1=0.0,
+                                                      cooldown_counter=0*jnp.ones(hemesh.n_hes),
+                                                      cooldown_steps=1, max_flips=10)
+did_flip.sum()
+```
+
+    Array(4, dtype=int64)
+
+``` python
+_ = apply_flips(geommesh, hemesh, l_min_T1=0.0, cooldown_counter=jnp.zeros(hemesh.n_hes, dtype=jnp.int32), cooldown_steps=5,
+                 max_flips=10) 
+                 
+# 100mus for single flip. 110 mus for 10 flips/tpt, 600 mus for flipping all edges.
+```
+
+    110 μs ± 1.58 μs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
 
 ### Energy relaxation (no self-propulsion)
 
@@ -259,7 +300,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,flip_count.sum()+1])
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-15-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-19-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)
@@ -275,7 +316,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-16-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-20-output-1.png)
 
 ## Overdamped dynamics with self-propulsion
 
@@ -411,7 +452,7 @@ brownian_motion =  diffrax.VirtualBrownianTree(0, step_size*n_steps,
 term_sde = diffrax.MultiTerm(diffrax.ODETerm(drift), diffrax.ControlTerm(diffusion, brownian_motion))
 ## Define solvers
 
-solver_sp = diffrax.Tsit5()
+solver_sp = diffrax.Euler()
 solver_sde = diffrax.EulerHeun()
 ```
 
@@ -445,6 +486,7 @@ def scan_fun(state: SimState, tnext: Float[jax.Array, ""],) -> tuple[SimState, L
     # T1 transitions for connectivity
     hemesh, cooldown_counter, to_flip = apply_flips(geommesh, state.hemesh,l_min_T1,
                                                     state.cooldown_counter, cooldown_steps,)
+    
     # make measurements for log
     energy = energy_ap(geommesh, hemesh, a0, p0, ka, kp)
     n_flips=to_flip.sum()
@@ -454,12 +496,32 @@ def scan_fun(state: SimState, tnext: Float[jax.Array, ""],) -> tuple[SimState, L
     next_state = SimState(geommesh=geommesh, hemesh=hemesh,
                           cooldown_counter=cooldown_counter, tprev=tnext,
                           solver_state_sp=solver_state_sp, solver_state_sde=solver_state_sde)
+    
+    # dummy returns for profiling
+    #log = Log(geommesh=state.geommesh, hemesh=state.hemesh,
+    #        energy=0, n_flips=0)
+
+    #next_state = SimState(geommesh=state.geommesh, hemesh=state.hemesh,
+    #                      cooldown_counter=state.cooldown_counter, tprev=tnext,
+    #                      solver_state_sp=solver_state_sp, solver_state_sde=solver_state_sde)
+
     return next_state, log
+```
+
+``` python
+final_state, logs = jax.lax.scan(scan_fun, init, timepoints)
 ```
 
 ``` python
 # Time stepping: scan advances (tprev -> tnext) for both theta and vertex dynamics.
 final_state, logs = jax.lax.scan(scan_fun, init, timepoints)
+```
+
+    1.71 s ± 7.39 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+``` python
+# 1.7s total.  21ms if no T1s. More complicated solver than Euler - slower.
+# So most time is in T1s. Can we make them more efficient yet? For example, flip only every n steps.
 ```
 
 ``` python
@@ -476,7 +538,7 @@ hemesh_traj = msh.tree_unstack(logs.hemesh)
 np.linalg.norm(geommesh_traj[0].vertices-geommesh_traj[-1].vertices, axis=-1).mean()
 ```
 
-    np.float64(0.0994635637342046)
+    np.float64(0.09947065147553884)
 
 ``` python
 fig = plt.figure(figsize=(4, 3))
@@ -493,7 +555,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,logs.n_flips.sum()+1])
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-27-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-33-output-1.png)
 
 ``` python
 # angle dynamics are stochastic
@@ -510,7 +572,7 @@ plt.ylabel("orientation")
 
     Text(0, 0.5, 'orientation')
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-28-output-2.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-34-output-2.png)
 
 ``` python
 fig, ax = plt.subplots(figsize=(4, 4))
@@ -536,4 +598,4 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-29-output-1.png)
+![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-35-output-1.png)
