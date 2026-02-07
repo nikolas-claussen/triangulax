@@ -57,8 +57,7 @@ def get_signed_angle_between_vectors(a: Float[jax.Array, "2"],
 def get_angle_between_vectors(a: Float[jax.Array, " dim"],
                               b: Float[jax.Array, " dim"]) -> Float[jax.Array, ""]:
     """Angle between two vectors"""
-    inner = a.dot(b) / (jnp.linalg.norm(a) * jnp.linalg.norm(b))
-    return jnp.arccos(jnp.clip(inner, -1, 1))
+    return jnp.atan2(jnp.linalg.norm(jnp.cross(a, b)), jnp.dot(a, b))
 
 def get_cot_between_vectors(a: Float[jax.Array, " dim"],
                               b: Float[jax.Array, " dim"]) -> Float[jax.Array, ""]:
