@@ -119,7 +119,7 @@ mesh = TriMesh.read_obj("test_meshes/disk.obj")
 results = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
 ```
 
-    61.8 ms ± 496 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    UsageError: Line magic function `%%timeit` not found.
 
 ``` python
 # test vectorized vs reference implementation for two meshes
@@ -146,17 +146,15 @@ print("Equal?", all([jnp.array_equal(a, b) for a, b in zip(ref, fast)]))
     Equal? True
 
 ``` python
-fast = get_half_edge_arrays_vectorized(mesh.vertices.shape[0], mesh.faces)
 ```
 
-    776 μs ± 13.8 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+    1.11 ms ± 43 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
 
 ``` python
-fast = get_half_edge_arrays_vectorized(mesh_high_res.vertices.shape[0], mesh_high_res.faces)
 ```
 
-    CPU times: user 228 ms, sys: 12.7 ms, total: 240 ms
-    Wall time: 233 ms
+    CPU times: user 211 ms, sys: 12.6 ms, total: 224 ms
+    Wall time: 221 ms
 
 ------------------------------------------------------------------------
 
@@ -273,6 +271,24 @@ save : str -\> None:
 
 load : str -\> HeMesh
 
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L366"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### test_mesh_validity
+
+``` python
+
+def test_mesh_validity(
+    h:HeMesh
+):
+
+```
+
+*Test if a mesh is valid. Returns True if valid, fails otherwise.*
+
 ``` python
 mesh = TriMesh.read_obj("test_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
@@ -280,6 +296,12 @@ hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
+
+``` python
+test_mesh_validity(hemesh)
+```
+
+    True
 
 ``` python
 # hemeshes can be compared for equali and are registered as py-trees
@@ -334,7 +356,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-17-output-2.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-19-output-2.png)
 
 ``` python
 # here is how you would do mesh traversal with jax.lax. The issues is that the output size needs to be fixed
@@ -349,6 +371,71 @@ jax.lax.fori_loop(1, max_valence, lambda i, x: x.at[i].set(self.twin[x[i-1]]), i
 ```
 
     Array([ 47, 401,  47, 401,  47, 401,  47, 401,  47, 401], dtype=int64)
+
+#### Computing with half-edge meshes
+
+By using the arrays of a half-edge meshes to index vertex- or
+face-positions (in increasingly complex ways), we can compute all sorts
+of quantities of interests associated with a mesh. Let’s start simple
+with primal and dual edge lengths.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L394"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_signed_dual_he_length
+
+``` python
+
+def get_signed_dual_he_length(
+    vertices:Float[Array, 'n_vertices 2'], face_positions:Float[Array, 'n_faces 2'], hemesh:HeMesh
+)->Float[Array, 'n_hes']:
+
+```
+
+*Compute lengths of dual edges. Boundary dual edges get length 1.
+Negative sign = flipped edge.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L389"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_he_length
+
+``` python
+
+def get_he_length(
+    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
+)->Float[Array, 'n_hes']:
+
+```
+
+*Get lengths of half-edges (triangulation/primal edges).*
+
+``` python
+# edges and dual edges should be orthogonal since we are using circumcenters
+
+edges = mesh.vertices[hemesh.orig]-mesh.vertices[hemesh.dest]
+dual_edges = (mesh.face_positions[hemesh.heface]
+              -mesh.face_positions[hemesh.heface[hemesh.twin]])
+
+jnp.allclose(jnp.einsum('vi,vi->v', edges[~hemesh.is_bdry_edge], dual_edges[~hemesh.is_bdry_edge]), 0)
+```
+
+    Array(True, dtype=bool)
+
+``` python
+# computing the signed edge length shows that there are some "flipped" edges.
+
+signed_squared_length = jnp.einsum('vi,vi->v', edges, dual_edges @ trig.get_rot_mat(np.pi/2))
+jnp.where((signed_squared_length < -0.0) & ~hemesh.is_bdry_edge )[0]
+```
+
+    Array([  9, 185, 191, 335, 363, 539, 545, 689], dtype=int64)
 
 ### Boundary and the vertex at infinity
 
@@ -385,7 +472,7 @@ latter are listed in the `inf_vertices` attribute of a
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L366"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L406"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### connect_boundary_to_infinity
@@ -421,40 +508,19 @@ hemesh_infty = HeMesh.from_triangles(mesh_infty.vertices.shape[0], mesh_infty.fa
 ```
 
 ``` python
-igl.is_edge_manifold(mesh_infty.faces)[0], igl.is_vertex_manifold(mesh_infty.faces)[0]
-```
-
-    (True, np.True_)
-
-``` python
-hemesh_infty.dest[hemesh_infty.iterate_around_vertex(-1)], igl.boundary_loop(mesh.faces)
-```
-
-    (Array([  0,  10,  21,  34,  47,  58,  70,  86,  91, 100, 108, 113, 114,
-            110, 111, 112, 107,  99,  85,  80,  69,  46,  33,  32,  20,   9,
-            130, 121, 120, 119, 118, 117, 116, 115, 123, 122], dtype=int64),
-     array([  0, 122, 123, 115, 116, 117, 118, 119, 120, 121, 130,   9,  20,
-             32,  33,  46,  69,  80,  85,  99, 107, 112, 111, 110, 114, 113,
-            108, 100,  91,  86,  70,  58,  47,  34,  21,  10], dtype=int64))
-
-``` python
-hemesh_infty.dest[hemesh_infty.iterate_around_vertex(0)], hemesh.dest[hemesh.iterate_around_vertex(0)]
-```
-
-    (Array([  1,  11,  10, 131, 122], dtype=int64),
-     Array([  1,  11,  10, 122], dtype=int64))
-
-``` python
-(hemesh.is_bdry == (hemesh_infty.is_bdry[:-1] >0)).all()
-```
-
-    Array(True, dtype=bool)
-
-``` python
 # to get back the original faces/vertices, do this:
 
 _ = hemesh_infty.faces[~hemesh_infty.is_inf_face]
+
+# if you want to re-index the triangles so they only refer to non-infinity vertices:
+_ = igl.remove_unreferenced(new_vertices, np.asarray(hemesh_infty.faces[~hemesh_infty.is_inf_face]) )
 ```
+
+``` python
+test_mesh_validity(hemesh_infty), (hemesh.is_bdry == (hemesh_infty.is_bdry[:-1] >0)).all()
+```
+
+    (True, Array(True, dtype=bool))
 
 ## Mesh geometry and per-mesh variables
 
@@ -466,7 +532,7 @@ class, the
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L410"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L450"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GeomMesh
@@ -525,7 +591,7 @@ load : str -\> GeomHeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L552"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L592"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### set_voronoi_face_positions
@@ -544,7 +610,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L546"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L586"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_face_positions
@@ -563,7 +629,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L558"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L598"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -607,7 +673,7 @@ geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L564"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L604"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -640,7 +706,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-35-output-2.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-38-output-2.png)
 
 ### Vertex, half-edge, and face properties
 
@@ -733,7 +799,7 @@ The resulting meshes have an extra “batch” axis in all their array.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L599"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L639"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -751,7 +817,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L595"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L635"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack
@@ -834,273 +900,6 @@ isinstance(tree_unstack(batch_out), list)
 
     True
 
-## Edge flips / T1s
-
-In our simulations, cells will exchange neighbors (T1-event). In the
-triangulation, this corresponds to an edge flip. We now implement the
-edge flip algorithm for
-[`HeMesh`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh)es.
-We basically edit the various connectivity arrays (in a JAX-compatible
-way).
-
-The algorithm (and the naming conventions in
-[`flip_edge`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#flip_edge))
-are from
-[here](https://jerryyin.info/geometry-processing-algorithms/half-edge/).
-
-**Before**
-
-<figure>
-<img
-src="03_halfedge_datastructure_files/figure-commonmark/1b16caba-387e-4705-b2ea-e0adcdd61ca6-1-84d03218-dec8-4992-9150-5054fdbf5dec.png"
-alt="image.png" />
-<figcaption aria-hidden="true">image.png</figcaption>
-</figure>
-
-**After**
-
-<figure>
-<img
-src="03_halfedge_datastructure_files/figure-commonmark/1b16caba-387e-4705-b2ea-e0adcdd61ca6-2-86f67a10-6db4-41e8-b111-1d355d7fb2a6.png"
-alt="image.png" />
-<figcaption aria-hidden="true">image.png</figcaption>
-</figure>
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L610"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### flip_edge
-
-``` python
-
-def flip_edge(
-    hemesh:HeMesh, e:Int[Array, ''], check_boundary:bool=False
-)->HeMesh:
-
-```
-
-*Flip half-edge e in a half-edge mesh.*
-
-See https://jerryyin.info/geometry-processing-algorithms/half-edge/. The
-algorithm is slightly modified since we keep track of the origin and
-destination of a half-edge, and use arrays instead of pointers. Returns
-a new HeMesh, does not modify in-place.
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L647"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_signed_dual_he_length
-
-``` python
-
-def get_signed_dual_he_length(
-    vertices:Float[Array, 'n_vertices 2'], face_positions:Float[Array, 'n_faces 2'], hemesh:HeMesh
-)->Float[Array, 'n_hes']:
-
-```
-
-*Compute lengths of dual edges. Boundary dual edges get length 1.
-Negative sign = flipped edge.*
-
-``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
-hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
-```
-
-    Warning: readOBJ() ignored non-comment line 3:
-      o flat_tri_ecmc
-
-``` python
-plt.triplot(*geommesh.vertices.T, hemesh.faces)
-ax = plt.gca()
-p = cellplot(hemesh, geommesh.face_positions,
-             cell_colors=np.array([0,0,0,0.1]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
-plt.gca().add_collection(p)
-
-plt.axis("equal")
-```
-
-    (np.float64(-1.10003475),
-     np.float64(1.09628575),
-     np.float64(-1.09934025),
-     np.float64(1.09050125))
-
-![](03_halfedge_datastructure_files/figure-commonmark/cell-55-output-2.png)
-
-``` python
-# edges and dual edges should be orthogonal since we are using circumcenters
-
-edges = geommesh.vertices[hemesh.orig]-geommesh.vertices[hemesh.dest]
-dual_edges = (geommesh.face_positions[hemesh.heface]
-              -geommesh.face_positions[hemesh.heface[hemesh.twin]])
-
-jnp.allclose(jnp.einsum('vi,vi->v', edges[~hemesh.is_bdry_edge], dual_edges[~hemesh.is_bdry_edge]), 0)
-```
-
-    Array(True, dtype=bool)
-
-``` python
-# computing the signed edge length shows that there are some "flipped" edges.
-
-signed_squared_length = jnp.einsum('vi,vi->v', edges, dual_edges @ trig.get_rot_mat(np.pi/2))
-jnp.where((signed_squared_length < -0.0) & ~hemesh.is_bdry_edge )[0]
-```
-
-    Array([  9, 185, 191, 335, 363, 539, 545, 689], dtype=int64)
-
-``` python
-set_voronoi_face_positions
-```
-
-    <function __main__.set_voronoi_face_positions(geommesh: __main__.GeomMesh, hemesh: __main__.HeMesh) -> __main__.GeomMesh>
-
-``` python
-# flip edge and recompute face positions
-
-flipped_hemesh = flip_edge(hemesh, e=335)
-flipped_geommesh = set_voronoi_face_positions(geommesh, flipped_hemesh)
-```
-
-``` python
-# connectivity is still valid
-
-igl.is_edge_manifold(hemesh.faces)[0], igl.is_edge_manifold(flipped_hemesh.faces)[0], flipped_hemesh.iterate_around_vertex(100)
-```
-
-    (True, True, Array([298, 299, 630, 632], dtype=int64))
-
-``` python
-# you can see the flipped edge between vertices 126-117 in the plot below (middle right)
-
-fig = plt.figure(figsize=(8,8))
-
-plt.triplot(*geommesh.vertices.T, hemesh.faces)
-plt.triplot(*flipped_geommesh.vertices.T, flipped_hemesh.faces)
-
-ax = plt.gca()
-p1 = cellplot(hemesh, geommesh.face_positions,
-         cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
-p2 = cellplot(flipped_hemesh, flipped_geommesh.face_positions,
-              cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "tab:orange"})
-ax.add_collection(p1)
-ax.add_collection(p2)
-plt.axis("equal")
-
-label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
-```
-
-![](03_halfedge_datastructure_files/figure-commonmark/cell-61-output-1.png)
-
-#### Repeated flips
-
-In a simulation, we need to carry out edge flips at every timestep. The
-function `flip_edge(hemesh: HeMesh, e: int) -> HeMesh` does a single
-edge flip by modifying the connectivity arrays. Luckily, it is already
-JAX-compatible (we can JIT-compile it).
-
-To carry out multiple flips, we must do the flips in sequence
-(otherwise, you risk leaving the mesh in an invalid state). To make
-things JAX-compatible, we do a `jax.lax.scan` scan over *all*
-half-edges.
-
-``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
-hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
-```
-
-    Warning: readOBJ() ignored non-comment line 3:
-      o flat_tri_ecmc
-
-``` python
-dual_lengths = get_signed_dual_he_length(geommesh.vertices, geommesh.face_positions, hemesh)
-edges = jnp.where((dual_lengths < -0.05) & ~hemesh.is_bdry_edge & hemesh.is_unique)[0]
-# we only want to flip unique hes!
-edges, edges.size
-```
-
-    (Array([  9, 185, 191, 335], dtype=int64), 4)
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L669"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### flip_all
-
-``` python
-
-def flip_all(
-    hemesh:HeMesh, to_flip:Bool[Array, 'n_hes']
-)->HeMesh:
-
-```
-
-*Flip all (unique) half-edges where to_flip is True in a half-edge mesh.
-Wraps flip_edge.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L660"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### flip_by_id
-
-``` python
-
-def flip_by_id(
-    hemesh:HeMesh, ids:Int[Array, 'flips'], to_flip:Bool[Array, 'flips']
-)->HeMesh:
-
-```
-
-*Flip half-edges from ids array if the to_flip is True. Wraps
-flip_edge.*
-
-``` python
-to_flip = (dual_lengths < 0) & ~jnp.isnan(dual_lengths)
-
-flipped_hemesh = flip_all(hemesh, to_flip=to_flip)
-```
-
-``` python
-flipped_hemesh = flip_all(hemesh, to_flip=(dual_lengths<0.02)) # no extra recompile
-```
-
-``` python
-flipped_geommesh = set_voronoi_face_positions(geommesh, flipped_hemesh)
-```
-
-``` python
-fig = plt.figure(figsize=(8,8))
-
-plt.triplot(*geommesh.vertices.T, hemesh.faces)
-plt.triplot(*flipped_geommesh.vertices.T, flipped_hemesh.faces)
-
-ax = plt.gca()
-ax = plt.gca()
-p1 = cellplot(hemesh, geommesh.face_positions,
-         cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
-p2 = cellplot(flipped_hemesh, flipped_geommesh.face_positions,
-              cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "tab:orange"})
-ax.add_collection(p1)
-ax.add_collection(p2)
-plt.axis("equal")
-
-label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
-```
-
-![](03_halfedge_datastructure_files/figure-commonmark/cell-69-output-1.png)
-
 ## Saving to disk
 
 We save and load
@@ -1153,9 +952,3 @@ np.allclose(reloaded.faces, hemesh.faces)
 ```
 
     True
-
-### Next steps
-
-Looks good - the JAX-compatible triangular-mesh data structures seem to
-work. In particular, the tricky T1/edge-flip function. Next steps: toy
-simulation, notebook 01.

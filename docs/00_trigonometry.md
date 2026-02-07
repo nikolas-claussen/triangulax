@@ -21,125 +21,11 @@ practice, this means that we use `jnp` (=`jax.numpy`) instead of
 `numpy`, and make sure our code follows JAX’s functional programming
 paradigm (see [JAX- the sharp
 bits](https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html)).
-There is also some extra legwork to register any new classes with JAX.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L92"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_perp_2d
-
-``` python
-
-def get_perp_2d(
-    x:Float[Array, '... 2']
-)->Float[Array, '... 2']:
-
-```
-
-*Get perpendicular vector.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L87"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_rot_mat
-
-``` python
-
-def get_rot_mat(
-    theta:float
-)->Float[Array, '2 2']:
-
-```
-
-*Get 2D rotation matrix from angle in radians.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L82"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_cot_between_vectors
-
-``` python
-
-def get_cot_between_vectors(
-    a:Float[Array, 'dim'], b:Float[Array, 'dim']
-)->Float[Array, '']:
-
-```
-
-*Cotangent of angle between two vectors*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L76"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_angle_between_vectors
-
-``` python
-
-def get_angle_between_vectors(
-    a:Float[Array, 'dim'], b:Float[Array, 'dim']
-)->Float[Array, '']:
-
-```
-
-*Angle between two vectors*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L65"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_voronoi_corner_perimeter
-
-``` python
-
-def get_voronoi_corner_perimeter(
-    a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], zero_clip:float=1e-10
-)->Float[Array, '']:
-
-```
-
-*Compute contribution to Voronoi perimeter at corner a of triangle abc.
-Can be negative! 2d only atm.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L50"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_voronoi_corner_area
-
-``` python
-
-def get_voronoi_corner_area(
-    a:Float[Array, '2'], b:Float[Array, '2'], c:Float[Array, '2'], zero_clip:float=1e-10
-)->Float[Array, '']:
-
-```
-
-*Compute Voronoi area at corner a of triangle abc. Returns zero for a
-degenerate triangle. 2d only atm.*
-
-TO DO: does this yield *correct* results for self-intersecting corner
-slices (circumcenter outside of triangle)?
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L45"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_polygon_area
@@ -157,7 +43,7 @@ def get_polygon_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L39"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L40"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_area
@@ -170,12 +56,13 @@ def get_triangle_area(
 
 ```
 
-*Area of triangle with vertices a, b, c. Works in dim 2 or 3.*
+*Unoriented area of triangle with vertices a, b, c. Works in dim 2 or
+3.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L33"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L34"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_oriented_triangle_area
@@ -194,7 +81,7 @@ scalar, if d=3, a vector.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L23"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L24"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_circumcenter
@@ -208,6 +95,97 @@ def get_circumcenter(
 ```
 
 *Return circumcenter coordinates of triangle with vertices a, b, c*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L63"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_cot_between_vectors
+
+``` python
+
+def get_cot_between_vectors(
+    a:Float[Array, 'dim'], b:Float[Array, 'dim']
+)->Float[Array, '']:
+
+```
+
+*Cotangent of angle between two vectors*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L57"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_angle_between_vectors
+
+``` python
+
+def get_angle_between_vectors(
+    a:Float[Array, 'dim'], b:Float[Array, 'dim']
+)->Float[Array, '']:
+
+```
+
+*Angle between two vectors*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L51"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_signed_angle_between_vectors
+
+``` python
+
+def get_signed_angle_between_vectors(
+    a:Float[Array, '2'], b:Float[Array, '2']
+)->Float[Array, '']:
+
+```
+
+*Signed angle between two 2d vectors*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L70"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_voronoi_corner_area
+
+``` python
+
+def get_voronoi_corner_area(
+    a:Float[Array, 'dim'], b:Float[Array, 'dim'], c:Float[Array, 'dim'], zero_clip:float=1e-10
+)->Float[Array, '*']:
+
+```
+
+*Compute oriented Voronoi area at corner a of triangle abc. Returns
+vector in 3d.* Returns zero for a degenerate triangle.
+
+``` python
+get_voronoi_corner_area(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
+```
+
+    Array(-0.25, dtype=float64)
+
+``` python
+get_circumcenter(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
+```
+
+    Array([0.5, 0.5], dtype=float64)
+
+``` python
+get_signed_angle_between_vectors(jnp.array([1.,0.]), jnp.array([0.5,0.5])) * (180/jnp.pi)
+```
+
+    Array(45., dtype=float64)
 
 ``` python
 get_polygon_area(jnp.array([[0.,0.], [0.,1.], [1.,0.]]) ), get_triangle_area(*jnp.array([[0.,0.], [0.,1.], [1.,0.]]) )
@@ -239,18 +217,12 @@ get_voronoi_corner_area(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0
 
     Array(-0.25, dtype=float64)
 
-``` python
-get_voronoi_corner_perimeter(jnp.array([0., 0.]), jnp.array([1., 0.]), jnp.array([0., 1.]))
-```
-
-    Array(1., dtype=float64)
-
 ### Normals and rotation matrices in 3D
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L105"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L100"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### quaternion_to_rot_max
@@ -271,7 +243,7 @@ https://fr.wikipedia.org/wiki/Quaternions_et_rotation_dans_l%27espace
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L98"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L93"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_normal
@@ -286,12 +258,48 @@ def get_triangle_normal(
 
 *Compute unit normal vector of triangle abc.*
 
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L89"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_perp_2d
+
+``` python
+
+def get_perp_2d(
+    x:Float[Array, '... 2']
+)->Float[Array, '... 2']:
+
+```
+
+*Get perpendicular vector.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L85"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_rot_mat
+
+``` python
+
+def get_rot_mat(
+    theta:float
+)->Float[Array, '2 2']:
+
+```
+
+*Get 2D rotation matrix from angle in radians.*
+
 ### Barycentric coordinates
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L118"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L113"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_barycentric_coordinates

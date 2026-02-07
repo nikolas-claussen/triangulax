@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>linear_operators_on_meshes – triangulax</title>
+<title>geometry_and_linear_operators – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -137,14 +137,14 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/04_linear_operators_on_meshes_files/figure-html/9a657caf-1-image.png">
+<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/05_geometry_and_linear_operators_files/figure-html/9a657caf-1-image.png">
 <meta property="og:site_name" content="triangulax">
 <meta property="og:image:alt" content="image.png">
 <meta property="og:image:height" content="334">
 <meta property="og:image:width" content="358">
 <meta name="twitter:title" content="triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/04_linear_operators_on_meshes_files/figure-html/9a657caf-1-image.png">
+<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/05_geometry_and_linear_operators_files/figure-html/9a657caf-1-image.png">
 <meta name="twitter:image:alt" content="image.png">
 <meta name="twitter:image-height" content="334">
 <meta name="twitter:image-width" content="358">
@@ -172,7 +172,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04_linear_operators_on_meshes.html">Adjacency-like operators on half-edge meshes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05_geometry_and_linear_operators.html">Adjacency-like operators on half-edge meshes</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -216,19 +216,25 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_linear_operators_on_meshes.html" class="sidebar-item-text sidebar-link active">
+  <a href="./04_topological_modifications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topological modifications in half-edge meshes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_geometry_and_linear_operators.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_example_simulation.html" class="sidebar-item-text sidebar-link">
+  <a href="./06_example_simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06_self-propelled_Voronoi_model.html" class="sidebar-item-text sidebar-link">
+  <a href="./07_self-propelled_Voronoi_model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
   </div>
 </li>
@@ -249,10 +255,10 @@ window.Quarto = {
   <li><a href="#computing-cell-areas-perimeters-etc-via-corners" id="toc-computing-cell-areas-perimeters-etc-via-corners" class="nav-link" data-scroll-target="#computing-cell-areas-perimeters-etc-via-corners">Computing cell areas, perimeters, etc via corners</a></li>
   <li><a href="#sum_he_to_vertex_opposite" id="toc-sum_he_to_vertex_opposite" class="nav-link" data-scroll-target="#sum_he_to_vertex_opposite">sum_he_to_vertex_opposite</a></li>
   <li><a href="#sum_he_to_vertex_incoming" id="toc-sum_he_to_vertex_incoming" class="nav-link" data-scroll-target="#sum_he_to_vertex_incoming">sum_he_to_vertex_incoming</a></li>
-  <li><a href="#get_cell_areas" id="toc-get_cell_areas" class="nav-link" data-scroll-target="#get_cell_areas">get_cell_areas</a></li>
+  <li><a href="#get_cell_areas_traversal" id="toc-get_cell_areas_traversal" class="nav-link" data-scroll-target="#get_cell_areas_traversal">get_cell_areas_traversal</a></li>
+  <li><a href="#mesh-geometry-functions-area-coordination-number" id="toc-mesh-geometry-functions-area-coordination-number" class="nav-link" data-scroll-target="#mesh-geometry-functions-area-coordination-number">Mesh geometry functions (area, coordination number, …)</a></li>
   <li><a href="#get_coordination_number" id="toc-get_coordination_number" class="nav-link" data-scroll-target="#get_coordination_number">get_coordination_number</a></li>
-  <li><a href="#get_cell_perimeters" id="toc-get_cell_perimeters" class="nav-link" data-scroll-target="#get_cell_perimeters">get_cell_perimeters</a></li>
-  <li><a href="#get_cell_areas-1" id="toc-get_cell_areas-1" class="nav-link" data-scroll-target="#get_cell_areas-1">get_cell_areas</a></li>
+  <li><a href="#get_voronoi_areas" id="toc-get_voronoi_areas" class="nav-link" data-scroll-target="#get_voronoi_areas">get_voronoi_areas</a></li>
   <li><a href="#get_triangle_areas" id="toc-get_triangle_areas" class="nav-link" data-scroll-target="#get_triangle_areas">get_triangle_areas</a></li>
   <li><a href="#finite-element-gradient-and-cotan-laplacian" id="toc-finite-element-gradient-and-cotan-laplacian" class="nav-link" data-scroll-target="#finite-element-gradient-and-cotan-laplacian">Finite-element gradient and cotan-Laplacian</a></li>
   <li><a href="#compute_cotan_laplace" id="toc-compute_cotan_laplace" class="nav-link" data-scroll-target="#compute_cotan_laplace">compute_cotan_laplace</a></li>
@@ -265,7 +271,7 @@ window.Quarto = {
   <li><a href="#linear_op_to_sparse" id="toc-linear_op_to_sparse" class="nav-link" data-scroll-target="#linear_op_to_sparse">linear_op_to_sparse</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="04_linear_operators_on_meshes.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="05_geometry_and_linear_operators.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
@@ -282,7 +288,7 @@ window.Quarto = {
 <li>Compute the finite-element gradient of a function defined on vertices</li>
 </ul>
 <p>These operations can be done efficiently using a “gather/scatter” approach, see <a href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.ndarray.at.html#jax.numpy.ndarray.at"><code>jax.numpy.ndarray.at</code></a>. There is no need to explicitly instantiate a matrix for the operators.</p>
-<div id="4006c7fb-56a2-445c-9647-017dc017074e" class="cell" data-execution_count="9">
+<div id="4006c7fb-56a2-445c-9647-017dc017074e" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load test data</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
@@ -319,7 +325,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces ...'</span>]:</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Average per-vertex field onto faces (uniform weights).</em></p>
-<div id="78393c62" class="cell" data-execution_count="11">
+<div id="78393c62" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests vs libigl</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">123</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -356,7 +362,7 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <section id="computing-cell-areas-perimeters-etc-via-corners" class="level3">
 <h3 class="anchored" data-anchor-id="computing-cell-areas-perimeters-etc-via-corners">Computing cell areas, perimeters, etc via corners</h3>
 <p>To compute, for instance, the cell area using the shoelace formula, you need to iterate around the faces adjacent to a vertex. This is not straightforward to vectorize because the number of adjacent faces per vertex can vary (there can be 5-, 6-, 7-sided cells etc.). One way to solve this is a scheme in which the lists of adjacent faces are “padded” in some manner, so that they are all the same length. This is cumbersome. Instead, let us split all “cell-based” quantities into contributions from “corners”, i.e., half-edges, like this:</p>
-<p><img src="04_linear_operators_on_meshes_files/figure-html/9a657caf-1-image.png" class="img-fluid" alt="image.png"> Source: <a href="https://doc.cgal.org/latest/Weights/group__PkgWeightsRefVoronoiRegionWeights.html">CGAL</a></p>
+<p><img src="05_geometry_and_linear_operators_files/figure-html/9a657caf-1-image.png" class="img-fluid" alt="image.png"> Source: <a href="https://doc.cgal.org/latest/Weights/group__PkgWeightsRefVoronoiRegionWeights.html">CGAL</a></p>
 <p>To compute the total area, we can sum over all half-edges <span class="math inline">\((r,p)\)</span> opposite to a vertex <span class="math inline">\(q\)</span>. Numerically, this can be achieved efficiently using gather/scatter operations.</p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L78" target="_blank" style="float:right; font-size:smaller">source</a></p>
@@ -384,18 +390,18 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <p><em>Sum a half-edge field onto destination vertices.</em></p>
 <p>hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L94" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="get_cell_areas" class="level3">
-<h3 class="anchored" data-anchor-id="get_cell_areas">get_cell_areas</h3>
+<section id="get_cell_areas_traversal" class="level3">
+<h3 class="anchored" data-anchor-id="get_cell_areas_traversal">get_cell_areas_traversal</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_areas(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_areas_traversal(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    geommesh:GeomMesh, hemesh:HeMesh</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute areas of cells by mesh traversal (don’t use for simulation, inefficient).</em></p>
 <p>Boundary vertices get area 0.</p>
-<div id="5618181e-7193-48af-ac45-c1b3d77c4df3" class="cell" data-execution_count="22">
+<div id="5618181e-7193-48af-ac45-c1b3d77c4df3" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let's use the adjacency matrix to compute the area of all cells. First, compute all corner areas</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>a, b, c <span class="op">=</span> (hemesh.dest[hemesh.nxt], hemesh.dest[hemesh.prv], hemesh.dest)</span>
@@ -404,15 +410,18 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> sum_he_to_vertex_opposite(hemesh, corner_areas)</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>cell_areas_corner <span class="op">=</span> cell_areas_corner.at[hemesh.is_bdry].<span class="bu">set</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="462432a9-100a-400c-9942-9eb1643b05bb" class="cell" data-execution_count="25">
+<div id="462432a9-100a-400c-9942-9eb1643b05bb" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for comparison, compute the areas by mesh traversal</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>cell_areas_iterative <span class="op">=</span> <span class="op">-</span>get_cell_areas(geommesh, hemesh)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>cell_areas_iterative <span class="op">=</span> <span class="op">-</span>get_cell_areas_traversal(geommesh, hemesh)</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">abs</span>(cell_areas_iterative<span class="op">-</span>cell_areas_corner).<span class="bu">max</span>() <span class="co"># works!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
+<div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>np.float64(4.85722573273506e-17)</code></pre>
 </div>
 </div>
+</section>
+<section id="mesh-geometry-functions-area-coordination-number" class="level3">
+<h3 class="anchored" data-anchor-id="mesh-geometry-functions-area-coordination-number">Mesh geometry functions (area, coordination number, …)</h3>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L112" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
@@ -423,53 +432,35 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="64840cc3-641c-4076-bbef-802d67cf3e4c" class="cell" data-execution_count="17">
+<div id="64840cc3-641c-4076-bbef-802d67cf3e4c" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using the gather/scatter trick, we can also compute the coordination number of each vertex</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>get_coordination_number(hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>Array([4., 6., 6., 7., 6., 6., 6., 6., 6., 4., 4., 6., 6., 5., 6., 6., 6.,
-       5., 5., 6., 3., 4., 6., 6., 6., 7., 5., 6., 6., 7., 7., 6., 4., 4.,
-       3., 7., 6., 6., 5., 7., 6., 6., 6., 6., 7., 5., 4., 5., 5., 6., 6.,
-       7., 7., 5., 6., 6., 7., 5., 3., 5., 7., 6., 5., 6., 5., 6., 7., 6.,
-       5., 4., 5., 5., 6., 6., 6., 6., 6., 7., 6., 6., 4., 6., 6., 5., 6.,
-       4., 4., 6., 6., 6., 7., 4., 6., 6., 6., 5., 6., 6., 6., 4., 4., 6.,
-       6., 6., 6., 7., 6., 4., 4., 5., 4., 4., 3., 4., 4., 3., 4., 3., 5.,
-       4., 3., 4., 3., 5., 6., 6., 6., 6., 6., 6., 4.], dtype=float64)</code></pre>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>get_coordination_number(hemesh).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>Array(5.40458015, dtype=float64)</code></pre>
 </div>
 </div>
-<hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L131" target="_blank" style="float:right; font-size:smaller">source</a></p>
-</section>
-<section id="get_cell_perimeters" class="level3">
-<h3 class="anchored" data-anchor-id="get_cell_perimeters">get_cell_perimeters</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_perimeters(</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Compute Voronoi perimeters for each vertex.</em></p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="get_cell_areas-1" class="level3">
-<h3 class="anchored" data-anchor-id="get_cell_areas-1">get_cell_areas</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cell_areas(</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="get_voronoi_areas" class="level3">
+<h3 class="anchored" data-anchor-id="get_voronoi_areas">get_voronoi_areas</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_areas(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute Voronoi area for each vertex.</em></p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L116" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_triangle_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_triangle_areas">get_triangle_areas</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_areas(</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces ...'</span>]:</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_areas(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces ...'</span>]:</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute oriented triangle areas in a mesh.</em></p>
 </section>
 <section id="finite-element-gradient-and-cotan-laplacian" class="level3">
@@ -485,119 +476,119 @@ face-&gt;vertex rel. error: 1.3698911362107636e-16</code></pre>
 \]</span> where the sum is over adjacent vertices, and <span class="math inline">\(\alpha_j, \beta_j\)</span> are the two triangle angles “opposite” to the edge <span class="math inline">\(ij\)</span>.</p>
 <p>To check for correctness, we can compare with <a href="https://libigl.github.io/libigl-python-bindings/tut-chapter1/">this <code>libgigl</code> tutorial</a>, using the test mesh and some random test fields.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L143" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L132" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_cotan_laplace" class="level3">
 <h3 class="anchored" data-anchor-id="compute_cotan_laplace">compute_cotan_laplace</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_cotan_laplace(</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices dim'</span>], vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices ...'</span>]:</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_cotan_laplace(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices dim'</span>], vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices ...'</span>]:</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute cotangent laplacian of a per-vertex field (natural boundary conditions).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L166" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L155" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="cotan_laplace_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="cotan_laplace_sparse">cotan_laplace_sparse</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cotan_laplace_sparse(</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices dim'</span>]</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cotan_laplace_sparse(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices dim'</span>]</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Assemble cotangent Laplacian as a sparse matrix (BCOO).</em></p>
 <div id="1a781550" class="cell" data-execution_count="100">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test against libigl cotmatrix (natural boundary conditions)</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>u_vec <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices, <span class="dv">3</span>))</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> igl.cotmatrix(np.asarray(geommesh.vertices), np.asarray(hemesh.faces))</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>lap_jax <span class="op">=</span> compute_cotan_laplace(hemesh, geommesh.vertices, u)</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>lap_igl <span class="op">=</span> L <span class="op">@</span> np.asarray(u)</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>rel_err <span class="op">=</span> np.linalg.norm(np.asarray(lap_jax) <span class="op">-</span> lap_igl) <span class="op">/</span> np.linalg.norm(lap_igl)</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"scalar field rel. error:"</span>, rel_err)</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>lap_jax_vec <span class="op">=</span> compute_cotan_laplace(hemesh, geommesh.vertices, u_vec)</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>lap_igl_vec <span class="op">=</span> L <span class="op">@</span> np.asarray(u_vec)</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>rel_err_vec <span class="op">=</span> np.linalg.norm(np.asarray(lap_jax_vec) <span class="op">-</span> lap_igl_vec) <span class="op">/</span> np.linalg.norm(lap_igl_vec)</span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"vector field rel. error:"</span>, rel_err_vec)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test against libigl cotmatrix (natural boundary conditions)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>u_vec <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices, <span class="dv">3</span>))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> igl.cotmatrix(np.asarray(geommesh.vertices), np.asarray(hemesh.faces))</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>lap_jax <span class="op">=</span> compute_cotan_laplace(hemesh, geommesh.vertices, u)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>lap_igl <span class="op">=</span> L <span class="op">@</span> np.asarray(u)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>rel_err <span class="op">=</span> np.linalg.norm(np.asarray(lap_jax) <span class="op">-</span> lap_igl) <span class="op">/</span> np.linalg.norm(lap_igl)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"scalar field rel. error:"</span>, rel_err)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>lap_jax_vec <span class="op">=</span> compute_cotan_laplace(hemesh, geommesh.vertices, u_vec)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>lap_igl_vec <span class="op">=</span> L <span class="op">@</span> np.asarray(u_vec)</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>rel_err_vec <span class="op">=</span> np.linalg.norm(np.asarray(lap_jax_vec) <span class="op">-</span> lap_igl_vec) <span class="op">/</span> np.linalg.norm(lap_igl_vec)</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"vector field rel. error:"</span>, rel_err_vec)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>scalar field rel. error: 3.678610050757719e-12
 vector field rel. error: 3.659299534118066e-12</code></pre>
 </div>
 </div>
 <div id="95677f8d" class="cell" data-execution_count="61">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test sparse cotan Laplacian vs apply function</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>u_test <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>L_sparse <span class="op">=</span> cotan_laplace_sparse(hemesh, geommesh.vertices)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>lap_sparse <span class="op">=</span> L_sparse <span class="op">@</span> u_test</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>lap_apply <span class="op">=</span> compute_cotan_laplace(hemesh, geommesh.vertices, u_test)</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>rel_err_sparse <span class="op">=</span> jnp.linalg.norm(lap_sparse <span class="op">-</span> lap_apply) <span class="op">/</span> jnp.linalg.norm(lap_apply)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"cotan sparse vs apply rel. error:"</span>, rel_err_sparse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test sparse cotan Laplacian vs apply function</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>u_test <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>L_sparse <span class="op">=</span> cotan_laplace_sparse(hemesh, geommesh.vertices)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>lap_sparse <span class="op">=</span> L_sparse <span class="op">@</span> u_test</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>lap_apply <span class="op">=</span> compute_cotan_laplace(hemesh, geommesh.vertices, u_test)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>rel_err_sparse <span class="op">=</span> jnp.linalg.norm(lap_sparse <span class="op">-</span> lap_apply) <span class="op">/</span> jnp.linalg.norm(lap_apply)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"cotan sparse vs apply rel. error:"</span>, rel_err_sparse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>cotan sparse vs apply rel. error: 1.3520071722257924e-16</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L217" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L206" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_gradient_3d" class="level3">
 <h3 class="anchored" data-anchor-id="compute_gradient_3d">compute_gradient_3d</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_3d(</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices 3'</span>], vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 3 ...'</span>]:</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_3d(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices 3'</span>], vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 3 ...'</span>]:</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute the linear finite-element gradient (constant per face).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L193" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L182" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_gradient_2d" class="level3">
 <h3 class="anchored" data-anchor-id="compute_gradient_2d">compute_gradient_2d</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_2d(</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices 2'</span>], vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 2 ...'</span>]:</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_2d(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, vertices:Float[Array, <span class="st">'n_vertices 2'</span>], vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 2 ...'</span>]:</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute the linear finite-element gradient (constant per face).</em></p>
 <div id="92537afc" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here's how to compute the gradient in libigl</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>grad_matrix <span class="op">=</span> igl.grad(np.asarray(geommesh.vertices), np.asarray(hemesh.faces))</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the gradient of field by matrix multiplication</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_matrix <span class="op">@</span> np.asarray(u)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># order='F' copied from igl tutorial</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_igl.reshape((hemesh.n_faces, geommesh.dim), order<span class="op">=</span><span class="st">'F'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here's how to compute the gradient in libigl</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>grad_matrix <span class="op">=</span> igl.grad(np.asarray(geommesh.vertices), np.asarray(hemesh.faces))</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the gradient of field by matrix multiplication</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_matrix <span class="op">@</span> np.asarray(u)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># order='F' copied from igl tutorial</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_igl.reshape((hemesh.n_faces, geommesh.dim), order<span class="op">=</span><span class="st">'F'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="58db395a" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test jax and libigl implementations</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>grad_jax <span class="op">=</span> compute_gradient_2d(hemesh, geommesh.vertices, u)</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>rel_err_grad <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax) <span class="op">-</span> grad_igl) <span class="op">/</span> np.linalg.norm(grad_igl)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test jax and libigl implementations</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>grad_jax <span class="op">=</span> compute_gradient_2d(hemesh, geommesh.vertices, u)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>rel_err_grad <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax) <span class="op">-</span> grad_igl) <span class="op">/</span> np.linalg.norm(grad_igl)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>gradient rel. error: 1.413315746703021e-16</code></pre>
 </div>
 </div>
 <div id="fedbb5c6" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same test, in 3d</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>grad_matrix_3d <span class="op">=</span> igl.grad(np.asarray(geommesh_3d.vertices), np.asarray(hemesh.faces))</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_matrix_3d <span class="op">@</span> np.asarray(u)</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_igl_3d.reshape((hemesh.n_faces, geommesh_3d.dim), order<span class="op">=</span><span class="st">'F'</span>)</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>grad_jax_3d <span class="op">=</span> compute_gradient_3d(hemesh, geommesh_3d.vertices, u)</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>rel_err_grad_3d <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax_3d) <span class="op">-</span> grad_igl_3d) <span class="op">/</span> np.linalg.norm(grad_igl_3d)</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad_3d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same test, in 3d</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>grad_matrix_3d <span class="op">=</span> igl.grad(np.asarray(geommesh_3d.vertices), np.asarray(hemesh.faces))</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_matrix_3d <span class="op">@</span> np.asarray(u)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_igl_3d.reshape((hemesh.n_faces, geommesh_3d.dim), order<span class="op">=</span><span class="st">'F'</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>grad_jax_3d <span class="op">=</span> compute_gradient_3d(hemesh, geommesh_3d.vertices, u)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>rel_err_grad_3d <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax_3d) <span class="op">-</span> grad_igl_3d) <span class="op">/</span> np.linalg.norm(grad_igl_3d)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad_3d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>gradient rel. error: 1.5657863888820882e-16</code></pre>
 </div>
@@ -605,121 +596,102 @@ vector field rel. error: 3.659299534118066e-12</code></pre>
 </section>
 <section id="wrapping-as-linear-operators" class="level3">
 <h3 class="anchored" data-anchor-id="wrapping-as-linear-operators">Wrapping as linear operators</h3>
-<p>It’s often useful to think of functions like <a href="https://nikolas-claussen.github.io/triangulax/linear_operators_on_meshes.html#compute_cotan_laplace"><code>compute_cotan_laplace()</code></a> as a linear operator on fields on meshes. For example, imagine you want to solve the Laplace equation on a mesh with fixed vertex positions and connectivity. You will want to use a linear solver. Luckily, most such solvers only need to be able to compute the action of a linear operator on an input vector, and don’t need an explicit matrix representation.</p>
-<p>In the JAX ecosystem, the <code>lineax</code> library defines linear solvers. We can <em>wrap</em> <a href="https://nikolas-claussen.github.io/triangulax/linear_operators_on_meshes.html#compute_cotan_laplace"><code>compute_cotan_laplace()</code></a> as a linear operator, which allows us to pass it into iterative linear algebra algorithms.</p>
+<p>It’s often useful to think of functions like <a href="https://nikolas-claussen.github.io/triangulax/geometry_and_linear_operators.html#compute_cotan_laplace"><code>compute_cotan_laplace()</code></a> as a linear operator on fields on meshes. For example, imagine you want to solve the Laplace equation on a mesh with fixed vertex positions and connectivity. You will want to use a linear solver. Luckily, most such solvers only need to be able to compute the action of a linear operator on an input vector, and don’t need an explicit matrix representation.</p>
+<p>In the JAX ecosystem, the <code>lineax</code> library defines linear solvers. We can <em>wrap</em> <a href="https://nikolas-claussen.github.io/triangulax/geometry_and_linear_operators.html#compute_cotan_laplace"><code>compute_cotan_laplace()</code></a> as a linear operator, which allows us to pass it into iterative linear algebra algorithms.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L266" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L255" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="diag_jsparse" class="level3">
 <h3 class="anchored" data-anchor-id="diag_jsparse">diag_jsparse</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diag_jsparse(</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    v:Float[Array, <span class="st">'N'</span>], k:<span class="bu">int</span><span class="op">=</span><span class="dv">0</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diag_jsparse(</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    v:Float[Array, <span class="st">'N'</span>], k:<span class="bu">int</span><span class="op">=</span><span class="dv">0</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Construct a diagonal jax.sparse array. Plugin replacement for np.diag</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L241" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L230" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="scipy_to_bcoo" class="level3">
 <h3 class="anchored" data-anchor-id="scipy_to_bcoo">scipy_to_bcoo</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scipy_to_bcoo(</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    A, <span class="co"># Input sparse matrix (CSR or CSC recommended)</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Equivalent JAX sparse matrix</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scipy_to_bcoo(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    A, <span class="co"># Input sparse matrix (CSR or CSC recommended)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Equivalent JAX sparse matrix</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Convert a SciPy sparse matrix (CSC or CSR) to a JAX BCOO sparse matrix</em> without converting to dense.</p>
 <div id="1baabfa0" class="cell" data-execution_count="62">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> msh.GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> msh.GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
 <div id="ae8e6189" class="cell" data-execution_count="63">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># "bake in" the connectivity and vertex positions</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices)</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> laplace_op(u)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># "bake in" the connectivity and vertex positions</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> laplace_op(u)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cdce536a" class="cell" data-execution_count="64">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the linear operator</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>laplace_op_lx <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op,</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                                              input_structure<span class="op">=</span>jax.eval_shape(laplace_op, u))</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># now you can use the linear operator to compute matrix representations, solve linear systems, etc.</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> laplace_op_lx.as_matrix()</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>mat.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the linear operator</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>laplace_op_lx <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                                              input_structure<span class="op">=</span>jax.eval_shape(laplace_op, u))</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># now you can use the linear operator to compute matrix representations, solve linear systems, etc.</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> laplace_op_lx.as_matrix()</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>mat.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="64">
 <pre><code>(131, 131)</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L278" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L267" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="linear_op_to_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="linear_op_to_sparse">linear_op_to_sparse</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> linear_op_to_sparse(</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    op:<span class="bu">callable</span>, in_shape:<span class="bu">tuple</span>, out_shape:<span class="bu">tuple</span>, dtype:Union<span class="op">=</span><span class="va">None</span>, chunk_size:<span class="bu">int</span><span class="op">=</span><span class="dv">256</span>, tol:<span class="bu">float</span><span class="op">=</span><span class="fl">0.0</span></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> linear_op_to_sparse(</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    op:<span class="bu">callable</span>, in_shape:<span class="bu">tuple</span>, out_shape:<span class="bu">tuple</span>, dtype:Union<span class="op">=</span><span class="va">None</span>, chunk_size:<span class="bu">int</span><span class="op">=</span><span class="dv">256</span>, tol:<span class="bu">float</span><span class="op">=</span><span class="fl">0.0</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Build a sparse matrix for a linear map using batched one-hot probes.</em></p>
 <p>Note: this function is general, but not necessarily very efficient for large matrix sizes.</p>
 <div id="a9ed5a07" class="cell" data-execution_count="93">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare sparse construction to lineax dense matrix (small meshes only)</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hemesh.n_vertices <span class="op">&lt;=</span> <span class="dv">2000</span>:</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    laplace_op_local <span class="op">=</span> functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices)</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    laplace_op_lx_local <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op_local,</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>                                                        input_structure<span class="op">=</span>jax.eval_shape(laplace_op_local, u))</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    sp_mat <span class="op">=</span> linear_op_to_sparse(laplace_op_local, (hemesh.n_vertices,), (hemesh.n_vertices,))</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    mat_dense <span class="op">=</span> laplace_op_lx_local.as_matrix()</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    rel_err_sparse <span class="op">=</span> jnp.linalg.norm(sp_mat.todense() <span class="op">-</span> mat_dense) <span class="op">/</span> jnp.linalg.norm(mat_dense)</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"sparse vs lineax rel. error:"</span>, rel_err_sparse)</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Skipping dense comparison for large mesh."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare sparse construction to lineax dense matrix (small meshes only)</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hemesh.n_vertices <span class="op">&lt;=</span> <span class="dv">2000</span>:</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    laplace_op_local <span class="op">=</span> functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    laplace_op_lx_local <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op_local,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                                                        input_structure<span class="op">=</span>jax.eval_shape(laplace_op_local, u))</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    sp_mat <span class="op">=</span> linear_op_to_sparse(laplace_op_local, (hemesh.n_vertices,), (hemesh.n_vertices,))</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    mat_dense <span class="op">=</span> laplace_op_lx_local.as_matrix()</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    rel_err_sparse <span class="op">=</span> jnp.linalg.norm(sp_mat.todense() <span class="op">-</span> mat_dense) <span class="op">/</span> jnp.linalg.norm(mat_dense)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"sparse vs lineax rel. error:"</span>, rel_err_sparse)</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Skipping dense comparison for large mesh."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Skipping dense comparison for large mesh.</code></pre>
 </div>
 </div>
 <div id="1cc5f280" class="cell" data-execution_count="94">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">## now let's try with a large mesh</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/torus_high_resolution.obj"</span>)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> msh.GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> jax.jit(functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">## now let's try with a large mesh</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/torus_high_resolution.obj"</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> msh.GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> jax.jit(functools.partial(compute_cotan_laplace, hemesh, geommesh.vertices))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o Torus</code></pre>
 </div>
 </div>
-<div id="27a16423" class="cell" data-execution_count="95">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>hemesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="95">
-<pre><code>HeMesh(N_V=36864, N_HE=221184, N_F=73728)</code></pre>
-</div>
-</div>
 <div id="81a0ffb5" class="cell" data-execution_count="96">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>sparse_laplace_op <span class="op">=</span>  linear_op_to_sparse(laplace_op, (hemesh.n_vertices,), (hemesh.n_vertices,))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="d0a32c8a" class="cell" data-execution_count="97">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>sparse_laplace_op.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="97">
-<pre><code>(36864, 36864)</code></pre>
-</div>
-</div>
-<div id="78a46f71" class="cell" data-execution_count="49">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>igl.cotmatrix(geommesh.vertices, hemesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="49">
-<pre><code>&lt;Compressed Sparse Column sparse matrix of dtype 'float64'
-    with 258048 stored elements and shape (36864, 36864)&gt;</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>sparse_laplace_op <span class="op">=</span>  linear_op_to_sparse(laplace_op, (hemesh.n_vertices,), (hemesh.n_vertices,))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

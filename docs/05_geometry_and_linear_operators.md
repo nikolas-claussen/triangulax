@@ -115,7 +115,7 @@ in some manner, so that they are all the same length. This is
 cumbersome. Instead, let us split all “cell-based” quantities into
 contributions from “corners”, i.e., half-edges, like this:
 
-![image.png](04_linear_operators_on_meshes_files/figure-commonmark/9a657caf-1-image.png)
+![image.png](05_geometry_and_linear_operators_files/figure-commonmark/9a657caf-1-image.png)
 Source:
 [CGAL](https://doc.cgal.org/latest/Weights/group__PkgWeightsRefVoronoiRegionWeights.html)
 
@@ -168,14 +168,14 @@ hemesh: connectivity information he_field: (n_hes,) or (n_hes, d) array
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L94"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_cell_areas
+### get_cell_areas_traversal
 
 ``` python
 
-def get_cell_areas(
+def get_cell_areas_traversal(
     geommesh:GeomMesh, hemesh:HeMesh
 )->Float[Array, 'n_vertices']:
 
@@ -199,11 +199,13 @@ cell_areas_corner = cell_areas_corner.at[hemesh.is_bdry].set(0)
 ``` python
 # for comparison, compute the areas by mesh traversal
 
-cell_areas_iterative = -get_cell_areas(geommesh, hemesh)
+cell_areas_iterative = -get_cell_areas_traversal(geommesh, hemesh)
 np.abs(cell_areas_iterative-cell_areas_corner).max() # works!
 ```
 
     np.float64(4.85722573273506e-17)
+
+### Mesh geometry functions (area, coordination number, …)
 
 ------------------------------------------------------------------------
 
@@ -224,35 +226,10 @@ def get_coordination_number(
 ``` python
 # using the gather/scatter trick, we can also compute the coordination number of each vertex
 
-get_coordination_number(hemesh)
+get_coordination_number(hemesh).mean()
 ```
 
-    Array([4., 6., 6., 7., 6., 6., 6., 6., 6., 4., 4., 6., 6., 5., 6., 6., 6.,
-           5., 5., 6., 3., 4., 6., 6., 6., 7., 5., 6., 6., 7., 7., 6., 4., 4.,
-           3., 7., 6., 6., 5., 7., 6., 6., 6., 6., 7., 5., 4., 5., 5., 6., 6.,
-           7., 7., 5., 6., 6., 7., 5., 3., 5., 7., 6., 5., 6., 5., 6., 7., 6.,
-           5., 4., 5., 5., 6., 6., 6., 6., 6., 7., 6., 6., 4., 6., 6., 5., 6.,
-           4., 4., 6., 6., 6., 7., 4., 6., 6., 6., 5., 6., 6., 6., 4., 4., 6.,
-           6., 6., 6., 7., 6., 4., 4., 5., 4., 4., 3., 4., 4., 3., 4., 3., 5.,
-           4., 3., 4., 3., 5., 6., 6., 6., 6., 6., 6., 4.], dtype=float64)
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L131"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_cell_perimeters
-
-``` python
-
-def get_cell_perimeters(
-    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_vertices']:
-
-```
-
-*Compute Voronoi perimeters for each vertex.*
+    Array(5.40458015, dtype=float64)
 
 ------------------------------------------------------------------------
 
@@ -260,11 +237,11 @@ def get_cell_perimeters(
 href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_cell_areas
+### get_voronoi_areas
 
 ``` python
 
-def get_cell_areas(
+def get_voronoi_areas(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
 )->Float[Array, 'n_vertices']:
 
@@ -326,7 +303,7 @@ using the test mesh and some random test fields.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L143"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L132"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_cotan_laplace
@@ -345,7 +322,7 @@ conditions).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L166"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L155"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cotan_laplace_sparse
@@ -402,7 +379,7 @@ print("cotan sparse vs apply rel. error:", rel_err_sparse)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L217"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L206"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_3d
@@ -420,7 +397,7 @@ def compute_gradient_3d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L193"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L182"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_2d
@@ -474,7 +451,7 @@ print("gradient rel. error:", rel_err_grad_3d)
 ### Wrapping as linear operators
 
 It’s often useful to think of functions like
-[`compute_cotan_laplace()`](https://nikolas-claussen.github.io/triangulax/linear_operators_on_meshes.html#compute_cotan_laplace)
+[`compute_cotan_laplace()`](https://nikolas-claussen.github.io/triangulax/geometry_and_linear_operators.html#compute_cotan_laplace)
 as a linear operator on fields on meshes. For example, imagine you want
 to solve the Laplace equation on a mesh with fixed vertex positions and
 connectivity. You will want to use a linear solver. Luckily, most such
@@ -483,14 +460,14 @@ on an input vector, and don’t need an explicit matrix representation.
 
 In the JAX ecosystem, the `lineax` library defines linear solvers. We
 can *wrap*
-[`compute_cotan_laplace()`](https://nikolas-claussen.github.io/triangulax/linear_operators_on_meshes.html#compute_cotan_laplace)
+[`compute_cotan_laplace()`](https://nikolas-claussen.github.io/triangulax/geometry_and_linear_operators.html#compute_cotan_laplace)
 as a linear operator, which allows us to pass it into iterative linear
 algebra algorithms.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L266"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L255"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### diag_jsparse
@@ -508,7 +485,7 @@ def diag_jsparse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L241"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L230"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### scipy_to_bcoo
@@ -557,7 +534,7 @@ mat.shape
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L278"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L267"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### linear_op_to_sparse
@@ -605,24 +582,5 @@ laplace_op = jax.jit(functools.partial(compute_cotan_laplace, hemesh, geommesh.v
       o Torus
 
 ``` python
-hemesh
-```
-
-    HeMesh(N_V=36864, N_HE=221184, N_F=73728)
-
-``` python
 sparse_laplace_op =  linear_op_to_sparse(laplace_op, (hemesh.n_vertices,), (hemesh.n_vertices,))
 ```
-
-``` python
-sparse_laplace_op.shape
-```
-
-    (36864, 36864)
-
-``` python
-igl.cotmatrix(geommesh.vertices, hemesh.faces)
-```
-
-    <Compressed Sparse Column sparse matrix of dtype 'float64'
-        with 258048 stored elements and shape (36864, 36864)>

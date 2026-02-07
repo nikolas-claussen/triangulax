@@ -111,12 +111,8 @@ write_obj : str -\> None
 mesh = TriMesh.read_obj("test_meshes/disk.obj")
 ```
 
-    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype <class 'jax.numpy.float64'> requested in array is not available, and will be truncated to dtype float32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-      mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
-    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype <class 'jax.numpy.int64'> requested in array is not available, and will be truncated to dtype int32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-      mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)
 
 ``` python
 # test computing the circumcenter of each face. should be equidistant to all vertex points
@@ -137,12 +133,8 @@ mesh.write_obj(filename, save_face_positions=True)
 mesh = TriMesh.read_obj(filename, read_face_positions=True)
 ```
 
-    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype <class 'jax.numpy.float64'> requested in array is not available, and will be truncated to dtype float32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-      mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
-    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype <class 'jax.numpy.int64'> requested in array is not available, and will be truncated to dtype int32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-      mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)
 
 ### Creating meshes and plotting
 
@@ -161,7 +153,7 @@ Some functions for plotting meshes:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L172"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L174"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_triangular_lattice
@@ -180,7 +172,7 @@ points.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L164"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L166"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_poisson_points
@@ -199,7 +191,7 @@ def generate_poisson_points(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L155"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L157"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_ginibre_points
@@ -239,7 +231,7 @@ plt.axis("equal")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L186"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L188"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_adjacent_vertex_indices

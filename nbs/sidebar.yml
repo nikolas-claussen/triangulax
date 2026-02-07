@@ -6,6 +6,7 @@ website:
       - 01_triangular_meshes.ipynb
       - 02_coding_in_JAX_notes.ipynb
       - 03_halfedge_datastructure.ipynb
-      - 04_linear_operators_on_meshes.ipynb
-      - 05_example_simulation.ipynb
-      - 06_self-propelled_Voronoi_model.ipynb
+      - 04_topological_modifications.ipynb
+      - 05_geometry_and_linear_operators.ipynb
+      - 06_example_simulation.ipynb
+      - 07_self-propelled_Voronoi_model.ipynb

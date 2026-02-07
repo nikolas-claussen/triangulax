@@ -89,7 +89,7 @@ plt.triplot(*geommesh.vertices.T, mesh.faces)
 plt.axis("equal");
 ```
 
-![](05_example_simulation_files/figure-commonmark/cell-9-output-1.png)
+![](06_example_simulation_files/figure-commonmark/cell-9-output-1.png)
 
 ### Forward pass - minimize energy
 
@@ -178,7 +178,7 @@ fig = plt.figure(figsize=(4, 3))
 plt.plot(loss)
 ```
 
-![](05_example_simulation_files/figure-commonmark/cell-16-output-1.png)
+![](06_example_simulation_files/figure-commonmark/cell-16-output-1.png)
 
 ``` python
 fig = plt.figure(figsize=(4, 4))
@@ -187,7 +187,7 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](05_example_simulation_files/figure-commonmark/cell-17-output-1.png)
+![](06_example_simulation_files/figure-commonmark/cell-17-output-1.png)
 
 #### Using an ODE solver - `diffrax`
 
@@ -249,7 +249,7 @@ plt.triplot(*y.vertices.T, hemesh.faces)
 plt.axis("equal");
 ```
 
-![](05_example_simulation_files/figure-commonmark/cell-20-output-1.png)
+![](06_example_simulation_files/figure-commonmark/cell-20-output-1.png)
 
 ### Meta-training
 
@@ -367,7 +367,7 @@ plt.triplot(*batch_geom_out[i].vertices.T, batch_he_out[i].faces)
 plt.axis("equal");
 ```
 
-![](05_example_simulation_files/figure-commonmark/cell-26-output-1.png)
+![](06_example_simulation_files/figure-commonmark/cell-26-output-1.png)
 
 ##### Compute the batched loss
 

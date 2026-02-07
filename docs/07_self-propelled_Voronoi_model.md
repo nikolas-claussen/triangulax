@@ -62,6 +62,7 @@ import copy
 import numpy as np
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 import jax
 import jax.numpy as jnp
@@ -87,6 +88,7 @@ from triangulax import trigonometry as trig
 from triangulax.triangular import TriMesh
 from triangulax import mesh as msh
 from triangulax.mesh import HeMesh, GeomMesh
+from triangulax.topology import flip_by_id
 from triangulax import linops
 ```
 
@@ -122,9 +124,43 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-7-output-1.png)
+![](07_self-propelled_Voronoi_model_files/figure-commonmark/cell-7-output-1.png)
 
 ### Voronoi geometry and area-perimeter energy
+
+``` python
+## Let's define a custom function to compute the Voronoi perimeter of a cell
+# We compute the contribution of each corner, and sum over all incoming corners of a cell
+
+@functools.partial(jax.jit, static_argnames=['zero_clip'])
+def get_voronoi_corner_perimeter(a: Float[jax.Array, "2"],
+                                 b: Float[jax.Array, "2"],
+                                 c: Float[jax.Array, "2"], zero_clip: float=1e-10) -> Float[jax.Array, ""]:
+    """Compute contribution to Voronoi perimeter at corner a of triangle abc. Can be negative! 2d only atm."""
+    u = trig.get_circumcenter(a, b, c)
+    e1 = u - (a + b) / 2    # Voronoi edges are midpoints of triangle edges
+    e2 = u - (a + c) / 2
+    n1 = (b-a)/jnp.clip(jnp.linalg.norm(b-a), zero_clip)
+    n2 = (a-c)/jnp.clip(jnp.linalg.norm(a-c), zero_clip)
+    return jnp.cross(n1, e1) + jnp.cross(n2, e2)
+
+def get_voronoi_perimeters(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi perimeters for each vertex."""
+    a = hemesh.dest[hemesh.nxt]
+    b = hemesh.dest[hemesh.prv]
+    c = hemesh.dest
+    corner_perims = jax.vmap(get_voronoi_corner_perimeter)(
+        vertices[a], vertices[b], vertices[c])
+    corner_perims = jnp.where(hemesh.is_bdry_he, 0, corner_perims)
+    cell_perims = linops.sum_he_to_vertex_opposite(hemesh, corner_perims)
+    return cell_perims
+```
+
+``` python
+get_voronoi_corner_perimeter(jnp.array([0., 0.]), jnp.array([1., 0.]), jnp.array([0., 1.]))
+```
+
+    Array(1., dtype=float64)
 
 ``` python
 @jax.jit
@@ -133,8 +169,8 @@ def energy_ap(geommesh: GeomMesh, hemesh: HeMesh, a0: float, p0: float,
     """Area-perimeter energy for Voronoi cells.
     Adds small penalty for triangles with negative area.
     """
-    cell_areas = linops.get_cell_areas(geommesh.vertices, hemesh)    
-    cell_perimeters = linops.get_cell_perimeters(geommesh.vertices, hemesh)
+    cell_areas = linops.get_voronoi_areas(geommesh.vertices, hemesh)    
+    cell_perimeters = get_voronoi_perimeters(geommesh.vertices, hemesh)
     tri_areas = linops.get_triangle_areas(geommesh.vertices, hemesh)
     # add a factor 2x for boundary vertices to account for missing triangles
     cell_areas = jnp.where(hemesh.is_bdry, 2.0 * cell_areas, cell_areas)
@@ -147,8 +183,8 @@ def energy_ap(geommesh: GeomMesh, hemesh: HeMesh, a0: float, p0: float,
 ```
 
 ``` python
-cell_areas, cell_perimeters = (linops.get_cell_areas(geommesh.vertices, hemesh),
-                               linops.get_cell_perimeters(geommesh.vertices, hemesh))
+cell_areas, cell_perimeters = (linops.get_voronoi_areas(geommesh.vertices, hemesh),
+                               get_voronoi_perimeters(geommesh.vertices, hemesh))
 
 a_mean, p_mean = (cell_areas[~hemesh.is_bdry].mean(), cell_perimeters[~hemesh.is_bdry].mean())
 a_mean, p_mean, p_mean/np.sqrt(a_mean)
@@ -162,7 +198,7 @@ a_mean, p_mean, p_mean/np.sqrt(a_mean)
 energy_ap(geommesh, hemesh, a0=a_mean, p0=3*jnp.sqrt(a_mean))
 ```
 
-    66.4 μs ± 345 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+    64.8 μs ± 608 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
 
 ``` python
 grad_energy = jax.jit(jax.grad(energy_ap))
@@ -172,7 +208,7 @@ grad_energy = jax.jit(jax.grad(energy_ap))
 grad_energy(geommesh, hemesh, a0=a_mean, p0=3*jnp.sqrt(a_mean))
 ```
 
-    170 μs ± 21.2 μs per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    176 μs ± 32.1 μs per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 ### Edge flips
 
@@ -184,7 +220,7 @@ via “cool down” period (an edge flipped at step *t* cannot be flipped
 again for the next few steps).
 
 ``` python
-#@functools.partial(jax.jit, static_argnames=['cooldown_steps', 'max_flips'])
+@functools.partial(jax.jit, static_argnames=['cooldown_steps', 'max_flips'])
 def apply_flips(geommesh: GeomMesh, hemesh: HeMesh, l_min_T1: float, 
                 cooldown_counter: Int[jax.Array, " n_hes"], cooldown_steps: int, max_flips: int = 10
                 ) -> Tuple[HeMesh, Int[jax.Array, " n_hes"], Bool[jax.Array, " n_hes"],]:
@@ -201,7 +237,7 @@ def apply_flips(geommesh: GeomMesh, hemesh: HeMesh, l_min_T1: float,
     edge_lengths = jnp.where(allow_flip, edge_lengths, 1000)
     ids = jnp.argsort(edge_lengths)[:max_flips]
     
-    hemesh_next = msh.flip_by_id(hemesh, ids, edge_lengths[ids] < l_min_T1)
+    hemesh_next = flip_by_id(hemesh, ids, edge_lengths[ids] < l_min_T1)
     did_flip = (edge_lengths < l_min_T1) & (edge_lengths < edge_lengths[ids[-1]])    
     cooldown_counter = jnp.where(did_flip, cooldown_steps, jnp.clip(cooldown_counter-1, 0))
 
@@ -221,10 +257,8 @@ did_flip.sum()
 _ = apply_flips(geommesh, hemesh, l_min_T1=0.0, cooldown_counter=jnp.zeros(hemesh.n_hes, dtype=jnp.int32), cooldown_steps=5,
                  max_flips=10) 
                  
-# 100mus for single flip. 110 mus for 10 flips/tpt, 600 mus for flipping all edges.
+# 100mus for single flip. 110 mus for 10 flips/tpt, 600 mus for scanning over and flipping all edges.
 ```
-
-    110 μs ± 1.58 μs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
 
 ### Energy relaxation (no self-propulsion)
 
@@ -300,7 +334,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,flip_count.sum()+1])
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-19-output-1.png)
+![](07_self-propelled_Voronoi_model_files/figure-commonmark/cell-21-output-1.png)
 
 ``` python
 geommesh_relaxed = msh.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)
@@ -316,7 +350,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-20-output-1.png)
+![](07_self-propelled_Voronoi_model_files/figure-commonmark/cell-22-output-1.png)
 
 ## Overdamped dynamics with self-propulsion
 
@@ -497,14 +531,6 @@ def scan_fun(state: SimState, tnext: Float[jax.Array, ""],) -> tuple[SimState, L
                           cooldown_counter=cooldown_counter, tprev=tnext,
                           solver_state_sp=solver_state_sp, solver_state_sde=solver_state_sde)
     
-    # dummy returns for profiling
-    #log = Log(geommesh=state.geommesh, hemesh=state.hemesh,
-    #        energy=0, n_flips=0)
-
-    #next_state = SimState(geommesh=state.geommesh, hemesh=state.hemesh,
-    #                      cooldown_counter=state.cooldown_counter, tprev=tnext,
-    #                      solver_state_sp=solver_state_sp, solver_state_sde=solver_state_sde)
-
     return next_state, log
 ```
 
@@ -512,17 +538,22 @@ def scan_fun(state: SimState, tnext: Float[jax.Array, ""],) -> tuple[SimState, L
 final_state, logs = jax.lax.scan(scan_fun, init, timepoints)
 ```
 
+#### Numerical efficiency
+
+`%%timeit` shows that the simulation run above take about 1.7s. - The
+most expensive step is scanning for edge flips. You can probably
+accelerate the simulation a lot by checking only every *n* steps. - ODE
+solvers more complicated than `diffrax.Euler` perform worse, out of the
+box. You could likely use [adaptive
+timestepping](https://docs.kidger.site/diffrax/api/stepsize_controller/)
+to greatly accelerate the simulation.
+
 ``` python
 # Time stepping: scan advances (tprev -> tnext) for both theta and vertex dynamics.
 final_state, logs = jax.lax.scan(scan_fun, init, timepoints)
 ```
 
     1.71 s ± 7.39 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-
-``` python
-# 1.7s total.  21ms if no T1s. More complicated solver than Euler - slower.
-# So most time is in T1s. Can we make them more efficient yet? For example, flip only every n steps.
-```
 
 ``` python
 # Measurements logged at each step: geometry, connectivity, energy, and T1 flip counts.
@@ -534,11 +565,14 @@ hemesh_traj = msh.tree_unstack(logs.hemesh)
 ### Visualize trajectory
 
 ``` python
-# total displacement
-np.linalg.norm(geommesh_traj[0].vertices-geommesh_traj[-1].vertices, axis=-1).mean()
+# total displacement - about 50% of a cell distance
+
+mean_edge_len = msh.get_he_length(geommesh.vertices, hemesh).mean()
+
+np.linalg.norm(geommesh_traj[0].vertices-geommesh_traj[-1].vertices, axis=-1).mean() / mean_edge_len
 ```
 
-    np.float64(0.09947065147553884)
+    Array(0.54366345, dtype=float64)
 
 ``` python
 fig = plt.figure(figsize=(4, 3))
@@ -555,7 +589,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,logs.n_flips.sum()+1])
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-33-output-1.png)
+![](07_self-propelled_Voronoi_model_files/figure-commonmark/cell-34-output-1.png)
 
 ``` python
 # angle dynamics are stochastic
@@ -572,16 +606,11 @@ plt.ylabel("orientation")
 
     Text(0, 0.5, 'orientation')
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-34-output-2.png)
+![](07_self-propelled_Voronoi_model_files/figure-commonmark/cell-35-output-2.png)
 
 ``` python
+# plot initial and final mesh
 fig, ax = plt.subplots(figsize=(4, 4))
-
-#plt.triplot(*geommesh_traj_sde[0].vertices.T, hemesh_traj_sde[0].faces)
-
-#plt.triplot(*geommesh_traj_sde[-1].vertices.T, hemesh_traj_sde[-1].faces)
-#plt.scatter(*geommesh_final.vertices.T, c=areas, cmap="viridis", s=20, vmin=0)
-
 
 geommesh_traj[-1] = msh.set_voronoi_face_positions(geommesh_traj[-1], hemesh_traj[-1])
 
@@ -593,9 +622,44 @@ ax.add_collection(msh.cellplot(hemesh_traj[-1], geommesh_traj[-1].face_positions
                                mpl_polygon_kwargs={"lw": 0.5, "ec": "tab:red"}))
 
 
-
 ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](06_self-propelled_Voronoi_model_files/figure-commonmark/cell-35-output-1.png)
+![](07_self-propelled_Voronoi_model_files/figure-commonmark/cell-36-output-1.png)
+
+``` python
+from mpl.collections.LineCollection
+from mpl.colors.LinearSegmentedColormap, Normalize
+```
+
+``` python
+## plot trajectories of vertices (color = time: blue → red)
+
+# logs.geommesh.vertices: (n_steps, n_vertices, 2), downsample in time 
+stride = 10
+X = np.asarray(logs.geommesh.vertices)[::stride] 
+T = X.shape[0]
+
+# Build line segments connecting consecutive time points for each vertex.
+segments = np.stack([X[:-1], X[1:]], axis=2).reshape(-1, 2, 2)
+t_idx = np.repeat(np.arange(T - 1), logs.geommesh.n_vertices)
+
+cmap = mpl.colors.LinearSegmentedColormap.from_list("blue_to_red", ["blue", "red"])
+norm = mpl.colors.Normalize(vmin=0, vmax=T - 2)
+
+lc = mpl.collections.LineCollection(segments, cmap=cmap, norm=norm, linewidths=0.6, alpha=0.9)
+lc.set_array(t_idx)
+
+fig, ax = plt.subplots(figsize=(5, 5))
+ax.add_collection(lc)
+ax.set_aspect("equal")
+ax.autoscale_view()
+ax.set_title("Vertex trajectories (red → blue in time)")
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+
+cbar = fig.colorbar(lc, ax=ax, fraction=0.046, pad=0.04)
+```
+
+![](07_self-propelled_Voronoi_model_files/figure-commonmark/cell-38-output-1.png)

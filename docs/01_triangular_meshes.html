@@ -214,19 +214,25 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04_linear_operators_on_meshes.html" class="sidebar-item-text sidebar-link">
+  <a href="./04_topological_modifications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topological modifications in half-edge meshes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_geometry_and_linear_operators.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_example_simulation.html" class="sidebar-item-text sidebar-link">
+  <a href="./06_example_simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06_self-propelled_Voronoi_model.html" class="sidebar-item-text sidebar-link">
+  <a href="./07_self-propelled_Voronoi_model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
   </div>
 </li>
@@ -300,30 +306,26 @@ window.Quarto = {
 <p>read_obj : str -&gt; TriMesh</p>
 <p><strong>Methods</strong></p>
 <p>write_obj : str -&gt; None</p>
-<div id="c92469ca-bcb7-424f-ab1a-57391c5c955a" class="cell" data-execution_count="8">
+<div id="c92469ca-bcb7-424f-ab1a-57391c5c955a" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test reading a mesh</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype &lt;class 'jax.numpy.float64'&gt; requested in array is not available, and will be truncated to dtype float32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-  mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)
-Warning: readOBJ() ignored non-comment line 3:
-  o flat_tri_ecmc
-/var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype &lt;class 'jax.numpy.int64'&gt; requested in array is not available, and will be truncated to dtype int32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-  mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)</code></pre>
+<pre><code>Warning: readOBJ() ignored non-comment line 3:
+  o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="bef6e5d3-ea7d-49de-92ac-ba58c4a08c96" class="cell" data-execution_count="9">
+<div id="bef6e5d3-ea7d-49de-92ac-ba58c4a08c96" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test computing the circumcenter of each face. should be equidistant to all vertex points</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dists <span class="op">=</span> jnp.stack([jnp.linalg.norm(mesh.vertices[mesh.faces[:,i]]<span class="op">-</span>mesh.face_positions, axis<span class="op">=</span><span class="dv">1</span>) <span class="cf">for</span> i <span class="kw">in</span> [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>]], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>jnp.allclose(dists[:,<span class="dv">0</span>], dists[:,<span class="dv">1</span>]) <span class="kw">and</span> jnp.allclose(dists[:,<span class="dv">1</span>], dists[:,<span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>Array(True, dtype=bool)</code></pre>
 </div>
 </div>
-<div id="3adefefb-2b1a-4c44-b6c0-8a5e78cdb053" class="cell" data-execution_count="10">
+<div id="3adefefb-2b1a-4c44-b6c0-8a5e78cdb053" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test writing face positions to vn entries</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
@@ -331,12 +333,8 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>mesh.write_obj(filename, save_face_positions<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(filename, read_face_positions<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype &lt;class 'jax.numpy.float64'&gt; requested in array is not available, and will be truncated to dtype float32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-  mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)
-Warning: readOBJ() ignored non-comment line 3:
-  o flat_tri_ecmc
-/var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_46976/2048334256.py:80: UserWarning: Explicitly requested dtype &lt;class 'jax.numpy.int64'&gt; requested in array is not available, and will be truncated to dtype int32. To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable. See https://github.com/jax-ml/jax#current-gotchas for more.
-  mesh = TriMesh(jnp.array(vertices[:,:dim], dtype=jnp.float64), jnp.array(faces, dtype=jnp.int64), face_positions=None)</code></pre>
+<pre><code>Warning: readOBJ() ignored non-comment line 3:
+  o flat_tri_ecmc</code></pre>
 </div>
 </div>
 </section>
@@ -354,7 +352,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <li>Plot cell tesselation</li>
 </ol>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L172" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L174" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_triangular_lattice" class="level3">
 <h3 class="anchored" data-anchor-id="generate_triangular_lattice">generate_triangular_lattice</h3>
@@ -365,7 +363,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Get points for rectangular patch of triangular lattice with nx, ny points.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L164" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L166" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_poisson_points" class="level3">
 <h3 class="anchored" data-anchor-id="generate_poisson_points">generate_poisson_points</h3>
@@ -376,7 +374,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sample n_vertices points from the Poisson ensemble in rectangle</em> [-limit_x/2, limit_x/2] * [-limit_y/2, limit_y/2].</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L155" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L157" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_ginibre_points" class="level3">
 <h3 class="anchored" data-anchor-id="generate_ginibre_points">generate_ginibre_points</h3>
@@ -414,7 +412,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <section id="elementary-book-keeping-using-list-of-triangles-data-structure" class="level3">
 <h3 class="anchored" data-anchor-id="elementary-book-keeping-using-list-of-triangles-data-structure">Elementary book-keeping using list-of-triangles data structure</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L186" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L188" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_adjacent_vertex_indices" class="level3">
 <h3 class="anchored" data-anchor-id="get_adjacent_vertex_indices">get_adjacent_vertex_indices</h3>

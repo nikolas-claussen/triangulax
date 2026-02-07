@@ -131,6 +131,8 @@ class TriMesh:
         flines = ["f {} {} {}\n".format(*[int(v+1) for v in fc]) for fc in self.faces]
 
         with open(filename, 'w') as f:
+            if save_face_positions:
+                f.writelines(["#Attention: vn-lines encode face centers, not normals",])
             f.writelines(vlines)
             if save_face_positions:
                 f.writelines(vnlines)               
