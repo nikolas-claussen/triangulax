@@ -331,6 +331,8 @@ class HeMesh:
 
     @property
     def bdry_loops(self) -> list[Int[jax.Array, " loop_length"]]:
+        if not self.has_inf_vertex:
+            return igl.boundary_loop_all(self.faces)
         return [self.dest[self.iterate_around_vertex(v)] for v in jnp.array(self.inf_vertices)]
         
     # copying, saving, and loading
