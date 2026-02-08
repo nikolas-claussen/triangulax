@@ -117,8 +117,7 @@ notebooks with example simulations can be found in the `nbds/` folder.
 - `mesh`: a half-edge data structure for triangular meshes compatible
   with JAX.
 - `topology`: topological modifications (flip, collapse, and split)
-- `adjacency`, `triangulax.geometry`, `triangulax.linops`: geometry
-  processing tools
+- `adjacency`, `geometry`, `linops`: geometry processing tools
 - Notebook `nbs/08_example_simulation.ipynb`,
   `nbs/09_self_propelled_Voronoi.ipynb`: examples for simulating mesh
   dynamics
