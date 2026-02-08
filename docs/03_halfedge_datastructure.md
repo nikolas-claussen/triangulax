@@ -49,7 +49,7 @@ We follow the notes in notebook 02 to ensure JAX compatibility.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L35"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L34"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### label_plot
@@ -88,7 +88,7 @@ plt.axis("equal")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L61"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L60"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_half_edge_arrays_vectorized
@@ -159,7 +159,7 @@ print("Equal?", all([jnp.array_equal(a, b) for a, b in zip(ref, fast)]))
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L143"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L142"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HeMesh
@@ -274,7 +274,7 @@ load : str -\> HeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L366"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L365"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### test_mesh_validity
@@ -376,66 +376,13 @@ jax.lax.fori_loop(1, max_valence, lambda i, x: x.at[i].set(self.twin[x[i-1]]), i
 
 By using the arrays of a half-edge meshes to index vertex- or
 face-positions (in increasingly complex ways), we can compute all sorts
-of quantities of interests associated with a mesh. Let’s start simple
-with primal and dual edge lengths.
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L394"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_signed_dual_he_length
+of quantities of interests associated with a mesh, for example the edge
+lengths.
 
 ``` python
-
-def get_signed_dual_he_length(
-    vertices:Float[Array, 'n_vertices 2'], face_positions:Float[Array, 'n_faces 2'], hemesh:HeMesh
-)->Float[Array, 'n_hes']:
-
-```
-
-*Compute lengths of dual edges. Boundary dual edges get length 1.
-Negative sign = flipped edge.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L389"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_he_length
-
-``` python
-
-def get_he_length(
-    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_hes']:
-
-```
-
-*Get lengths of half-edges (triangulation/primal edges).*
-
-``` python
-# edges and dual edges should be orthogonal since we are using circumcenters
-
 edges = mesh.vertices[hemesh.orig]-mesh.vertices[hemesh.dest]
-dual_edges = (mesh.face_positions[hemesh.heface]
-              -mesh.face_positions[hemesh.heface[hemesh.twin]])
-
-jnp.allclose(jnp.einsum('vi,vi->v', edges[~hemesh.is_bdry_edge], dual_edges[~hemesh.is_bdry_edge]), 0)
+lengths = jnp.linalg.norm(edges, axis=-1)
 ```
-
-    Array(True, dtype=bool)
-
-``` python
-# computing the signed edge length shows that there are some "flipped" edges.
-
-signed_squared_length = jnp.einsum('vi,vi->v', edges, dual_edges @ trig.get_rot_mat(np.pi/2))
-jnp.where((signed_squared_length < -0.0) & ~hemesh.is_bdry_edge )[0]
-```
-
-    Array([  9, 185, 191, 335, 363, 539, 545, 689], dtype=int64)
 
 ### Boundary and the vertex at infinity
 
@@ -472,7 +419,7 @@ latter are listed in the `inf_vertices` attribute of a
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L406"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L388"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### connect_boundary_to_infinity
@@ -532,7 +479,7 @@ class, the
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L450"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L432"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GeomMesh
@@ -591,45 +538,7 @@ load : str -\> GeomHeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L592"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### set_voronoi_face_positions
-
-``` python
-
-def set_voronoi_face_positions(
-    geommesh:GeomMesh, hemesh:HeMesh
-)->GeomMesh:
-
-```
-
-*Set face positions of geommesh to the circumcenters of the faces
-defined by hemesh.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L586"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_voronoi_face_positions
-
-``` python
-
-def get_voronoi_face_positions(
-    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh
-)->Float[Array, 'n_faces 2']:
-
-```
-
-*Get face positions of geommesh to the circumcenters of the faces
-defined by hemesh.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L598"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L568"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -673,7 +582,7 @@ geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L604"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L574"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -706,7 +615,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_halfedge_datastructure_files/figure-commonmark/cell-38-output-2.png)
+![](03_halfedge_datastructure_files/figure-commonmark/cell-33-output-2.png)
 
 ### Vertex, half-edge, and face properties
 
@@ -799,7 +708,7 @@ The resulting meshes have an extra “batch” axis in all their array.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L639"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L609"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -817,7 +726,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L635"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L605"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack

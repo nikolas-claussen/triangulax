@@ -65,6 +65,7 @@ from triangulax import trigonometry as trg
 from triangulax import mesh as msh
 from triangulax.triangular import TriMesh
 from triangulax.mesh import HeMesh, GeomMesh
+from triangulax import geometry as geom
 from triangulax import linops as lin
 ```
 
@@ -89,7 +90,7 @@ plt.triplot(*geommesh.vertices.T, mesh.faces)
 plt.axis("equal");
 ```
 
-![](06_example_simulation_files/figure-commonmark/cell-9-output-1.png)
+![](08_example_simulation_files/figure-commonmark/cell-9-output-1.png)
 
 ### Forward pass - minimize energy
 
@@ -99,17 +100,13 @@ is useful to test the machinery. For more complicated simulations, we
 will want to use GeomMesh as a wrapper for the various arrays.
 
 ``` python
-def get_lengths(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh) -> Float[jax.Array, "n_hes 2"]:
-    return jnp.linalg.norm(vertices[hemesh.orig]-vertices[hemesh.dest], axis=-1)
-
 @jax.jit
 def energy_function(geommesh: GeomMesh, hemesh: HeMesh, ell_0: float=1):
-    edge_lengths = get_lengths(geommesh.vertices, hemesh)
+    edge_lengths = geom.get_he_length(geommesh.vertices, hemesh)
     edge_energy = jnp.mean((edge_lengths/ell_0-1)**2) # this way, term is "auto-normalized"
     # let's add a term for the triangle areas. Use the oriented area to penalize invalid mesh configurations
     a_0 = (np.sqrt(3)/4) * ell_0**2 # area of equilateral triangle
-    tri_area = jax.vmap(trg.get_oriented_triangle_area)(*geommesh.vertices[hemesh.faces.T])
-
+    tri_area = geom.get_oriented_triangle_areas(geommesh.vertices, hemesh)
     area_energy = jnp.mean((tri_area/a_0-1)**2)
     #jax.debug.print("E_l: {E_l}, E_a: {E_a}",  E_l=edge_energy, E_a=area_energy)
     # this is how you can print inside a JITed-function
@@ -178,7 +175,7 @@ fig = plt.figure(figsize=(4, 3))
 plt.plot(loss)
 ```
 
-![](06_example_simulation_files/figure-commonmark/cell-16-output-1.png)
+![](08_example_simulation_files/figure-commonmark/cell-16-output-1.png)
 
 ``` python
 fig = plt.figure(figsize=(4, 4))
@@ -187,7 +184,7 @@ plt.triplot(*geommesh_optimized.vertices.T, hemesh_optimized.faces)
 plt.axis("equal");
 ```
 
-![](06_example_simulation_files/figure-commonmark/cell-17-output-1.png)
+![](08_example_simulation_files/figure-commonmark/cell-17-output-1.png)
 
 #### Using an ODE solver - `diffrax`
 
@@ -249,7 +246,7 @@ plt.triplot(*y.vertices.T, hemesh.faces)
 plt.axis("equal");
 ```
 
-![](06_example_simulation_files/figure-commonmark/cell-20-output-1.png)
+![](08_example_simulation_files/figure-commonmark/cell-20-output-1.png)
 
 ### Meta-training
 
@@ -300,7 +297,7 @@ of more complex ones down the line.
 
 def meta_loss(model: RelaxationDynamics, initial_geommesh: GeomMesh, initial_hemesh: HeMesh,  meta_ell0: float) -> float:
     geommesh_optimized, hemesh_optimized = model(initial_geommesh, initial_hemesh)
-    lengths = get_lengths(geommesh_optimized.vertices,  hemesh_optimized)
+    lengths = geom.get_he_length(geommesh_optimized.vertices,  hemesh_optimized)
     return jnp.mean((lengths/meta_ell0-1)**2)
 ```
 
@@ -367,7 +364,7 @@ plt.triplot(*batch_geom_out[i].vertices.T, batch_he_out[i].faces)
 plt.axis("equal");
 ```
 
-![](06_example_simulation_files/figure-commonmark/cell-26-output-1.png)
+![](08_example_simulation_files/figure-commonmark/cell-26-output-1.png)
 
 ##### Compute the batched loss
 

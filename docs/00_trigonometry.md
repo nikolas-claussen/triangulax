@@ -153,7 +153,26 @@ def get_signed_angle_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L70"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L87"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_oriented_voronoi_corner_area
+
+``` python
+
+def get_oriented_voronoi_corner_area(
+    a:Float[Array, 'dim'], b:Float[Array, 'dim'], c:Float[Array, 'dim'], zero_clip:float=1e-10
+)->Float[Array, '*']:
+
+```
+
+*Compute oriented Voronoi area at corner a of triangle abc. Returns a
+vector in 3d.* Returns zero for a degenerate triangle.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L71"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_area
@@ -166,8 +185,8 @@ def get_voronoi_corner_area(
 
 ```
 
-*Compute oriented Voronoi area at corner a of triangle abc. Returns
-vector in 3d.* Returns zero for a degenerate triangle.
+*Compute Voronoi area at corner a of triangle abc.* Returns zero for a
+degenerate triangle.
 
 ``` python
 get_voronoi_corner_area(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0.]))
@@ -222,7 +241,7 @@ get_voronoi_corner_area(jnp.array([0.,0.]), jnp.array([0.,1.]),  jnp.array([1.,0
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L100"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L117"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### quaternion_to_rot_max
@@ -243,7 +262,7 @@ https://fr.wikipedia.org/wiki/Quaternions_et_rotation_dans_l%27espace
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L93"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L110"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_normal
@@ -261,7 +280,7 @@ def get_triangle_normal(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L89"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L106"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_perp_2d
@@ -279,7 +298,7 @@ def get_perp_2d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L85"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L102"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_rot_mat
@@ -299,7 +318,7 @@ def get_rot_mat(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L113"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L130"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_barycentric_coordinates

@@ -141,13 +141,13 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="Simulation test case - optimize mesh to make triangles equilateral – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/06_example_simulation_files/figure-html/cell-9-output-1.png">
+<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/08_example_simulation_files/figure-html/cell-9-output-1.png">
 <meta property="og:site_name" content="triangulax">
 <meta property="og:image:height" content="351">
 <meta property="og:image:width" content="382">
 <meta name="twitter:title" content="Simulation test case - optimize mesh to make triangles equilateral – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
-<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/06_example_simulation_files/figure-html/cell-9-output-1.png">
+<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/08_example_simulation_files/figure-html/cell-9-output-1.png">
 <meta name="twitter:image-height" content="351">
 <meta name="twitter:image-width" content="382">
 <meta name="twitter:card" content="summary_large_image">
@@ -174,7 +174,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06_example_simulation.html">Simulation test case - optimize mesh to make triangles equilateral</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08_example_simulation.html">Simulation test case - optimize mesh to make triangles equilateral</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -224,19 +224,31 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05_geometry_and_linear_operators.html" class="sidebar-item-text sidebar-link">
+  <a href="./05_adjacency_operators.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06_example_simulation.html" class="sidebar-item-text sidebar-link active">
+  <a href="./06_geometric_quantities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mesh geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_linear_operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_example_simulation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07_self-propelled_Voronoi_model.html" class="sidebar-item-text sidebar-link">
+  <a href="./09_self-propelled_Voronoi.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
   </div>
 </li>
@@ -257,7 +269,7 @@ window.Quarto = {
   <li><a href="#meta-optimization" id="toc-meta-optimization" class="nav-link" data-scroll-target="#meta-optimization">Meta-optimization</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="06_example_simulation.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="08_example_simulation.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -307,33 +319,34 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_debug_nans"</span>, <span class="va">True</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">'jax_log_compiles'</span>, <span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="1983d5fe" class="cell" data-execution_count="41">
+<div id="1983d5fe" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> diffrax</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> equinox <span class="im">as</span> eqx</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># equinox has automated "filtering" of JAX-transforms. So we can work with objects which are not just pytrees of arrays</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># (like neural networks) and appy jit, vmap etc</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="723a50d1-f5c2-435c-9026-39b6067f426d" class="cell" data-execution_count="4">
+<div id="723a50d1-f5c2-435c-9026-39b6067f426d" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jaxtyping <span class="im">import</span> Float</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Tuple</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dataclasses</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> functools</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell" data-execution_count="5">
+<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import previously defined modules</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> trigonometry <span class="im">as</span> trg</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh <span class="im">as</span> msh</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.triangular <span class="im">import</span> TriMesh</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.mesh <span class="im">import</span> HeMesh, GeomMesh</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops <span class="im">as</span> lin</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> geometry <span class="im">as</span> geom</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops <span class="im">as</span> lin</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="load-example-mesh" class="level3">
 <h3 class="anchored" data-anchor-id="load-example-mesh">Load example mesh</h3>
-<div id="a1466484-c167-4d4e-97fc-3f622728062d" class="cell" data-execution_count="7">
+<div id="a1466484-c167-4d4e-97fc-3f622728062d" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, vertices<span class="op">=</span>mesh.vertices)</span>
@@ -343,18 +356,18 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>HeMesh(N_V=131, N_HE=708, N_F=224)</code></pre>
 </div>
 </div>
-<div id="82e699dd-6ad6-4fcd-aa23-bdfdb170fe0a" class="cell" data-execution_count="8">
+<div id="82e699dd-6ad6-4fcd-aa23-bdfdb170fe0a" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, mesh.faces)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06_example_simulation_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="08_example_simulation_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -363,44 +376,40 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <section id="forward-pass---minimize-energy" class="level3">
 <h3 class="anchored" data-anchor-id="forward-pass---minimize-energy">Forward pass - minimize energy</h3>
 <p>We write the energy_function using a geommesh as an argument. This is overkill for present purposes ince only the vertex positions matter, but is useful to test the machinery. For more complicated simulations, we will want to use GeomMesh as a wrapper for the various arrays.</p>
-<div id="740a9d2c" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lengths(vertices: Float[jax.Array, <span class="st">"n_vertices 2"</span>], hemesh: msh.HeMesh) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">"n_hes 2"</span>]:</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.linalg.norm(vertices[hemesh.orig]<span class="op">-</span>vertices[hemesh.dest], axis<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> energy_function(geommesh: GeomMesh, hemesh: HeMesh, ell_0: <span class="bu">float</span><span class="op">=</span><span class="dv">1</span>):</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    edge_lengths <span class="op">=</span> get_lengths(geommesh.vertices, hemesh)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    edge_energy <span class="op">=</span> jnp.mean((edge_lengths<span class="op">/</span>ell_0<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>) <span class="co"># this way, term is "auto-normalized"</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># let's add a term for the triangle areas. Use the oriented area to penalize invalid mesh configurations</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    a_0 <span class="op">=</span> (np.sqrt(<span class="dv">3</span>)<span class="op">/</span><span class="dv">4</span>) <span class="op">*</span> ell_0<span class="op">**</span><span class="dv">2</span> <span class="co"># area of equilateral triangle</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    tri_area <span class="op">=</span> jax.vmap(trg.get_oriented_triangle_area)(<span class="op">*</span>geommesh.vertices[hemesh.faces.T])</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    area_energy <span class="op">=</span> jnp.mean((tri_area<span class="op">/</span>a_0<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#jax.debug.print("E_l: {E_l}, E_a: {E_a}",  E_l=edge_energy, E_a=area_energy)</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this is how you can print inside a JITed-function</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> edge_energy <span class="op">+</span> area_energy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="740a9d2c" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> energy_function(geommesh: GeomMesh, hemesh: HeMesh, ell_0: <span class="bu">float</span><span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    edge_lengths <span class="op">=</span> geom.get_he_length(geommesh.vertices, hemesh)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    edge_energy <span class="op">=</span> jnp.mean((edge_lengths<span class="op">/</span>ell_0<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>) <span class="co"># this way, term is "auto-normalized"</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># let's add a term for the triangle areas. Use the oriented area to penalize invalid mesh configurations</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    a_0 <span class="op">=</span> (np.sqrt(<span class="dv">3</span>)<span class="op">/</span><span class="dv">4</span>) <span class="op">*</span> ell_0<span class="op">**</span><span class="dv">2</span> <span class="co"># area of equilateral triangle</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    tri_area <span class="op">=</span> geom.get_oriented_triangle_areas(geommesh.vertices, hemesh)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    area_energy <span class="op">=</span> jnp.mean((tri_area<span class="op">/</span>a_0<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">#jax.debug.print("E_l: {E_l}, E_a: {E_a}",  E_l=edge_energy, E_a=area_energy)</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this is how you can print inside a JITed-function</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> edge_energy <span class="op">+</span> area_energy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="95cf9ba7-78da-40df-b2b2-aeeeadb2250c" class="cell" data-execution_count="22">
+<div id="95cf9ba7-78da-40df-b2b2-aeeeadb2250c" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>val, grad <span class="op">=</span> jax.value_and_grad(energy_function)(geommesh, hemesh) <span class="co"># computing value and gradient of the energy</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>val, grad, grad.vertices.shape <span class="co"># the gradient is another GeomMesh. 1.60519339</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="27">
 <pre><code>(Array(1.60519339, dtype=float64),
  GeomMesh(D=2,N_V=131, N_HE=708, N_F=224),
  (131, 2))</code></pre>
 </div>
 </div>
-<div id="498b6da3-da6f-45d0-b3b7-7b7a90575069" class="cell" data-execution_count="23">
+<div id="498b6da3-da6f-45d0-b3b7-7b7a90575069" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>connectivity_grad <span class="op">=</span> jax.grad(energy_function, argnums<span class="op">=</span><span class="dv">1</span>, allow_int<span class="op">=</span><span class="va">True</span>)(geommesh, hemesh)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># we can even compute the gradient w.r.t to the connectivity matrix. It is also a HeMesh</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>connectivity_grad, connectivity_grad.dest[<span class="dv">0</span>] <span class="co"># whatever that means</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>(HeMesh(N_V=131, N_HE=708, N_F=224), np.void((b'',), dtype=[('float0', 'V')]))</code></pre>
 </div>
 </div>
 <section id="energy-optimization" class="level4">
 <h4 class="anchored" data-anchor-id="energy-optimization">Energy optimization</h4>
 <p>Let’s follow the patterns for writing a simulation time-stepping loop described in notebook 02.</p>
-<div id="a3f097d9" class="cell" data-execution_count="84">
+<div id="a3f097d9" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># time-stepping function</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_step(geommesh: GeomMesh, hemesh: HeMesh,</span>
@@ -410,7 +419,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    geommesh <span class="op">=</span> dataclasses.replace(geommesh, vertices<span class="op">=</span>updated_vertices)</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (geommesh, hemesh), loss <span class="co"># explicitly return the hemesh - may need to be updated by flips!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="42641806-1873-4d07-ba52-0a8374f31965" class="cell" data-execution_count="89">
+<div id="42641806-1873-4d07-ba52-0a8374f31965" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulation timesteps</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>step_size <span class="op">=</span> <span class="fl">0.02</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>N_steps <span class="op">=</span> <span class="dv">20000</span></span>
@@ -428,17 +437,17 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    (geommesh, hemesh), loss <span class="op">=</span> make_step(geommesh, hemesh, current_time, next_time, ell_0<span class="op">=</span>ell_0)</span>
 <span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ((geommesh, hemesh), next_time), loss <span class="co"># log the loss/energy</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="b5118f03" class="cell" data-execution_count="90">
+<div id="b5118f03" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run the simulation</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>((geommesh_optimized, hemesh_optimized), _), loss <span class="op">=</span> jax.lax.scan(scan_function, init, timepoints)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="daab7173-68b8-4856-a6ee-316ab1768611" class="cell" data-execution_count="91">
+<div id="daab7173-68b8-4856-a6ee-316ab1768611" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">3</span>))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plt.plot(loss)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06_example_simulation_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="08_example_simulation_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -451,7 +460,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06_example_simulation_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="08_example_simulation_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -462,7 +471,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <p>Above, we implemented “gradient descent” for the pseudo-energy, or, equivalently, a basic forward-Euler scheme for the ODE <span class="math inline">\(\partial_t \mathbf{v}_i = - \nabla_{\mathbf{v}_i} E\)</span>. For more complicated models, and to minimize coding effort, it makes sense to use a pre-made ODE solver instead. The <code>diffrax</code> library implements ODE and SDE solvers in JAX and is compatible with autodiff (you can differentiate through the solver), since it was designed for neural differential equations.</p>
 <p>For “adiabatic” dynamics, which involve mimizing an energy at every timestep, we can use the “optimistix” library.</p>
 <p>The below is based on the <a href="https://docs.kidger.site/diffrax/usage/manual-stepping/">Stepping through a solver</a> tutorial in <code>diffrax</code>. The reason we want to step through the solver one-by-one is to carry out T1s (in future simulations).</p>
-<div id="5c60209a" class="cell" data-execution_count="93">
+<div id="5c60209a" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the RHS for the ODE solver</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vector_field(t, y, args):</span>
@@ -483,7 +492,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y0</span>
 <span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> solver.init(term, t0, t0<span class="op">+</span>dt, y0, args)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="04bcddd8" class="cell" data-execution_count="94">
+<div id="04bcddd8" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan through the solve</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan_fun(carry, t):</span>
@@ -494,7 +503,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>init <span class="op">=</span> (state, y0, t0)</span>
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>(state, y, t), _ <span class="op">=</span> jax.lax.scan(scan_fun, init, step_times[<span class="dv">1</span>:])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="e7a6f101" class="cell" data-execution_count="95">
+<div id="e7a6f101" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>y0.vertices.T, hemesh.faces)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>y.vertices.T, hemesh.faces)</span>
@@ -502,7 +511,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06_example_simulation_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="08_example_simulation_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -514,7 +523,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <p>One use case for JAX is to <em>differentiate through</em> a scientific simulation, allowing one to optimize the simulation parameters towards some some desired behavior. For example, we may wish to find a triangulation dynamics that creates some target shape.</p>
 <p>As a toy example, let’s take the above “dynamics” which minimizes the pseudo-energy to make all triangles equilateral. It depends on the parameter <span class="math inline">\(\ell_0\)</span>. Relaxation of the pseudo-energy for some number of steps defines our “forward pass”. Let’s try to optimize <span class="math inline">\(\ell_0\)</span> so that the tissue, at the end of the energy relaxation, has some target size (of course, a contrived problem, since we know the solution from the start).</p>
 <p>First, we wrap our dynamical model as an <code>eqx.Module</code>, so we can optimize it just like a neural net.</p>
-<div id="7d7790ad-a9e3-4947-8a2d-eca63aa611af" class="cell" data-execution_count="96">
+<div id="7d7790ad-a9e3-4947-8a2d-eca63aa611af" class="cell" data-execution_count="36">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> RelaxationDynamics(eqx.Module):</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    ell_0: jax.Array</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    step_size : <span class="bu">float</span> <span class="op">=</span> eqx.field(static<span class="op">=</span><span class="va">True</span>)</span>
@@ -533,15 +542,15 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <h4 class="anchored" data-anchor-id="define-meta-training-loss">Define Meta-training loss</h4>
 <p>Now we need to define our meta-training loss. In this case, it’s just the deviation of the average edge length from the total. Note how the meta-loss is <em>distinct</em> from the pseudo-energy we minimize during the forward pass.</p>
 <p>Let’s use the <code>equinox</code> library to handle our problem, in anticipation of more complex ones down the line.</p>
-<div id="af2694a6-0ad5-4204-8752-6ba0a13c8a40" class="cell" data-execution_count="97">
+<div id="af2694a6-0ad5-4204-8752-6ba0a13c8a40" class="cell" data-execution_count="39">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the meta-loss</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> meta_loss(model: RelaxationDynamics, initial_geommesh: GeomMesh, initial_hemesh: HeMesh,  meta_ell0: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    geommesh_optimized, hemesh_optimized <span class="op">=</span> model(initial_geommesh, initial_hemesh)</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    lengths <span class="op">=</span> get_lengths(geommesh_optimized.vertices,  hemesh_optimized)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    lengths <span class="op">=</span> geom.get_he_length(geommesh_optimized.vertices,  hemesh_optimized)</span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean((lengths<span class="op">/</span>meta_ell0<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="0c33f24a-4410-496d-abb9-d16613f4ae8b" class="cell" data-execution_count="99">
+<div id="0c33f24a-4410-496d-abb9-d16613f4ae8b" class="cell" data-execution_count="40">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize the model, and test the meta loss</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>initial_ell0 <span class="op">=</span> <span class="fl">0.4</span></span>
@@ -549,7 +558,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>model_initial <span class="op">=</span> RelaxationDynamics(ell_0<span class="op">=</span>jnp.array([initial_ell0]), step_size<span class="op">=</span>step_size, N_steps<span class="op">=</span>N_steps)</span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>model_initial(geommesh, hemesh), meta_loss(model_initial, geommesh, hemesh, meta_ell0<span class="op">=</span>meta_ell0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="99">
+<div class="cell-output cell-output-display" data-execution_count="40">
 <pre><code>((GeomMesh(D=2,N_V=131, N_HE=708, N_F=224),
   HeMesh(N_V=131, N_HE=708, N_F=224)),
  Array(0.13074658, dtype=float64))</code></pre>
@@ -559,7 +568,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <section id="batching" class="level4">
 <h4 class="anchored" data-anchor-id="batching">Batching</h4>
 <p>To evaluate the loss, we want to average over a bunch of initial conditions. These are analogous to <em>batches</em> in a normal ML problem.</p>
-<div id="a35a2157-3448-4a79-ae88-acf204948f89" class="cell" data-execution_count="102">
+<div id="a35a2157-3448-4a79-ae88-acf204948f89" class="cell" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let's create a bunch of meshes with different initial positions and see if we can batch over them using vmap</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
@@ -581,18 +590,18 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>batch_geom_array <span class="op">=</span> msh.tree_stack(batch_geom)</span>
 <span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>batch_geom_array, batch_geom_array.vertices.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="102">
+<div class="cell-output cell-output-display" data-execution_count="41">
 <pre><code>(GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), (3, 131, 2))</code></pre>
 </div>
 </div>
-<div id="fd1b046f-a28e-4d20-a0a5-03a71e992e4e" class="cell" data-execution_count="103">
+<div id="fd1b046f-a28e-4d20-a0a5-03a71e992e4e" class="cell" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can apply the simulation and upack the results into a list</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>batch_geom_array_out, batch_he_array_out <span class="op">=</span> jax.vmap(model_initial)(batch_geom_array, batch_he_array) </span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>batch_geom_out <span class="op">=</span> msh.tree_unstack(batch_geom_array_out)</span>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>batch_he_out <span class="op">=</span> msh.tree_unstack(batch_he_array_out)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="ab19b28b-7c70-4b30-ad73-e9de2eacb8e8" class="cell" data-execution_count="104">
+<div id="ab19b28b-7c70-4b30-ad73-e9de2eacb8e8" class="cell" data-execution_count="43">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># still works</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">2</span></span>
@@ -603,24 +612,24 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06_example_simulation_files/figure-html/cell-26-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="08_example_simulation_files/figure-html/cell-26-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <section id="compute-the-batched-loss" class="level5">
 <h5 class="anchored" data-anchor-id="compute-the-batched-loss">Compute the batched loss</h5>
-<div id="3db6ad4d-59f7-4ef9-b634-4f6290ca80cb" class="cell" data-execution_count="107">
+<div id="3db6ad4d-59f7-4ef9-b634-4f6290ca80cb" class="cell" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the right way to vmap the loss</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>jax.vmap(meta_loss, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="va">None</span>))(model_initial, batch_geom_array, batch_he_array, <span class="fl">0.8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="107">
+<div class="cell-output cell-output-display" data-execution_count="44">
 <pre><code>Array([0.24862355, 0.24863542, 0.24863226], dtype=float64)</code></pre>
 </div>
 </div>
-<div id="de3303c5-baa1-4b9c-ba68-28e2f311b45c" class="cell" data-execution_count="108">
+<div id="de3303c5-baa1-4b9c-ba68-28e2f311b45c" class="cell" data-execution_count="45">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check against non-vmapped version. pretty similar, floating point errors likely at origin of differences</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>[meta_loss(model_initial, batch_geom_out[i], batch_he_out[i], <span class="fl">0.8</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="108">
+<div class="cell-output cell-output-display" data-execution_count="45">
 <pre><code>[Array(0.24848931, dtype=float64),
  Array(0.24848805, dtype=float64),
  Array(0.2484898, dtype=float64)]</code></pre>
@@ -632,13 +641,13 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <section id="meta-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="meta-optimization">Meta-optimization</h3>
 <p>Now we are in a position to “optiomize” our model parameter <code>ell_0</code>. Based on <a href="https://docs.kidger.site/equinox/examples/mnist/#training">equinox CNN tutorial</a>.</p>
-<div id="5b0282a2-9cbd-4d35-9648-09695a64feef" class="cell" data-execution_count="109">
+<div id="5b0282a2-9cbd-4d35-9648-09695a64feef" class="cell" data-execution_count="46">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> batched_meta_loss(model, batch_geom_array, batch_he_array, meta_ell0):</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean(jax.vmap(meta_loss, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="dv">0</span>,<span class="dv">0</span>, <span class="va">None</span>))(model, batch_geom_array, batch_he_array, meta_ell0))</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>batched_meta_loss_jit <span class="op">=</span> jax.jit(batched_meta_loss)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="34be4913-0f58-402a-8a3b-dfde5c87dc17" class="cell" data-execution_count="112">
+<div id="34be4913-0f58-402a-8a3b-dfde5c87dc17" class="cell" data-execution_count="47">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hyper-parameters for the outer learning step.</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>LEARNING_RATE <span class="op">=</span> <span class="fl">1e-2</span></span>
@@ -653,12 +662,12 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>model_initial <span class="op">=</span> RelaxationDynamics(ell_0<span class="op">=</span>jnp.array([initial_ell0]), step_size<span class="op">=</span>step_size, N_steps<span class="op">=</span>N_steps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="f117bfab-9fba-413c-a3d5-3735d94ba486" class="cell" data-execution_count="116">
+<div id="f117bfab-9fba-413c-a3d5-3735d94ba486" class="cell" data-execution_count="48">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>loss, grads <span class="op">=</span> eqx.filter_jit(eqx.filter_value_and_grad(batched_meta_loss))(model_initial,</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                                                                           batch_geom_array, batch_he_array, META_ELL0)</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>loss, grads, grads.ell_0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="116">
+<div class="cell-output cell-output-display" data-execution_count="48">
 <pre><code>(Array(0.24848878, dtype=float64),
  RelaxationDynamics(ell_0=f64[1], step_size=0.01, N_steps=20000),
  Array([-2.48070057], dtype=float64))</code></pre>
@@ -668,7 +677,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <h4 class="anchored" data-anchor-id="forward-and-reverse-mode-autodiff">Forward and reverse mode autodiff</h4>
 <p>Since we are differentiation w.r.t. a small number of parameters (justy 1: <span class="math inline">\(\ell_0\)</span>), we can use forward mode automatic differentiation for increased efficiency. This may be the case more generally: if we want to learn “translationally invariant” models, where the parameters for all cells are equal, the parameter count we want to differentiate by may be small. Forward mode autodiff is also somewhat more “forgiving” when it comes to control flow.</p>
 <p>See: https://docs.jax.dev/en/latest/notebooks/autodiff_cookbook.html</p>
-<div id="b687e2fc-9866-4b55-867e-5812a10711ef" class="cell" data-execution_count="117">
+<div id="b687e2fc-9866-4b55-867e-5812a10711ef" class="cell" data-execution_count="49">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="at">@eqx.filter_jit</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> outer_optimizer_step(model: RelaxationDynamics,</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                         batch_geom: GeomMesh, batch_he: HeMesh) <span class="op">-&gt;</span> Tuple[RelaxationDynamics, <span class="bu">float</span>]:</span>
@@ -687,7 +696,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model, loss</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="69a0b5b2-6e9d-466a-8e69-483669109251" class="cell" data-execution_count="118">
+<div id="69a0b5b2-6e9d-466a-8e69-483669109251" class="cell" data-execution_count="50">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model_initial</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> tqdm(<span class="bu">range</span>(LEARNING_STEPS)): <span class="co"># in the future, could also iterate over the initial conditions/batches</span></span>
@@ -698,7 +707,7 @@ import optax # optimisation (ML-style, e.g. ADAM)</code></pre>
 <span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 19s with forward mode vs 32s with reverse mode.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"d25ca3f93e22447c9b123d30e102628e","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"5b3fcc2f6d0c4553a423cf6c09989f8a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-stdout">

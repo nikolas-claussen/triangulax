@@ -3,8 +3,8 @@
 # %% auto #0
 __all__ = ['get_circumcenter', 'get_oriented_triangle_area', 'get_triangle_area', 'get_polygon_area',
            'get_signed_angle_between_vectors', 'get_angle_between_vectors', 'get_cot_between_vectors',
-           'get_voronoi_corner_area', 'get_rot_mat', 'get_perp_2d', 'get_triangle_normal', 'quaternion_to_rot_max',
-           'get_barycentric_coordinates']
+           'get_voronoi_corner_area', 'get_oriented_voronoi_corner_area', 'get_rot_mat', 'get_perp_2d',
+           'get_triangle_normal', 'quaternion_to_rot_max', 'get_barycentric_coordinates']
 
 # %% ../nbs/00_trigonometry.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -48,21 +48,23 @@ def get_polygon_area(pts: Float[jax.Array, "n_vertices 2"]) -> Float[jax.Array, 
     return jnp.sum(pts[:,0]*jnp.roll(pts[:,1], 1) - jnp.roll(pts[:,0], 1)*pts[:,1])/2
 
 # %% ../nbs/00_trigonometry.ipynb #48180c1b
-def get_signed_angle_between_vectors(a: Float[jax.Array, "2"],
-                                     b: Float[jax.Array, "2"]) -> Float[jax.Array, ""]:
+def get_signed_angle_between_vectors(a: Float[jax.Array, "2"], b: Float[jax.Array, "2"]
+                                     ) -> Float[jax.Array, ""]:
     """Signed angle between two 2d vectors"""
     return jnp.atan2(jnp.cross(a, b), jnp.dot(a, b))
 
 
-def get_angle_between_vectors(a: Float[jax.Array, " dim"],
-                              b: Float[jax.Array, " dim"]) -> Float[jax.Array, ""]:
+def get_angle_between_vectors(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"]
+                              ) -> Float[jax.Array, ""]:
     """Angle between two vectors"""
     return jnp.atan2(jnp.linalg.norm(jnp.cross(a, b)), jnp.dot(a, b))
 
-def get_cot_between_vectors(a: Float[jax.Array, " dim"],
-                              b: Float[jax.Array, " dim"]) -> Float[jax.Array, ""]:
+
+def get_cot_between_vectors(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"]
+                            ) -> Float[jax.Array, ""]:
     """Cotangent of angle between two vectors"""
-    return jnp.dot(a, b) / jnp.linalg.norm(jnp.cross(a, b))
+    divisor = jnp.clip(jnp.linalg.norm(jnp.cross(a, b)), 1e-12)
+    return jnp.dot(a, b) / divisor
 
 # %% ../nbs/00_trigonometry.ipynb #27a11ad7
 @functools.partial(jax.jit, static_argnames=['zero_clip'])
@@ -70,7 +72,23 @@ def get_voronoi_corner_area(a: Float[jax.Array, " dim"],
                             b: Float[jax.Array, " dim"],
                             c: Float[jax.Array, " dim"], zero_clip: float=1e-10) -> Float[jax.Array, "*"]:
     """
-    Compute oriented Voronoi area at corner a of triangle abc. Returns vector in 3d.
+    Compute Voronoi area at corner a of triangle abc.
+    Returns zero for a degenerate triangle.
+    """
+    u = get_circumcenter(a, b, c)
+    # Voronoi edges are midpoints of triangle edges. the corner area splits into two triangles:
+    #a_corner = get_polygon_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0))
+    a_corner = get_oriented_triangle_area(a, (a-c)/2, u)+get_oriented_triangle_area(u, (a-b)/2, a)
+    a_triangle = get_triangle_area(a, b, c)
+    return jnp.where(a_triangle > zero_clip, jnp.linalg.norm(a_corner), 0.0)
+
+
+@functools.partial(jax.jit, static_argnames=['zero_clip'])
+def get_oriented_voronoi_corner_area(a: Float[jax.Array, " dim"],
+                            b: Float[jax.Array, " dim"],
+                            c: Float[jax.Array, " dim"], zero_clip: float=1e-10) -> Float[jax.Array, "*"]:
+    """
+    Compute oriented Voronoi area at corner a of triangle abc. Returns a vector in 3d.
     Returns zero for a degenerate triangle.
     """
     u = get_circumcenter(a, b, c)

@@ -7,6 +7,8 @@ website:
       - 02_coding_in_JAX_notes.ipynb
       - 03_halfedge_datastructure.ipynb
       - 04_topological_modifications.ipynb
-      - 05_geometry_and_linear_operators.ipynb
-      - 06_example_simulation.ipynb
-      - 07_self-propelled_Voronoi_model.ipynb
+      - 05_adjacency_operators.ipynb
+      - 06_geometric_quantities.ipynb
+      - 07_linear_operators.ipynb
+      - 08_example_simulation.ipynb
+      - 09_self-propelled_Voronoi.ipynb

@@ -129,8 +129,9 @@ def get_cotan_weights_per_he(vertices: Float[jax.Array, "n_vertices dim"],
 
 def get_cotan_weights_per_egde(vertices: Float[jax.Array, "n_vertices dim"],
                                hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Average of cotangent of angles opposite to edge"""
+    """Average of cotangent of angles opposite to edge."""
     per_he = get_cotan_weights_per_he(vertices, hemesh)
+    per_he = jnp.where(hemesh.is_bdry_he, 0.0, per_he)
     return (per_he + per_he[hemesh.twin])/2
 
 def get_voronoi_edge_lengths(vertices: Float[jax.Array, "n_vertices dim"],
