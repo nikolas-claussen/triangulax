@@ -18,6 +18,18 @@ custom geometry processing operations (and in Python, rather than C++).
 bindings](https://libigl.github.io/libigl-python-bindings/) focused on
 providing “ready made” geometry processing tools.
 
+A second use case is simulating for 2D tissue mechanics ([Active tension
+networks](https://www.pnas.org/doi/10.1073/pnas.2321928121),
+[area-perimeter vertex
+model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
+[active foams](https://www.nature.com/articles/s41567-021-01215-1)). 2D
+cell tilings are conveniently represented by their dual triangular
+network. `triangulax` makes it (relatively) easy to implement custom
+models within a single libary. JAX makes it easy to compute mechanical
+forces from arbitrary energy functions.
+
+### Automatic differentiation
+
 The main feature of `triangulax` is compatibility with automatic
 differentiation. This enables computation of gradients of any mesh-based
 function. Most tools are also compatible with JAX’s JIT-compilation,
@@ -26,34 +38,30 @@ delivering high performance in high-level python.
 For example, consider:
 
 1.  Flattening or deforming 3D models (computer graphics)
-2.  Simulating thin plates or membranes (mechanics)
+2.  Mechanics of thin plates or membranes (mechanics)
+3.  Cell resolved tissue simulations
 
-Such tasks often require optimizing some mesh-based “energy” (like the
+Such tasks often feature some mesh-based “energy” (like the [Dirichlet
+variational
+functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), the
 [Helfrich elastic
 energy](https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes), or
 the [Dirichlet
-energy](https://multires.caltech.edu/pubs/ConfEquiv.pdf)). Automatic
-differentiation makes is trivial to compute gradients and optimize such
-energies, and rapidly explore different ideas.
-
-Another use case is as a simulation framework for 2D tissue mechanics
-([Active tension
-networks](https://www.pnas.org/doi/10.1073/pnas.2321928121),
-[area-perimeter vertex
-model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
-[active foams](https://www.nature.com/articles/s41567-021-01215-1)). 2D
-cell tilings are conveniently represented by their dual triangular
-network. `triangulax` makes it easy to implement various models, and JAX
-makes it trivial to compute the resulting forces, and run simulations.
+functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), or the
+[area-perimeter
+energy](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
+respectively). Automatic differentiation with JAX makes is trivial to
+compute gradients. This makes it easy to optimize energies or to
+simulate forces.
 
 #### Gradient-based “meta-optimization” and inverse problems
 
-However, we can go further: once we have written a dynamical model for
-triangular meshes, thanks to JAX, we can *differentiate* the model
-output w.r.t. model parameters. This means we can apply gradient-based
-optimization to *inverse problems*. For example, in the tissue mechanics
-context you could ask: what mechanical actions do individual cells need
-to take so that the tissue as a whole takes on a certain shape?
+Automatic differentiation goes further: once we have a dynamical model
+for triangular meshes, we can *differentiate* the model output w.r.t.
+its parameters. This means one can apply gradient-based optimization to
+*inverse problems*. For example, in the tissue mechanics context: what
+mechanical actions do individual cells need to take so that the tissue
+as a whole takes on a certain shape?
 
 ## Developer guide and installation instructions
 
