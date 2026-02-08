@@ -5,33 +5,36 @@
 
 ## Overview
 
-This package provides data-structures for triangular meshes and geometry
-processing tools based on JAX and fully compatible with JAX’s
+This python package provides data-structures for triangular meshes and
+geometry processing tools based on JAX and fully compatible with JAX’s
 just-in-time compilation and automatic differentiation.
 
 ### Use cases
 
 Triangular meshes are ubiquitous in computer graphics and in scientific
 computing. The tools provided by `triangulax` makes it easy to implement
-custom geometry processing operations (and in Python, not C++ !).
-`triangulax` complements libraries like the excellent
-[`libigl`](https://libigl.github.io/libigl-python-bindings/) which are
-focused on providing “ready made” geometry processing tools.
+custom geometry processing operations (and in Python, rather than C++).
+`triangulax` complements libraries like the excellent [`libigl` python
+bindings](https://libigl.github.io/libigl-python-bindings/) focused on
+providing “ready made” geometry processing tools.
 
-But the main feature of `triangulax` is compatibility with automatic
-differentiation. Why? Often, one is often interested in
-deforming/dynamical meshes. For example: 1. Flattening or deforming 3D
-models (computer graphics) 2. Simulating thin plates or membranes
-(mechanics)
+The main feature of `triangulax` is compatibility with automatic
+differentiation. This enables computation of gradients of any mesh-based
+function. Most tools are also compatible with JAX’s JIT-compilation,
+delivering high performance in high-level python.
 
-This usually requires optimizing some mesh-based “energy” (like the
-[Helfrich
-energy](https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes) in
-membrane elasticity, or the [Dirichlet
-energy](https://multires.caltech.edu/pubs/ConfEquiv.pdf) in mesh
-parametrization). Automatic differentiation makes is trivial to compute
-gradients and optimize such energies, and rapidly explore different
-ideas.
+For example, consider:
+
+1.  Flattening or deforming 3D models (computer graphics)
+2.  Simulating thin plates or membranes (mechanics)
+
+Such tasks often require optimizing some mesh-based “energy” (like the
+[Helfrich elastic
+energy](https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes), or
+the [Dirichlet
+energy](https://multires.caltech.edu/pubs/ConfEquiv.pdf)). Automatic
+differentiation makes is trivial to compute gradients and optimize such
+energies, and rapidly explore different ideas.
 
 Another use case is as a simulation framework for 2D tissue mechanics
 ([Active tension
@@ -43,15 +46,14 @@ cell tilings are conveniently represented by their dual triangular
 network. `triangulax` makes it easy to implement various models, and JAX
 makes it trivial to compute the resulting forces, and run simulations.
 
-#### Gradient-based “meta-optimization”
+#### Gradient-based “meta-optimization” and inverse problems
 
 However, we can go further: once we have written a dynamical model for
 triangular meshes, thanks to JAX, we can *differentiate* the model
-output w.r.t. model parameters. We can then use gradient-based
-optimization to find dynamical models that produce certain behaviors of
-interest. For example, in the tissue mechanics context you could ask:
-what mechanical actions do individual cells need to take so that the
-tissue as a whole takes on a certain shape?
+output w.r.t. model parameters. This means we can apply gradient-based
+optimization to *inverse problems*. For example, in the tissue mechanics
+context you could ask: what mechanical actions do individual cells need
+to take so that the tissue as a whole takes on a certain shape?
 
 ## Developer guide and installation instructions
 
@@ -100,12 +102,18 @@ notebooks with example simulations can be found in the `nbds/` folder.
 
 ## Usage
 
-- The `mesh` module provides a half-edge data structure for triangular
-  meshes compatible with JAX.
-- The `linops` module provides linear operators on meshes (gradient,
-  Laplacian)
-- The notebook `nbs/05_example_simulation.ipynb` showcases how to
-  simulate mesh dynamics with `triangulax`
+`triangulax` comprises the following modules:
+
+- `triangular`: input/output for triangular meshes
+- `trigonometry`: trigonometry
+- `mesh`: a half-edge data structure for triangular meshes compatible
+  with JAX.
+- `topology`: topological modifications (flip, collapse, and split)
+- `adjacency`, `triangulax.geometry`, `triangulax.linops`: geometry
+  processing tools
+- Notebook `nbs/08_example_simulation.ipynb`,
+  `nbs/09_self_propelled_Voronoi.ipynb`: examples for simulating mesh
+  dynamics
 
 ### Minimal example
 
@@ -113,7 +121,7 @@ notebooks with example simulations can be found in the `nbds/` folder.
 import igl
 import jax
 import jax.numpy as jnp
-from triangulax import mesh, linops
+from triangulax import mesh, geometry
 
 # load example mesh and convert to half-edge mesh
 
@@ -131,15 +139,15 @@ print("Mean coordination number:", coord_number.mean())
 
 def mean_voronoi_area(vertices, hemesh: mesh.HeMesh) -> float:
     """Compute the mean Voronoi area per vertex."""
-    voronoi_areas = linops.get_cell_area(vertices, hemesh)
+    voronoi_areas = geometry.get_voronoi_areas(vertices, hemesh)
     return jnp.mean(voronoi_areas)
 
 value, gradient = jax.value_and_grad(mean_voronoi_area)(vertices, hemesh)
 print("Mean gradient norm:", jnp.linalg.norm(gradient, axis=1).mean())
 ```
 
-    Mean coordination number: 5.40458
-    Mean gradient norm: 0.009738781
-
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
+
+    Mean coordination number: 5.40458
+    Mean gradient norm: 0.00036383414
