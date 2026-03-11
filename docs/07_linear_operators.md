@@ -30,7 +30,7 @@ The cot-Laplacian computes the following per-vertex field:
 $$
 (\Delta u)\_i = \frac{1}{2} \sum\_{j} (\cot\alpha_j +\cot\beta_j) (u_j-u_i)
 $$
-where the sum is over adjacent vertices, and
+The sum is over adjacent vertices, and
 *α*<sub>*j*</sub>, *β*<sub>*j*</sub> are the two triangle angles
 “opposite” to the edge *i**j*.
 

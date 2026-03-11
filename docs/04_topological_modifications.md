@@ -131,7 +131,7 @@ msh.label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 
 #### Repeated flips
 
-In a simulation, we need to carry out edge flips at every timestep. The
+In a simulation, we need to carry out edge flips at every time step. The
 function `flip_edge(hemesh: HeMesh, e: int) -> HeMesh` does a single
 edge flip by modifying the connectivity arrays. Luckily, it is already
 JAX-compatible (we can JIT-compile it).
@@ -256,8 +256,8 @@ To split a half-edge `e` in a `hemesh`:
     edge cases. We can test the resulting half-edge mesh via plots, and
     use `libigl` to verify that the mesh is in a valid state.
 
-Finally, we also need a datastructure to keep track of the map from the
-vertices/edges/faces of the inital mesh to that of the modified one.
+Finally, we also need a data structure to keep track of the map from the
+vertices/edges/faces of the initial mesh to that of the modified one.
 
 **WARNING**: code not fully tested
 

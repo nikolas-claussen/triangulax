@@ -1,4 +1,4 @@
-# Area-perimeter self-propelled Voronoi model
+# Tutorial: Self-propelled Voronoi model
 
 
 After the toy example of notebook 05, let’s implement a slightly more
@@ -100,7 +100,7 @@ from importlib import reload
 #reload(trig)
 ```
 
-#### Read in test data
+### Read in test data
 
 ``` python
 mesh = TriMesh.read_obj("test_meshes/disk.obj")
@@ -126,6 +126,87 @@ ax.autoscale_view();
 ```
 
 ![](09_self-propelled_Voronoi_files/figure-commonmark/cell-7-output-1.png)
+
+### A note on periodic boundary conditions
+
+The mesh we just loaded is a disk, and thus has a boundary. You may
+instead want to do simulations with *periodic* boundary conditions,
+i.e. simulate cells in a box with lengths
+**L** = \[*L*<sub>*x*</sub>, *L*<sub>*y*</sub>\] where opposite sides
+are identified. In `triangulax`, mesh connectivity and geometry are
+decoupled, so periodic boundary conditions are easy to implement. You
+need two ingredients:
+
+1.  A triangulation whose connectivity has the desired periodicity
+    (e.g. a triangulation of a torus).
+
+There are different ways to generate a triangulation of the torus - one
+example is included in `test_meshes/torus_2d.obj`. Note: doing edge
+flips/T1 on this mesh will preserve its topology, no further bookkeeping
+needed. In particular, one does not need to keep track of any boundary
+vertices. There is no boundary! All `triangulax` tools related to the
+mesh connectivity (like the
+[`HeMesh`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh)
+class) can be used without modification.
+
+2.  A distance function that takes into account the periodicity.
+
+For a rectangular domain with lengths
+**L** = \[*L*<sub>*x*</sub>, *L*<sub>*y*</sub>\], the displacement
+vector between two points **r**<sub>1</sub>, **r**<sub>2</sub> can be
+computed like this:
+
+``` python
+def displacement_periodic(r_1, r_2, L):
+    d = r_2 – r_1
+    return d – L*jnp.round(d/L)
+```
+
+This always gives the shortest displacement vector between the two
+points. With this distance function, you can compute edge lengths,
+angles, Voronoi duals, etc.
+
+For a domain twisted/sheared along the *x*-axis by an amount *s* (i.e. a
+torus where (*x*, *y*) and
+(*x* + *s**L*<sub>*x*</sub>, *y* + *L*<sub>*y*</sub>) are identified),
+the distance function becomes
+
+``` python
+def displacement_periodic_twisted(r_1, r_2, L, s):
+    d = r_2 – r_1
+    twist = s * L[0] * jnp.round(d[1] / L[1]) # compute the amount of twist
+    d = d.at[0].set(d[0] + twist)
+    return d – L*jnp.round(d/L)
+```
+
+Note: nothing prevents you from changing the shape of your domain,
+i.e. **L**, *s* dynamically during your simulation! You can even take
+gradients with respect to them.
+
+``` python
+# this is an example of a 2d mesh with "periodic boundary conditions" - topologically, it is just a torus.
+# you can see the faces that wrap around the boundary.
+
+import igl
+
+vertices, _, _, faces, _, _ = igl.readOBJ("test_meshes/torus_2d.obj")
+
+plt.triplot(vertices[:,0], vertices[:,1], faces, lw=0.5, color="k")
+plt.axis("equal")
+```
+
+    (np.float64(-0.028125350000000004),
+     np.float64(1.04895835),
+     np.float64(0.03749965),
+     np.float64(1.04583335))
+
+![](09_self-propelled_Voronoi_files/figure-commonmark/cell-8-output-2.png)
+
+``` python
+igl.boundary_loop_all(faces) # the mesh has no boundary
+```
+
+    []
 
 ### Voronoi geometry and area-perimeter energy
 
@@ -165,9 +246,16 @@ a_mean, p_mean = (cell_areas[~hemesh.is_bdry].mean(), cell_perimeters[~hemesh.is
 a_mean, p_mean, p_mean/np.sqrt(a_mean)
 ```
 
-    (Array(0.02756258, dtype=float64),
-     Array(0.63463959, dtype=float64),
-     Array(3.82267399, dtype=float64))
+    NameError: name 'geommesh' is not defined
+    [31m---------------------------------------------------------------------------[39m
+    [31mNameError[39m                                 Traceback (most recent call last)
+    [36mCell[39m[36m [39m[32mIn[62][39m[32m, line 1[39m
+    [32m----> [39m[32m1[39m cell_areas, cell_perimeters = (geom.get_voronoi_areas([43mgeommesh[49m.vertices, hemesh),
+    [32m      2[39m                                get_voronoi_perimeters(geommesh.vertices, hemesh))
+    [32m      4[39m a_mean, p_mean = (cell_areas[~hemesh.is_bdry].mean(), cell_perimeters[~hemesh.is_bdry].mean())
+    [32m      5[39m a_mean, p_mean, p_mean/np.sqrt(a_mean)
+
+    [31mNameError[39m: name 'geommesh' is not defined
 
 ``` python
 energy_ap(geommesh, hemesh, a0=a_mean, p0=3*jnp.sqrt(a_mean))
@@ -313,7 +401,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,flip_count.sum()+1])
 ```
 
-![](09_self-propelled_Voronoi_files/figure-commonmark/cell-20-output-1.png)
+![](09_self-propelled_Voronoi_files/figure-commonmark/cell-22-output-1.png)
 
 ``` python
 geommesh_relaxed = geom.set_voronoi_face_positions(geommesh_relaxed, hemesh_relaxed)
@@ -329,7 +417,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](09_self-propelled_Voronoi_files/figure-commonmark/cell-21-output-1.png)
+![](09_self-propelled_Voronoi_files/figure-commonmark/cell-23-output-1.png)
 
 ## Overdamped dynamics with self-propulsion
 
@@ -568,7 +656,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,logs.n_flips.sum()+1])
 ```
 
-![](09_self-propelled_Voronoi_files/figure-commonmark/cell-33-output-1.png)
+![](09_self-propelled_Voronoi_files/figure-commonmark/cell-35-output-1.png)
 
 ``` python
 # angle dynamics are stochastic
@@ -585,7 +673,7 @@ plt.ylabel("orientation")
 
     Text(0, 0.5, 'orientation')
 
-![](09_self-propelled_Voronoi_files/figure-commonmark/cell-34-output-2.png)
+![](09_self-propelled_Voronoi_files/figure-commonmark/cell-36-output-2.png)
 
 ``` python
 # plot initial and final mesh
@@ -605,7 +693,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](09_self-propelled_Voronoi_files/figure-commonmark/cell-35-output-1.png)
+![](09_self-propelled_Voronoi_files/figure-commonmark/cell-37-output-1.png)
 
 ``` python
 ## plot trajectories of vertices (color = time: blue → red)
@@ -636,4 +724,4 @@ ax.set_ylabel("y")
 cbar = fig.colorbar(lc, ax=ax, fraction=0.046, pad=0.04)
 ```
 
-![](09_self-propelled_Voronoi_files/figure-commonmark/cell-36-output-1.png)
+![](09_self-propelled_Voronoi_files/figure-commonmark/cell-38-output-1.png)

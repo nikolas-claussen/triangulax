@@ -16,7 +16,7 @@ computing. The tools provided by `triangulax` makes it easy to implement
 custom geometry processing operations (and in Python, rather than C++).
 `triangulax` complements libraries like the excellent [`libigl` python
 bindings](https://libigl.github.io/libigl-python-bindings/) focused on
-providing “ready made” geometry processing tools.
+providing “ready-made” geometry processing tools.
 
 A second use case is simulating for 2D tissue mechanics ([Active tension
 networks](https://www.pnas.org/doi/10.1073/pnas.2321928121),
@@ -25,7 +25,7 @@ model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
 [active foams](https://www.nature.com/articles/s41567-021-01215-1)). 2D
 cell tilings are conveniently represented by their dual triangular
 network. `triangulax` makes it (relatively) easy to implement custom
-models within a single libary. JAX makes it easy to compute mechanical
+models within a single library. JAX makes it easy to compute mechanical
 forces from arbitrary energy functions.
 
 ### Automatic differentiation
@@ -65,13 +65,13 @@ as a whole takes on a certain shape?
 
 ## Developer guide and installation instructions
 
-This package is developed based on jupyter notebooks, which are
+This package is developed based on Jupyter notebooks, which are
 converted into python modules using `nbdev`. Take a look at
 `.github/workflows/copilot-instructions.md` for details.
 
 ### Install triangulax in Development mode
 
-1.  Clone the github repository
+1.  Clone the GitHub repository
 
 ``` sh
 $ git clone https://github.com/nikolas-claussen/triangulax.git
@@ -118,7 +118,7 @@ notebooks with example simulations can be found in the `nbds/` folder.
   with JAX.
 - `topology`: topological modifications (flip, collapse, and split)
 - `adjacency`, `geometry`, `linops`: geometry processing tools
-- Notebook `nbs/08_example_simulation.ipynb`,
+- Notebooks `nbs/08_example_simulation.ipynb`,
   `nbs/09_self_propelled_Voronoi.ipynb`: examples for simulating mesh
   dynamics
 

@@ -12,3 +12,4 @@ website:
       - 07_linear_operators.ipynb
       - 08_example_simulation.ipynb
       - 09_self-propelled_Voronoi.ipynb
+      - 10_differentiable_meshes.ipynb

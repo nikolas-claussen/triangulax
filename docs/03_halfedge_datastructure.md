@@ -38,7 +38,7 @@ The latter are packaged into a
 class. Together, the pair `(GeomMesh, HeMesh)` describes a mesh (like
 vertices/faces pair). A named tuple
 [`Mesh`](https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#mesh)
-comines the two.
+combines the two.
 
 The first task is to create a helper function to plot mesh connectivity,
 and to create the half-edge connectivity matrices from the more
@@ -274,7 +274,7 @@ load : str -\> HeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L365"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L367"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### test_mesh_validity
@@ -304,7 +304,7 @@ test_mesh_validity(hemesh)
     True
 
 ``` python
-# hemeshes can be compared for equali and are registered as py-trees
+# hemeshes can be compared for equality and are registered as pytrees
 
 leafs, ts = jax.tree_util.tree_flatten(hemesh)
 
@@ -396,7 +396,7 @@ class, boundary half-edges are assigned to a fictitious `-1` face. This
 convention has a downside. It is not possible to modify the boundary
 loop of the mesh by edge flips - doing so would result in an invalid
 state. In a simulation, this artificially limits the mesh’s ability to
-deform. Instead, we can add “vertices at infinity” and connect al edges
+deform. Instead, we can add “vertices at infinity” and connect all edges
 in a given boundary to ∞. This turns the mesh into a topological sphere.
 Now, one can flip boundary edges without the overall number of
 half-edges changing (so the array shape stays the same). Multiple
@@ -405,7 +405,7 @@ boundaries are also supported. Each boundary corresponds to a distinct
 
 The coordinates of the fictitious vertices are set to `[np.inf, np.inf]`
 by convention. The boundary is found by iterating around ∞. By
-convention, ∞-vertices, if they exists, are the final vertices of the
+convention, ∞-vertices, if they exist, are the final vertices of the
 mesh (don’t rely on this - implementation detail).
 
 We generally assume that the mesh has only a single connected component.
@@ -419,7 +419,7 @@ latter are listed in the `inf_vertices` attribute of a
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L388"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L390"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### connect_boundary_to_infinity
@@ -479,7 +479,7 @@ class, the
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L432"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L434"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GeomMesh
@@ -538,7 +538,7 @@ load : str -\> GeomHeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L568"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L570"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -582,7 +582,7 @@ geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L574"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L576"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -628,7 +628,7 @@ property (for example, the cell target area). All values are arrays, and
 the first axis corresponds to the number of vertices/half-edges/faces,
 respectively. To keep track of the possible attributes, we use
 `IntEnum`’s as keys (this also ensures keys are hashable, as required by
-JAX)
+JAX).
 
 ``` python
 mesh = TriMesh.read_obj("test_meshes/disk.obj")
@@ -693,8 +693,8 @@ geommmesh.he_attribs.keys()
 ## Batching
 
 In our simulations, we may want to “batch” over several initial
-conditions/random seeds/etc (analogous to batching over training data in
-normal ML). In JAX, we can efficiently and concisely vectorize
+conditions/random seeds/etc. (analogous to batching over training data
+in normal ML). In JAX, we can efficiently and concisely vectorize
 operations over such “batch axes” with `jax.vmap`.
 
 To batch over our custom data structures, we need to pull a small
@@ -708,7 +708,7 @@ The resulting meshes have an extra “batch” axis in all their array.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L609"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L611"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -726,7 +726,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L605"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L607"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack

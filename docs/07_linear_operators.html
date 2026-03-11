@@ -197,7 +197,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02_coding_in_JAX_notes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Coding in JAX</span></a>
+ <span class="menu-text">Tutorial: coding in JAX</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -233,13 +233,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08_example_simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./09_self-propelled_Voronoi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
+ <span class="menu-text">Tutorial: Self-propelled Voronoi model</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_differentiable_meshes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: making mesh geometry differentiable</span></a>
   </div>
 </li>
     </ul>
@@ -288,7 +294,7 @@ window.Quarto = {
 \]</span> plus cyclic permutations. Here, <span class="math inline">\(a_{ijk}\)</span> is the triangle area, <span class="math inline">\(\mathbf{v}_i\)</span> are the vertex positions, and <span class="math inline">\(()^\perp\)</span> denotes rotation by 90 degrees (in 3D, you rotate about the triangle normal).</p>
 <p>The cot-Laplacian computes the following per-vertex field: <span class="math display">\[
 (\Delta u)_i = \frac{1}{2} \sum_{j} (\cot\alpha_j +\cot\beta_j) (u_j-u_i)
-\]</span> where the sum is over adjacent vertices, and <span class="math inline">\(\alpha_j, \beta_j\)</span> are the two triangle angles “opposite” to the edge <span class="math inline">\(ij\)</span>.</p>
+\]</span> The sum is over adjacent vertices, and <span class="math inline">\(\alpha_j, \beta_j\)</span> are the two triangle angles “opposite” to the edge <span class="math inline">\(ij\)</span>.</p>
 <p>To check for correctness, we can compare with <a href="https://libigl.github.io/libigl-python-bindings/tut-chapter1/">this <code>libgigl</code> tutorial</a>, using the test mesh and some random test fields.</p>
 <div id="9e8eeb1a" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.triangular <span class="im">import</span> TriMesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>

@@ -5,13 +5,14 @@
 ## Mesh geometry
 
 Using the half-edge mesh and the adjacency-like operators it defines, we
-can compute all sorts of geometric quantities of interest: egde lengths,
+can compute all sorts of geometric quantities of interest: edge lengths,
 cell areas, curvature in 3d, etc.
 
-#### Discrete exterior calculus and discrete hodge star
+#### Discrete exterior calculus and discrete Hodge star
 
-Note: the quantities triangle area, cell area, edge length, and dual
-edge lengths are what’s required for DEC.
+Note: triangle area, cell area, edge length, and dual edge lengths are
+what’s required for [discrete exterior
+calculus](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf).
 
 ``` python
 from triangulax.triangular import TriMesh

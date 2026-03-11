@@ -1,4 +1,4 @@
-# Simulation test case - optimize mesh to make triangles equilateral
+# Tutorial: Mesh optimization
 
 
 Let’s start with a simple test case to see `triangulax` in action. The
@@ -17,10 +17,12 @@ step, we can meta-optimize over the model parameters (here
 
 ### JAX-compatible scientific computing libraries - useful in future steps
 
-    import diffrax # ODE solvers
-    import lineax # linear solvers
-    import optimistix # optimisation (scientific-computing style, e.g. conjugate gradient)
-    import optax # optimisation (ML-style, e.g. ADAM)
+``` python
+import diffrax # ODE solvers
+import lineax # linear solvers
+import optimistix # optimisation (scientific-computing style, e.g. conjugate gradient)
+import optax # optimisation (ML-style, e.g. ADAM)
+```
 
 ``` python
 import numpy as np
@@ -95,9 +97,9 @@ plt.axis("equal");
 ### Forward pass - minimize energy
 
 We write the energy_function using a geommesh as an argument. This is
-overkill for present purposes ince only the vertex positions matter, but
-is useful to test the machinery. For more complicated simulations, we
-will want to use GeomMesh as a wrapper for the various arrays.
+overkill for present purposes since only the vertex positions matter,
+but is useful to test the machinery. For more complicated simulations,
+we will want to use GeomMesh as a wrapper for the various arrays.
 
 ``` python
 @jax.jit
@@ -197,8 +199,8 @@ implements ODE and SDE solvers in JAX and is compatible with autodiff
 (you can differentiate through the solver), since it was designed for
 neural differential equations.
 
-For “adiabatic” dynamics, which involve mimizing an energy at every
-timestep, we can use the “optimistix” library.
+For “adiabatic” dynamics, which involve minimizing an energy at every
+time step, we can use the `optimistix` library.
 
 The below is based on the [Stepping through a
 solver](https://docs.kidger.site/diffrax/usage/manual-stepping/)
@@ -252,8 +254,8 @@ plt.axis("equal");
 
 One use case for JAX is to *differentiate through* a scientific
 simulation, allowing one to optimize the simulation parameters towards
-some some desired behavior. For example, we may wish to find a
-triangulation dynamics that creates some target shape.
+some desired behavior. For example, we may wish to find a triangulation
+dynamics that creates some target shape.
 
 As a toy example, let’s take the above “dynamics” which minimizes the
 pseudo-energy to make all triangles equilateral. It depends on the
@@ -426,7 +428,7 @@ loss, grads, grads.ell_0
 
 #### Forward and reverse mode autodiff
 
-Since we are differentiation w.r.t. a small number of parameters (justy
+Since we are differentiation w.r.t. a small number of parameters (just
 1: ℓ<sub>0</sub>), we can use forward mode automatic differentiation for
 increased efficiency. This may be the case more generally: if we want to
 learn “translationally invariant” models, where the parameters for all

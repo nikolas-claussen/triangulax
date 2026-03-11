@@ -203,7 +203,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02_coding_in_JAX_notes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Coding in JAX</span></a>
+ <span class="menu-text">Tutorial: coding in JAX</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -239,13 +239,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08_example_simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./09_self-propelled_Voronoi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
+ <span class="menu-text">Tutorial: Self-propelled Voronoi model</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_differentiable_meshes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: making mesh geometry differentiable</span></a>
   </div>
 </li>
     </ul>
@@ -299,7 +305,7 @@ window.Quarto = {
 <li>Edges: 6 <span class="math inline">\((2N_E,)\)</span> matrices, [<code>origin</code>, <code>dest</code>, <code>nxt</code>, <code>prv</code>, <code>twin</code>, <code>face</code>] for each half-edge (<code>face</code> is undefined for boundary half-edges).</li>
 <li>Faces, 1 <span class="math inline">\((N_F, 1)\)</span> matrix, whose entry for face <span class="math inline">\(i\)</span> is an arbitrary HE in <span class="math inline">\(i\)</span>. (Not to be confused with the <span class="math inline">\((N_F, 3)\)</span> matrix of <em>vertex IDs</em> used previously).</li>
 </ol>
-<p>Additionally, there are two float arrays for vertex and face positions, as previously. However, we split <em>combinatorial</em> and <em>geometric</em> information - a <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> class for the combinatorics, and a couple of regular arrays for the vertex positions, face positions, and vertex/half-edge/face attributes. The latter are packaged into a <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> class. Together, the pair <code>(GeomMesh, HeMesh)</code> describes a mesh (like vertices/faces pair). A named tuple <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#mesh"><code>Mesh</code></a> comines the two.</p>
+<p>Additionally, there are two float arrays for vertex and face positions, as previously. However, we split <em>combinatorial</em> and <em>geometric</em> information - a <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> class for the combinatorics, and a couple of regular arrays for the vertex positions, face positions, and vertex/half-edge/face attributes. The latter are packaged into a <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> class. Together, the pair <code>(GeomMesh, HeMesh)</code> describes a mesh (like vertices/faces pair). A named tuple <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#mesh"><code>Mesh</code></a> combines the two.</p>
 <p>The first task is to create a helper function to plot mesh connectivity, and to create the half-edge connectivity matrices from the more conventional list-of-triangles format. The latter is somewhat involved.</p>
 <p>We follow the notes in notebook 02 to ensure JAX compatibility.</p>
 <hr>
@@ -454,7 +460,7 @@ Wall time: 221 ms</code></pre>
 <p><strong>Static methods</strong></p>
 <p>load : str -&gt; HeMesh</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L365" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L367" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="test_mesh_validity" class="level3">
 <h3 class="anchored" data-anchor-id="test_mesh_validity">test_mesh_validity</h3>
@@ -478,8 +484,8 @@ Wall time: 221 ms</code></pre>
 <pre><code>True</code></pre>
 </div>
 </div>
-<div id="b05bdc43-7033-420b-bbdf-0daf113ed228" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hemeshes can be compared for equali and are registered as py-trees</span></span>
+<div id="b05bdc43-7033-420b-bbdf-0daf113ed228" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hemeshes can be compared for equality and are registered as pytrees</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>leafs, ts <span class="op">=</span> jax.tree_util.tree_flatten(hemesh)</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -563,12 +569,12 @@ Wall time: 221 ms</code></pre>
 </section>
 <section id="boundary-and-the-vertex-at-infinity" class="level3">
 <h3 class="anchored" data-anchor-id="boundary-and-the-vertex-at-infinity">Boundary and the vertex at infinity</h3>
-<p>So far, our mesh representations <a href="https://nikolas-claussen.github.io/triangulax/triangular_meshes.html#trimesh"><code>TriMesh</code></a> and <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> work for triangular meshes with and without boundary. In the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> class, boundary half-edges are assigned to a fictitious <code>-1</code> face. This convention has a downside. It is not possible to modify the boundary loop of the mesh by edge flips - doing so would result in an invalid state. In a simulation, this artificially limits the mesh’s ability to deform. Instead, we can add “vertices at infinity” and connect al edges in a given boundary to <span class="math inline">\(\infty\)</span>. This turns the mesh into a topological sphere. Now, one can flip boundary edges without the overall number of half-edges changing (so the array shape stays the same). Multiple boundaries are also supported. Each boundary corresponds to a distinct <span class="math inline">\(\infty\)</span>-vertex (for example, 2 for a cylinder).</p>
-<p>The coordinates of the fictitious vertices are set to <code>[np.inf, np.inf]</code> by convention. The boundary is found by iterating around <span class="math inline">\(\infty\)</span>. By convention, <span class="math inline">\(\infty\)</span>-vertices, if they exists, are the final vertices of the mesh (don’t rely on this - implementation detail).</p>
+<p>So far, our mesh representations <a href="https://nikolas-claussen.github.io/triangulax/triangular_meshes.html#trimesh"><code>TriMesh</code></a> and <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> work for triangular meshes with and without boundary. In the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> class, boundary half-edges are assigned to a fictitious <code>-1</code> face. This convention has a downside. It is not possible to modify the boundary loop of the mesh by edge flips - doing so would result in an invalid state. In a simulation, this artificially limits the mesh’s ability to deform. Instead, we can add “vertices at infinity” and connect all edges in a given boundary to <span class="math inline">\(\infty\)</span>. This turns the mesh into a topological sphere. Now, one can flip boundary edges without the overall number of half-edges changing (so the array shape stays the same). Multiple boundaries are also supported. Each boundary corresponds to a distinct <span class="math inline">\(\infty\)</span>-vertex (for example, 2 for a cylinder).</p>
+<p>The coordinates of the fictitious vertices are set to <code>[np.inf, np.inf]</code> by convention. The boundary is found by iterating around <span class="math inline">\(\infty\)</span>. By convention, <span class="math inline">\(\infty\)</span>-vertices, if they exist, are the final vertices of the mesh (don’t rely on this - implementation detail).</p>
 <p>We generally assume that the mesh has only a single connected component.</p>
 <p>The <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> class can deal with both the -1-face and the <span class="math inline">\(\infty\)</span>-vertices conventions. The latter are listed in the <code>inf_vertices</code> attribute of a <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L388" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L390" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="connect_boundary_to_infinity" class="level3">
 <h3 class="anchored" data-anchor-id="connect_boundary_to_infinity">connect_boundary_to_infinity</h3>
@@ -615,7 +621,7 @@ Wall time: 221 ms</code></pre>
 <h2 class="anchored" data-anchor-id="mesh-geometry-and-per-mesh-variables">Mesh geometry and per-mesh variables</h2>
 <p>Mesh geometry (vertex and face positions) and per-mesh-item (per-face, per-half-edge, per-vertex) variables are combined into a second data class, the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L432" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L434" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="geommesh" class="level3">
 <h3 class="anchored" data-anchor-id="geommesh">GeomMesh</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -643,7 +649,7 @@ Wall time: 221 ms</code></pre>
 <p><strong>Static methods</strong></p>
 <p>load : str -&gt; GeomHeMesh</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L568" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L570" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="mesh" class="level3">
 <h3 class="anchored" data-anchor-id="mesh">Mesh</h3>
@@ -681,7 +687,7 @@ Wall time: 221 ms</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L574" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L576" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="cellplot" class="level3">
 <h3 class="anchored" data-anchor-id="cellplot">cellplot</h3>
@@ -717,7 +723,7 @@ Wall time: 221 ms</code></pre>
 </section>
 <section id="vertex-half-edge-and-face-properties" class="level3">
 <h3 class="anchored" data-anchor-id="vertex-half-edge-and-face-properties">Vertex, half-edge, and face properties</h3>
-<p>In simulations, we will often want to attach extra information to a mesh’s vertices/edges/faces. In the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> class, these are saved in three dictionaries, <code>vertex_attribs</code>, <code>he_attribs</code>, <code>face_attribs</code>. Each key/value pair represents one property (for example, the cell target area). All values are arrays, and the first axis corresponds to the number of vertices/half-edges/faces, respectively. To keep track of the possible attributes, we use <code>IntEnum</code>’s as keys (this also ensures keys are hashable, as required by JAX)</p>
+<p>In simulations, we will often want to attach extra information to a mesh’s vertices/edges/faces. In the <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> class, these are saved in three dictionaries, <code>vertex_attribs</code>, <code>he_attribs</code>, <code>face_attribs</code>. Each key/value pair represents one property (for example, the cell target area). All values are arrays, and the first axis corresponds to the number of vertices/half-edges/faces, respectively. To keep track of the possible attributes, we use <code>IntEnum</code>’s as keys (this also ensures keys are hashable, as required by JAX).</p>
 <div id="452cebbe" class="cell" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
@@ -781,10 +787,10 @@ Wall time: 221 ms</code></pre>
 </section>
 <section id="batching" class="level2">
 <h2 class="anchored" data-anchor-id="batching">Batching</h2>
-<p>In our simulations, we may want to “batch” over several initial conditions/random seeds/etc (analogous to batching over training data in normal ML). In JAX, we can efficiently and concisely vectorize operations over such “batch axes” with <code>jax.vmap</code>.</p>
+<p>In our simulations, we may want to “batch” over several initial conditions/random seeds/etc. (analogous to batching over training data in normal ML). In JAX, we can efficiently and concisely vectorize operations over such “batch axes” with <code>jax.vmap</code>.</p>
 <p>To batch over our custom data structures, we need to pull a small trick - convert a list of <a href="https://nikolas-claussen.github.io/triangulax/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a>/<code>GeomMeshe</code> instances into a single mesh with a batch axis for the various arrays. Luckily, this can be <a href="https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees">done using JAX’s pytree tools</a>. The resulting meshes have an extra “batch” axis in all their array.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L609" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L611" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="tree_unstack" class="level3">
 <h3 class="anchored" data-anchor-id="tree_unstack">tree_unstack</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -794,7 +800,7 @@ Wall time: 221 ms</code></pre>
 <span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Unstack a batched pytree along axis into a list of pytrees.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L605" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L607" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="tree_stack" class="level3">
 <h3 class="anchored" data-anchor-id="tree_stack">tree_stack</h3>

@@ -174,7 +174,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02_coding_in_JAX_notes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Coding in JAX</span></a>
+ <span class="menu-text">Tutorial: coding in JAX</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -210,13 +210,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08_example_simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation test case - optimize mesh to make triangles equilateral</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./09_self-propelled_Voronoi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Area-perimeter self-propelled Voronoi model</span></a>
+ <span class="menu-text">Tutorial: Self-propelled Voronoi model</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_differentiable_meshes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: making mesh geometry differentiable</span></a>
   </div>
 </li>
     </ul>
@@ -359,7 +365,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="repeated-flips" class="level4">
 <h4 class="anchored" data-anchor-id="repeated-flips">Repeated flips</h4>
-<p>In a simulation, we need to carry out edge flips at every timestep. The function <code>flip_edge(hemesh: HeMesh, e: int) -&gt; HeMesh</code> does a single edge flip by modifying the connectivity arrays. Luckily, it is already JAX-compatible (we can JIT-compile it).</p>
+<p>In a simulation, we need to carry out edge flips at every time step. The function <code>flip_edge(hemesh: HeMesh, e: int) -&gt; HeMesh</code> does a single edge flip by modifying the connectivity arrays. Luckily, it is already JAX-compatible (we can JIT-compile it).</p>
 <p>To carry out multiple flips, we must do the flips in sequence (otherwise, you risk leaving the mesh in an invalid state). To make things JAX-compatible, we do a <code>jax.lax.scan</code> scan over <em>all</em> half-edges.</p>
 <div id="69320efd-505e-44af-9b28-f50a00e7fc53" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
@@ -452,7 +458,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Glue the “gap” back together.</li>
 <li>Merge the vertices <code>hemesh.orig[e]</code>, <code>hemesh.dest[e]</code> We must be careful to preserve the manifold structure of the mesh, deal with edge cases. We can test the resulting half-edge mesh via plots, and use <code>libigl</code> to verify that the mesh is in a valid state.</li>
 </ol>
-<p>Finally, we also need a datastructure to keep track of the map from the vertices/edges/faces of the inital mesh to that of the modified one.</p>
+<p>Finally, we also need a data structure to keep track of the map from the vertices/edges/faces of the initial mesh to that of the modified one.</p>
 <p><strong>WARNING</strong>: code not fully tested</p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L98" target="_blank" style="float:right; font-size:smaller">source</a></p>
