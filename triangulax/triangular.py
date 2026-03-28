@@ -25,7 +25,7 @@ import dataclasses
 # %% ../nbs/src/01_triangular_meshes.ipynb #cef3ff0a
 from . import trigonometry as trig
 
-# %% ../nbs/src/01_triangular_meshes.ipynb #468fc48c-bf9f-46b9-bc24-74638da2c662
+# %% ../nbs/src/01_triangular_meshes.ipynb #37cb0cee
 _INF_SENTINEL = 1e300  # Sentinel for infinity vertices in .obj files
 
 @dataclasses.dataclass(init=True, repr=False, eq=False, frozen=False, slots=False)
@@ -247,8 +247,12 @@ class TriMesh:
         return jnp.array(pairs[unique_indices][:, 1])
 
     @property
-    def has_inf_vertex(self) -> bool:
-        return jnp.isinf(self.vertices).any()
+    def has_inf_vertex(self) -> np.bool:
+        return np.isinf(self.vertices).any()
+    
+    @property
+    def inf_vertices(self) -> bool:
+        return np.where(np.isinf(self.vertices))
 
     @property
     def n_vertices(self) -> int:

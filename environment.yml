@@ -18,6 +18,7 @@ dependencies:
   - optimistix
   - diffrax
   - optax
+  - meshplot
   - pip
   - pip:
       - libigl==2.6.1

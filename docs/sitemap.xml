@@ -1,51 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/02_halfedge_datastructure.html</loc>
+    <lastmod>2026-03-28T22:23:12.980Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/01_triangular_meshes.html</loc>
+    <lastmod>2026-03-28T22:23:12.942Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/06_linear_operators.html</loc>
+    <lastmod>2026-03-28T22:23:12.998Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/04_adjacency_operators.html</loc>
+    <lastmod>2026-03-28T22:23:12.964Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization.html</loc>
+    <lastmod>2026-03-28T22:23:12.332Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/tutorials/00_triangular_meshes.html</loc>
+    <lastmod>2026-03-28T22:23:12.326Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/tutorials/01_coding_with_JAX.html</loc>
+    <lastmod>2026-03-28T22:23:12.325Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/tutorials/10_differentiable_meshes.html</loc>
+    <lastmod>2026-03-28T22:23:12.376Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/tutorials/05_membrane_mechanics.html</loc>
+    <lastmod>2026-03-28T22:23:12.357Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/tutorials/04_PDEs_on_curved_surfaces.html</loc>
+    <lastmod>2026-03-28T22:23:12.369Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nikolas-claussen.github.io/triangulax/tutorials/03_vertex_models.html</loc>
+    <lastmod>2026-03-28T22:23:12.348Z</lastmod>
+  </url>
+  <url>
     <loc>https://nikolas-claussen.github.io/triangulax/index.html</loc>
-    <lastmod>2026-03-11T15:37:45.862Z</lastmod>
+    <lastmod>2026-03-28T22:23:12.325Z</lastmod>
   </url>
   <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/09_self-propelled_Voronoi.html</loc>
-    <lastmod>2026-03-11T15:37:45.855Z</lastmod>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/03_topological_modifications.html</loc>
+    <lastmod>2026-03-28T22:23:12.982Z</lastmod>
   </url>
   <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/00_trigonometry.html</loc>
-    <lastmod>2026-02-08T01:38:02.408Z</lastmod>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/05_geometric_quantities.html</loc>
+    <lastmod>2026-03-28T22:23:13.013Z</lastmod>
   </url>
   <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/01_triangular_meshes.html</loc>
-    <lastmod>2026-02-08T01:38:02.504Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/10_differentiable_meshes.html</loc>
-    <lastmod>2026-03-11T15:37:45.874Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/07_linear_operators.html</loc>
-    <lastmod>2026-03-11T15:37:56.609Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/08_example_simulation.html</loc>
-    <lastmod>2026-03-11T15:37:45.841Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/03_halfedge_datastructure.html</loc>
-    <lastmod>2026-03-11T15:37:56.623Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/02_coding_in_JAX_notes.html</loc>
-    <lastmod>2026-03-11T15:37:45.774Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/04_topological_modifications.html</loc>
-    <lastmod>2026-03-11T15:37:56.616Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/06_geometric_quantities.html</loc>
-    <lastmod>2026-03-11T15:37:56.610Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/05_adjacency_operators.html</loc>
-    <lastmod>2026-03-11T15:37:56.606Z</lastmod>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/00_trigonometry.html</loc>
+    <lastmod>2026-03-28T22:23:12.791Z</lastmod>
   </url>
 </urlset>

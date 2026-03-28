@@ -8,18 +8,12 @@ __all__ = ['get_he_length', 'get_triangle_areas', 'get_oriented_triangle_areas',
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
-import igl
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
 import jax.numpy as jnp
-import jax.experimental.sparse as jsparse
 
 import dataclasses
-
-import lineax
-
-import functools
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float 

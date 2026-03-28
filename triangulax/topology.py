@@ -16,10 +16,8 @@ import jax
 import jax.numpy as jnp
 
 # %% ../nbs/src/03_topological_modifications.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
-from jaxtyping import Float, Int, Bool, PyTree 
-from typing import Any, Iterable, NamedTuple
-from pathlib import Path
-from enum import IntEnum
+from jaxtyping import Int, Bool 
+from typing import Any
 
 import dataclasses
 

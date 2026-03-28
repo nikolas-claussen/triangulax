@@ -2,14 +2,21 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 00_trigonometry.ipynb
-      - 01_triangular_meshes.ipynb
-      - 02_coding_in_JAX_notes.ipynb
-      - 03_halfedge_datastructure.ipynb
-      - 04_topological_modifications.ipynb
-      - 05_adjacency_operators.ipynb
-      - 06_geometric_quantities.ipynb
-      - 07_linear_operators.ipynb
-      - 08_example_simulation.ipynb
-      - 09_self-propelled_Voronoi.ipynb
-      - 10_differentiable_meshes.ipynb
+      - section: src
+        contents:
+          - src/00_trigonometry.ipynb
+          - src/01_triangular_meshes.ipynb
+          - src/02_halfedge_datastructure.ipynb
+          - src/03_topological_modifications.ipynb
+          - src/04_adjacency_operators.ipynb
+          - src/05_geometric_quantities.ipynb
+          - src/06_linear_operators.ipynb
+      - section: tutorials
+        contents:
+          - tutorials/00_triangular_meshes.ipynb
+          - tutorials/01_coding_with_JAX.ipynb
+          - tutorials/02_mesh_optimization.ipynb
+          - tutorials/03_vertex_models.ipynb
+          - tutorials/04_PDEs_on_curved_surfaces.ipynb
+          - tutorials/05_membrane_mechanics.ipynb
+          - tutorials/10_differentiable_meshes.ipynb

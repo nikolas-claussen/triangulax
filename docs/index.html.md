@@ -6,34 +6,32 @@
 ## Overview
 
 This python package provides data-structures for triangular meshes and
-geometry processing tools based on JAX and fully compatible with JAX’s
+geometry processing tools based on JAX, fully compatible with
 just-in-time compilation and automatic differentiation.
 
 ### Use cases
 
 Triangular meshes are ubiquitous in computer graphics and in scientific
-computing. The tools provided by `triangulax` makes it easy to implement
-custom geometry processing operations (and in Python, rather than C++).
-`triangulax` complements libraries like the excellent [`libigl` python
-bindings](https://libigl.github.io/libigl-python-bindings/) focused on
-providing “ready-made” geometry processing tools.
+computing, for example in the finite-element method.
 
-A second use case is simulating for 2D tissue mechanics ([Active tension
-networks](https://www.pnas.org/doi/10.1073/pnas.2321928121),
-[area-perimeter vertex
-model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
-[active foams](https://www.nature.com/articles/s41567-021-01215-1)). 2D
-cell tilings are conveniently represented by their dual triangular
-network. `triangulax` makes it (relatively) easy to implement custom
-models within a single library. JAX makes it easy to compute mechanical
-forces from arbitrary energy functions.
+A major motivation for `triangulax` are simulations in soft-matter and
+biophysics, like the mechanics of membranes and two-dimensional tissue
+sheets (e.g. [active tension
+networks](https://www.pnas.org/doi/10.1073/pnas.2321928121) or the
+[self-propelled Voronoi
+model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011)).
+
+`triangulax` complements libraries like the [`libigl` python
+bindings](https://libigl.github.io/libigl-python-bindings/) by allowing
+implementation of custom simulations and geometry operations.
 
 ### Automatic differentiation
 
-The main feature of `triangulax` is compatibility with automatic
-differentiation. This enables computation of gradients of any mesh-based
-function. Most tools are also compatible with JAX’s JIT-compilation,
-delivering high performance in high-level python.
+The main feature of `triangulax` is compatibility with (forward- and
+reverse-mode) automatic differentiation. This enables computation of
+gradients of any mesh-based function. Most tools are also compatible
+with JAX’s JIT-compilation, delivering high performance in high-level
+Python (rather than C++).
 
 For example, consider:
 
@@ -41,7 +39,7 @@ For example, consider:
 2.  Mechanics of thin plates or membranes (mechanics)
 3.  Cell resolved tissue simulations
 
-Such tasks often feature some mesh-based “energy” (like the [Dirichlet
+These tasks revolve around a mesh-based “energy” (like the [Dirichlet
 variational
 functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), the
 [Helfrich elastic
@@ -50,18 +48,16 @@ the [Dirichlet
 functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), or the
 [area-perimeter
 energy](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
-respectively). Automatic differentiation with JAX makes is trivial to
-compute gradients. This makes it easy to optimize energies or to
-simulate forces.
+respectively). JAX automatically computes their gradients, making it
+easy to optimize energies or to simulate forces.
 
 #### Gradient-based “meta-optimization” and inverse problems
 
-Automatic differentiation goes further: once we have a dynamical model
-for triangular meshes, we can *differentiate* the model output w.r.t.
-its parameters. This means one can apply gradient-based optimization to
-*inverse problems*. For example, in the tissue mechanics context: what
-mechanical actions do individual cells need to take so that the tissue
-as a whole takes on a certain shape?
+Since `triangulax` is fully JAX-compatible, it allows differentiating a
+simulation w.r.t. its parameters. This means one can apply
+gradient-based optimization to *inverse problems*. For example, in the
+tissue mechanics context, one can ask: what do individual cells need to
+do so that the tissue as a whole takes on a certain shape?
 
 ## Developer guide and installation instructions
 
@@ -106,7 +102,7 @@ $ nbdev_prepare
 Documentation can be found hosted on this GitHub
 [repository](https://github.com/nikolas-claussen/triangulax)’s
 [pages](https://nikolas-claussen.github.io/triangulax/). Jupyter
-notebooks with example simulations can be found in the `nbds/` folder.
+notebooks tutorials can be found in the `nbs/tutorials/` folder.
 
 ## Usage
 
@@ -118,9 +114,6 @@ notebooks with example simulations can be found in the `nbds/` folder.
   with JAX.
 - `topology`: topological modifications (flip, collapse, and split)
 - `adjacency`, `geometry`, `linops`: geometry processing tools
-- Notebooks `nbs/08_example_simulation.ipynb`,
-  `nbs/09_self_propelled_Voronoi.ipynb`: examples for simulating mesh
-  dynamics
 
 ### Minimal example
 
