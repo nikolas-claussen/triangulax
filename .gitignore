@@ -153,3 +153,7 @@ checklink/cookies.txt
 
 # large test data
 *high_resolution.obj
+
+# code from previous projects to be integrated
+
+previous_projects/
