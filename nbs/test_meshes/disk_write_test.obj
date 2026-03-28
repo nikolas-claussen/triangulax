@@ -1,4 +1,5 @@
-#Attention: vn-lines encode face centers, not normalsv 0.653095 -0.749993 0
+# triangulax: vn-lines encode face centers, not normals
+v 0.653095 -0.749993 0
 v 0.63956 -0.564372 0
 v 0.693428 -0.395518 0
 v 0.684744 -0.159231 0
