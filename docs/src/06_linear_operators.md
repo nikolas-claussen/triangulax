@@ -45,11 +45,11 @@ from triangulax.triangular import TriMesh
 ``` python
 # load test data
 
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommesh = msh.GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 
-mesh_3d = TriMesh.read_obj("test_meshes/disk.obj", dim=3)
+mesh_3d = TriMesh.read_obj("../test_meshes/disk.obj", dim=3)
 geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_positions)
 ```
 
@@ -63,7 +63,7 @@ geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_posit
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L56"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L78"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### diag_jsparse
@@ -81,7 +81,25 @@ def diag_jsparse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L31"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L57"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### bcoo_to_scipy
+
+``` python
+
+def bcoo_to_scipy(
+    A:BCOO, # Input JAX sparse matrix
+)->csr_matrix: # Equivalent SciPy sparse matrix
+
+```
+
+*Convert a JAX BCOO sparse matrix to a SciPy CSR sparse matrix.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L32"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### scipy_to_bcoo
@@ -102,7 +120,7 @@ without converting to dense.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L66"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L88"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_cotan_laplace
@@ -121,7 +139,7 @@ conditions).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L77"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L99"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cotan_laplace_sparse
@@ -175,6 +193,14 @@ print("cotan sparse vs apply rel. error:", rel_err_sparse)
 
     cotan sparse vs apply rel. error: 1.302894564211555e-16
 
+``` python
+bcoo_to_scipy(L_sparse), (scipy_to_bcoo(bcoo_to_scipy(L_sparse)).todense() == L_sparse.todense()).all()
+```
+
+    (<Compressed Sparse Row sparse matrix of dtype 'float64'
+        with 839 stored elements and shape (131, 131)>,
+     Array(True, dtype=bool))
+
 ### Mass matrix (lumped)
 
 The finite-element mass matrix *M* appears whenever we discretize a
@@ -185,7 +211,7 @@ Voronoi area associated with vertex *i*.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L120"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L142"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### mass_matrix_inv_sparse
@@ -203,7 +229,7 @@ def mass_matrix_inv_sparse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L97"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L119"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### mass_matrix_sparse
@@ -244,7 +270,7 @@ only depend on mesh connectivity, not geometry.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L184"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L206"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_3d
@@ -262,7 +288,7 @@ def compute_gradient_3d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L174"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L196"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_2d
@@ -280,7 +306,7 @@ def compute_gradient_2d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L222"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L244"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_3d
@@ -306,7 +332,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L194"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L216"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_2d
@@ -332,7 +358,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L249"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L271"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### reshape_face_gradient
@@ -455,7 +481,7 @@ mat.shape
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L278"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L300"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### linear_op_to_sparse

@@ -63,7 +63,7 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: ms
     """Get dihedral angles (angle between adjacent face normals)."""
     oriented_areas = get_oriented_triangle_areas(vertices, hemesh)
     dihedral = jax.vmap(trig.get_angle_between_vectors)(oriented_areas[hemesh.heface],
-                                                        oriented_areas[hemesh.twin[hemesh.heface]])
+                                                        oriented_areas[hemesh.heface[hemesh.twin]])
     return dihedral
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #b30791e6

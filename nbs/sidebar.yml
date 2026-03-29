@@ -2,6 +2,9 @@ website:
   sidebar:
     contents:
       - index.ipynb
+      - section: previous_projects
+        contents:
+          - previous_projects/01 Simulation of non-reciprocal Cahn Hillard 1D.ipynb
       - section: src
         contents:
           - src/00_trigonometry.ipynb
@@ -19,4 +22,3 @@ website:
           - tutorials/03_vertex_models.ipynb
           - tutorials/04_PDEs_on_curved_surfaces.ipynb
           - tutorials/05_membrane_mechanics.ipynb
-          - tutorials/10_differentiable_meshes.ipynb
