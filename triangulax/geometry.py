@@ -54,7 +54,7 @@ def get_vertex_normals(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh
                        ) ->Float[jax.Array, "n_faces ..."]:
     """Compute per-vertex normals by averaging over faces"""
     oriented_areas = get_oriented_triangle_areas(vertices, hemesh)
-    oriented_areas_vertex = adj.sum_face_to_vertex(oriented_areas)
+    oriented_areas_vertex = adj.sum_face_to_vertex(hemesh, oriented_areas)
     norm = jnp.clip(jnp.linalg.norm(oriented_areas_vertex, axis=-1), 1e-12)
     return (oriented_areas_vertex.T / norm).T
 
