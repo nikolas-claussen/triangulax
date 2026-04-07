@@ -393,7 +393,7 @@ window.Quarto = {
 <section id="load-mesh-and-build-operators" class="level3">
 <h3 class="anchored" data-anchor-id="load-mesh-and-build-operators">Load mesh and build operators</h3>
 <p>We load a torus mesh and construct the half-edge connectivity, geometry, and the FEM operators: the cotangent Laplacian <span class="math inline">\(L\)</span> and the lumped mass matrix <span class="math inline">\(M\)</span> (diagonal, with Voronoi dual areas per vertex).</p>
-<div id="dda1d604" class="cell">
+<div id="dda1d604" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load 3D torus mesh</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/torus.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(trimesh.vertices.shape[<span class="dv">0</span>], trimesh.faces)</span>
@@ -412,7 +412,7 @@ window.Quarto = {
   o Torus</code></pre>
 </div>
 </div>
-<div id="7733658d" class="cell">
+<div id="7733658d" class="cell" data-execution_count="38">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the torus mesh</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>meshplot.plot(np.array(trimesh.vertices), np.array(hemesh.faces), shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">False</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -427,7 +427,7 @@ window.Quarto = {
 </div>
 <p>The torus <code>.obj</code> file includes UV (texture) coordinates — a 2D parametrization of the surface. We can use these for flat 2D plots of scalar fields, which is often more informative than 3D rendering.</p>
 <p>The mapping between mesh vertices and texture vertices is provided by <a href="https://nikolas-claussen.github.io/triangulax/src/triangular_meshes.html#trimesh.texture_vertex_to_vertex_map"><code>TriMesh.texture_vertex_to_vertex_map</code></a>.</p>
-<div id="44e698cf" class="cell">
+<div id="44e698cf" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>uv <span class="op">=</span> trimesh.texture_vertices                      <span class="co"># (n_texture_vertices, 2)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>uv_faces <span class="op">=</span> trimesh.texture_faces                   <span class="co"># (n_faces, 3) — indices into uv</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>tv2v <span class="op">=</span> trimesh.texture_vertex_to_vertex_map        <span class="co"># texture_vertex_i  -&gt;  mesh_vertex_j</span></span>
@@ -531,7 +531,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="b0b35ab1" class="cell">
+<div id="b0b35ab1" class="cell" data-execution_count="37">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3D view of the heat equation solution</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> mcolors.Normalize(vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="bu">float</span>(u0_heat.<span class="bu">max</span>()))</span>

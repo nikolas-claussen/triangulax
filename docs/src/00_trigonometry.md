@@ -150,6 +150,13 @@ def get_signed_angle_between_vectors(
 
 *Signed angle between two 2d vectors*
 
+``` python
+def get_tetrahedron_volume(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"], c: Float[jax.Array, " dim"]
+                           ) -> Float[jax.Array, ""]:
+    """Volume of tetrahedron defined by side vectors a, b, c"""
+    return jnp.linalg.vecdot(a, jnp.cross(b,c)) / 6
+```
+
 ------------------------------------------------------------------------
 
 <a

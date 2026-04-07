@@ -39,7 +39,7 @@ geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_posit
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L27"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L28"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_he_length
@@ -57,7 +57,7 @@ def get_he_length(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L61"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L62"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_dihedral_angles
@@ -75,7 +75,7 @@ def get_dihedral_angles(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L53"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L54"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_vertex_normals
@@ -93,7 +93,7 @@ def get_vertex_normals(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L46"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L47"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_normals
@@ -111,7 +111,7 @@ def get_triangle_normals(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L41"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L42"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_oriented_triangle_areas
@@ -129,7 +129,7 @@ def get_oriented_triangle_areas(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L36"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L37"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_areas
@@ -147,7 +147,44 @@ def get_triangle_areas(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L76"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L77"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_area
+
+``` python
+
+def get_area(
+    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
+)->Float[Array, '']:
+
+```
+
+*Total surface area.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L71"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_volume
+
+``` python
+
+def get_volume(
+    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
+)->Float[Array, '']:
+
+```
+
+*Signed volume of a closed triangulated surface (sums tetrahedra volumes
+relative to the origin).*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L91"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### set_voronoi_face_positions
@@ -166,7 +203,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L70"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L85"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_face_positions
@@ -185,7 +222,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L91"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L106"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_oriented_dual_he_length
@@ -204,7 +241,7 @@ Negative sign = flipped edge.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L85"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L100"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_dual_he_length
@@ -253,7 +290,7 @@ jnp.where((dual_length < -0.0) & ~hemesh.is_bdry_edge )[0]
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L131"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L146"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_edge_lengths
@@ -271,7 +308,7 @@ def get_voronoi_edge_lengths(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L124"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L139"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cotan_weights_per_egde
@@ -289,7 +326,7 @@ def get_cotan_weights_per_egde(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L117"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L132"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cotan_weights_per_he
@@ -307,7 +344,7 @@ def get_cotan_weights_per_he(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L111"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L126"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_sum
@@ -325,7 +362,7 @@ def get_angle_sum(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L104"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L119"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_corner_angles
@@ -389,7 +426,7 @@ This approach can also compute cell perimeter, …
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L155"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L170"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_areas
@@ -407,7 +444,7 @@ def get_voronoi_areas(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L138"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L153"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cell_areas_traversal
@@ -443,3 +480,22 @@ np.abs(cell_areas_iterative-cell_areas_corner).max() # works!
 ```
 
     np.float64(5.551115123125783e-17)
+
+## Mean curvature via dihedral angles
+
+Computes the point-wise, per-vertex mean curvature of a mesh using
+dihedral angles, according to the formula
+$$H_i = \frac{1}{4a_i} \sum\_{j\sim i} \ell\_{ij} \theta\_{ij} $$
+where the sum is over all *j* neighboring *i*, and *a*<sub>*i*</sub> is
+the (Voronoi) area around vertex *i*.
+
+``` python
+def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                                ) ->Float[jax.Array, " n_vertices"]:
+
+    """Compute mean curvature of triangulated mesh using dihedral angles and voronoi areas"""
+    dihedral_angles = get_dihedral_angles(vertices, hemesh)
+    edge_lengths = get_he_length(vertices, hemesh)
+    cell_areas = get_voronoi_areas(vertices, hemesh)
+    return  1/4 * adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles*edge_lengths) / cell_areas
+```

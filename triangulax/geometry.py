@@ -2,9 +2,10 @@
 
 # %% auto #0
 __all__ = ['get_he_length', 'get_triangle_areas', 'get_oriented_triangle_areas', 'get_triangle_normals', 'get_vertex_normals',
-           'get_dihedral_angles', 'get_voronoi_face_positions', 'set_voronoi_face_positions', 'get_dual_he_length',
-           'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum', 'get_cotan_weights_per_he',
-           'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths', 'get_cell_areas_traversal', 'get_voronoi_areas']
+           'get_dihedral_angles', 'get_volume', 'get_area', 'get_voronoi_face_positions', 'set_voronoi_face_positions',
+           'get_dual_he_length', 'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum',
+           'get_cotan_weights_per_he', 'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths',
+           'get_cell_areas_traversal', 'get_voronoi_areas']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -65,6 +66,20 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: ms
     dihedral = jax.vmap(trig.get_angle_between_vectors)(oriented_areas[hemesh.heface],
                                                         oriented_areas[hemesh.heface[hemesh.twin]])
     return dihedral
+
+# %% ../nbs/src/05_geometric_quantities.ipynb #cbaf37c7
+def get_volume(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+              ) -> Float[jax.Array, ""]:
+    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to the origin)."""
+    v0, v1, v2 = vertices[hemesh.faces.T]
+    return trig.get_tetrahedron_volume(v0, v1, v2).sum()
+
+def get_area(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+            ) -> Float[jax.Array, ""]:
+    """Total surface area."""
+    return get_triangle_areas(vertices, hemesh).sum()
+
+
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #b30791e6
 def get_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh
