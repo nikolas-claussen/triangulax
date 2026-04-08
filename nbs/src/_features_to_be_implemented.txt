@@ -1,0 +1,33 @@
+This text file lists features to be implemented.
+A point of reference is the (mature) C++ geometry
+library https://geometry-central.net as well as
+the libigl library https://libigl.github.io/libigl-python-bindings/igl_docs/.
+
+
+1) In the 05_geometric_quantities notebook, I want to add the following for 3d meshes:
+- projector (3*3 matrix) on local normal
+- (orthonormal) basis for tangent space at each face and vertex in "world" 3d coordinates.
+See https://geometry-central.net/surface/geometry/quantities/#face-tangent-basis
+- x/y coordinates in the local bases (face/vertex) for each half edge,
+as well as the rotation matrices linking adjacent bases (parallel transport)
+https://geometry-central.net/surface/geometry/quantities/#tangent-vectors-and-transport
+
+
+2) In the (currently empty) "07_algorithms" notebook, add geometry-processing algorithms
+that go beyond geometric primitives and individual linear operators.
+
+The first thing to implement are remeshing algorithms as in
+https://geometry-central.net/surface/algorithms/remeshing/
+I want to implement two algorithms: 
+- Laplacian tangential vertex smoothing (move each vertex to area-weighted average of neighbors)
+In particular, need to pay attention to the boundary conditions 
+- Delaunay flipping, using the topology module, as well as tutorial #3 on vertex models.
+- A function to asses mesh quality, in particular triangle aspect ratio (maximal angle or similar)
+and variance of triangle areas. Include a function that prints a user-readable report.
+
+3) Minor additions
+
+- add normal derivative (flux across edge), based on
+https://libigl.github.io/libigl-python-bindings/igl_docs/#normal_derivative
+Both a sparse matrix version, and a function that applies the normal derivative
+to a function. To be added to 06_linear_operators

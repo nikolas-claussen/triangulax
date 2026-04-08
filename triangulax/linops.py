@@ -116,11 +116,11 @@ def cotan_laplace_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: m
     return mat.sum_duplicates()
 
 # %% ../nbs/src/06_linear_operators.ipynb #c45f21b2
-def mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                       ) -> jsparse.BCOO:
+def mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
+                       area_type: str = "voronoi") -> jsparse.BCOO:
     """Assemble lumped (diagonal) mass matrix as a sparse matrix (BCOO).
 
-    The lumped mass matrix is diagonal with entries equal to the Voronoi dual
+    The lumped mass matrix is diagonal wiIn cth entries equal to the Voronoi dual
     area of each vertex: $M_{ii} = A_i$.
 
     Parameters
@@ -129,27 +129,46 @@ def mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh
         Vertex positions.
     hemesh : HeMesh
         Half-edge mesh connectivity.
+    area_type : {"voronoi", "barycentric"}, default="voronoi"
+        Choice of dual-cell area definition used on the diagonal.
+
 
     Returns
     -------
     M : BCOO, shape (n_vertices, n_vertices)
         Diagonal sparse mass matrix.
     """
-    voronoi_areas = geom.get_voronoi_areas(vertices, hemesh)
-    return diag_jsparse(voronoi_areas)
+    if area_type == "voronoi":
+        cell_areas = geom.get_voronoi_areas(vertices, hemesh)
+    elif area_type == "barycentric":
+        cell_areas = geom.get_barycentric_cell_areas(vertices, hemesh)
+    return diag_jsparse(cell_areas)
 
 
-def mass_matrix_inv_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                           ) -> jsparse.BCOO:
-    """Assemble inverse lumped mass matrix as a sparse matrix (BCOO).
+def mass_matrix_inv_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
+                           area_type: str = "voronoi") -> jsparse.BCOO:
+    """Assemble the inverse lumped mass matrix as a sparse matrix (BCOO).
+
+    Parameters
+    ----------
+    vertices : array, shape (n_vertices, dim)
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh connectivity.
+    area_type : {"voronoi", "barycentric"}, default="voronoi"
+        Choice of dual-cell area definition used on the diagonal.
+
 
     Returns
     -------
     M_inv : BCOO, shape (n_vertices, n_vertices)
         Diagonal sparse inverse mass matrix.
     """
-    voronoi_areas = geom.get_voronoi_areas(vertices, hemesh)
-    return diag_jsparse(1.0 / voronoi_areas)
+    if area_type == "voronoi":
+        cell_areas = geom.get_voronoi_areas(vertices, hemesh)
+    elif area_type == "barycentric":
+        cell_areas = geom.get_barycentric_cell_areas(vertices, hemesh)
+    return diag_jsparse(1.0 / cell_areas)
 
 # %% ../nbs/src/06_linear_operators.ipynb #e2587568
 def _fe_grad_phi_2d(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,

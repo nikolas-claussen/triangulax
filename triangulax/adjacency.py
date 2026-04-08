@@ -76,7 +76,7 @@ def sum_vertex_to_face(hemesh: msh.HeMesh, v_field: Float[jax.Array, "n_vertices
             + v_field[hemesh.dest[hemesh.nxt[hemesh.face_incident]]])
 
 def average_vertex_to_face(hemesh: msh.HeMesh, v_field: Float[jax.Array, "n_vertices ..."]
-                  ) -> Float[jax.Array, "n_faces ..."]:
+                           ) -> Float[jax.Array, "n_faces ..."]:
     """Average vertex-field to faces."""
     return sum_vertex_to_face(hemesh, v_field) / 3
 
