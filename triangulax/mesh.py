@@ -430,7 +430,7 @@ def connect_boundary_to_infinity(vertices: Float[jax.Array, "n_vertices 2"],
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #c7c0e33c-a06d-4a93-9d88-6aa0716bdf5b
 @jax.tree_util.register_dataclass
-@dataclasses.dataclass(repr=False, eq=False, frozen=True,)
+@dataclasses.dataclass(repr=False, eq=False, frozen=False,)
 class GeomMesh:
     """
     Data class for holding mesh geometry and mesh-associated variables.

@@ -5,7 +5,7 @@ __all__ = ['get_he_length', 'get_triangle_areas', 'get_oriented_triangle_areas',
            'get_dihedral_angles', 'get_volume', 'get_area', 'get_voronoi_face_positions', 'set_voronoi_face_positions',
            'get_dual_he_length', 'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum',
            'get_cotan_weights_per_he', 'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths',
-           'get_cell_areas_traversal', 'get_voronoi_areas']
+           'get_cell_areas_traversal', 'get_voronoi_areas', 'get_mean_curvature_dihedral']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -175,5 +175,16 @@ def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.
     corner_areas = jax.vmap(trig.get_voronoi_corner_area)(
         vertices[a], vertices[b], vertices[c])
     corner_areas = jnp.where(hemesh.is_bdry_he, 0, corner_areas)
+    #corner_areas = jnp.clip(corner_areas, 0) # ??
     cell_areas = adj.sum_he_to_vertex_opposite(hemesh, corner_areas)
     return cell_areas
+
+# %% ../nbs/src/05_geometric_quantities.ipynb #a840388a
+def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                                ) ->Float[jax.Array, " n_vertices"]:
+
+    """Compute mean curvature of triangulated mesh using dihedral angles and voronoi areas"""
+    dihedral_angles = get_dihedral_angles(vertices, hemesh)
+    edge_lengths = get_he_length(vertices, hemesh)
+    cell_areas = get_voronoi_areas(vertices, hemesh)
+    return  1/4 * adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles*edge_lengths) / cell_areas

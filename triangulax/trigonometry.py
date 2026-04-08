@@ -3,8 +3,8 @@
 # %% auto #0
 __all__ = ['get_circumcenter', 'get_oriented_triangle_area', 'get_triangle_area', 'get_polygon_area',
            'get_signed_angle_between_vectors', 'get_angle_between_vectors', 'get_cot_between_vectors',
-           'get_voronoi_corner_area', 'get_oriented_voronoi_corner_area', 'get_rot_mat', 'get_perp_2d',
-           'get_triangle_normal', 'quaternion_to_rot_max', 'get_barycentric_coordinates']
+           'get_tetrahedron_volume', 'get_voronoi_corner_area', 'get_oriented_voronoi_corner_area', 'get_rot_mat',
+           'get_perp_2d', 'get_triangle_normal', 'quaternion_to_rot_max', 'get_barycentric_coordinates']
 
 # %% ../nbs/src/00_trigonometry.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -65,6 +65,12 @@ def get_cot_between_vectors(a: Float[jax.Array, " dim"], b: Float[jax.Array, " d
     """Cotangent of angle between two vectors"""
     divisor = jnp.clip(jnp.linalg.norm(jnp.cross(a, b)), 1e-12)
     return jnp.dot(a, b) / divisor
+
+# %% ../nbs/src/00_trigonometry.ipynb #e04b3dfe
+def get_tetrahedron_volume(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"], c: Float[jax.Array, " dim"]
+                           ) -> Float[jax.Array, ""]:
+    """Volume of tetrahedron defined by side vectors a, b, c"""
+    return jnp.linalg.vecdot(a, jnp.cross(b,c)) / 6
 
 # %% ../nbs/src/00_trigonometry.ipynb #27a11ad7
 @functools.partial(jax.jit, static_argnames=['zero_clip'])
