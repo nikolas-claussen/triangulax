@@ -2,9 +2,9 @@
 
 # %% auto #0
 __all__ = ['get_he_length', 'get_triangle_areas', 'get_oriented_triangle_areas', 'get_triangle_normals', 'get_vertex_normals',
-           'get_dihedral_angles', 'get_volume', 'get_area', 'get_voronoi_face_positions', 'set_voronoi_face_positions',
-           'get_dual_he_length', 'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum',
-           'get_cotan_weights_per_he', 'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths',
+           'get_dihedral_angles', 'get_barycentric_cell_areas', 'get_volume', 'get_area', 'get_voronoi_face_positions',
+           'set_voronoi_face_positions', 'get_dual_he_length', 'get_oriented_dual_he_length', 'get_corner_angles',
+           'get_angle_sum', 'get_cotan_weights_per_he', 'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths',
            'get_cell_areas_traversal', 'get_voronoi_areas', 'get_mean_curvature_dihedral']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
@@ -67,6 +67,12 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: ms
                                                         oriented_areas[hemesh.heface[hemesh.twin]])
     return dihedral
 
+# %% ../nbs/src/05_geometric_quantities.ipynb #ef84787c
+def get_barycentric_cell_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                              ) -> Float[jax.Array, " n_vertices"]:
+    """Get area of barycentric dual cell around each vertex. Defined as 1/3 * sum of adjacent triangle areas."""
+    return adj.sum_face_to_vertex(hemesh, get_triangle_areas(vertices, hemesh)) / 3.0
+
 # %% ../nbs/src/05_geometric_quantities.ipynb #cbaf37c7
 def get_volume(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
               ) -> Float[jax.Array, ""]:
@@ -78,8 +84,6 @@ def get_area(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
             ) -> Float[jax.Array, ""]:
     """Total surface area."""
     return get_triangle_areas(vertices, hemesh).sum()
-
-
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #b30791e6
 def get_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh
@@ -183,8 +187,12 @@ def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.
 def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                                 ) ->Float[jax.Array, " n_vertices"]:
 
-    """Compute mean curvature of triangulated mesh using dihedral angles and voronoi areas"""
+    """Compute mean curvature of triangulated mesh using Steiner approximation:
+        H_i = 1/(4 A_i) * sum_j * theta_ij * l_ij
+    where theta_ij is the dihedral angle between faces adjacent to edge ij, l_ij is the length of edge ij,
+    and A_i is the barycentric dual cell area around vertex i.
+    """
     dihedral_angles = get_dihedral_angles(vertices, hemesh)
     edge_lengths = get_he_length(vertices, hemesh)
-    cell_areas = get_voronoi_areas(vertices, hemesh)
+    cell_areas = get_barycentric_cell_areas(vertices, hemesh)
     return  1/4 * adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles*edge_lengths) / cell_areas
