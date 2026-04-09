@@ -92,8 +92,10 @@ need to do so that the tissue as a whole takes on a certain shape?
 
 ### See also
 
-- [libigl](https://libigl.github.io/libigl-python-bindings/) geometry
-  processing library with Python bindings.
+- [libigl](https://libigl.github.io/libigl-python-bindings/) Geometry
+  processing library with Python bindings. You can use `libigl`
+  functions on `triangulax` meshes.
+
 - [VertAX](https://github.com/VirtualEmbryo/VertAX/) JAX-based
   simulations of 2D tissues.
 
@@ -132,7 +134,7 @@ $ pip install -e .
 # ...
 
 # compile to have changes apply to triangulax
-$ nbdev_prepare
+$ nbdev_export
 ```
 
 ## Documentation

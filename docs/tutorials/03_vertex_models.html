@@ -294,7 +294,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: Mesh optimization and “learning”</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -449,7 +449,8 @@ window.Quarto = {
 </section>
 <section id="a-note-on-periodic-boundary-conditions" class="level3">
 <h3 class="anchored" data-anchor-id="a-note-on-periodic-boundary-conditions">A note on periodic boundary conditions</h3>
-<p>The mesh we just loaded is a disk, and thus has a boundary. You may instead want to do simulations with <em>periodic</em> boundary conditions, i.e.&nbsp;simulate cells in a box with lengths <span class="math inline">\(\mathbf{L} = [L_x, L_y]\)</span> where opposite sides are identified. In <code>triangulax</code>, mesh connectivity and geometry are decoupled, so periodic boundary conditions are easy to implement. You need two ingredients:</p>
+<p>The mesh we just loaded is a disk, and thus has a boundary. You may instead want to do simulations with <em>periodic</em> boundary conditions, i.e.&nbsp;simulate cells in a box with lengths <span class="math inline">\(\mathbf{L} = [L_x, L_y]\)</span> where opposite sides are identified. The tools for this are implemented in the <code>periodic</code> module.</p>
+<p>In <code>triangulax</code>, mesh connectivity and geometry are decoupled, so periodic boundary conditions are easy to implement. You need two ingredients:</p>
 <ol type="1">
 <li>A triangulation whose connectivity has the desired periodicity (e.g.&nbsp;a triangulation of a torus).</li>
 </ol>

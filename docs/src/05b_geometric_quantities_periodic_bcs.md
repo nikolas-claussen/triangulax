@@ -43,7 +43,7 @@ respect to *L*.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L39"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L40"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### displacement_periodic_twisted
@@ -62,7 +62,7 @@ def displacement_periodic_twisted(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L24"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L25"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### displacement_periodic
@@ -180,7 +180,7 @@ areas = jax.vmap(trig.get_triangle_area_from_lengths)(la, lb, lc)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L88"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L98"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_corner_cotangents
@@ -199,7 +199,7 @@ function.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L78"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L90"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_corner_angles
@@ -217,7 +217,26 @@ def get_periodic_corner_angles(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L70"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L81"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodicb_arycentric_cell_areas
+
+``` python
+
+def get_periodicb_arycentric_cell_areas(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
+)->Float[Array, 'n_faces']:
+
+```
+
+*Get area of barycentric dual cell around each vertex, using a periodic
+distance function.* Defined as 1/3 \* sum of adjacent triangle areas.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L73"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_triangle_areas
@@ -286,9 +305,89 @@ print("periodic geometry tests passed")
 ### Voronoi dual
 
 We can also compute the Voronoi dual for a periodic boundary conditions.
-To do so, we modify the “circumcenter” function to use our custom
-distance function.
+To do so, we use the intrisic “circumcenter” function.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L141"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_voronoi_face_positions
 
 ``` python
-1
+
+def get_periodic_voronoi_face_positions(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
+)->Float[Array, 'n_faces 2']:
+
 ```
+
+*Compute periodic Voronoi dual positions from intrinsic circumcenter
+barycentric coordinates.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L130"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_voronoi_areas
+
+``` python
+
+def get_periodic_voronoi_areas(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
+)->Float[Array, 'n_vertices']:
+
+```
+
+*Compute Voronoi cell areas from periodic edge lengths and cotangent
+weights.*
+
+``` python
+periodic_voronoi_areas = get_periodic_voronoi_areas(vertices, hemesh, periodic_distance)
+periodic_face_positions = get_periodic_voronoi_face_positions(vertices, hemesh, periodic_distance)
+
+periodic_he_lengths = _get_periodic_he_lengths(vertices, hemesh, periodic_distance)
+periodic_cotan_weights = _get_periodic_cotan_weights_per_edge(vertices, hemesh, periodic_distance)
+
+assert periodic_voronoi_areas.shape == (hemesh.n_vertices,)
+assert periodic_face_positions.shape == (hemesh.n_faces, 2)
+
+assert jnp.allclose(
+    periodic_voronoi_areas,
+    adj.sum_he_to_vertex_incoming(
+        hemesh,
+        periodic_cotan_weights * periodic_he_lengths**2 / 4,
+    ),
+)
+assert jnp.allclose(periodic_voronoi_areas.sum(), periodic_areas.sum())
+
+face_hes = hemesh.face_incident
+a = vertices[hemesh.orig[face_hes]]
+ab = jax.vmap(periodic_distance)(vertices[hemesh.orig[face_hes]], vertices[hemesh.dest[face_hes]])
+bc = jax.vmap(periodic_distance)(vertices[hemesh.orig[hemesh.nxt[face_hes]]],
+                                 vertices[hemesh.dest[hemesh.nxt[face_hes]]])
+b = a + ab
+c = b + bc
+radii_a = jnp.linalg.norm(periodic_face_positions - a, axis=1)
+radii_b = jnp.linalg.norm(periodic_face_positions - b, axis=1)
+radii_c = jnp.linalg.norm(periodic_face_positions - c, axis=1)
+assert jnp.allclose(radii_a, radii_b)
+assert jnp.allclose(radii_b, radii_c)
+
+zero_twist_distance = lambda r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, 0.0)
+assert jnp.allclose(
+    periodic_voronoi_areas,
+    get_periodic_voronoi_areas(vertices, hemesh, zero_twist_distance),
+)
+assert jnp.allclose(
+    periodic_face_positions,
+    get_periodic_voronoi_face_positions(vertices, hemesh, zero_twist_distance),
+)
+
+print("periodic Voronoi tests passed")
+```
+
+    periodic Voronoi tests passed

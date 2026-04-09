@@ -296,7 +296,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: Mesh optimization and “learning”</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -346,7 +346,7 @@ window.Quarto = {
   <li><a href="#get_voronoi_face_positions" id="toc-get_voronoi_face_positions" class="nav-link" data-scroll-target="#get_voronoi_face_positions">get_voronoi_face_positions</a></li>
   <li><a href="#get_oriented_dual_he_length" id="toc-get_oriented_dual_he_length" class="nav-link" data-scroll-target="#get_oriented_dual_he_length">get_oriented_dual_he_length</a></li>
   <li><a href="#get_dual_he_length" id="toc-get_dual_he_length" class="nav-link" data-scroll-target="#get_dual_he_length">get_dual_he_length</a></li>
-  <li><a href="#corner-angles-gaussian-curvature-and-cotangent-weights" id="toc-corner-angles-gaussian-curvature-and-cotangent-weights" class="nav-link" data-scroll-target="#corner-angles-gaussian-curvature-and-cotangent-weights">Corner angles, Gaussian curvature, and cotangent weights</a></li>
+  <li><a href="#corner-angles-gaussian-curvature-cotangent-weights-and-voronoi-edge-lengthsareas" id="toc-corner-angles-gaussian-curvature-cotangent-weights-and-voronoi-edge-lengthsareas" class="nav-link" data-scroll-target="#corner-angles-gaussian-curvature-cotangent-weights-and-voronoi-edge-lengthsareas">Corner angles, Gaussian curvature, cotangent weights, and Voronoi edge lengths/areas</a></li>
   <li><a href="#get_voronoi_edge_areas" id="toc-get_voronoi_edge_areas" class="nav-link" data-scroll-target="#get_voronoi_edge_areas">get_voronoi_edge_areas</a></li>
   <li><a href="#get_voronoi_edge_lengths" id="toc-get_voronoi_edge_lengths" class="nav-link" data-scroll-target="#get_voronoi_edge_lengths">get_voronoi_edge_lengths</a></li>
   <li><a href="#get_cotan_weights_per_egde" id="toc-get_cotan_weights_per_egde" class="nav-link" data-scroll-target="#get_cotan_weights_per_egde">get_cotan_weights_per_egde</a></li>
@@ -579,10 +579,10 @@ Warning: readOBJ() ignored non-comment line 3:
 </div>
 </div>
 </section>
-<section id="corner-angles-gaussian-curvature-and-cotangent-weights" class="level3">
-<h3 class="anchored" data-anchor-id="corner-angles-gaussian-curvature-and-cotangent-weights">Corner angles, Gaussian curvature, and cotangent weights</h3>
+<section id="corner-angles-gaussian-curvature-cotangent-weights-and-voronoi-edge-lengthsareas" class="level3">
+<h3 class="anchored" data-anchor-id="corner-angles-gaussian-curvature-cotangent-weights-and-voronoi-edge-lengthsareas">Corner angles, Gaussian curvature, cotangent weights, and Voronoi edge lengths/areas</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L158" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L163" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_voronoi_edge_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_voronoi_edge_areas">get_voronoi_edge_areas</h3>
@@ -593,7 +593,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Voronoi “area” for an edge. Defined as dual edge length </em> primal edge length ** 2 / 4.* Summing over all edge areas adjacent to a vertex gives the area of the Voronoi cell around that vertex. Computed directly from angles. Accurate in any dimension</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L153" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L157" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_voronoi_edge_lengths" class="level3">
 <h3 class="anchored" data-anchor-id="get_voronoi_edge_lengths">get_voronoi_edge_lengths</h3>
@@ -604,7 +604,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Computed directly from angles. Accurate in any dimension</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L146" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L149" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_cotan_weights_per_egde" class="level3">
 <h3 class="anchored" data-anchor-id="get_cotan_weights_per_egde">get_cotan_weights_per_egde</h3>
@@ -615,7 +615,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Average of cotangent of angles opposite to edge.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L139" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L141" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_cotan_weights_per_he" class="level3">
 <h3 class="anchored" data-anchor-id="get_cotan_weights_per_he">get_cotan_weights_per_he</h3>
@@ -626,7 +626,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Cotangent of angle opposite to half-edge</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L133" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L134" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_angle_sum" class="level3">
 <h3 class="anchored" data-anchor-id="get_angle_sum">get_angle_sum</h3>
@@ -680,7 +680,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <p>To compute the total area, we can sum over all half-edges <span class="math inline">\((r,p)\)</span> opposite to a vertex <span class="math inline">\(q\)</span>.</p>
 <p>Via this approach, one can also compute cell perimeter, etc.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L186" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L191" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_voronoi_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_voronoi_areas">get_voronoi_areas</h3>
@@ -691,7 +691,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute Voronoi area for each vertex.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L168" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L173" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_cell_areas_traversal" class="level3">
 <h3 class="anchored" data-anchor-id="get_cell_areas_traversal">get_cell_areas_traversal</h3>
@@ -720,7 +720,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <h3 class="anchored" data-anchor-id="mean-curvature">Mean curvature</h3>
 <p>To computes the point-wise, per-vertex mean curvature of a mesh, one can use the Steiner formula <span class="math display">\[H_i = \frac{1}{4a_i} \sum_{j\sim i} \ell_{ij} \theta_{ij} \]</span> where the sum is over all <span class="math inline">\(j\)</span> neighboring <span class="math inline">\(i\)</span>, <span class="math inline">\(\theta_{ij}\)</span> are the dihedral angles between the adjacent triangles, and <span class="math inline">\(a_i\)</span> is the cell area around vertex <span class="math inline">\(i\)</span>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L193" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L198" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_mean_curvature_dihedral" class="level3">
 <h3 class="anchored" data-anchor-id="get_mean_curvature_dihedral">get_mean_curvature_dihedral</h3>
@@ -751,7 +751,7 @@ Warning: readOBJ() ignored non-comment line 3:
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L207" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L212" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_corner_scaled_angles" class="level3">
 <h3 class="anchored" data-anchor-id="get_corner_scaled_angles">get_corner_scaled_angles</h3>
@@ -775,7 +775,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(scaled_sums_disk[hemesh.is_bdry], jnp.pi, atol<span class="op">=</span><span class="fl">1e-10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L237" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L242" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_face_tangent_basis" class="level3">
 <h3 class="anchored" data-anchor-id="get_face_tangent_basis">get_face_tangent_basis</h3>
@@ -809,7 +809,7 @@ Max bx·n: 5.93629416659658e-17</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L266" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L271" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_vertex_tangent_basis" class="level3">
 <h3 class="anchored" data-anchor-id="get_vertex_tangent_basis">get_vertex_tangent_basis</h3>
@@ -850,7 +850,7 @@ Max bx·n: 1.6653345369377348e-16</code></pre>
 </ol>
 <p>This defines two angles <span class="math inline">\(\phi_{ij}^v, \phi_{ij}^f\)</span> for each half-edge, the discrete parallel transport map along (“v”) or across (“f”) the half edge.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L298" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 </section>
 <section id="get_transport_across_halfedge" class="level3">
@@ -871,7 +871,7 @@ Max bx·n: 1.6653345369377348e-16</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L327" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L332" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_transport_along_halfedge" class="level3">
 <h3 class="anchored" data-anchor-id="get_transport_along_halfedge">get_transport_along_halfedge</h3>

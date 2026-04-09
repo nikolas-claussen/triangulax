@@ -20,6 +20,7 @@ from jaxtyping import Float, Bool, Int
 
 # %% ../nbs/src/07_algorithms.ipynb #598702c5
 from . import trigonometry as trig
+from .triangular import TriMesh
 from . import mesh as msh
 from . import adjacency as adj
 from . import geometry as geom

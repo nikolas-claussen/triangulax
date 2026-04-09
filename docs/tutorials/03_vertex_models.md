@@ -133,9 +133,12 @@ The mesh we just loaded is a disk, and thus has a boundary. You may
 instead want to do simulations with *periodic* boundary conditions,
 i.e. simulate cells in a box with lengths
 **L** = \[*L*<sub>*x*</sub>, *L*<sub>*y*</sub>\] where opposite sides
-are identified. In `triangulax`, mesh connectivity and geometry are
-decoupled, so periodic boundary conditions are easy to implement. You
-need two ingredients:
+are identified. The tools for this are implemented in the `periodic`
+module.
+
+In `triangulax`, mesh connectivity and geometry are decoupled, so
+periodic boundary conditions are easy to implement. You need two
+ingredients:
 
 1.  A triangulation whose connectivity has the desired periodicity
     (e.g. a triangulation of a torus).

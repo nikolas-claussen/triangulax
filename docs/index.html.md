@@ -6,32 +6,39 @@
 ## Overview
 
 This python package provides data-structures for triangular meshes and
-geometry processing tools based on JAX, fully compatible with
-just-in-time compilation and automatic differentiation.
+geometry processing tools based on JAX, fully compatible with automatic
+differentiation and just-in-time compilation.
 
 ### Use cases
 
 Triangular meshes are ubiquitous in computer graphics and in scientific
-computing, for example in the finite-element method.
+computing, for example in the finite-element method. A major motivation
+for `triangulax` are simulations in soft-matter and biophysics. For
+example, with `triangulax`, you can simulate:
 
-A major motivation for `triangulax` are simulations in soft-matter and
-biophysics, like the mechanics of membranes and two-dimensional tissue
-sheets (e.g. [active tension
-networks](https://www.pnas.org/doi/10.1073/pnas.2321928121) or the
-[self-propelled Voronoi
-model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011)).
+1.  Cell-resolved models of two-dimensional tissue sheets like [active
+    tension networks](https://www.pnas.org/doi/10.1073/pnas.2321928121)
+    (tutorial 3).
+2.  Reaction-diffusion systems on 3D curved surfaces (tutorial 4)
+3.  Mechanics of membranes and thin elastic shells in 3D (tutorial 5)
 
-`triangulax` complements libraries like the [`libigl` python
-bindings](https://libigl.github.io/libigl-python-bindings/) by allowing
-implementation of custom simulations and geometry operations.
+`triangulax` is for modularity and flexibility. The library includes a
+suite of geometry processing tools based on [discrete differential
+geometry](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/) (Voronoi duals,
+curvatures, Laplace operator, …) and represents surfaces as [half-edge
+meshes](https://jerryyin.info/geometry-processing-algorithms/half-edge/),
+which allows implementing custom simulations and geometry operations in
+any dimension.
 
-### Automatic differentiation
+### Automatic differentiation and just-in-time compilation
 
 The main feature of `triangulax` is compatibility with (forward- and
 reverse-mode) automatic differentiation. This enables computation of
 gradients of any mesh-based function. Most tools are also compatible
-with JAX’s JIT-compilation, delivering high performance in high-level
-Python (rather than C++).
+with JAX’s JIT-compilation. This delivers high performance in high-level
+Python (rather than C++) and allows running on GPUs.
+
+#### Simulating with automatic differentiation
 
 For example, consider:
 
@@ -49,15 +56,47 @@ functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), or the
 [area-perimeter
 energy](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
 respectively). JAX automatically computes their gradients, making it
-easy to optimize energies or to simulate forces.
+easy to optimize energies or to simulate forces. For “multiphysics”
+simulations (for example, reaction-diffusion dynamics on a deforming
+surface), it suffices to specify the combined energy of the system - all
+forces and cross-terms are calculated automatically.
 
-#### Gradient-based “meta-optimization” and inverse problems
+To simulate dynamics or minimize energies, `triangulax` integrates
+seamlessly with the JAX ecosystem like
+[optimistix](https://docs.kidger.site/optimistix/) (optimization) and
+[diffrax](https://github.com/patrick-kidger/diffrax) (ODE integration).
 
-Since `triangulax` is fully JAX-compatible, it allows differentiating a
+### Inverse problems and bilevel optimization
+
+Since `triangulax` is fully JAX-compatible, you can differentiate a
 simulation w.r.t. its parameters. This means one can apply
-gradient-based optimization to *inverse problems*. For example, in the
-tissue mechanics context, one can ask: what do individual cells need to
+gradient-based optimization to *inverse problems* (tutorial 2).
+Effectively, your simulation becomes a “neural network” which maps
+initial conditions to simulation results. `triangulax` can be used with
+[optimistix](https://docs.kidger.site/optimistix/) and
+[diffrax](https://github.com/patrick-kidger/diffrax) which allows
+straight-through and adjoint-based differentiation.
+
+For concreteness, consider an elastic energy
+*E*({**v**<sub>*i*</sub>}<sub>*i*</sub>; **θ**) that depends on both
+mesh vertex positions **v**<sub>*i*</sub> and parameters **θ** (elastic
+moduli, spring rest lengths, etc). The minimum-energy configuration
+**v**<sub>*i*</sub><sup>\*</sup> = arg min *E*(⋅; **θ**) depends on
+**θ**, and via automatic differentiation, you can compute
+∂<sub>**θ**</sub>**v**<sub>*i*</sub><sup>\*</sup>. This means you can
+use gradient-based optimization to find a **θ** such that the
+minimum-energy configuration has a desired shape. For example, in the
+tissue mechanics context, you can ask: what do individual cells need to
 do so that the tissue as a whole takes on a certain shape?
+
+### See also
+
+- [libigl](https://libigl.github.io/libigl-python-bindings/) Geometry
+  processing library with Python bindings. You can use `libigl`
+  functions on `triangulax` meshes.
+
+- [VertAX](https://github.com/VirtualEmbryo/VertAX/) JAX-based
+  simulations of 2D tissues.
 
 ## Developer guide and installation instructions
 
@@ -94,7 +133,7 @@ $ pip install -e .
 # ...
 
 # compile to have changes apply to triangulax
-$ nbdev_prepare
+$ nbdev_export
 ```
 
 ## Documentation
@@ -108,12 +147,13 @@ notebooks tutorials can be found in the `nbs/tutorials/` folder.
 
 `triangulax` comprises the following modules:
 
+- `trigonometry`: trigonometry and linear algebra
 - `triangular`: input/output for triangular meshes
-- `trigonometry`: trigonometry
 - `mesh`: a half-edge data structure for triangular meshes compatible
   with JAX.
 - `topology`: topological modifications (flip, collapse, and split)
-- `adjacency`, `geometry`, `linops`: geometry processing tools
+- `adjacency`, `geometry`, `periodic`, `linops`, `algorithms`: geometry
+  processing tools
 
 ### Minimal example
 

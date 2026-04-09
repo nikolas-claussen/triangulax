@@ -294,7 +294,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: Mesh optimization and “learning”</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -334,8 +334,11 @@ window.Quarto = {
   <li><a href="#edge-lengths-angles-and-areas" id="toc-edge-lengths-angles-and-areas" class="nav-link" data-scroll-target="#edge-lengths-angles-and-areas">Edge lengths, angles, and areas</a></li>
   <li><a href="#get_periodic_corner_cotangents" id="toc-get_periodic_corner_cotangents" class="nav-link" data-scroll-target="#get_periodic_corner_cotangents">get_periodic_corner_cotangents</a></li>
   <li><a href="#get_periodic_corner_angles" id="toc-get_periodic_corner_angles" class="nav-link" data-scroll-target="#get_periodic_corner_angles">get_periodic_corner_angles</a></li>
+  <li><a href="#get_periodicb_arycentric_cell_areas" id="toc-get_periodicb_arycentric_cell_areas" class="nav-link" data-scroll-target="#get_periodicb_arycentric_cell_areas">get_periodicb_arycentric_cell_areas</a></li>
   <li><a href="#get_periodic_triangle_areas" id="toc-get_periodic_triangle_areas" class="nav-link" data-scroll-target="#get_periodic_triangle_areas">get_periodic_triangle_areas</a></li>
   <li><a href="#voronoi-dual" id="toc-voronoi-dual" class="nav-link" data-scroll-target="#voronoi-dual">Voronoi dual</a></li>
+  <li><a href="#get_periodic_voronoi_face_positions" id="toc-get_periodic_voronoi_face_positions" class="nav-link" data-scroll-target="#get_periodic_voronoi_face_positions">get_periodic_voronoi_face_positions</a></li>
+  <li><a href="#get_periodic_voronoi_areas" id="toc-get_periodic_voronoi_areas" class="nav-link" data-scroll-target="#get_periodic_voronoi_areas">get_periodic_voronoi_areas</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="05b_geometric_quantities_periodic_bcs.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
@@ -361,7 +364,7 @@ window.Quarto = {
 <p>For a square domain with length <span class="math inline">\(L\)</span> the displacement vector between two points <span class="math inline">\(\mathbf{r}_1, \mathbf{r}_2\)</span> can be computed as <span class="math display">\[\mathbf{d} = \mathbf{r}_1 - \mathbf{r}_2 - \mathrm{round}\left(\frac{|\mathbf{r}_1 - \mathbf{r}_2 |}{L} \right)L\]</span></p>
 <p>This always gives the shortest displacement vector between the two points. With this distance function, one can compute edge lengths, angles, Voronoi duals, etc. Note: nothing prevents you from changing the shape of your domain, i.e.&nbsp;<span class="math inline">\(L\)</span> dynamically during your simulation (for instance, to simulare growing tissues). You can even take gradients with respect to <span class="math inline">\(L\)</span>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L39" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L40" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="displacement_periodic_twisted" class="level3">
 <h3 class="anchored" data-anchor-id="displacement_periodic_twisted">displacement_periodic_twisted</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -372,7 +375,7 @@ window.Quarto = {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Return the minimum-image displacement on a sheared periodic torus.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L24" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L25" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="displacement_periodic" class="level3">
 <h3 class="anchored" data-anchor-id="displacement_periodic">displacement_periodic</h3>
@@ -483,7 +486,7 @@ window.Quarto = {
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>areas <span class="op">=</span> jax.vmap(trig.get_triangle_area_from_lengths)(la, lb, lc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L88" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L98" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_corner_cotangents" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_corner_cotangents">get_periodic_corner_cotangents</h3>
@@ -494,7 +497,7 @@ window.Quarto = {
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute all face corner cotangents using a periodic displacement function.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L78" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L90" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_corner_angles" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_corner_angles">get_periodic_corner_angles</h3>
@@ -505,63 +508,74 @@ window.Quarto = {
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute all face corner angles using a periodic distance function.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L70" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L81" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="get_periodic_triangle_areas" class="level3">
-<h3 class="anchored" data-anchor-id="get_periodic_triangle_areas">get_periodic_triangle_areas</h3>
+<section id="get_periodicb_arycentric_cell_areas" class="level3">
+<h3 class="anchored" data-anchor-id="get_periodicb_arycentric_cell_areas">get_periodicb_arycentric_cell_areas</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_periodic_triangle_areas(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_periodicb_arycentric_cell_areas(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh, distance_function:Callable</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces'</span>]:</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Get area of barycentric dual cell around each vertex, using a periodic distance function.</em> Defined as 1/3 * sum of adjacent triangle areas.</p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L73" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_periodic_triangle_areas" class="level3">
+<h3 class="anchored" data-anchor-id="get_periodic_triangle_areas">get_periodic_triangle_areas</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_periodic_triangle_areas(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh, distance_function:Callable</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces'</span>]:</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute triangle areas using a periodic distance function.</em></p>
 <div id="3b3f0d7f" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>periodic_distance <span class="op">=</span> <span class="kw">lambda</span> r_1, r_2: displacement_periodic(r_1, r_2, L)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>periodic_areas <span class="op">=</span> get_periodic_triangle_areas(vertices, hemesh, periodic_distance)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>periodic_angles <span class="op">=</span> get_periodic_corner_angles(vertices, hemesh, periodic_distance)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>periodic_cotangents <span class="op">=</span> get_periodic_corner_cotangents(vertices, hemesh, periodic_distance)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>manual_edge_lengths <span class="op">=</span> jnp.linalg.norm(</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    jax.vmap(periodic_distance)(vertices[hemesh.orig], vertices[hemesh.dest]),</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=-</span><span class="dv">1</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a> )</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>la_test, lb_test, lc_test <span class="op">=</span> (manual_edge_lengths[hemesh.prv[hemesh.face_incident]],</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                             manual_edge_lengths[hemesh.face_incident],</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                             manual_edge_lengths[hemesh.nxt[hemesh.face_incident]],)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_areas.shape <span class="op">==</span> (hemesh.n_faces,)</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_angles.shape <span class="op">==</span> (hemesh.n_faces, <span class="dv">3</span>)</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_cotangents.shape <span class="op">==</span> (hemesh.n_faces, <span class="dv">3</span>)</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    periodic_areas,</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    jax.vmap(trig.get_triangle_area_from_lengths)(la_test, lb_test, lc_test),</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    periodic_angles,</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    jax.vmap(trig.get_angles_from_lengths)(la_test, lb_test, lc_test),</span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>    periodic_cotangents,</span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    jax.vmap(trig.get_cotangents_from_lengths)(la_test, lb_test, lc_test),</span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>zero_twist_distance <span class="op">=</span> <span class="kw">lambda</span> r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, <span class="fl">0.0</span>)</span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    periodic_areas,</span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    get_periodic_triangle_areas(vertices, hemesh, zero_twist_distance),</span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    periodic_angles,</span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>    get_periodic_corner_angles(vertices, hemesh, zero_twist_distance),</span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>    periodic_cotangents,</span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>    get_periodic_corner_cotangents(vertices, hemesh, zero_twist_distance),</span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"periodic geometry tests passed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>periodic_distance <span class="op">=</span> <span class="kw">lambda</span> r_1, r_2: displacement_periodic(r_1, r_2, L)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>periodic_areas <span class="op">=</span> get_periodic_triangle_areas(vertices, hemesh, periodic_distance)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>periodic_angles <span class="op">=</span> get_periodic_corner_angles(vertices, hemesh, periodic_distance)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>periodic_cotangents <span class="op">=</span> get_periodic_corner_cotangents(vertices, hemesh, periodic_distance)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>manual_edge_lengths <span class="op">=</span> jnp.linalg.norm(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    jax.vmap(periodic_distance)(vertices[hemesh.orig], vertices[hemesh.dest]),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>la_test, lb_test, lc_test <span class="op">=</span> (manual_edge_lengths[hemesh.prv[hemesh.face_incident]],</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>                             manual_edge_lengths[hemesh.face_incident],</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>                             manual_edge_lengths[hemesh.nxt[hemesh.face_incident]],)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_areas.shape <span class="op">==</span> (hemesh.n_faces,)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_angles.shape <span class="op">==</span> (hemesh.n_faces, <span class="dv">3</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_cotangents.shape <span class="op">==</span> (hemesh.n_faces, <span class="dv">3</span>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    periodic_areas,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    jax.vmap(trig.get_triangle_area_from_lengths)(la_test, lb_test, lc_test),</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    periodic_angles,</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    jax.vmap(trig.get_angles_from_lengths)(la_test, lb_test, lc_test),</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    periodic_cotangents,</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    jax.vmap(trig.get_cotangents_from_lengths)(la_test, lb_test, lc_test),</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>zero_twist_distance <span class="op">=</span> <span class="kw">lambda</span> r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, <span class="fl">0.0</span>)</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>    periodic_areas,</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    get_periodic_triangle_areas(vertices, hemesh, zero_twist_distance),</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    periodic_angles,</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    get_periodic_corner_angles(vertices, hemesh, zero_twist_distance),</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    periodic_cotangents,</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>    get_periodic_corner_cotangents(vertices, hemesh, zero_twist_distance),</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"periodic geometry tests passed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>periodic geometry tests passed</code></pre>
 </div>
@@ -569,9 +583,75 @@ window.Quarto = {
 </section>
 <section id="voronoi-dual" class="level3">
 <h3 class="anchored" data-anchor-id="voronoi-dual">Voronoi dual</h3>
-<p>We can also compute the Voronoi dual for a periodic boundary conditions. To do so, we modify the “circumcenter” function to use our custom distance function.</p>
-<div id="a40f1f15" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>We can also compute the Voronoi dual for a periodic boundary conditions. To do so, we use the intrisic “circumcenter” function.</p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L141" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_periodic_voronoi_face_positions" class="level3">
+<h3 class="anchored" data-anchor-id="get_periodic_voronoi_face_positions">get_periodic_voronoi_face_positions</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_periodic_voronoi_face_positions(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh, distance_function:Callable</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 2'</span>]:</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Compute periodic Voronoi dual positions from intrinsic circumcenter barycentric coordinates.</em></p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L130" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_periodic_voronoi_areas" class="level3">
+<h3 class="anchored" data-anchor-id="get_periodic_voronoi_areas">get_periodic_voronoi_areas</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_periodic_voronoi_areas(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh, distance_function:Callable</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Compute Voronoi cell areas from periodic edge lengths and cotangent weights.</em></p>
+<div id="81a812b9" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>periodic_voronoi_areas <span class="op">=</span> get_periodic_voronoi_areas(vertices, hemesh, periodic_distance)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>periodic_face_positions <span class="op">=</span> get_periodic_voronoi_face_positions(vertices, hemesh, periodic_distance)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>periodic_he_lengths <span class="op">=</span> _get_periodic_he_lengths(vertices, hemesh, periodic_distance)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>periodic_cotan_weights <span class="op">=</span> _get_periodic_cotan_weights_per_edge(vertices, hemesh, periodic_distance)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_voronoi_areas.shape <span class="op">==</span> (hemesh.n_vertices,)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> periodic_face_positions.shape <span class="op">==</span> (hemesh.n_faces, <span class="dv">2</span>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    periodic_voronoi_areas,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    adj.sum_he_to_vertex_incoming(</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        hemesh,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        periodic_cotan_weights <span class="op">*</span> periodic_he_lengths<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> <span class="dv">4</span>,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(periodic_voronoi_areas.<span class="bu">sum</span>(), periodic_areas.<span class="bu">sum</span>())</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>face_hes <span class="op">=</span> hemesh.face_incident</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> vertices[hemesh.orig[face_hes]]</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>ab <span class="op">=</span> jax.vmap(periodic_distance)(vertices[hemesh.orig[face_hes]], vertices[hemesh.dest[face_hes]])</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>bc <span class="op">=</span> jax.vmap(periodic_distance)(vertices[hemesh.orig[hemesh.nxt[face_hes]]],</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>                                 vertices[hemesh.dest[hemesh.nxt[face_hes]]])</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> a <span class="op">+</span> ab</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b <span class="op">+</span> bc</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>radii_a <span class="op">=</span> jnp.linalg.norm(periodic_face_positions <span class="op">-</span> a, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>radii_b <span class="op">=</span> jnp.linalg.norm(periodic_face_positions <span class="op">-</span> b, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>radii_c <span class="op">=</span> jnp.linalg.norm(periodic_face_positions <span class="op">-</span> c, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(radii_a, radii_b)</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(radii_b, radii_c)</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>zero_twist_distance <span class="op">=</span> <span class="kw">lambda</span> r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, <span class="fl">0.0</span>)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>    periodic_voronoi_areas,</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    get_periodic_voronoi_areas(vertices, hemesh, zero_twist_distance),</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>    periodic_face_positions,</span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>    get_periodic_voronoi_face_positions(vertices, hemesh, zero_twist_distance),</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"periodic Voronoi tests passed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>periodic Voronoi tests passed</code></pre>
+</div>
 </div>
 
 

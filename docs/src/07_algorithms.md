@@ -22,8 +22,16 @@ hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 vertices = mesh.vertices
 ```
 
-    Warning: readOBJ() ignored non-comment line 3:
-      o flat_tri_ecmc
+    NameError: name 'TriMesh' is not defined
+    [31m---------------------------------------------------------------------------[39m
+    [31mNameError[39m                                 Traceback (most recent call last)
+    [36mCell[39m[36m [39m[32mIn[1][39m[32m, line 2[39m
+    [32m      1[39m [38;5;66;03m# Load test mesh[39;00m
+    [32m----> [39m[32m2[39m mesh = [43mTriMesh[49m.read_obj([33m"[39m[33m../test_meshes/disk.obj[39m[33m"[39m)
+    [32m      3[39m hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[[32m0[39m], mesh.faces)
+    [32m      4[39m vertices = mesh.vertices
+
+    [31mNameError[39m: name 'TriMesh' is not defined
 
 ### Mesh quality assessment
 
@@ -33,7 +41,7 @@ angle, summary statistics, and a human-readable quality report.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L29"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L30"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_angles
@@ -66,7 +74,7 @@ assert jnp.all(max_angles >= jnp.pi / 3 - 1e-6)  # max angle >= 60° always
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L54"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L55"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_mesh_quality_stats
@@ -113,7 +121,7 @@ mesh, but generally improves quality in practice.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L94"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L95"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### is_locally_delaunay
@@ -145,7 +153,7 @@ assert jnp.all(delaunay[hemesh.is_bdry_edge])  # boundary edges are always Delau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L120"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L121"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### fix_delaunay
@@ -225,7 +233,7 @@ Smoothing](https://geometry-central.net/surface/algorithms/remeshing/#tangential
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L162"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L163"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### smooth_vertices_laplacian

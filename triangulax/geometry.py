@@ -130,11 +130,13 @@ def get_corner_angles(vertices: Float[jax.Array, "n_vertices dim"],hemesh: msh.H
     a = vertices[hemesh.dest[hemesh.nxt]]
     return jax.vmap(trig.get_angle_between_vectors)(b-a, c-a)
 
+
 def get_angle_sum(vertices: Float[jax.Array, "n_vertices dim"],hemesh: msh.HeMesh
                   ) -> Float[jax.Array, " n_vertices"]:
     """Angle sum around vertices. 2*pi-angle sum measures Gaussian curvature"""
     angles = get_corner_angles(vertices, hemesh)
     return adj.sum_he_to_vertex_opposite(hemesh, angles)
+
 
 def get_cotan_weights_per_he(vertices: Float[jax.Array, "n_vertices dim"],
                              hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
@@ -143,6 +145,7 @@ def get_cotan_weights_per_he(vertices: Float[jax.Array, "n_vertices dim"],
     a = vertices[hemesh.dest[hemesh.nxt]]
     return jax.vmap(trig.get_cot_between_vectors)(b-a, c-a)
 
+
 def get_cotan_weights_per_egde(vertices: Float[jax.Array, "n_vertices dim"],
                                hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
     """Average of cotangent of angles opposite to edge."""
@@ -150,10 +153,12 @@ def get_cotan_weights_per_egde(vertices: Float[jax.Array, "n_vertices dim"],
     per_he = jnp.where(hemesh.is_bdry_he, 0.0, per_he)
     return (per_he + per_he[hemesh.twin])/2
 
+
 def get_voronoi_edge_lengths(vertices: Float[jax.Array, "n_vertices dim"],
                              hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
     """Computed directly from angles. Accurate in any dimension"""
     return get_cotan_weights_per_egde(vertices, hemesh) * get_he_length(vertices, hemesh)
+
 
 def get_voronoi_edge_areas(vertices: Float[jax.Array, "n_vertices dim"],
                            hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:

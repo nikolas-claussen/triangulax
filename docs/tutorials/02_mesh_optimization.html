@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tutorial: Mesh optimization and “learning” – triangulax</title>
+<title>Tutorial: Mesh optimization and inverse problems – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -139,13 +139,13 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Tutorial: Mesh optimization and “learning” – triangulax">
+<meta property="og:title" content="Tutorial: Mesh optimization and inverse problems – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization_files/figure-html/cell-9-output-1.png">
 <meta property="og:site_name" content="triangulax">
 <meta property="og:image:height" content="351">
 <meta property="og:image:width" content="382">
-<meta name="twitter:title" content="Tutorial: Mesh optimization and “learning” – triangulax">
+<meta name="twitter:title" content="Tutorial: Mesh optimization and inverse problems – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization_files/figure-html/cell-9-output-1.png">
 <meta name="twitter:image-height" content="351">
@@ -174,7 +174,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and “learning”</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and inverse problems</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -298,7 +298,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Tutorial: Mesh optimization and “learning”</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -331,9 +331,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#load-example-mesh" id="toc-load-example-mesh" class="nav-link active" data-scroll-target="#load-example-mesh">Load example mesh</a></li>
-  <li><a href="#forward-pass---minimize-energy" id="toc-forward-pass---minimize-energy" class="nav-link" data-scroll-target="#forward-pass---minimize-energy">Forward pass - minimize energy</a></li>
-  <li><a href="#meta-training" id="toc-meta-training" class="nav-link" data-scroll-target="#meta-training">Meta-training</a></li>
+  <li><a href="#forward-pass---minimize-energy" id="toc-forward-pass---minimize-energy" class="nav-link active" data-scroll-target="#forward-pass---minimize-energy">Forward pass - minimize energy</a></li>
+  <li><a href="#backward-pass---inverse-problem" id="toc-backward-pass---inverse-problem" class="nav-link" data-scroll-target="#backward-pass---inverse-problem">Backward pass - inverse problem</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="02_mesh_optimization.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
@@ -341,9 +340,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and “learning”</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and inverse problems</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Tutorial: Mesh optimization and “learning”</h1>
+<h1 class="title">Tutorial: Mesh optimization and inverse problems</h1>
 </div>
 
 
@@ -360,7 +359,7 @@ window.Quarto = {
 </header>
 
 
-<p>Let’s start with a simple test case to see <code>triangulax</code> in action. The goal is to move the vertices <span class="math inline">\(\mathbf{v}_i\)</span> of a triangulation so that all triangle edge lengths are as close to some <span class="math inline">\(\ell_0\)</span> as possible. We specify a pseudo-energy <span class="math inline">\(E=\sum_{ij} (|\mathbf{v}_i-\mathbf{v}_j| - \ell_0)^2\)</span>, and then minimize it using the gradients w.r.t the vertex positions, computed with JAX.</p>
+<p>Let’s start with a simple test case to see <code>triangulax</code> in action. The goal is to move the vertices <span class="math inline">\(\mathbf{v}_i\)</span> of a triangulation so that all triangle edge lengths are as close to some <span class="math inline">\(\ell_0\)</span> as possible. We specify a pseudo-energy <span class="math inline">\(E(\{\mathbf{v}_i\}_i; \ell_0) =\sum_{ij} (|\mathbf{v}_i-\mathbf{v}_j| - \ell_0)^2\)</span>, and then minimize it using the gradients w.r.t the vertex positions, computed with JAX.</p>
 <p>This defines the “forward pass” of our “dynamical” model. In a second step, we can meta-optimize over the model parameters (here <span class="math inline">\(\ell_0\)</span>), to “learn” the dynamics that generate a desired shape.</p>
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 <div id="d159edd4-4456-41f8-b520-8b1b69219c67" class="cell" data-execution_count="1">
@@ -404,8 +403,7 @@ window.Quarto = {
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> geometry <span class="im">as</span> geom</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops <span class="im">as</span> lin</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="load-example-mesh" class="level3">
-<h3 class="anchored" data-anchor-id="load-example-mesh">Load example mesh</h3>
+<p><strong>Load example mesh</strong></p>
 <div id="a1466484-c167-4d4e-97fc-3f622728062d" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
@@ -432,7 +430,6 @@ window.Quarto = {
 </div>
 </div>
 </div>
-</section>
 <section id="forward-pass---minimize-energy" class="level3">
 <h3 class="anchored" data-anchor-id="forward-pass---minimize-energy">Forward pass - minimize energy</h3>
 <p>We write the energy_function using a <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> as an argument, which serves as wrapper for the various arrays that describe mesh geometry and properties.</p>
@@ -578,8 +575,8 @@ window.Quarto = {
 </div>
 </section>
 </section>
-<section id="meta-training" class="level3">
-<h3 class="anchored" data-anchor-id="meta-training">Meta-training</h3>
+<section id="backward-pass---inverse-problem" class="level3">
+<h3 class="anchored" data-anchor-id="backward-pass---inverse-problem">Backward pass - inverse problem</h3>
 <p>One use case for JAX is <em>differentiating through</em> a scientific simulation to optimize the simulation parameters towards some desired behavior. For example, we may wish to find a triangulation dynamics that creates some target shape.</p>
 <p>As a toy example, let’s take the above “dynamics” which minimizes the pseudo-energy to make all triangles equilateral. It depends on the parameter <span class="math inline">\(\ell_0\)</span>. Relaxation of the pseudo-energy for some number of steps defines our “forward pass”. Let’s optimize <span class="math inline">\(\ell_0\)</span> so that the mesh has some target size at the end of the energy relaxation (of course, this is a contrived problem, since we know the solution from the start).</p>
 <p>First, we wrap our dynamical model as an <code>eqx.Module</code>, so we can optimize it just like a neural net.</p>

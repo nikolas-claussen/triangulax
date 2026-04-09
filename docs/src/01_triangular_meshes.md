@@ -278,7 +278,7 @@ Typical use: map gradients from a 3D mesh to its 2D UV parametrization::
                                     mesh.texture_vertices, mesh.texture_faces)
     gradient_2d = jnp.einsum('fij,fj->fi', jac, gradient_3d)
 
-### Creating meshes and plotting
+### Creating and plotting meshes
 
 Some functions to create meshes based on the Delaunay triangulation of a
 point set.
@@ -367,6 +367,95 @@ plt.axis("equal")
      np.float64(1.5000093386295263))
 
 ![](01_triangular_meshes_files/figure-commonmark/cell-14-output-2.png)
+
+### Creating 2d meshes with periodic boundary conditions (PBCs)
+
+------------------------------------------------------------------------
+
+### get_periodic_delaunay_faces
+
+``` python
+
+def get_periodic_delaunay_faces(
+    points:Float[Array, 'n_vertices 2'], # Seed points in 2D. Points may lie outside the fundamental domain.
+    L:Float[Array, '2'], # Domain size ``[L_x, L_y]`` with positive entries.
+)->Int[Array, 'n_faces 3']: # Triangle indices for the periodic Delaunay triangulation of the wrapped points.
+
+```
+
+*Return faces of the periodic Delaunay triangulation on a rectangular
+torus.*
+
+The input points are first wrapped into the fundamental domain
+`[0, L_x) x [0, L_y)`. The point cloud is then tiled into the eight
+neighboring copies of the box, triangulated in the extended domain, and
+mapped back to the original vertex ids.
+
+------------------------------------------------------------------------
+
+### get_faces_crossing_periodic_boundaries
+
+``` python
+
+def get_faces_crossing_periodic_boundaries(
+    vertices:Float[Array, 'n_vertices 2'], # Vertex positions. They may lie outside the fundamental domain and are wrapped
+into ``[0, L_x) x [0, L_y)`` internally.
+    faces:Int[Array, 'n_faces 3'], # Triangle indices.
+    L_x:float, L_y:float
+)->Int[Array, 'n_faces']: # Boolean mask whose entry ``i`` is True when ``faces[i]`` crosses a domain boundary.
+
+```
+
+*Return a boolean mask for faces that cross a periodic box boundary.*
+
+A face is marked as boundary-crossing if at least one of its edges is
+shorter under the minimum-image convention than in the direct
+coordinates inside the fundamental domain.
+
+``` python
+L = jnp.array([1.6, 1.0])
+points = generate_poisson_points(100, *L)
+wrapped_points = jnp.mod(points, L[None, :])
+faces = get_periodic_delaunay_faces(points, L)
+crosses_boundary = get_faces_crossing_periodic_boundaries(wrapped_points, faces, *L)
+
+plt.figure(figsize=(5, 4))
+plt.triplot(*wrapped_points.T, faces, lw=0.5)
+plt.triplot(*wrapped_points.T, faces[~crosses_boundary], lw=1)
+
+
+plt.scatter(*wrapped_points.T, s=12)
+plt.plot([0, L[0], L[0], 0, 0], [0, 0, L[1], L[1], 0], c="black", lw=1)
+plt.gca().set_aspect("equal")
+plt.xlim(-0.05 * L[0], 1.05 * L[0])
+plt.ylim(-0.05 * L[1], 1.05 * L[1])
+plt.title("Periodic Delaunay triangulation")
+```
+
+    Text(0.5, 1.0, 'Periodic Delaunay triangulation')
+
+![](01_triangular_meshes_files/figure-commonmark/cell-17-output-2.png)
+
+``` python
+for n_vertices in [32, 64, 96]:
+    L = jnp.array([1.7, 1.1])
+    points = generate_poisson_points(n_vertices, *L)
+    wrapped_points = jnp.mod(points, L[None, :])
+    faces = np.array(get_periodic_delaunay_faces(points, L))
+    crosses_boundary = np.array(get_faces_crossing_periodic_boundaries(wrapped_points, faces, *L))
+
+    assert faces.ndim == 2 and faces.shape[1] == 3
+    assert np.all(np.diff(np.sort(faces, axis=1), axis=1) > 0)
+    assert crosses_boundary.shape == (faces.shape[0],)
+    assert (~crosses_boundary).any()
+    assert igl.is_edge_manifold(faces)[0]
+    assert igl.is_vertex_manifold(faces)[0]
+    assert len(igl.boundary_loop_all(faces)) == 0
+
+print("Periodic Delaunay triangulations are manifold and boundary-free.")
+```
+
+    Periodic Delaunay triangulations are manifold and boundary-free.
 
 ### Elementary book-keeping using list-of-triangles data structure
 

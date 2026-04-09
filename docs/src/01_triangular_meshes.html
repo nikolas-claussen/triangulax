@@ -294,7 +294,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: Mesh optimization and “learning”</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -334,10 +334,13 @@ window.Quarto = {
   <li><a href="#uv-maps" id="toc-uv-maps" class="nav-link" data-scroll-target="#uv-maps">UV maps</a></li>
   <li><a href="#trimesh" id="toc-trimesh" class="nav-link" data-scroll-target="#trimesh">TriMesh</a></li>
   <li><a href="#compute_per_face_jacobian" id="toc-compute_per_face_jacobian" class="nav-link" data-scroll-target="#compute_per_face_jacobian">compute_per_face_jacobian</a></li>
-  <li><a href="#creating-meshes-and-plotting" id="toc-creating-meshes-and-plotting" class="nav-link" data-scroll-target="#creating-meshes-and-plotting">Creating meshes and plotting</a></li>
+  <li><a href="#creating-and-plotting-meshes" id="toc-creating-and-plotting-meshes" class="nav-link" data-scroll-target="#creating-and-plotting-meshes">Creating and plotting meshes</a></li>
   <li><a href="#generate_triangular_lattice" id="toc-generate_triangular_lattice" class="nav-link" data-scroll-target="#generate_triangular_lattice">generate_triangular_lattice</a></li>
   <li><a href="#generate_poisson_points" id="toc-generate_poisson_points" class="nav-link" data-scroll-target="#generate_poisson_points">generate_poisson_points</a></li>
   <li><a href="#generate_ginibre_points" id="toc-generate_ginibre_points" class="nav-link" data-scroll-target="#generate_ginibre_points">generate_ginibre_points</a></li>
+  <li><a href="#creating-2d-meshes-with-periodic-boundary-conditions-pbcs" id="toc-creating-2d-meshes-with-periodic-boundary-conditions-pbcs" class="nav-link" data-scroll-target="#creating-2d-meshes-with-periodic-boundary-conditions-pbcs">Creating 2d meshes with periodic boundary conditions (PBCs)</a></li>
+  <li><a href="#get_periodic_delaunay_faces" id="toc-get_periodic_delaunay_faces" class="nav-link" data-scroll-target="#get_periodic_delaunay_faces">get_periodic_delaunay_faces</a></li>
+  <li><a href="#get_faces_crossing_periodic_boundaries" id="toc-get_faces_crossing_periodic_boundaries" class="nav-link" data-scroll-target="#get_faces_crossing_periodic_boundaries">get_faces_crossing_periodic_boundaries</a></li>
   <li><a href="#elementary-book-keeping-using-list-of-triangles-data-structure" id="toc-elementary-book-keeping-using-list-of-triangles-data-structure" class="nav-link" data-scroll-target="#elementary-book-keeping-using-list-of-triangles-data-structure">Elementary book-keeping using list-of-triangles data structure</a></li>
   <li><a href="#get_adjacent_vertex_indices" id="toc-get_adjacent_vertex_indices" class="nav-link" data-scroll-target="#get_adjacent_vertex_indices">get_adjacent_vertex_indices</a></li>
   </ul></li>
@@ -531,8 +534,8 @@ window.Quarto = {
                                 mesh.texture_vertices, mesh.texture_faces)
 gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 </section>
-<section id="creating-meshes-and-plotting" class="level3">
-<h3 class="anchored" data-anchor-id="creating-meshes-and-plotting">Creating meshes and plotting</h3>
+<section id="creating-and-plotting-meshes" class="level3">
+<h3 class="anchored" data-anchor-id="creating-and-plotting-meshes">Creating and plotting meshes</h3>
 <p>Some functions to create meshes based on the Delaunay triangulation of a point set.</p>
 <ol type="1">
 <li>Poisson (vertices placed uniformly at random) in disk or box</li>
@@ -602,6 +605,85 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 </div>
 </div>
 </section>
+<section id="creating-2d-meshes-with-periodic-boundary-conditions-pbcs" class="level3">
+<h3 class="anchored" data-anchor-id="creating-2d-meshes-with-periodic-boundary-conditions-pbcs">Creating 2d meshes with periodic boundary conditions (PBCs)</h3>
+<hr>
+</section>
+<section id="get_periodic_delaunay_faces" class="level3">
+<h3 class="anchored" data-anchor-id="get_periodic_delaunay_faces">get_periodic_delaunay_faces</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_periodic_delaunay_faces(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    points:Float[Array, <span class="st">'n_vertices 2'</span>], <span class="co"># Seed points in 2D. Points may lie outside the fundamental domain.</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    L:Float[Array, <span class="st">'2'</span>], <span class="co"># Domain size ``[L_x, L_y]`` with positive entries.</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Int[Array, <span class="st">'n_faces 3'</span>]: <span class="co"># Triangle indices for the periodic Delaunay triangulation of the wrapped points.</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Return faces of the periodic Delaunay triangulation on a rectangular torus.</em></p>
+<p>The input points are first wrapped into the fundamental domain <code>[0, L_x) x [0, L_y)</code>. The point cloud is then tiled into the eight neighboring copies of the box, triangulated in the extended domain, and mapped back to the original vertex ids.</p>
+<hr>
+</section>
+<section id="get_faces_crossing_periodic_boundaries" class="level3">
+<h3 class="anchored" data-anchor-id="get_faces_crossing_periodic_boundaries">get_faces_crossing_periodic_boundaries</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_faces_crossing_periodic_boundaries(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], <span class="co"># Vertex positions. They may lie outside the fundamental domain and are wrapped</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>into ``[<span class="dv">0</span>, L_x) x [<span class="dv">0</span>, L_y)`` internally.</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    faces:Int[Array, <span class="st">'n_faces 3'</span>], <span class="co"># Triangle indices.</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    L_x:<span class="bu">float</span>, L_y:<span class="bu">float</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Int[Array, <span class="st">'n_faces'</span>]: <span class="co"># Boolean mask whose entry ``i`` is True when ``faces[i]`` crosses a domain boundary.</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Return a boolean mask for faces that cross a periodic box boundary.</em></p>
+<p>A face is marked as boundary-crossing if at least one of its edges is shorter under the minimum-image convention than in the direct coordinates inside the fundamental domain.</p>
+<div id="a6b34cdd" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> jnp.array([<span class="fl">1.6</span>, <span class="fl">1.0</span>])</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>points <span class="op">=</span> generate_poisson_points(<span class="dv">100</span>, <span class="op">*</span>L)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>wrapped_points <span class="op">=</span> jnp.mod(points, L[<span class="va">None</span>, :])</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>faces <span class="op">=</span> get_periodic_delaunay_faces(points, L)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>crosses_boundary <span class="op">=</span> get_faces_crossing_periodic_boundaries(wrapped_points, faces, <span class="op">*</span>L)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">4</span>))</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>wrapped_points.T, faces, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>wrapped_points.T, faces[<span class="op">~</span>crosses_boundary], lw<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>plt.scatter(<span class="op">*</span>wrapped_points.T, s<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, L[<span class="dv">0</span>], L[<span class="dv">0</span>], <span class="dv">0</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">0</span>, L[<span class="dv">1</span>], L[<span class="dv">1</span>], <span class="dv">0</span>], c<span class="op">=</span><span class="st">"black"</span>, lw<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>plt.gca().set_aspect(<span class="st">"equal"</span>)</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="op">-</span><span class="fl">0.05</span> <span class="op">*</span> L[<span class="dv">0</span>], <span class="fl">1.05</span> <span class="op">*</span> L[<span class="dv">0</span>])</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="fl">0.05</span> <span class="op">*</span> L[<span class="dv">1</span>], <span class="fl">1.05</span> <span class="op">*</span> L[<span class="dv">1</span>])</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Periodic Delaunay triangulation"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<pre><code>Text(0.5, 1.0, 'Periodic Delaunay triangulation')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_triangular_meshes_files/figure-html/cell-17-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="4faf1858" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n_vertices <span class="kw">in</span> [<span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">96</span>]:</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    L <span class="op">=</span> jnp.array([<span class="fl">1.7</span>, <span class="fl">1.1</span>])</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    points <span class="op">=</span> generate_poisson_points(n_vertices, <span class="op">*</span>L)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    wrapped_points <span class="op">=</span> jnp.mod(points, L[<span class="va">None</span>, :])</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    faces <span class="op">=</span> np.array(get_periodic_delaunay_faces(points, L))</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    crosses_boundary <span class="op">=</span> np.array(get_faces_crossing_periodic_boundaries(wrapped_points, faces, <span class="op">*</span>L))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> faces.ndim <span class="op">==</span> <span class="dv">2</span> <span class="kw">and</span> faces.shape[<span class="dv">1</span>] <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(np.diff(np.sort(faces, axis<span class="op">=</span><span class="dv">1</span>), axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> crosses_boundary.shape <span class="op">==</span> (faces.shape[<span class="dv">0</span>],)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> (<span class="op">~</span>crosses_boundary).<span class="bu">any</span>()</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> igl.is_edge_manifold(faces)[<span class="dv">0</span>]</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> igl.is_vertex_manifold(faces)[<span class="dv">0</span>]</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">len</span>(igl.boundary_loop_all(faces)) <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Periodic Delaunay triangulations are manifold and boundary-free."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Periodic Delaunay triangulations are manifold and boundary-free.</code></pre>
+</div>
+</div>
+</section>
 <section id="elementary-book-keeping-using-list-of-triangles-data-structure" class="level3">
 <h3 class="anchored" data-anchor-id="elementary-book-keeping-using-list-of-triangles-data-structure">Elementary book-keeping using list-of-triangles data structure</h3>
 <hr>
@@ -609,16 +691,16 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 </section>
 <section id="get_adjacent_vertex_indices" class="level3">
 <h3 class="anchored" data-anchor-id="get_adjacent_vertex_indices">get_adjacent_vertex_indices</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_adjacent_vertex_indices(</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    faces:Int[Array, <span class="st">'n_faces 3'</span>], n_vertices:<span class="bu">int</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">list</span>:</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_adjacent_vertex_indices(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    faces:Int[Array, <span class="st">'n_faces 3'</span>], n_vertices:<span class="bu">int</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">list</span>:</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>For each vertex, get the indices of the adjacent vertices in correct order.</em> For boundary vertices, this list contains the vertex itself.</p>
 <div id="7d5a6c59-59ff-4f56-b743-bc591edd70fd" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>neighbors <span class="op">=</span> get_adjacent_vertex_indices(mesh.faces, mesh.n_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>neighbors <span class="op">=</span> get_adjacent_vertex_indices(mesh.faces, mesh.n_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>

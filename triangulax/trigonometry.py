@@ -3,10 +3,10 @@
 # %% auto #0
 __all__ = ['get_circumcenter', 'get_oriented_triangle_area', 'get_triangle_area', 'get_polygon_area', 'project_on_vector',
            'project_out_vector', 'get_projector', 'get_signed_angle_between_vectors', 'get_angle_between_vectors',
-           'get_cot_between_vectors', 'get_tetrahedron_volume', 'get_voronoi_corner_area',
-           'get_triangle_area_from_lengths', 'get_angles_from_lengths', 'get_cotangents_from_lengths',
-           'get_circumcenter_from_lengths', 'get_rot_mat', 'get_perp_2d', 'get_triangle_normal',
-           'quaternion_to_rot_max', 'get_barycentric_coordinates', 'rotate_around_axis']
+           'get_cot_between_vectors', 'get_tetrahedron_volume', 'get_triangle_area_from_lengths',
+           'get_angles_from_lengths', 'get_cotangents_from_lengths', 'get_circumcenter_from_lengths', 'get_rot_mat',
+           'get_perp_2d', 'get_triangle_normal', 'quaternion_to_rot_max', 'get_barycentric_coordinates',
+           'rotate_around_axis']
 
 # %% ../nbs/src/00_trigonometry.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -102,21 +102,6 @@ def get_tetrahedron_volume(a: Float[jax.Array, " dim"], b: Float[jax.Array, " di
                            ) -> Float[jax.Array, ""]:
     """Volume of tetrahedron defined by side vectors a, b, c"""
     return jnp.linalg.vecdot(a, jnp.cross(b,c)) / 6
-
-# %% ../nbs/src/00_trigonometry.ipynb #27a11ad7
-@functools.partial(jax.jit, static_argnames=['zero_clip'])
-def get_voronoi_corner_area(a: Float[jax.Array, " dim"],
-                            b: Float[jax.Array, " dim"],
-                            c: Float[jax.Array, " dim"], zero_clip: float=1e-10) -> Float[jax.Array, "*"]:
-    """
-    Compute Voronoi area at corner a of triangle abc.
-    Returns zero for a degenerate triangle.
-    """
-    u = get_circumcenter(a, b, c)
-    # Voronoi edges are midpoints of triangle edges. the corner area splits into two triangles:
-    a_corner = get_oriented_triangle_area(a, (a-c)/2, u)+get_oriented_triangle_area(u, (a-b)/2, a)
-    a_triangle = get_triangle_area(a, b, c)
-    return jnp.where(a_triangle > zero_clip, jnp.linalg.norm(a_corner), 0.0)
 
 # %% ../nbs/src/00_trigonometry.ipynb #07ef8c20
 def get_triangle_area_from_lengths(la: Float[jax.Array, ""],

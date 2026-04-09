@@ -1,11 +1,11 @@
-# Tutorial: Mesh optimization and “learning”
+# Tutorial: Mesh optimization and inverse problems
 
 
 Let’s start with a simple test case to see `triangulax` in action. The
 goal is to move the vertices **v**<sub>*i*</sub> of a triangulation so
 that all triangle edge lengths are as close to some ℓ<sub>0</sub> as
 possible. We specify a pseudo-energy
-*E* = ∑<sub>*i**j*</sub>(|**v**<sub>*i*</sub> − **v**<sub>*j*</sub>| − ℓ<sub>0</sub>)<sup>2</sup>,
+*E*({**v**<sub>*i*</sub>}<sub>*i*</sub>; ℓ<sub>0</sub>) = ∑<sub>*i**j*</sub>(|**v**<sub>*i*</sub> − **v**<sub>*j*</sub>| − ℓ<sub>0</sub>)<sup>2</sup>,
 and then minimize it using the gradients w.r.t the vertex positions,
 computed with JAX.
 
@@ -62,7 +62,7 @@ from triangulax import geometry as geom
 from triangulax import linops as lin
 ```
 
-### Load example mesh
+**Load example mesh**
 
 ``` python
 mesh = TriMesh.read_obj("test_meshes/disk.obj")
@@ -241,7 +241,7 @@ plt.axis("equal");
 
 ![](02_mesh_optimization_files/figure-commonmark/cell-20-output-1.png)
 
-### Meta-training
+### Backward pass - inverse problem
 
 One use case for JAX is *differentiating through* a scientific
 simulation to optimize the simulation parameters towards some desired
