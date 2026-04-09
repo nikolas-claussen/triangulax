@@ -12,12 +12,9 @@ automatic differentiation to calculate energy gradients.
 import numpy as np
 from scipy import sparse, optimize
 import matplotlib.pyplot as plt
-from matplotlib import colors as mcolors
 import meshplot
 
-from functools import partial
-
-from tqdm.notebook import tqdm
+import igl
 ```
 
 ``` python
@@ -59,21 +56,11 @@ normal vectors of adjacent triangles. The mean curvature at vertex *i*
 can be approximated by
 $$H_i = \frac{1}{4a_i} \sum\_{j\sim i} \ell\_{ij} \theta\_{ij} $$
 where the sum is over all *j* neighboring *i*, and *a*<sub>*i*</sub> is
-the (Voronoi) area around vertex *i*. This can be slightly more robust
-numerically
+the barycentric area around vertex *i*. This discretization turns out to
+be more robust numerically, and is already implemented in the `geometry`
+module.
 
 ``` python
-@jax.jit
-def get_mean_curvature_dihedral(vertices, hemesh):
-
-    """Compute mean curvature of triangulated mesh using dihedral angles and voronoi areas"""
-
-    dihedral_angles = geom.get_dihedral_angles(vertices, hemesh)
-    dihedral_angles = 2*jnp.tan(dihedral_angles/2)
-    edge_lengths = geom.get_he_length(vertices, hemesh)
-    cell_areas = geom.get_voronoi_areas(vertices, hemesh)
-    return  1/4 * adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles*edge_lengths) / cell_areas
-
 @jax.jit
 def get_mean_curvature_laplace(vertices, hemesh):
 
@@ -176,11 +163,11 @@ meshplot.plot(vertices_bdry_imposed, hemesh.faces, shading={"wireframe":False}, 
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(-0.001874…
 
-    <meshplot.Viewer.Viewer at 0x390db5310>
+    <meshplot.Viewer.Viewer at 0x369eb8e10>
 
 ``` python
 # compute the area of the initial configuration - this is the energy we will minimize
-initial_area = geom.get_triangle_areas(vertices_bdry_imposed, hemesh).sum()
+initial_area = geom.get_area(vertices_bdry_imposed, hemesh)
 print(f"Initial area: {initial_area:.4f}")
 ```
 
@@ -190,12 +177,12 @@ print(f"Initial area: {initial_area:.4f}")
 # let's check the cotan-Laplacian gives us the area via A = 1/2 * v^T L v, where v are the vertex positions
 
 L = linops.cotan_laplace_sparse(vertices_bdry_imposed, hemesh)
-area_L = jnp.diag(vertices_bdry_imposed.T.dot(L @ vertices_bdry_imposed)).sum() /2
+area_L = -jnp.diag(vertices_bdry_imposed.T.dot(L @ vertices_bdry_imposed)).sum() /2
 
 print(f"Initial area from Laplace operator: {area_L:.4f}")
 ```
 
-    Initial area from Laplace operator: -4.3650
+    Initial area from Laplace operator: 4.3650
 
 ``` python
 # Let's use the iterative Pinkall-Poitier method to find the mininum energy configuration.
@@ -213,7 +200,8 @@ for t in range(10):
     new_vertices = np.zeros_like(vertices_iterated[-1])
     new_vertices[bdry_verts] = bcs
 
-    solution = np.stack([sparse.linalg.spsolve(-L_ii, L_ib.dot(bc)) for bc in bcs.T], axis=-1) # iterate over x/y/z coordinates
+    solution = np.stack([sparse.linalg.spsolve(-L_ii, L_ib.dot(bc)) for bc in bcs.T], axis=-1)
+    # iterate over x/y/z coordinates
     new_vertices[interior_verts] = solution
     vertices_iterated.append(new_vertices)
 ```
@@ -226,10 +214,10 @@ meshplot.plot(vertices_iterated[-1], hemesh.faces, shading={"wireframe":True}, r
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(-0.001874…
 
-    <meshplot.Viewer.Viewer at 0x3a5e46510>
+    <meshplot.Viewer.Viewer at 0x367955cd0>
 
 ``` python
-final_area = geom.get_triangle_areas(vertices_iterated[-1], hemesh).sum()
+final_area = geom.get_area(vertices_iterated[-1], hemesh)
 print(f"Initial area: {initial_area:.4f}", f"Final area: {final_area:.4f}")
 ```
 
@@ -238,17 +226,14 @@ print(f"Initial area: {initial_area:.4f}", f"Final area: {final_area:.4f}")
 ``` python
 # the gradient of the area is very small after optimization:   
 
-def get_area(vertices, hemesh):
-    return geom.get_triangle_areas(vertices, hemesh).sum()
-
-(jnp.linalg.norm(jax.grad(get_area)(vertices_iterated[0], hemesh), axis=-1)[interior_verts].mean(),
- jnp.linalg.norm(jax.grad(get_area)(vertices_iterated[-1], hemesh), axis=-1)[interior_verts].mean())
+(jnp.linalg.norm(jax.grad(geom.get_area)(vertices_iterated[0], hemesh), axis=-1)[interior_verts].mean(),
+ jnp.linalg.norm(jax.grad(geom.get_area)(vertices_iterated[-1], hemesh), axis=-1)[interior_verts].mean())
 ```
 
     (Array(0.06015605, dtype=float64), Array(0.00068703, dtype=float64))
 
 ``` python
-# the mean curvature is very small after optimization, as expected for a minimal surface:
+# the mean curvature is also very small after optimization, as expected for a minimal surface:
 H_laplace = get_mean_curvature_laplace(vertices_iterated[-1], hemesh)
 jnp.abs(H_laplace).mean()
 ```
@@ -277,11 +262,15 @@ membrane.
 ``` python
 # let's load a sphere as a test mesh for the Helfrich energy
 
-trimesh = TriMesh.read_obj("../test_meshes/sphere.obj", dim=3) # sphere_fine sphere
+trimesh = TriMesh.read_obj("../test_meshes/sphere_fine.obj", dim=3) # sphere_fine sphere
+
+trimesh.vertices -= trimesh.vertices.mean(axis=0)
+trimesh.vertices = (trimesh.vertices.T / np.linalg.norm(trimesh.vertices, axis=1)).T
+
 hemesh = HeMesh.from_triangles(trimesh.vertices.shape[0], trimesh.faces)
 ```
 
-    Warning: readOBJ() ignored non-comment line 3:
+    Warning: readOBJ() ignored non-comment line 4:
       o Icosphere
 
 ``` python
@@ -290,7 +279,7 @@ meshplot.plot(trimesh.vertices, hemesh.faces, shading={"wireframe":True})
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x17759b530>
+    <meshplot.Viewer.Viewer at 0x367957360>
 
 ``` python
 # let's define the discrete Helfrich energy.
@@ -299,13 +288,9 @@ meshplot.plot(trimesh.vertices, hemesh.faces, shading={"wireframe":True})
 def get_helfrich_energy(vertices, args):
     """Compute the discrete Helfrich energy of a triangulated surface. args = (hemesh, H0, kappa)"""
     hemesh, H0, kappa = args
-
-    H = get_mean_curvature_laplace(vertices, hemesh) # get_mean_curvature_laplace get_mean_curvature_dihedral
-    cell_areas = geom.get_voronoi_areas(vertices, hemesh)
+    H = geom.get_mean_curvature_dihedral(vertices, hemesh)
+    cell_areas = geom.get_barycentric_cell_areas(vertices, hemesh)
     return (kappa/2) * ((H - H0) **2 * cell_areas).sum()
-
-
-# let's also define the "conformal" energy, which penalizes shear deformation of individual triangles, but not area changes.
 ```
 
 ``` python
@@ -313,8 +298,7 @@ def get_helfrich_energy(vertices, args):
 
 vertices = trimesh.vertices
 H_laplace = get_mean_curvature_laplace(vertices, hemesh)
-H_dihedral = get_mean_curvature_dihedral(vertices, hemesh)
-
+H_dihedral = geom.get_mean_curvature_dihedral(vertices, hemesh)
 
 # let's compute the radius of the sphere:
 R = jnp.linalg.norm(vertices-vertices.mean(axis=0), axis=-1).mean()
@@ -322,8 +306,8 @@ print("H (Laplace)", H_laplace.mean(), "H - 1/R:", jnp.abs(H_laplace - 1/R).mean
 print("H (Dihedral)", H_dihedral.mean(), "H - 1/R:", jnp.abs(H_dihedral - 1/R).mean())
 ```
 
-    H (Laplace) 0.9999999396050825 H - 1/R: 1.642197383279145e-06
-    H (Dihedral) 1.0508797410359099 H - 1/R: 0.05087976509886655
+    H (Laplace) 1.0000076108652165 H - 1/R: 7.6108652156675975e-06
+    H (Dihedral) 1.0044138499642183 H - 1/R: 0.004413849964217461
 
 ``` python
 args = (hemesh, 0, 1)
@@ -331,19 +315,19 @@ args = (hemesh, 0, 1)
 get_helfrich_energy(trimesh.vertices, args), get_helfrich_energy(2*trimesh.vertices, args)
 ```
 
-    (Array(5.8329657, dtype=float64), Array(5.8329657, dtype=float64))
+    (Array(6.29466847, dtype=float64), Array(6.29466847, dtype=float64))
 
 ``` python
 # now, let's deform the sphere and minimize the Helfrich energy to find the equilibrium shape.
 
-deformed_vertices = trimesh.vertices.at[:, 1].add(1*trimesh.vertices[:, 1]**3)
-deformed_vertices = trimesh.vertices.at[:, 2].add(1*trimesh.vertices[:, 0]**3)
+deformed_vertices = trimesh.vertices.at[:, 1].add(0.5*trimesh.vertices[:, 1]**3)
+deformed_vertices = trimesh.vertices.at[:, 2].add(0.5*trimesh.vertices[:, 0]**3)
 
 print("Minimum vs deformed energy:", get_helfrich_energy(trimesh.vertices, args),
                                      get_helfrich_energy(deformed_vertices, args))
 ```
 
-    Minimum vs deformed energy: 5.832965695813845 7.342784645258564
+    Minimum vs deformed energy: 6.294668468631172 7.159011639563514
 
 ``` python
 meshplot.plot(deformed_vertices, hemesh.faces, shading={"wireframe":True})
@@ -351,7 +335,101 @@ meshplot.plot(deformed_vertices, hemesh.faces, shading={"wireframe":True})
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x38c105790>
+    <meshplot.Viewer.Viewer at 0x32f9fad50>
+
+``` python
+# we can compute the energy gradient
+
+grad = jax.grad(get_helfrich_energy)(deformed_vertices, args)
+normal = geom.get_vertex_normals(deformed_vertices, hemesh)
+grad_norm = jnp.linalg.norm(grad, axis=-1)
+
+(jnp.abs(jnp.linalg.vecdot(grad, normal)) / grad_norm).mean() # gradient is along normal
+```
+
+    Array(0.98613633, dtype=float64)
+
+``` python
+coord_number = adj.get_coordination_number(hemesh)
+
+grad_norm[coord_number==5].mean(),  grad_norm[coord_number==6].mean()
+```
+
+    (Array(0.45213393, dtype=float64), Array(0.13997084, dtype=float64))
+
+``` python
+#### WORK IN PROGRESS
+```
+
+``` python
+areas = geom.get_voronoi_areas(deformed_vertices, hemesh)
+areas_igl = igl.massmatrix(deformed_vertices, hemesh.faces, igl.MASSMATRIX_TYPE_VORONOI).diagonal()
+delta = np.abs(areas-areas_igl)/areas_igl
+```
+
+``` python
+delta.max(), delta.mean() # 0.037
+```
+
+    (np.float64(0.03720164028063362), np.float64(0.0007206968888023912))
+
+``` python
+def get_voronoi_corner_area(a, b, c, zero_clip: float=1e-10):
+    """
+    Compute Voronoi area at corner a of triangle abc.
+    Returns zero for a degenerate triangle.
+    """
+    u = trig.get_circumcenter(a, b, c)
+    # Voronoi edges are midpoints of triangle edges. the corner area splits into two triangles:
+    #a_corner = get_polygon_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0))
+    a_corner = trig.get_oriented_triangle_area(a, (a-c)/2, u)+trig.get_oriented_triangle_area(u, (a-b)/2, a)
+    normal = jnp.cross(b-a, c-a)
+    normal = normal / jnp.linalg.norm(normal)
+
+    a_triangle = trig.get_triangle_area(a, b, c)
+    return jnp.where(a_triangle > zero_clip, jnp.dot(normal, a_corner), 0)
+                     #jnp.linalg.norm(a_corner), 0.0)
+
+
+def get_voronoi_areas(vertices, hemesh):
+    """Compute Voronoi area for each vertex."""
+    a = hemesh.dest[hemesh.nxt]
+    b = hemesh.dest[hemesh.prv]
+    c = hemesh.dest
+    corner_areas = jax.vmap(trig.get_voronoi_corner_area)(
+        vertices[a], vertices[b], vertices[c])
+    corner_areas = jnp.where(hemesh.is_bdry_he, 0, corner_areas)
+    cell_areas = adj.sum_he_to_vertex_opposite(hemesh, corner_areas)
+    return cell_areas
+```
+
+``` python
+areas = get_voronoi_areas(deformed_vertices, hemesh)
+areas_igl = igl.massmatrix(deformed_vertices, hemesh.faces, igl.MASSMATRIX_TYPE_VORONOI).diagonal()
+delta = 100*np.abs(areas-areas_igl)/areas_igl
+
+delta.max(), delta.mean() # 0.037
+```
+
+    (np.float64(3.7201640280633623), np.float64(0.07206968888023912))
+
+``` python
+# find triangles with maximum angle > 90
+
+weights = adj.sum_he_to_vertex_opposite(hemesh, 1.0*(geom.get_cotan_weights_per_he(deformed_vertices, hemesh) < 0))
+
+delta[weights==0].mean(), delta[weights>0].mean()
+```
+
+    (np.float64(0.019674486986031633), np.float64(1.3134329337583852))
+
+``` python
+coord_number = adj.get_coordination_number(hemesh)
+
+delta[coord_number==5].mean(),  delta[coord_number==6].mean()
+```
+
+    (np.float64(1.484385890096511), np.float64(0.04516842790469108))
 
 #### Nonlinear minimization
 
@@ -361,58 +439,169 @@ can compute using JAX. Here, we use the JAX-based optimization library
 `optimistix`.
 
 ``` python
-solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
+solver = optimistix.BFGS(rtol=1e-8, atol=1e-8)
 
 y0 = deformed_vertices
 args = (hemesh, 0, 1) 
 
-sol = optimistix.minimise(get_helfrich_energy, solver, y0, args, max_steps=20000, throw=False)
+sol = optimistix.minimise(get_helfrich_energy, solver, y0, args, max_steps=2000, throw=False)
 vertices_final = sol.value
-
-# initially converges to correct solution, but eventually, the shape becomes degenerat
 ```
-
-``` python
-jnp.linalg.norm(y0-sol.value, axis=-1).mean(), jnp.linalg.norm(y0-trimesh.vertices, axis=-1).mean()
-```
-
-    (Array(0.06861081, dtype=float64), Array(0.25017407, dtype=float64))
 
 ``` python
 print("Initial/final/minimal energy:", get_helfrich_energy(y0, args),
                                        get_helfrich_energy(sol.value, args),
                                        get_helfrich_energy(trimesh.vertices, args))
-
-
-# that's no good... the vertices have hardly moved, yet the energy decreased a lot.
-# at points where the mesh is highly deformed, the energy becomes poorly behaved.
-# need to fix. Does it have to do with Voronoi areas? 
-
-# Overall, it appears that the normal + tangential area method is the most principled approach.
 ```
 
-    Initial/final/minimal energy: 7.342784645258564 4.824873875545231 5.832965695813845
+    Initial/final/minimal energy: 7.159011639563514 6.301857302795774 6.294668468631172
 
 ``` python
-# compute the norm of the energy gradient
-grad_norm = jnp.linalg.norm(jax.grad(get_helfrich_energy)(y0, args), axis=-1)
+# displacement from initial condition.
+
+jnp.linalg.norm(y0-sol.value, axis=-1).mean(), jnp.linalg.norm(y0-trimesh.vertices, axis=-1).mean()
 ```
 
+    (Array(0.04791518, dtype=float64), Array(0.12507872, dtype=float64))
+
 ``` python
-p = meshplot.plot(sol.value, hemesh.faces, shading={"wireframe":True}, return_plot=True)
-p.add_mesh(y0 + np.array([0, 0, 3]), hemesh.faces, np.array(grad_norm), shading={"wireframe":True})
+# after minimization, the deviation from being a perfect sphere is fairly low
+
+center = jnp.average(vertices_final, weights=geom.get_barycentric_cell_areas(vertices_final, hemesh), axis=0)
+Rs =  jnp.linalg.norm(vertices_final - center, axis=1)
+
+Rs.std() / Rs.mean()
+```
+
+    Array(0.01078662, dtype=float64)
+
+``` python
+p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),shading={"wireframe":True}, return_plot=True)
+p.add_mesh(sol.value + np.array([0, 0, 3]), hemesh.faces, shading={"wireframe":True})
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
     1
 
-## Constrained minimization
+## Constrained minimization using Penalty and Augmented Lagrangian methods
 
 Much of the physics of membranes arises from balancing the Helfrich
 bending energy with constraints on the volume *V* and area *A* of the
-membrane. We can include these constraints via two Lagrange multipliers
-*λ*, *p*, surface tension and pressure:
+membrane. For simplicity, we softly enforce these contrstraints with
+quadratic penalty terms in the energy:
+*E*<sub>*P*</sub> = *μ*<sub>*V*</sub>(*V* − *V*<sub>0</sub>)<sup>2</sup>/(2*V*<sub>0</sub>) + *μ*<sub>*A*</sub>(*A* − *A*<sub>0</sub>)<sup>2</sup>/(2*A*<sub>0</sub>)
+
+``` python
+trimesh = TriMesh.read_obj("../test_meshes/sphere_fine.obj", dim=3) # let's load a finer mesh
+trimesh.vertices -= trimesh.vertices.mean(axis=0)
+trimesh.vertices = (trimesh.vertices.T / np.linalg.norm(trimesh.vertices, axis=1)).T
+
+hemesh = HeMesh.from_triangles(trimesh.vertices.shape[0], trimesh.faces)
+```
+
+    Warning: readOBJ() ignored non-comment line 4:
+      o Icosphere
+
+``` python
+# verify volume and area on the sphere mesh
+A_sphere = geom.get_area(trimesh.vertices, hemesh)
+V_sphere = geom.get_volume(trimesh.vertices, hemesh)
+print(f"Sphere area: {A_sphere:.4f} (exact 4π = {4*jnp.pi:.4f})")
+print(f"Sphere volume: {V_sphere:.4f} (exact 4π/3 = {4*jnp.pi/3:.4f})")
+```
+
+    Sphere area: 12.5062 (exact 4π = 12.5664)
+    Sphere volume: 4.1527 (exact 4π/3 = 4.1888)
+
+``` python
+@jax.jit
+def get_helfrich_energy_with_penalty(vertices, args):
+    """Compute the discrete Helfrich energy of a triangulated surface with a penalty method.
+    args = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)"""
+    hemesh, H0, kappa, mu_A, mu_V, A0, V0 = args
+    E = get_helfrich_energy(vertices, (hemesh, H0, kappa))
+    contraint_area = mu_A/2 * (geom.get_area(vertices, hemesh) - A0)**2/A0
+    constraint_volume = mu_V/2 *(geom.get_volume(vertices, hemesh) - V0)**2 / V0**2
+    return E + contraint_area + contraint_area  + constraint_volume
+```
+
+``` python
+A0 = geom.get_area(trimesh.vertices, hemesh)
+V0 = 0.8 * geom.get_volume(trimesh.vertices, hemesh)
+kappa, H0 = 1.0, 0.0
+mu_A = 300.0
+mu_V = 600.0
+args = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
+
+y0 = trimesh.vertices * np.array([0.95, 1.1, 0.95]) # let's start from a stretched configuration
+```
+
+``` python
+solver = optimistix.LBFGS(rtol=1e-8, atol=1e-8,) #   learning_rate=0.001
+sol = optimistix.minimise(get_helfrich_energy_with_penalty, solver, y0, args, max_steps=10000, throw=False)
+vertices_final = sol.value
+```
+
+``` python
+grad_norm = jnp.linalg.norm(jax.grad(get_helfrich_energy_with_penalty)(y0, args), axis=-1)
+```
+
+``` python
+grad_norm.std() / grad_norm.mean()
+```
+
+    Array(0.13204597, dtype=float64)
+
+``` python
+geom.get_area(vertices_final, hemesh)/A0, geom.get_volume(vertices_final, hemesh)/V0
+```
+
+    (Array(0.99737148, dtype=float64), Array(1.0155582, dtype=float64))
+
+``` python
+p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),
+                  shading={"wireframe":True}, return_plot=True)
+
+p.add_mesh(sol.value + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":True})
+```
+
+    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
+
+    1
+
+### Regularization with an in-plane “parametrization” energy
+
+If you play around with the avove
+
+``` python
+def get_neo_hookean_energy(deformation, lame_lambda, lame_mu):
+    """Compute the neo-Hookean energy from Cauchy-Green deformation tensor"""
+    return (lame_mu/2*jnp.trace(deformation)
+            +lame_lambda/4*jnp.linalg.det(deformation)
+            -(lame_mu/+lame_lambda/4)*jnp.log(jnp.linalg.det(deformation))
+            -lame_mu -lame_lambda/4)
+
+def get_metric(vertices, hemesh):
+    """Compute the metric tensor per triangle of a triangulated surface"""
+    a, b, c = vertices[hemesh.faces.T]
+    J = jnp.stack([b-a, c-a], axis=1)
+    return jnp.einsum("vix,vjx->vij", J, J)
+
+def get_elastic_energy(vertices, args):
+    """Compute the elastic energy of a triangulated surface. args = (hemesh, metric_orig, lame_lambda, lame_mu)"""
+    hemesh, metric_orig, lame_lambda, lame_mu = args
+    triangle_areas = geom.get_triangle_areas(vertices, hemesh)
+    metric = get_metric(vertices, hemesh)
+    deformation = jnp.einsum("vij,vjk->vik", jnp.linalg.inv(metric_orig), metric)
+    energies = jax.vmap(get_neo_hookean_energy, in_axes=(0,None,None))(deformation, lame_lambda, lame_mu)
+    return (triangle_areas*energies).sum()
+```
+
+### Augmented Lagrangian method
+
+A more systematic way to include the area and volume constraints is via
+two Lagrange multipliers *λ*, *p*, surface tension and pressure:
 
 ℒ = *E*<sub>*H*</sub> − *λ*(*A* − *A*<sub>0</sub>) − *p*(*V* − *V*<sub>0</sub>)
 
@@ -453,81 +642,6 @@ In pseudo-code, the AL method works like this:
         Update Lagrange multipliers: λ =  λ - μ * c(x)
         Increase penalty parameter μ
         Select new tolerance
-
-``` python
-def get_volume(vertices, hemesh):
-    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to the origin)."""
-    v0, v1, v2 = vertices[hemesh.faces.T]
-    return trig.get_tetrahedron_volume(v0, v1, v2).sum()
-
-def get_area(vertices, hemesh):
-    """Total surface area."""
-    return geom.get_triangle_areas(vertices, hemesh).sum()
-
-# verify on the sphere mesh
-A_sphere = get_area(trimesh.vertices, hemesh)
-V_sphere = get_volume(trimesh.vertices, hemesh)
-print(f"Sphere area: {A_sphere:.4f} (exact 4π = {4*jnp.pi:.4f})")
-print(f"Sphere volume: {V_sphere:.4f} (exact 4π/3 = {4*jnp.pi/3:.4f})")
-```
-
-    Sphere area: 11.6659 (exact 4π = 12.5664)
-    Sphere volume: 3.6587 (exact 4π/3 = 4.1888)
-
-``` python
-# let's first try a simple penalty menthod to enfore the constraints.
-
-@jax.jit
-def get_helfrich_energy_with_penalty(vertices, args):
-    """Compute the discrete Helfrich energy of a triangulated surface with a penalty method.
-    args = (hemesh, H0, kappa, mu, A0, V0)"""
-    hemesh, H0, kappa, mu, A0, V0 = args
-    E = get_helfrich_energy(vertices, (hemesh, H0, kappa))
-    contraint_penalty = mu/2 *((get_area(vertices, hemesh) - A0)**2 + (get_volume(vertices, hemesh) - V0)**2)
-    #area_penalty = 50 * geom.get_triangle_areas(vertices, hemesh).sum()
-    # area_penalty = ((geom.get_triangle_areas(vertices, hemesh)-0.146)**2).sum()
-    return E + contraint_penalty   #+ area_penalty
-```
-
-``` python
-A0 = get_area(trimesh.vertices, hemesh)
-V0 = 0.9 * get_volume(trimesh.vertices, hemesh)
-kappa, H0 = 1.0, 0.0
-mu = 100.0
-args = (hemesh, H0, kappa, mu, A0, V0)
-
-# small perturbation to break spherical symmetry
-#y0 = trimesh.vertices + 0.02 * jax.random.normal(jax.random.PRNGKey(0), trimesh.vertices.shape)
-y0 = deformed_vertices
-```
-
-``` python
-solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8) # BFGS is generally a recipe for trouble
-
-sol = optimistix.minimise(get_helfrich_energy_with_penalty, solver, y0, args, max_steps=2000, throw=False)
-vertices_final = sol.value
-```
-
-``` python
-get_area(vertices_final, hemesh)/A0, get_volume(vertices_final, hemesh)/V0
-```
-
-    (Array(0.99847313, dtype=float64), Array(1.01169332, dtype=float64))
-
-``` python
-# works but the mesh becomes poor quality. need to add some term to prevent poor-quality triangles.
-# one option is to add a per-triangle area penalty (not quit physical)
-# more precisely, one can add a Dirichlet energy term (get's absorved into overall area Lagrange multiplier) Does that reall change anyting?
-#
-```
-
-``` python
-meshplot.plot(vertices_final, hemesh.faces, shading={"wireframe":True})
-```
-
-    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
-
-    <meshplot.Viewer.Viewer at 0x491491250>
 
 ``` python
 @jax.jit

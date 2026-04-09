@@ -245,7 +245,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
+ <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -256,8 +256,20 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry-processing algorithms</span></a>
   </div>
 </li>
       </ul>
@@ -324,7 +336,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#helfrich-energy" id="toc-helfrich-energy" class="nav-link" data-scroll-target="#helfrich-energy">Helfrich energy</a></li>
   </ul></li>
-  <li><a href="#constrained-minimization" id="toc-constrained-minimization" class="nav-link" data-scroll-target="#constrained-minimization">Constrained minimization</a></li>
+  <li><a href="#constrained-minimization-using-penalty-and-augmented-lagrangian-methods" id="toc-constrained-minimization-using-penalty-and-augmented-lagrangian-methods" class="nav-link" data-scroll-target="#constrained-minimization-using-penalty-and-augmented-lagrangian-methods">Constrained minimization using Penalty and Augmented Lagrangian methods</a>
+  <ul class="collapse">
+  <li><a href="#regularization-with-an-in-plane-parametrization-energy" id="toc-regularization-with-an-in-plane-parametrization-energy" class="nav-link" data-scroll-target="#regularization-with-an-in-plane-parametrization-energy">Regularization with an in-plane “parametrization” energy</a></li>
+  <li><a href="#augmented-lagrangian-method" id="toc-augmented-lagrangian-method" class="nav-link" data-scroll-target="#augmented-lagrangian-method">Augmented Lagrangian method</a></li>
+  </ul></li>
   <li><a href="#below---work-in-progress-ignore" id="toc-below---work-in-progress-ignore" class="nav-link" data-scroll-target="#below---work-in-progress-ignore">Below - work in progress, ignore</a>
   <ul class="collapse">
   <li><a href="#non-linear-optimization" id="toc-non-linear-optimization" class="nav-link" data-scroll-target="#non-linear-optimization">Non-linear optimization</a></li>
@@ -360,12 +376,9 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> sparse, optimize</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> colors <span class="im">as</span> mcolors</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> meshplot</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.notebook <span class="im">import</span> tqdm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> meshplot</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="4f0cca42" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
@@ -379,7 +392,7 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> lineax</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> optimistix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="1c1a6541" class="cell" data-execution_count="164">
+<div id="1c1a6541" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> trigonometry <span class="im">as</span> trig</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> geometry <span class="im">as</span> geom</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> adjacency <span class="im">as</span> adj</span>
@@ -390,29 +403,18 @@ window.Quarto = {
 </div>
 <section id="computing-the-mean-curvature" class="level2">
 <h2 class="anchored" data-anchor-id="computing-the-mean-curvature">Computing the mean curvature</h2>
-<p>The mean curvature of a surface (see <a href="https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces">wikipedia</a>, and <a href="https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf">Crane, Chpt. 5</a>) can be computed from the Laplace operator, applied to the vertex positions <span class="math inline">\(\mathbf{v}\)</span> as <span class="math inline">\(\Delta\mathbf{v} = 2H\mathbf{n}\)</span>, where <span class="math inline">\(\mathbf{n}\)</span> is the surface normal. To compute the curvature <span class="math inline">\(H\)</span> numerically, one can also use the <em>dihedral angles</em> <span class="math inline">\(\theta_{ij}\)</span> of each edge <span class="math inline">\(ij\)</span>: the angles between the normal vectors of adjacent triangles. The mean curvature at vertex <span class="math inline">\(i\)</span> can be approximated by <span class="math display">\[H_i = \frac{1}{4a_i} \sum_{j\sim i} \ell_{ij} \theta_{ij} \]</span> where the sum is over all <span class="math inline">\(j\)</span> neighboring <span class="math inline">\(i\)</span>, and <span class="math inline">\(a_i\)</span> is the (Voronoi) area around vertex <span class="math inline">\(i\)</span>. This can be slightly more robust numerically</p>
-<div id="739dc6be" class="cell" data-execution_count="163">
+<p>The mean curvature of a surface (see <a href="https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces">wikipedia</a>, and <a href="https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf">Crane, Chpt. 5</a>) can be computed from the Laplace operator, applied to the vertex positions <span class="math inline">\(\mathbf{v}\)</span> as <span class="math inline">\(\Delta\mathbf{v} = 2H\mathbf{n}\)</span>, where <span class="math inline">\(\mathbf{n}\)</span> is the surface normal. To compute the curvature <span class="math inline">\(H\)</span> numerically, one can also use the <em>dihedral angles</em> <span class="math inline">\(\theta_{ij}\)</span> of each edge <span class="math inline">\(ij\)</span>: the angles between the normal vectors of adjacent triangles. The mean curvature at vertex <span class="math inline">\(i\)</span> can be approximated by <span class="math display">\[H_i = \frac{1}{4a_i} \sum_{j\sim i} \ell_{ij} \theta_{ij} \]</span> where the sum is over all <span class="math inline">\(j\)</span> neighboring <span class="math inline">\(i\)</span>, and <span class="math inline">\(a_i\)</span> is the barycentric area around vertex <span class="math inline">\(i\)</span>. This discretization turns out to be more robust numerically, and is already implemented in the <code>geometry</code> module.</p>
+<div id="739dc6be" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_mean_curvature_dihedral(vertices, hemesh):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_mean_curvature_laplace(vertices, hemesh):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute mean curvature of triangulated mesh using dihedral angles and voronoi areas"""</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    dihedral_angles <span class="op">=</span> geom.get_dihedral_angles(vertices, hemesh)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    dihedral_angles <span class="op">=</span> <span class="dv">2</span><span class="op">*</span>jnp.tan(dihedral_angles<span class="op">/</span><span class="dv">2</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    edge_lengths <span class="op">=</span> geom.get_he_length(vertices, hemesh)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> geom.get_voronoi_areas(vertices, hemesh)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>  <span class="dv">1</span><span class="op">/</span><span class="dv">4</span> <span class="op">*</span> adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles<span class="op">*</span>edge_lengths) <span class="op">/</span> cell_areas</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_mean_curvature_laplace(vertices, hemesh):</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute mean curvature of triangulated mesh using cotan laplacian and voronoi areas"""</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    l_vec <span class="op">=</span> lin.compute_cotan_laplace(vertices, hemesh, vertices)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    n_vec <span class="op">=</span> geom.get_vertex_normals(vertices, hemesh)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> geom.get_voronoi_areas(vertices, hemesh)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>jnp.linalg.vecdot(l_vec, n_vec) <span class="op">/</span> (<span class="dv">2</span><span class="op">*</span> cell_areas)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute mean curvature of triangulated mesh using cotan laplacian and voronoi areas"""</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    l_vec <span class="op">=</span> lin.compute_cotan_laplace(vertices, hemesh, vertices)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    n_vec <span class="op">=</span> geom.get_vertex_normals(vertices, hemesh)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> geom.get_voronoi_areas(vertices, hemesh)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>jnp.linalg.vecdot(l_vec, n_vec) <span class="op">/</span> (<span class="dv">2</span><span class="op">*</span> cell_areas)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="2fb21751" class="cell" data-execution_count="162">
+<div id="2fb21751" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's look at a torus which has varying mean curvature</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>torus <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/torus.obj"</span>,dim <span class="op">=</span><span class="dv">3</span>)</span>
@@ -434,7 +436,7 @@ window.Quarto = {
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"40a0d284655c4ca6a7769e87b20e219c","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"bad40eb04ba940948d8446da1bf03b78","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
@@ -454,7 +456,7 @@ window.Quarto = {
 <li>Given the vertex-positions <span class="math inline">\(\mathbf{v}_i^{(t)}\)</span> at step <span class="math inline">\(t\)</span>, compute the cotan-Laplacian matrix <span class="math inline">\(\Delta^{(t)}_{ij}\)</span></li>
 <li>Solve <span class="math inline">\(\Delta^{(t)}_{ij} \cdot \mathbf{v}_i^{(t+1)} =0\)</span>, subject to fixed boundary conditions.</li>
 </ol>
-<div id="f31d6411" class="cell" data-execution_count="146">
+<div id="f31d6411" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's load a simple test mesh</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
@@ -475,7 +477,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="41a0f997" class="cell" data-execution_count="147">
+<div id="41a0f997" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's impose some boundary conditions on the disk mesh - think of this as finding the shape of a "soap film"</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># with a given boundary curve.</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -490,39 +492,39 @@ window.Quarto = {
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>vertices_bdry_imposed <span class="op">=</span> np.copy(trimesh.vertices)</span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>vertices_bdry_imposed[bdry_verts] <span class="op">=</span> bdry_pos</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="08b6658d" class="cell" data-execution_count="148">
+<div id="08b6658d" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the non-optimized membrane is pretty creased</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>meshplot.plot(vertices_bdry_imposed, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">False</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"2e7981a4e3054a81ae79a34796dd5dec","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"e764d304afcf4ac38da4b8db42544158","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="148">
-<pre><code>&lt;meshplot.Viewer.Viewer at 0x390db5310&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>&lt;meshplot.Viewer.Viewer at 0x369eb8e10&gt;</code></pre>
 </div>
 </div>
-<div id="6a554cc5" class="cell" data-execution_count="149">
+<div id="6a554cc5" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the area of the initial configuration - this is the energy we will minimize</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>initial_area <span class="op">=</span> geom.get_triangle_areas(vertices_bdry_imposed, hemesh).<span class="bu">sum</span>()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>initial_area <span class="op">=</span> geom.get_area(vertices_bdry_imposed, hemesh)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Initial area: </span><span class="sc">{</span>initial_area<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Initial area: 4.3650</code></pre>
 </div>
 </div>
-<div id="9c9a0ac0" class="cell" data-execution_count="150">
+<div id="9c9a0ac0" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's check the cotan-Laplacian gives us the area via A = 1/2 * v^T L v, where v are the vertex positions</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> linops.cotan_laplace_sparse(vertices_bdry_imposed, hemesh)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>area_L <span class="op">=</span> jnp.diag(vertices_bdry_imposed.T.dot(L <span class="op">@</span> vertices_bdry_imposed)).<span class="bu">sum</span>() <span class="op">/</span><span class="dv">2</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>area_L <span class="op">=</span> <span class="op">-</span>jnp.diag(vertices_bdry_imposed.T.dot(L <span class="op">@</span> vertices_bdry_imposed)).<span class="bu">sum</span>() <span class="op">/</span><span class="dv">2</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Initial area from Laplace operator: </span><span class="sc">{</span>area_L<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Initial area from Laplace operator: -4.3650</code></pre>
+<pre><code>Initial area from Laplace operator: 4.3650</code></pre>
 </div>
 </div>
-<div id="89db74ef" class="cell" data-execution_count="151">
+<div id="89db74ef" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's use the iterative Pinkall-Poitier method to find the mininum energy configuration.</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>vertices_iterated <span class="op">=</span> [np.copy(vertices_bdry_imposed)] </span>
@@ -538,47 +540,45 @@ window.Quarto = {
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    new_vertices <span class="op">=</span> np.zeros_like(vertices_iterated[<span class="op">-</span><span class="dv">1</span>])</span>
 <span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    new_vertices[bdry_verts] <span class="op">=</span> bcs</span>
 <span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    solution <span class="op">=</span> np.stack([sparse.linalg.spsolve(<span class="op">-</span>L_ii, L_ib.dot(bc)) <span class="cf">for</span> bc <span class="kw">in</span> bcs.T], axis<span class="op">=-</span><span class="dv">1</span>) <span class="co"># iterate over x/y/z coordinates</span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    new_vertices[interior_verts] <span class="op">=</span> solution</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    vertices_iterated.append(new_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    solution <span class="op">=</span> np.stack([sparse.linalg.spsolve(<span class="op">-</span>L_ii, L_ib.dot(bc)) <span class="cf">for</span> bc <span class="kw">in</span> bcs.T], axis<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># iterate over x/y/z coordinates</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    new_vertices[interior_verts] <span class="op">=</span> solution</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    vertices_iterated.append(new_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a344943e" class="cell" data-execution_count="152">
+<div id="a344943e" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># as a result of the optimization, we get an area-minimizing "Pringles" surface</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>meshplot.plot(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"af5ab00efb8f4886b1ede525ef9e32e8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"ea7a0b647a9a467099c8433b36ed1c0c","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="152">
-<pre><code>&lt;meshplot.Viewer.Viewer at 0x3a5e46510&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>&lt;meshplot.Viewer.Viewer at 0x367955cd0&gt;</code></pre>
 </div>
 </div>
-<div id="0da1eee8" class="cell" data-execution_count="153">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>final_area <span class="op">=</span> geom.get_triangle_areas(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], hemesh).<span class="bu">sum</span>()</span>
+<div id="0da1eee8" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>final_area <span class="op">=</span> geom.get_area(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], hemesh)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Initial area: </span><span class="sc">{</span>initial_area<span class="sc">:.4f}</span><span class="ss">"</span>, <span class="ss">f"Final area: </span><span class="sc">{</span>final_area<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Initial area: 4.3650 Final area: 3.7981</code></pre>
 </div>
 </div>
-<div id="1ea9c560" class="cell" data-execution_count="15">
+<div id="1ea9c560" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the gradient of the area is very small after optimization:   </span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_area(vertices, hemesh):</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> geom.get_triangle_areas(vertices, hemesh).<span class="bu">sum</span>()</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>(jnp.linalg.norm(jax.grad(get_area)(vertices_iterated[<span class="dv">0</span>], hemesh), axis<span class="op">=-</span><span class="dv">1</span>)[interior_verts].mean(),</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a> jnp.linalg.norm(jax.grad(get_area)(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], hemesh), axis<span class="op">=-</span><span class="dv">1</span>)[interior_verts].mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>(jnp.linalg.norm(jax.grad(geom.get_area)(vertices_iterated[<span class="dv">0</span>], hemesh), axis<span class="op">=-</span><span class="dv">1</span>)[interior_verts].mean(),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a> jnp.linalg.norm(jax.grad(geom.get_area)(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], hemesh), axis<span class="op">=-</span><span class="dv">1</span>)[interior_verts].mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
 <pre><code>(Array(0.06015605, dtype=float64), Array(0.00068703, dtype=float64))</code></pre>
 </div>
 </div>
-<div id="4ec5e056" class="cell" data-execution_count="158">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the mean curvature is very small after optimization, as expected for a minimal surface:</span></span>
+<div id="4ec5e056" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the mean curvature is also very small after optimization, as expected for a minimal surface:</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>H_laplace <span class="op">=</span> get_mean_curvature_laplace(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], hemesh)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>jnp.<span class="bu">abs</span>(H_laplace).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="158">
+<div class="cell-output cell-output-display" data-execution_count="20">
 <pre><code>Array(0.06984846, dtype=float64)</code></pre>
 </div>
 </div>
@@ -588,147 +588,344 @@ window.Quarto = {
 <p>The <em>Helfrich energy</em> is an elegant, geometric model of bending energy. It uses the mean and Gaussian curvatures <span class="math inline">\(H, K\)</span> of the surface <span class="math inline">\(\mathcal{M}\)</span>. The energy reads:</p>
 <p><span class="math display">\[E_H  =\int dA \left( \frac{\kappa_H}{2}(H-H_0)^2 + \kappa_G K \right) \]</span></p>
 <p>If the surface is closed, the <span class="math inline">\(\int K\)</span>-term is a topological invariant and can be dropped (and we will do so here). A nonzero <em>spontaneous curvature</em> <span class="math inline">\(H_0\)</span> means that the membrane “prefers” to be curved; this can result, for instance, from molecules that bind to the membrane.</p>
-<div id="ab811553" class="cell" data-execution_count="159">
+<div id="ab811553" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's load a sphere as a test mesh for the Helfrich energy</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>) <span class="co"># sphere_fine sphere</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(trimesh.vertices.shape[<span class="dv">0</span>], trimesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere_fine.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>) <span class="co"># sphere_fine sphere</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">-=</span> trimesh.vertices.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">=</span> (trimesh.vertices.T <span class="op">/</span> np.linalg.norm(trimesh.vertices, axis<span class="op">=</span><span class="dv">1</span>)).T</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(trimesh.vertices.shape[<span class="dv">0</span>], trimesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: readOBJ() ignored non-comment line 3:
+<pre><code>Warning: readOBJ() ignored non-comment line 4:
   o Icosphere</code></pre>
 </div>
 </div>
-<div id="d1a7e1d8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;powershell&quot;}}" data-execution_count="59">
+<div id="d1a7e1d8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;powershell&quot;}}" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>meshplot.plot(trimesh.vertices, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"0069d53fd3944ec49e8b8ff3da88935a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"d2c02abdb1744d60bcba6a54b1be5d03","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="59">
-<pre><code>&lt;meshplot.Viewer.Viewer at 0x17759b530&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>&lt;meshplot.Viewer.Viewer at 0x367957360&gt;</code></pre>
 </div>
 </div>
-<div id="1357c94c" class="cell" data-execution_count="160">
+<div id="1357c94c" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's define the discrete Helfrich energy.</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_helfrich_energy(vertices, args):</span>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the discrete Helfrich energy of a triangulated surface. args = (hemesh, H0, kappa)"""</span></span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    hemesh, H0, kappa <span class="op">=</span> args</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    H <span class="op">=</span> get_mean_curvature_laplace(vertices, hemesh) <span class="co"># get_mean_curvature_laplace get_mean_curvature_dihedral</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> geom.get_voronoi_areas(vertices, hemesh)</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (kappa<span class="op">/</span><span class="dv">2</span>) <span class="op">*</span> ((H <span class="op">-</span> H0) <span class="op">**</span><span class="dv">2</span> <span class="op">*</span> cell_areas).<span class="bu">sum</span>()</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co"># let's also define the "conformal" energy, which penalizes shear deformation of individual triangles, but not area changes.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    H <span class="op">=</span> geom.get_mean_curvature_dihedral(vertices, hemesh)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> geom.get_barycentric_cell_areas(vertices, hemesh)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (kappa<span class="op">/</span><span class="dv">2</span>) <span class="op">*</span> ((H <span class="op">-</span> H0) <span class="op">**</span><span class="dv">2</span> <span class="op">*</span> cell_areas).<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="8eeadddc" class="cell" data-execution_count="161">
+<div id="8eeadddc" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's check the mean-curvature of the sphere using the Laplace operator - this should be constant across all vertices</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>vertices <span class="op">=</span> trimesh.vertices</span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>H_laplace <span class="op">=</span> get_mean_curvature_laplace(vertices, hemesh)</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>H_dihedral <span class="op">=</span> get_mean_curvature_dihedral(vertices, hemesh)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>H_dihedral <span class="op">=</span> geom.get_mean_curvature_dihedral(vertices, hemesh)</span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># let's compute the radius of the sphere:</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> jnp.linalg.norm(vertices<span class="op">-</span>vertices.mean(axis<span class="op">=</span><span class="dv">0</span>), axis<span class="op">=-</span><span class="dv">1</span>).mean()</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"H (Laplace)"</span>, H_laplace.mean(), <span class="st">"H - 1/R:"</span>, jnp.<span class="bu">abs</span>(H_laplace <span class="op">-</span> <span class="dv">1</span><span class="op">/</span>R).mean())</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"H (Dihedral)"</span>, H_dihedral.mean(), <span class="st">"H - 1/R:"</span>, jnp.<span class="bu">abs</span>(H_dihedral <span class="op">-</span> <span class="dv">1</span><span class="op">/</span>R).mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># let's compute the radius of the sphere:</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> jnp.linalg.norm(vertices<span class="op">-</span>vertices.mean(axis<span class="op">=</span><span class="dv">0</span>), axis<span class="op">=-</span><span class="dv">1</span>).mean()</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"H (Laplace)"</span>, H_laplace.mean(), <span class="st">"H - 1/R:"</span>, jnp.<span class="bu">abs</span>(H_laplace <span class="op">-</span> <span class="dv">1</span><span class="op">/</span>R).mean())</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"H (Dihedral)"</span>, H_dihedral.mean(), <span class="st">"H - 1/R:"</span>, jnp.<span class="bu">abs</span>(H_dihedral <span class="op">-</span> <span class="dv">1</span><span class="op">/</span>R).mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>H (Laplace) 0.9999999396050825 H - 1/R: 1.642197383279145e-06
-H (Dihedral) 1.0508797410359099 H - 1/R: 0.05087976509886655</code></pre>
+<pre><code>H (Laplace) 1.0000076108652165 H - 1/R: 7.6108652156675975e-06
+H (Dihedral) 1.0044138499642183 H - 1/R: 0.004413849964217461</code></pre>
 </div>
 </div>
-<div id="49451402" class="cell" data-execution_count="131">
+<div id="49451402" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (hemesh, <span class="dv">0</span>, <span class="dv">1</span>)</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># exact helfrich for a sphere is 2*pi, here smaller due to discretization error. The energy is scale invariant.</span></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>get_helfrich_energy(trimesh.vertices, args), get_helfrich_energy(<span class="dv">2</span><span class="op">*</span>trimesh.vertices, args)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="131">
-<pre><code>(Array(5.8329657, dtype=float64), Array(5.8329657, dtype=float64))</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<pre><code>(Array(6.29466847, dtype=float64), Array(6.29466847, dtype=float64))</code></pre>
 </div>
 </div>
-<div id="5377b4f7" class="cell" data-execution_count="132">
+<div id="5377b4f7" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now, let's deform the sphere and minimize the Helfrich energy to find the equilibrium shape.</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>deformed_vertices <span class="op">=</span> trimesh.vertices.at[:, <span class="dv">1</span>].add(<span class="dv">1</span><span class="op">*</span>trimesh.vertices[:, <span class="dv">1</span>]<span class="op">**</span><span class="dv">3</span>)</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>deformed_vertices <span class="op">=</span> trimesh.vertices.at[:, <span class="dv">2</span>].add(<span class="dv">1</span><span class="op">*</span>trimesh.vertices[:, <span class="dv">0</span>]<span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>deformed_vertices <span class="op">=</span> trimesh.vertices.at[:, <span class="dv">1</span>].add(<span class="fl">0.5</span><span class="op">*</span>trimesh.vertices[:, <span class="dv">1</span>]<span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>deformed_vertices <span class="op">=</span> trimesh.vertices.at[:, <span class="dv">2</span>].add(<span class="fl">0.5</span><span class="op">*</span>trimesh.vertices[:, <span class="dv">0</span>]<span class="op">**</span><span class="dv">3</span>)</span>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Minimum vs deformed energy:"</span>, get_helfrich_energy(trimesh.vertices, args),</span>
 <span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>                                     get_helfrich_energy(deformed_vertices, args))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Minimum vs deformed energy: 5.832965695813845 7.342784645258564</code></pre>
+<pre><code>Minimum vs deformed energy: 6.294668468631172 7.159011639563514</code></pre>
 </div>
 </div>
-<div id="0f4d7677" class="cell" data-execution_count="133">
+<div id="0f4d7677" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>meshplot.plot(deformed_vertices, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"e9fdf373e1314886b724a8aac4bb5be8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"05b429d15bb0403ca5266ba7b3f20d72","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="133">
-<pre><code>&lt;meshplot.Viewer.Viewer at 0x38c105790&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<pre><code>&lt;meshplot.Viewer.Viewer at 0x32f9fad50&gt;</code></pre>
+</div>
+</div>
+<div id="63b9ff96" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we can compute the energy gradient</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>grad <span class="op">=</span> jax.grad(get_helfrich_energy)(deformed_vertices, args)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>normal <span class="op">=</span> geom.get_vertex_normals(deformed_vertices, hemesh)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>grad_norm <span class="op">=</span> jnp.linalg.norm(grad, axis<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>(jnp.<span class="bu">abs</span>(jnp.linalg.vecdot(grad, normal)) <span class="op">/</span> grad_norm).mean() <span class="co"># gradient is along normal</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<pre><code>Array(0.98613633, dtype=float64)</code></pre>
+</div>
+</div>
+<div id="9876df58" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> adj.get_coordination_number(hemesh)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>grad_norm[coord_number<span class="op">==</span><span class="dv">5</span>].mean(),  grad_norm[coord_number<span class="op">==</span><span class="dv">6</span>].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<pre><code>(Array(0.45213393, dtype=float64), Array(0.13997084, dtype=float64))</code></pre>
+</div>
+</div>
+<div id="d16c8764" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;markdown&quot;}}" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">#### WORK IN PROGRESS</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="5239146c" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>areas <span class="op">=</span> geom.get_voronoi_areas(deformed_vertices, hemesh)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>areas_igl <span class="op">=</span> igl.massmatrix(deformed_vertices, hemesh.faces, igl.MASSMATRIX_TYPE_VORONOI).diagonal()</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>delta <span class="op">=</span> np.<span class="bu">abs</span>(areas<span class="op">-</span>areas_igl)<span class="op">/</span>areas_igl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="f10cfb7d" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>delta.<span class="bu">max</span>(), delta.mean() <span class="co"># 0.037</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+<pre><code>(np.float64(0.03720164028063362), np.float64(0.0007206968888023912))</code></pre>
+</div>
+</div>
+<div id="67fa2656" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_corner_area(a, b, c, zero_clip: <span class="bu">float</span><span class="op">=</span><span class="fl">1e-10</span>):</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute Voronoi area at corner a of triangle abc.</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns zero for a degenerate triangle.</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    u <span class="op">=</span> trig.get_circumcenter(a, b, c)</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Voronoi edges are midpoints of triangle edges. the corner area splits into two triangles:</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#a_corner = get_polygon_area(jnp.stack([a, (a-b)/2, u, (a-c)/2], axis=0))</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>    a_corner <span class="op">=</span> trig.get_oriented_triangle_area(a, (a<span class="op">-</span>c)<span class="op">/</span><span class="dv">2</span>, u)<span class="op">+</span>trig.get_oriented_triangle_area(u, (a<span class="op">-</span>b)<span class="op">/</span><span class="dv">2</span>, a)</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>    normal <span class="op">=</span> jnp.cross(b<span class="op">-</span>a, c<span class="op">-</span>a)</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    normal <span class="op">=</span> normal <span class="op">/</span> jnp.linalg.norm(normal)</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>    a_triangle <span class="op">=</span> trig.get_triangle_area(a, b, c)</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.where(a_triangle <span class="op">&gt;</span> zero_clip, jnp.dot(normal, a_corner), <span class="dv">0</span>)</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>                     <span class="co">#jnp.linalg.norm(a_corner), 0.0)</span></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_voronoi_areas(vertices, hemesh):</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute Voronoi area for each vertex."""</span></span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> hemesh.dest[hemesh.nxt]</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> hemesh.dest[hemesh.prv]</span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> hemesh.dest</span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>    corner_areas <span class="op">=</span> jax.vmap(trig.get_voronoi_corner_area)(</span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>        vertices[a], vertices[b], vertices[c])</span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>    corner_areas <span class="op">=</span> jnp.where(hemesh.is_bdry_he, <span class="dv">0</span>, corner_areas)</span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>    cell_areas <span class="op">=</span> adj.sum_he_to_vertex_opposite(hemesh, corner_areas)</span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cell_areas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="a137ce9e" class="cell" data-execution_count="35">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>areas <span class="op">=</span> get_voronoi_areas(deformed_vertices, hemesh)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>areas_igl <span class="op">=</span> igl.massmatrix(deformed_vertices, hemesh.faces, igl.MASSMATRIX_TYPE_VORONOI).diagonal()</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>delta <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>np.<span class="bu">abs</span>(areas<span class="op">-</span>areas_igl)<span class="op">/</span>areas_igl</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>delta.<span class="bu">max</span>(), delta.mean() <span class="co"># 0.037</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<pre><code>(np.float64(3.7201640280633623), np.float64(0.07206968888023912))</code></pre>
+</div>
+</div>
+<div id="1091b81a" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find triangles with maximum angle &gt; 90</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> adj.sum_he_to_vertex_opposite(hemesh, <span class="fl">1.0</span><span class="op">*</span>(geom.get_cotan_weights_per_he(deformed_vertices, hemesh) <span class="op">&lt;</span> <span class="dv">0</span>))</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>delta[weights<span class="op">==</span><span class="dv">0</span>].mean(), delta[weights<span class="op">&gt;</span><span class="dv">0</span>].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<pre><code>(np.float64(0.019674486986031633), np.float64(1.3134329337583852))</code></pre>
+</div>
+</div>
+<div id="3cbf851f" class="cell" data-execution_count="37">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> adj.get_coordination_number(hemesh)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>delta[coord_number<span class="op">==</span><span class="dv">5</span>].mean(),  delta[coord_number<span class="op">==</span><span class="dv">6</span>].mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="37">
+<pre><code>(np.float64(1.484385890096511), np.float64(0.04516842790469108))</code></pre>
 </div>
 </div>
 <section id="nonlinear-minimization" class="level4">
 <h4 class="anchored" data-anchor-id="nonlinear-minimization">Nonlinear minimization</h4>
 <p>To minimize the energy, we can use one of many non-linear minimization algorithms, all of which use the gradient <span class="math inline">\(\nabla E_H\)</span> which we can compute using JAX. Here, we use the JAX-based optimization library <code>optimistix</code>.</p>
-<div id="22256fbf" class="cell" data-execution_count="137">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>)</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> deformed_vertices</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (hemesh, <span class="dv">0</span>, <span class="dv">1</span>) </span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.minimise(get_helfrich_energy, solver, y0, args, max_steps<span class="op">=</span><span class="dv">20000</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>vertices_final <span class="op">=</span> sol.value</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co"># initially converges to correct solution, but eventually, the shape becomes degenerat</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="22256fbf" class="cell" data-execution_count="38">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.BFGS(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> deformed_vertices</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (hemesh, <span class="dv">0</span>, <span class="dv">1</span>) </span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.minimise(get_helfrich_energy, solver, y0, args, max_steps<span class="op">=</span><span class="dv">2000</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>vertices_final <span class="op">=</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="e645b225" class="cell" data-execution_count="138">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>jnp.linalg.norm(y0<span class="op">-</span>sol.value, axis<span class="op">=-</span><span class="dv">1</span>).mean(), jnp.linalg.norm(y0<span class="op">-</span>trimesh.vertices, axis<span class="op">=-</span><span class="dv">1</span>).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="138">
-<pre><code>(Array(0.06861081, dtype=float64), Array(0.25017407, dtype=float64))</code></pre>
-</div>
-</div>
-<div id="5fc75f8e" class="cell" data-execution_count="139">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Initial/final/minimal energy:"</span>, get_helfrich_energy(y0, args),</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>                                       get_helfrich_energy(sol.value, args),</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>                                       get_helfrich_energy(trimesh.vertices, args))</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co"># that's no good... the vertices have hardly moved, yet the energy decreased a lot.</span></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co"># at points where the mesh is highly deformed, the energy becomes poorly behaved.</span></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="co"># need to fix. Does it have to do with Voronoi areas? </span></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Overall, it appears that the normal + tangential area method is the most principled approach.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5fc75f8e" class="cell" data-execution_count="43">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Initial/final/minimal energy:"</span>, get_helfrich_energy(y0, args),</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>                                       get_helfrich_energy(sol.value, args),</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                                       get_helfrich_energy(trimesh.vertices, args))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Initial/final/minimal energy: 7.342784645258564 4.824873875545231 5.832965695813845</code></pre>
+<pre><code>Initial/final/minimal energy: 7.159011639563514 6.301857302795774 6.294668468631172</code></pre>
 </div>
 </div>
-<div id="63b9ff96" class="cell" data-execution_count="140">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the norm of the energy gradient</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>grad_norm <span class="op">=</span> jnp.linalg.norm(jax.grad(get_helfrich_energy)(y0, args), axis<span class="op">=-</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e645b225" class="cell" data-execution_count="44">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># displacement from initial condition.</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>jnp.linalg.norm(y0<span class="op">-</span>sol.value, axis<span class="op">=-</span><span class="dv">1</span>).mean(), jnp.linalg.norm(y0<span class="op">-</span>trimesh.vertices, axis<span class="op">=-</span><span class="dv">1</span>).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
+<pre><code>(Array(0.04791518, dtype=float64), Array(0.12507872, dtype=float64))</code></pre>
 </div>
-<div id="ec632886" class="cell" data-execution_count="141">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> meshplot.plot(sol.value, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>p.add_mesh(y0 <span class="op">+</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>]), hemesh.faces, np.array(grad_norm), shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="35de4ea5" class="cell" data-execution_count="45">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># after minimization, the deviation from being a perfect sphere is fairly low</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>center <span class="op">=</span> jnp.average(vertices_final, weights<span class="op">=</span>geom.get_barycentric_cell_areas(vertices_final, hemesh), axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>Rs <span class="op">=</span>  jnp.linalg.norm(vertices_final <span class="op">-</span> center, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>Rs.std() <span class="op">/</span> Rs.mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="45">
+<pre><code>Array(0.01078662, dtype=float64)</code></pre>
+</div>
+</div>
+<div id="ec632886" class="cell" data-execution_count="46">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> meshplot.plot(y0, hemesh.faces, np.array(grad_norm),shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>p.add_mesh(sol.value <span class="op">+</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>]), hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"ee4aa2af82554205b97e8e6b23dc7ba7","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"9f84666fcf4b411d9a29a9863ad55abc","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="141">
+<div class="cell-output cell-output-display" data-execution_count="46">
 <pre><code>1</code></pre>
 </div>
 </div>
 </section>
 </section>
 </section>
-<section id="constrained-minimization" class="level2">
-<h2 class="anchored" data-anchor-id="constrained-minimization">Constrained minimization</h2>
-<p>Much of the physics of membranes arises from balancing the Helfrich bending energy with constraints on the volume <span class="math inline">\(V\)</span> and area <span class="math inline">\(A\)</span> of the membrane. We can include these constraints via two Lagrange multipliers <span class="math inline">\(\lambda, p\)</span>, surface tension and pressure:</p>
+<section id="constrained-minimization-using-penalty-and-augmented-lagrangian-methods" class="level2">
+<h2 class="anchored" data-anchor-id="constrained-minimization-using-penalty-and-augmented-lagrangian-methods">Constrained minimization using Penalty and Augmented Lagrangian methods</h2>
+<p>Much of the physics of membranes arises from balancing the Helfrich bending energy with constraints on the volume <span class="math inline">\(V\)</span> and area <span class="math inline">\(A\)</span> of the membrane. For simplicity, we softly enforce these contrstraints with quadratic penalty terms in the energy: <span class="math display">\[E_P =  \mu_V(V-V_0)^2/(2V_0) + \mu_A(A-A_0)^2/(2A_0)\]</span></p>
+<div id="1006f3cb" class="cell" data-execution_count="47">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere_fine.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>) <span class="co"># let's load a finer mesh</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">-=</span> trimesh.vertices.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">=</span> (trimesh.vertices.T <span class="op">/</span> np.linalg.norm(trimesh.vertices, axis<span class="op">=</span><span class="dv">1</span>)).T</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(trimesh.vertices.shape[<span class="dv">0</span>], trimesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: readOBJ() ignored non-comment line 4:
+  o Icosphere</code></pre>
+</div>
+</div>
+<div id="cdfa50bd" class="cell" data-execution_count="48">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify volume and area on the sphere mesh</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>A_sphere <span class="op">=</span> geom.get_area(trimesh.vertices, hemesh)</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>V_sphere <span class="op">=</span> geom.get_volume(trimesh.vertices, hemesh)</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sphere area: </span><span class="sc">{</span>A_sphere<span class="sc">:.4f}</span><span class="ss"> (exact 4π = </span><span class="sc">{</span><span class="dv">4</span><span class="op">*</span>jnp<span class="sc">.</span>pi<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sphere volume: </span><span class="sc">{</span>V_sphere<span class="sc">:.4f}</span><span class="ss"> (exact 4π/3 = </span><span class="sc">{</span><span class="dv">4</span><span class="op">*</span>jnp<span class="sc">.</span>pi<span class="op">/</span><span class="dv">3</span><span class="sc">:.4f}</span><span class="ss">)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sphere area: 12.5062 (exact 4π = 12.5664)
+Sphere volume: 4.1527 (exact 4π/3 = 4.1888)</code></pre>
+</div>
+</div>
+<div id="049cd24f" class="cell" data-execution_count="49">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_helfrich_energy_with_penalty(vertices, args):</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the discrete Helfrich energy of a triangulated surface with a penalty method.</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="co">    args = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)"""</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    hemesh, H0, kappa, mu_A, mu_V, A0, V0 <span class="op">=</span> args</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>    contraint_area <span class="op">=</span> mu_A<span class="op">/</span><span class="dv">2</span> <span class="op">*</span> (geom.get_area(vertices, hemesh) <span class="op">-</span> A0)<span class="op">**</span><span class="dv">2</span><span class="op">/</span>A0</span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>    constraint_volume <span class="op">=</span> mu_V<span class="op">/</span><span class="dv">2</span> <span class="op">*</span>(geom.get_volume(vertices, hemesh) <span class="op">-</span> V0)<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> V0<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E <span class="op">+</span> contraint_area <span class="op">+</span> contraint_area  <span class="op">+</span> constraint_volume</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3117ce75" class="cell" data-execution_count="135">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> geom.get_area(trimesh.vertices, hemesh)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> geom.get_volume(trimesh.vertices, hemesh)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>mu_A <span class="op">=</span> <span class="fl">300.0</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>mu_V <span class="op">=</span> <span class="fl">600.0</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (hemesh, H0, kappa, mu_A, mu_V, A0, V0)</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> trimesh.vertices <span class="op">*</span> np.array([<span class="fl">0.95</span>, <span class="fl">1.1</span>, <span class="fl">0.95</span>]) <span class="co"># let's start from a stretched configuration</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="fcdf0f6b" class="cell" data-execution_count="136">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.LBFGS(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>,) <span class="co">#   learning_rate=0.001</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.minimise(get_helfrich_energy_with_penalty, solver, y0, args, max_steps<span class="op">=</span><span class="dv">10000</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>vertices_final <span class="op">=</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="2d10bdb6" class="cell" data-execution_count="137">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>grad_norm <span class="op">=</span> jnp.linalg.norm(jax.grad(get_helfrich_energy_with_penalty)(y0, args), axis<span class="op">=-</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3511e22e" class="cell" data-execution_count="138">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>grad_norm.std() <span class="op">/</span> grad_norm.mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="138">
+<pre><code>Array(0.13204597, dtype=float64)</code></pre>
+</div>
+</div>
+<div id="cbafe1f3" class="cell" data-execution_count="139">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>geom.get_area(vertices_final, hemesh)<span class="op">/</span>A0, geom.get_volume(vertices_final, hemesh)<span class="op">/</span>V0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="139">
+<pre><code>(Array(0.99737148, dtype=float64), Array(1.0155582, dtype=float64))</code></pre>
+</div>
+</div>
+<div id="df31303a" class="cell" data-execution_count="140">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> meshplot.plot(y0, hemesh.faces, np.array(grad_norm),</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>                  shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>p.add_mesh(sol.value <span class="op">+</span> np.array([<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>]), hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"ddf85ee5ed0b4656a6f97edc32234256","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="140">
+<pre><code>1</code></pre>
+</div>
+</div>
+<section id="regularization-with-an-in-plane-parametrization-energy" class="level3">
+<h3 class="anchored" data-anchor-id="regularization-with-an-in-plane-parametrization-energy">Regularization with an in-plane “parametrization” energy</h3>
+<p>If you play around with the avove</p>
+<div id="b0e197d2" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_neo_hookean_energy(deformation, lame_lambda, lame_mu):</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the neo-Hookean energy from Cauchy-Green deformation tensor"""</span></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (lame_mu<span class="op">/</span><span class="dv">2</span><span class="op">*</span>jnp.trace(deformation)</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>            <span class="op">+</span>lame_lambda<span class="op">/</span><span class="dv">4</span><span class="op">*</span>jnp.linalg.det(deformation)</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>            <span class="op">-</span>(lame_mu<span class="op">/+</span>lame_lambda<span class="op">/</span><span class="dv">4</span>)<span class="op">*</span>jnp.log(jnp.linalg.det(deformation))</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">-</span>lame_mu <span class="op">-</span>lame_lambda<span class="op">/</span><span class="dv">4</span>)</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_metric(vertices, hemesh):</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the metric tensor per triangle of a triangulated surface"""</span></span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>    a, b, c <span class="op">=</span> vertices[hemesh.faces.T]</span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> jnp.stack([b<span class="op">-</span>a, c<span class="op">-</span>a], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.einsum(<span class="st">"vix,vjx-&gt;vij"</span>, J, J)</span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_elastic_energy(vertices, args):</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the elastic energy of a triangulated surface. args = (hemesh, metric_orig, lame_lambda, lame_mu)"""</span></span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>    hemesh, metric_orig, lame_lambda, lame_mu <span class="op">=</span> args</span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>    triangle_areas <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh)</span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a>    metric <span class="op">=</span> get_metric(vertices, hemesh)</span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>    deformation <span class="op">=</span> jnp.einsum(<span class="st">"vij,vjk-&gt;vik"</span>, jnp.linalg.inv(metric_orig), metric)</span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>    energies <span class="op">=</span> jax.vmap(get_neo_hookean_energy, in_axes<span class="op">=</span>(<span class="dv">0</span>,<span class="va">None</span>,<span class="va">None</span>))(deformation, lame_lambda, lame_mu)</span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (triangle_areas<span class="op">*</span>energies).<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="augmented-lagrangian-method" class="level3">
+<h3 class="anchored" data-anchor-id="augmented-lagrangian-method">Augmented Lagrangian method</h3>
+<p>A more systematic way to include the area and volume constraints is via two Lagrange multipliers <span class="math inline">\(\lambda, p\)</span>, surface tension and pressure:</p>
 <p><span class="math display">\[\mathcal{L} = E_H - \lambda (A-A_0) -p (V-V_0) \]</span></p>
 <p>Minimization under the boundary constraint is equivalent to stationarity of the Lagrangian:</p>
 <p><span class="math display">\[\nabla_\lambda \mathcal{L} = 0 \quad \mathrm{and} \quad \nabla_{\mathbf{v}} \mathcal{L} = 0 \]</span></p>
@@ -745,142 +942,68 @@ for k = 0, 1, 2, . . .
     Update Lagrange multipliers: λ =  λ - μ * c(x)
     Increase penalty parameter μ
     Select new tolerance</code></pre>
-<div id="cdfa50bd" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_volume(vertices, hemesh):</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to the origin)."""</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    v0, v1, v2 <span class="op">=</span> vertices[hemesh.faces.T]</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> trig.get_tetrahedron_volume(v0, v1, v2).<span class="bu">sum</span>()</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_area(vertices, hemesh):</span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Total surface area."""</span></span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> geom.get_triangle_areas(vertices, hemesh).<span class="bu">sum</span>()</span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="co"># verify on the sphere mesh</span></span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>A_sphere <span class="op">=</span> get_area(trimesh.vertices, hemesh)</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>V_sphere <span class="op">=</span> get_volume(trimesh.vertices, hemesh)</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sphere area: </span><span class="sc">{</span>A_sphere<span class="sc">:.4f}</span><span class="ss"> (exact 4π = </span><span class="sc">{</span><span class="dv">4</span><span class="op">*</span>jnp<span class="sc">.</span>pi<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sphere volume: </span><span class="sc">{</span>V_sphere<span class="sc">:.4f}</span><span class="ss"> (exact 4π/3 = </span><span class="sc">{</span><span class="dv">4</span><span class="op">*</span>jnp<span class="sc">.</span>pi<span class="op">/</span><span class="dv">3</span><span class="sc">:.4f}</span><span class="ss">)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Sphere area: 11.6659 (exact 4π = 12.5664)
-Sphere volume: 3.6587 (exact 4π/3 = 4.1888)</code></pre>
-</div>
-</div>
-<div id="049cd24f" class="cell" data-execution_count="335">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's first try a simple penalty menthod to enfore the constraints.</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_helfrich_energy_with_penalty(vertices, args):</span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the discrete Helfrich energy of a triangulated surface with a penalty method.</span></span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">    args = (hemesh, H0, kappa, mu, A0, V0)"""</span></span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    hemesh, H0, kappa, mu, A0, V0 <span class="op">=</span> args</span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>    contraint_penalty <span class="op">=</span> mu<span class="op">/</span><span class="dv">2</span> <span class="op">*</span>((get_area(vertices, hemesh) <span class="op">-</span> A0)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (get_volume(vertices, hemesh) <span class="op">-</span> V0)<span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">#area_penalty = 50 * geom.get_triangle_areas(vertices, hemesh).sum()</span></span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># area_penalty = ((geom.get_triangle_areas(vertices, hemesh)-0.146)**2).sum()</span></span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E <span class="op">+</span> contraint_penalty   <span class="co">#+ area_penalty</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="3117ce75" class="cell" data-execution_count="341">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> get_area(trimesh.vertices, hemesh)</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.9</span> <span class="op">*</span> get_volume(trimesh.vertices, hemesh)</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="fl">100.0</span></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (hemesh, H0, kappa, mu, A0, V0)</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="co"># small perturbation to break spherical symmetry</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="co">#y0 = trimesh.vertices + 0.02 * jax.random.normal(jax.random.PRNGKey(0), trimesh.vertices.shape)</span></span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> deformed_vertices</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="fcdf0f6b" class="cell" data-execution_count="342">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>) <span class="co"># BFGS is generally a recipe for trouble</span></span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.minimise(get_helfrich_energy_with_penalty, solver, y0, args, max_steps<span class="op">=</span><span class="dv">2000</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>vertices_final <span class="op">=</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="cbafe1f3" class="cell" data-execution_count="343">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>get_area(vertices_final, hemesh)<span class="op">/</span>A0, get_volume(vertices_final, hemesh)<span class="op">/</span>V0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="343">
-<pre><code>(Array(0.99847313, dtype=float64), Array(1.01169332, dtype=float64))</code></pre>
-</div>
-</div>
-<div id="48b6be37" class="cell" data-execution_count="344">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># works but the mesh becomes poor quality. need to add some term to prevent poor-quality triangles.</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># one option is to add a per-triangle area penalty (not quit physical)</span></span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co"># more precisely, one can add a Dirichlet energy term (get's absorved into overall area Lagrange multiplier) Does that reall change anyting?</span></span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="df31303a" class="cell" data-execution_count="345">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>meshplot.plot(vertices_final, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"d7aa874d12394ffdb66e3efe3ecbc8d7","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
-</script>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="345">
-<pre><code>&lt;meshplot.Viewer.Viewer at 0x491491250&gt;</code></pre>
-</div>
-</div>
 <div id="cee906df" class="cell" data-execution_count="275">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augmented_lagrangian(vertices, args):</span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian: E_H - λᵀc + (μ/2)|c|², where c = [A-A0, V-V0]."""</span></span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    hemesh, H0, kappa, lam, mu, A0, V0 <span class="op">=</span> args</span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> jnp.array([get_area(vertices, hemesh) <span class="op">-</span> A0,</span>
-<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>                    get_volume(vertices, hemesh) <span class="op">-</span> V0])</span>
-<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>    area_penalty <span class="op">=</span> ((geom.get_triangle_areas(vertices, hemesh)<span class="op">-</span><span class="fl">0.146</span>)<span class="op">**</span><span class="dv">2</span>).<span class="bu">sum</span>()</span>
-<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E <span class="op">-</span> lam <span class="op">@</span> c <span class="op">+</span> (mu <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> (c <span class="op">@</span> c) <span class="op">+</span> area_penalty</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augmented_lagrangian(vertices, args):</span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian: E_H - λᵀc + (μ/2)|c|², where c = [A-A0, V-V0]."""</span></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>    hemesh, H0, kappa, lam, mu, A0, V0 <span class="op">=</span> args</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> jnp.array([get_area(vertices, hemesh) <span class="op">-</span> A0,</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>                    get_volume(vertices, hemesh) <span class="op">-</span> V0])</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>    area_penalty <span class="op">=</span> ((geom.get_triangle_areas(vertices, hemesh)<span class="op">-</span><span class="fl">0.146</span>)<span class="op">**</span><span class="dv">2</span>).<span class="bu">sum</span>()</span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E <span class="op">-</span> lam <span class="op">@</span> c <span class="op">+</span> (mu <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> (c <span class="op">@</span> c) <span class="op">+</span> area_penalty</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="e2da85e2" class="cell" data-execution_count="289">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> al_minimize(vertices, hemesh, H0, kappa, A0, V0,</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                mu0<span class="op">=</span><span class="fl">1.0</span>, mu_growth<span class="op">=</span><span class="fl">1.5</span>, max_outer<span class="op">=</span><span class="dv">10</span>, tol<span class="op">=</span><span class="fl">1e-4</span>, max_inner<span class="op">=</span><span class="dv">500</span>):</span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian method for constrained Helfrich energy minimization."""</span></span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    lam <span class="op">=</span> jnp.zeros(<span class="dv">2</span>)</span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> mu0</span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-5</span>, atol<span class="op">=</span><span class="fl">1e-5</span>)</span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(max_outer):</span>
-<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>        args <span class="op">=</span> (hemesh, H0, kappa, lam, mu, A0, V0)</span>
-<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>        sol <span class="op">=</span> optimistix.minimise(augmented_lagrangian, solver, vertices, args,</span>
-<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>                                  max_steps<span class="op">=</span>max_inner, throw<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>        vertices <span class="op">=</span> sol.value</span>
-<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>        A <span class="op">=</span> get_area(vertices, hemesh)</span>
-<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>        V <span class="op">=</span> get_volume(vertices, hemesh)</span>
-<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> jnp.array([A <span class="op">-</span> A0, V <span class="op">-</span> V0])</span>
-<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>        E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
-<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># stationarity of the Lagrangian (μ=0): ∇_v L = 0 and ∇_λ L = -c = 0</span></span>
-<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a>        lagrangian_args <span class="op">=</span> (hemesh, H0, kappa, lam, <span class="fl">0.0</span>, A0, V0)</span>
-<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a>        grad_v <span class="op">=</span> jax.grad(augmented_lagrangian)(vertices, lagrangian_args)</span>
-<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a>        grad_norm <span class="op">=</span> jnp.sqrt(jnp.<span class="bu">sum</span>(grad_v<span class="op">**</span><span class="dv">2</span>) <span class="op">+</span> jnp.<span class="bu">sum</span>(c<span class="op">**</span><span class="dv">2</span>))</span>
-<span id="cb60-23"><a href="#cb60-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-24"><a href="#cb60-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  iter </span><span class="sc">{</span>k<span class="sc">:2d}</span><span class="ss"> | E_H=</span><span class="sc">{</span>E<span class="sc">:.4f}</span><span class="ss"> | A=</span><span class="sc">{</span>A<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">) | "</span></span>
-<span id="cb60-25"><a href="#cb60-25" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"V=</span><span class="sc">{</span>V<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">) | |∇L|=</span><span class="sc">{</span>grad_norm<span class="sc">:.2e}</span><span class="ss"> | μ=</span><span class="sc">{</span>mu<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
-<span id="cb60-26"><a href="#cb60-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-27"><a href="#cb60-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> grad_norm <span class="op">&lt;</span> tol:</span>
-<span id="cb60-28"><a href="#cb60-28" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"Converged!"</span>)</span>
-<span id="cb60-29"><a href="#cb60-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
-<span id="cb60-30"><a href="#cb60-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-31"><a href="#cb60-31" aria-hidden="true" tabindex="-1"></a>        lam <span class="op">=</span> lam <span class="op">-</span> mu <span class="op">*</span> c</span>
-<span id="cb60-32"><a href="#cb60-32" aria-hidden="true" tabindex="-1"></a>        mu <span class="op">=</span> mu <span class="op">*</span> mu_growth</span>
-<span id="cb60-33"><a href="#cb60-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-34"><a href="#cb60-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vertices, lam</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> al_minimize(vertices, hemesh, H0, kappa, A0, V0,</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>                mu0<span class="op">=</span><span class="fl">1.0</span>, mu_growth<span class="op">=</span><span class="fl">1.5</span>, max_outer<span class="op">=</span><span class="dv">10</span>, tol<span class="op">=</span><span class="fl">1e-4</span>, max_inner<span class="op">=</span><span class="dv">500</span>):</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian method for constrained Helfrich energy minimization."""</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>    lam <span class="op">=</span> jnp.zeros(<span class="dv">2</span>)</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> mu0</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-5</span>, atol<span class="op">=</span><span class="fl">1e-5</span>)</span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(max_outer):</span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>        args <span class="op">=</span> (hemesh, H0, kappa, lam, mu, A0, V0)</span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>        sol <span class="op">=</span> optimistix.minimise(augmented_lagrangian, solver, vertices, args,</span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a>                                  max_steps<span class="op">=</span>max_inner, throw<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a>        vertices <span class="op">=</span> sol.value</span>
+<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-14"><a href="#cb81-14" aria-hidden="true" tabindex="-1"></a>        A <span class="op">=</span> get_area(vertices, hemesh)</span>
+<span id="cb81-15"><a href="#cb81-15" aria-hidden="true" tabindex="-1"></a>        V <span class="op">=</span> get_volume(vertices, hemesh)</span>
+<span id="cb81-16"><a href="#cb81-16" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> jnp.array([A <span class="op">-</span> A0, V <span class="op">-</span> V0])</span>
+<span id="cb81-17"><a href="#cb81-17" aria-hidden="true" tabindex="-1"></a>        E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
+<span id="cb81-18"><a href="#cb81-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-19"><a href="#cb81-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># stationarity of the Lagrangian (μ=0): ∇_v L = 0 and ∇_λ L = -c = 0</span></span>
+<span id="cb81-20"><a href="#cb81-20" aria-hidden="true" tabindex="-1"></a>        lagrangian_args <span class="op">=</span> (hemesh, H0, kappa, lam, <span class="fl">0.0</span>, A0, V0)</span>
+<span id="cb81-21"><a href="#cb81-21" aria-hidden="true" tabindex="-1"></a>        grad_v <span class="op">=</span> jax.grad(augmented_lagrangian)(vertices, lagrangian_args)</span>
+<span id="cb81-22"><a href="#cb81-22" aria-hidden="true" tabindex="-1"></a>        grad_norm <span class="op">=</span> jnp.sqrt(jnp.<span class="bu">sum</span>(grad_v<span class="op">**</span><span class="dv">2</span>) <span class="op">+</span> jnp.<span class="bu">sum</span>(c<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb81-23"><a href="#cb81-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-24"><a href="#cb81-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  iter </span><span class="sc">{</span>k<span class="sc">:2d}</span><span class="ss"> | E_H=</span><span class="sc">{</span>E<span class="sc">:.4f}</span><span class="ss"> | A=</span><span class="sc">{</span>A<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">) | "</span></span>
+<span id="cb81-25"><a href="#cb81-25" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"V=</span><span class="sc">{</span>V<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">) | |∇L|=</span><span class="sc">{</span>grad_norm<span class="sc">:.2e}</span><span class="ss"> | μ=</span><span class="sc">{</span>mu<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb81-26"><a href="#cb81-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-27"><a href="#cb81-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> grad_norm <span class="op">&lt;</span> tol:</span>
+<span id="cb81-28"><a href="#cb81-28" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"Converged!"</span>)</span>
+<span id="cb81-29"><a href="#cb81-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb81-30"><a href="#cb81-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-31"><a href="#cb81-31" aria-hidden="true" tabindex="-1"></a>        lam <span class="op">=</span> lam <span class="op">-</span> mu <span class="op">*</span> c</span>
+<span id="cb81-32"><a href="#cb81-32" aria-hidden="true" tabindex="-1"></a>        mu <span class="op">=</span> mu <span class="op">*</span> mu_growth</span>
+<span id="cb81-33"><a href="#cb81-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-34"><a href="#cb81-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vertices, lam</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="2c326562" class="cell" data-execution_count="290">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># minimize Helfrich energy of a sphere with constrained area and reduced volume (deflated)</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> get_area(trimesh.vertices, hemesh)</span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.6</span> <span class="op">*</span> get_volume(trimesh.vertices, hemesh)</span>
-<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
-<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="co"># small perturbation to break spherical symmetry</span></span>
-<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
-<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>v0 <span class="op">=</span> trimesh.vertices <span class="op">+</span> <span class="fl">0.02</span> <span class="op">*</span> jax.random.normal(key, trimesh.vertices.shape)</span>
-<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Target: A0=</span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">, V0=</span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Initial: A=</span><span class="sc">{</span>get_area(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">, V=</span><span class="sc">{</span>get_volume(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a>v_opt, lam_opt <span class="op">=</span> al_minimize(v0, hemesh, H0, kappa, A0, V0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># minimize Helfrich energy of a sphere with constrained area and reduced volume (deflated)</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> get_area(trimesh.vertices, hemesh)</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.6</span> <span class="op">*</span> get_volume(trimesh.vertices, hemesh)</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a><span class="co"># small perturbation to break spherical symmetry</span></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>v0 <span class="op">=</span> trimesh.vertices <span class="op">+</span> <span class="fl">0.02</span> <span class="op">*</span> jax.random.normal(key, trimesh.vertices.shape)</span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Target: A0=</span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">, V0=</span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb82-12"><a href="#cb82-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Initial: A=</span><span class="sc">{</span>get_area(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">, V=</span><span class="sc">{</span>get_volume(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb82-13"><a href="#cb82-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-14"><a href="#cb82-14" aria-hidden="true" tabindex="-1"></a>v_opt, lam_opt <span class="op">=</span> al_minimize(v0, hemesh, H0, kappa, A0, V0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Target: A0=11.6659, V0=2.1952
 Initial: A=11.6992, V=3.6646
@@ -897,16 +1020,16 @@ Initial: A=11.6992, V=3.6646
 </div>
 </div>
 <div id="407841d2" class="cell" data-execution_count="291">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize the deflated shape</span></span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>E_final <span class="op">=</span> get_helfrich_energy(v_opt, (hemesh, H0, kappa))</span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>E_sphere <span class="op">=</span> get_helfrich_energy(trimesh.vertices, (hemesh, H0, kappa))</span>
-<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Helfrich energy: sphere=</span><span class="sc">{</span>E_sphere<span class="sc">:.4f}</span><span class="ss">, deflated=</span><span class="sc">{</span>E_final<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final area: </span><span class="sc">{</span>get_area(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
-<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final volume: </span><span class="sc">{</span>get_volume(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
-<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Lagrange multipliers (tension, pressure): </span><span class="sc">{</span>lam_opt<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>meshplot.plot(v_opt, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize the deflated shape</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>E_final <span class="op">=</span> get_helfrich_energy(v_opt, (hemesh, H0, kappa))</span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>E_sphere <span class="op">=</span> get_helfrich_energy(trimesh.vertices, (hemesh, H0, kappa))</span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Helfrich energy: sphere=</span><span class="sc">{</span>E_sphere<span class="sc">:.4f}</span><span class="ss">, deflated=</span><span class="sc">{</span>E_final<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final area: </span><span class="sc">{</span>get_area(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final volume: </span><span class="sc">{</span>get_volume(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Lagrange multipliers (tension, pressure): </span><span class="sc">{</span>lam_opt<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a>meshplot.plot(v_opt, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Helfrich energy: sphere=6.5831, deflated=12.7386
 Final area: 11.7214 (target 11.6659)
@@ -923,6 +1046,7 @@ Lagrange multipliers (tension, pressure): [  1.66632623 -54.26580124]</code></pr
 </div>
 </div>
 </section>
+</section>
 <section id="below---work-in-progress-ignore" class="level2">
 <h2 class="anchored" data-anchor-id="below---work-in-progress-ignore">Below - work in progress, ignore</h2>
 <section id="non-linear-optimization" class="level3">
@@ -934,49 +1058,49 @@ Lagrange multipliers (tension, pressure): [  1.66632623 -54.26580124]</code></pr
 <p><span class="math display">\[\nabla_\lambda \mathcal{L} = 0 \quad \mathrm{and} \quad \nabla_{\mathbf{v}} \mathcal{L} = 0 \]</span></p>
 <p>We can attempt to solve this non-linear system of equations using the Newton method, or using non-linear least squares.</p>
 <div id="7a5d6252" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lagrangian(vertices, lagrange_mult, bdry_verts, bdry_pos, hemesh):</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the Lagrangian for the area minimization problem with boundary conditions."""</span></span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>    area <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh).<span class="bu">sum</span>()</span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    lagrange_term <span class="op">=</span> jax.vmap(jnp.dot)(lagrange_mult, vertices[bdry_verts] <span class="op">-</span> bdry_pos).<span class="bu">sum</span>()</span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> area <span class="op">-</span> lagrange_term</span>
-<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stationarity_condition(y, args):</span>
-<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>    vertices, lagrange_mult <span class="op">=</span> y</span>
-<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>    v_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">0</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
-<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>    l_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">1</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
-<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (v_term, l_term)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lagrangian(vertices, lagrange_mult, bdry_verts, bdry_pos, hemesh):</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the Lagrangian for the area minimization problem with boundary conditions."""</span></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>    area <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh).<span class="bu">sum</span>()</span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>    lagrange_term <span class="op">=</span> jax.vmap(jnp.dot)(lagrange_mult, vertices[bdry_verts] <span class="op">-</span> bdry_pos).<span class="bu">sum</span>()</span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> area <span class="op">-</span> lagrange_term</span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stationarity_condition(y, args):</span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>    vertices, lagrange_mult <span class="op">=</span> y</span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>    v_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">0</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>    l_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">1</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
+<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (v_term, l_term)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="09e641fc" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (jnp.array(bdry_verts), jnp.array(bdry_pos), hemesh)</span>
-<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> jnp.array(vertices_bdry_imposed)</span>
-<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>lagrange_mult_initial <span class="op">=</span> <span class="dv">1</span><span class="op">*</span>jnp.ones_like(bdry_pos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (jnp.array(bdry_verts), jnp.array(bdry_pos), hemesh)</span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> jnp.array(vertices_bdry_imposed)</span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>lagrange_mult_initial <span class="op">=</span> <span class="dv">1</span><span class="op">*</span>jnp.ones_like(bdry_pos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="a197f8c8" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> stationarity_condition((vertices_initial, lagrange_mult_initial), args)</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>get_lagrangian(vertices_initial, lagrange_mult_initial, <span class="op">*</span>args)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> stationarity_condition((vertices_initial, lagrange_mult_initial), args)</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>get_lagrangian(vertices_initial, lagrange_mult_initial, <span class="op">*</span>args)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>Array(4.36495664, dtype=float64)</code></pre>
 </div>
 </div>
 <div id="a6207b75" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.LevenbergMarquardt(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>, ) </span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> (vertices_initial, lagrange_mult_initial)</span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.root_find(stationarity_condition, solver, y0, args, max_steps<span class="op">=</span><span class="dv">50</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>vertices_final, lagrange_mult_final <span class="op">=</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.LevenbergMarquardt(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>, ) </span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> (vertices_initial, lagrange_mult_initial)</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.root_find(stationarity_condition, solver, y0, args, max_steps<span class="op">=</span><span class="dv">50</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>vertices_final, lagrange_mult_final <span class="op">=</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="bb390d8e" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>vertices_final.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>), vertices_final.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="co"># that doesn't look good</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>vertices_final.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>), vertices_final.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="co"># that doesn't look good</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
 <pre><code>(Array([1.00112636, 0.98954106, 0.49702471], dtype=float64),
  Array([-0.99658605, -0.99661577, -0.4918562 ], dtype=float64))</code></pre>
 </div>
 </div>
 <div id="557d37ee" class="cell" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>meshplot.plot(vertices_final, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>meshplot.plot(vertices_final, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id":"c7a38a217355452ab44cb063f09dd7fc","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}

@@ -235,7 +235,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
+ <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -246,8 +246,20 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry-processing algorithms</span></a>
   </div>
 </li>
       </ul>
@@ -483,16 +495,18 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 <h3 class="anchored" data-anchor-id="mass-matrix-lumped">Mass matrix (lumped)</h3>
 <p>The finite-element mass matrix <span class="math inline">\(M\)</span> appears whenever we discretize a time-dependent PDE. For a lumped (diagonal) mass matrix, <span class="math inline">\(M_{ii} = A_i\)</span> where <span class="math inline">\(A_i\)</span> is the Voronoi area associated with vertex <span class="math inline">\(i\)</span>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L142" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L148" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="mass_matrix_inv_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="mass_matrix_inv_sparse">mass_matrix_inv_sparse</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mass_matrix_inv_sparse(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse inverse mass matrix.</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Assemble inverse lumped mass matrix as a sparse matrix (BCOO).</em></p>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    area_type:<span class="bu">str</span><span class="op">=</span><span class="st">'voronoi'</span>, <span class="co"># Choice of dual-cell area definition used on the diagonal.</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse inverse mass matrix.</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Assemble the inverse lumped mass matrix as a sparse matrix (BCOO).</em></p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L119" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
@@ -502,10 +516,11 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mass_matrix_sparse(</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse mass matrix.</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    area_type:<span class="bu">str</span><span class="op">=</span><span class="st">'voronoi'</span>, <span class="co"># Choice of dual-cell area definition used on the diagonal.</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse mass matrix.</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Assemble lumped (diagonal) mass matrix as a sparse matrix (BCOO).</em></p>
-<p>The lumped mass matrix is diagonal with entries equal to the Voronoi dual area of each vertex: <span class="math inline">\(M_{ii} = A_i\)</span>.</p>
+<p>The lumped mass matrix is diagonal wiIn cth entries equal to the Voronoi dual area of each vertex: <span class="math inline">\(M_{ii} = A_i\)</span>.</p>
 <div id="c63d4943" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test mass matrix against igl.massmatrix (Voronoi type)</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>M_jax <span class="op">=</span> mass_matrix_sparse(geommesh.vertices, hemesh)</span>
@@ -524,7 +539,7 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 <h3 class="anchored" data-anchor-id="finite-element-gradient">Finite-element gradient</h3>
 <p>Not to be confused with the discrete-exterior-calculus operators, which only depend on mesh connectivity, not geometry.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L206" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L225" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_gradient_3d" class="level3">
 <h3 class="anchored" data-anchor-id="compute_gradient_3d">compute_gradient_3d</h3>
@@ -535,7 +550,7 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute the linear finite-element gradient (constant per face).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L196" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_gradient_2d" class="level3">
 <h3 class="anchored" data-anchor-id="compute_gradient_2d">compute_gradient_2d</h3>
@@ -546,7 +561,7 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute the linear finite-element gradient (constant per face).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L244" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L263" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="gradient_sparse_3d" class="level3">
 <h3 class="anchored" data-anchor-id="gradient_sparse_3d">gradient_sparse_3d</h3>
@@ -559,7 +574,7 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 <p>Returns a matrix G with shape (3<em>n_faces, n_vertices) such that for a scalar per-vertex field u (n_vertices,), the per-face gradients are obtained via: g_flat = G @ u # (3</em>n_faces,) g = g_flat.reshape((3, n_faces)).T # (n_faces, 3)</p>
 <p>This row layout matches libigl’s <code>grad</code> operator convention (component blocks).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L216" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L235" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="gradient_sparse_2d" class="level3">
 <h3 class="anchored" data-anchor-id="gradient_sparse_2d">gradient_sparse_2d</h3>
@@ -572,7 +587,7 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 <p>Returns a matrix G with shape (2<em>n_faces, n_vertices) such that for a scalar per-vertex field u (n_vertices,), the per-face gradients are obtained via: g_flat = G @ u # (2</em>n_faces,) g = g_flat.reshape((2, n_faces)).T # (n_faces, 2)</p>
 <p>This row layout matches libigl’s <code>grad</code> operator convention (component blocks).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L271" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L290" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="reshape_face_gradient" class="level3">
 <h3 class="anchored" data-anchor-id="reshape_face_gradient">reshape_face_gradient</h3>
@@ -672,7 +687,7 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L300" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L319" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="linear_op_to_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="linear_op_to_sparse">linear_op_to_sparse</h3>

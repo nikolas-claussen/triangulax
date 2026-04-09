@@ -13,7 +13,9 @@ website:
           - src/03_topological_modifications.ipynb
           - src/04_adjacency_operators.ipynb
           - src/05_geometric_quantities.ipynb
+          - src/05b_geometric_quantities_periodic_bcs.ipynb
           - src/06_linear_operators.ipynb
+          - src/07_algorithms.ipynb
       - section: tutorials
         contents:
           - tutorials/00_triangular_meshes.ipynb

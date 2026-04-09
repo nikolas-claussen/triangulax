@@ -6,9 +6,9 @@ __all__ = ['get_he_length', 'get_triangle_areas', 'get_barycentric_cell_areas', 
            'get_voronoi_face_positions', 'set_voronoi_face_positions', 'get_dual_he_length',
            'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum', 'get_cotan_weights_per_he',
            'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths', 'get_voronoi_edge_areas',
-           'get_cell_areas_traversal', 'get_voronoi_areas', 'get_voronoi_areas_new', 'get_mean_curvature_dihedral',
-           'get_corner_scaled_angles', 'get_face_tangent_basis', 'get_vertex_tangent_basis',
-           'get_transport_across_halfedge', 'get_transport_along_halfedge']
+           'get_cell_areas_traversal', 'get_voronoi_areas', 'get_mean_curvature_dihedral', 'get_corner_scaled_angles',
+           'get_face_tangent_basis', 'get_vertex_tangent_basis', 'get_transport_across_halfedge',
+           'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -182,21 +182,9 @@ def get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Floa
             areas[v] = trig.get_polygon_area(polygon)
     return -jnp.array(areas)
 
-def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                     ) ->Float[jax.Array, " n_vertices"]:
-    """Compute Voronoi area for each vertex."""
-    a = hemesh.dest[hemesh.nxt]
-    b = hemesh.dest[hemesh.prv]
-    c = hemesh.dest
-    corner_areas = jax.vmap(trig.get_voronoi_corner_area)(
-        vertices[a], vertices[b], vertices[c])
-    corner_areas = jnp.where(hemesh.is_bdry_he, 0, corner_areas)
-    #corner_areas = jnp.clip(corner_areas, 0) # ??
-    cell_areas = adj.sum_he_to_vertex_opposite(hemesh, corner_areas)
-    return cell_areas
 
-def get_voronoi_areas_new(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                          ) ->Float[jax.Array, " n_vertices"]:
+def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                      ) ->Float[jax.Array, " n_vertices"]:
     """Compute Voronoi area for each vertex."""
     edge_areas = get_voronoi_edge_areas(vertices, hemesh)
     return adj.sum_he_to_vertex_incoming(hemesh, edge_areas)

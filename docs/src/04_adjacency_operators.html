@@ -164,7 +164,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/04_adjacency_operators.html">Adjacency-like operators on half-edge meshes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/04_adjacency_operators.html">Adjacency-based operators on half-edge meshes</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -235,7 +235,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
+ <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -246,8 +246,20 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry-processing algorithms</span></a>
   </div>
 </li>
       </ul>
@@ -309,9 +321,9 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#adjacency-like-operators-on-half-edge-meshes" id="toc-adjacency-like-operators-on-half-edge-meshes" class="nav-link active" data-scroll-target="#adjacency-like-operators-on-half-edge-meshes">Adjacency-like operators on half-edge meshes</a>
+  <li><a href="#adjacency-based-operators-on-half-edge-meshes" id="toc-adjacency-based-operators-on-half-edge-meshes" class="nav-link active" data-scroll-target="#adjacency-based-operators-on-half-edge-meshes">Adjacency-based operators on half-edge meshes</a>
   <ul class="collapse">
-  <li><a href="#discrete-derivative" id="toc-discrete-derivative" class="nav-link" data-scroll-target="#discrete-derivative">Discrete derivative</a></li>
+  <li><a href="#discrete-exterior-derivative" id="toc-discrete-exterior-derivative" class="nav-link" data-scroll-target="#discrete-exterior-derivative">Discrete (exterior) derivative</a></li>
   <li><a href="#get_exterior_circulation" id="toc-get_exterior_circulation" class="nav-link" data-scroll-target="#get_exterior_circulation">get_exterior_circulation</a></li>
   <li><a href="#get_exterior_gradient" id="toc-get_exterior_gradient" class="nav-link" data-scroll-target="#get_exterior_gradient">get_exterior_gradient</a></li>
   <li><a href="#summing-over-adjacent-mesh-elements" id="toc-summing-over-adjacent-mesh-elements" class="nav-link" data-scroll-target="#summing-over-adjacent-mesh-elements">Summing over adjacent mesh elements</a></li>
@@ -332,14 +344,14 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="04_adjacency_operators.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/04_adjacency_operators.html">Adjacency-like operators on half-edge meshes</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/04_adjacency_operators.html">Adjacency-based operators on half-edge meshes</a></li></ol></nav></header>
 
 
 
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="adjacency-like-operators-on-half-edge-meshes" class="level2">
-<h2 class="anchored" data-anchor-id="adjacency-like-operators-on-half-edge-meshes">Adjacency-like operators on half-edge meshes</h2>
+<section id="adjacency-based-operators-on-half-edge-meshes" class="level2">
+<h2 class="anchored" data-anchor-id="adjacency-based-operators-on-half-edge-meshes">Adjacency-based operators on half-edge meshes</h2>
 <p>Using the <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> data structure, we can efficiently “traverse” our mesh. Using such traversals, one can express many adjacency-based <em>linear operators</em>, for example:</p>
 <ul>
 <li>Sum over all half-edges “incoming” to a vertex (special case: <em>count</em> the incoming edges, i.e., compute the coordination number)</li>
@@ -366,8 +378,8 @@ Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<section id="discrete-derivative" class="level3">
-<h3 class="anchored" data-anchor-id="discrete-derivative">Discrete derivative</h3>
+<section id="discrete-exterior-derivative" class="level3">
+<h3 class="anchored" data-anchor-id="discrete-exterior-derivative">Discrete (exterior) derivative</h3>
 <p>On a triangular mesh, there are two natural “derivatives”: for a per-vertex field, the difference across half-edges, and for a per-half-edge field, the circulation around a face (this is the basis of <a href="https://en.wikipedia.org/wiki/Discrete_exterior_calculus">discrete exterior calculus</a>).</p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/adjacency.py#L27" target="_blank" style="float:right; font-size:smaller">source</a></p>

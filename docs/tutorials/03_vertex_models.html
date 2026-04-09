@@ -241,7 +241,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Adjacency-like operators on half-edge meshes</span></a>
+ <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -252,8 +252,20 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry-processing algorithms</span></a>
   </div>
 </li>
       </ul>
@@ -554,7 +566,7 @@ window.Quarto = {
 </section>
 <section id="edge-flips" class="level3">
 <h3 class="anchored" data-anchor-id="edge-flips">Edge flips</h3>
-<p>After each timestep, we need to check if the Voronoi edge lengths are below some threshold (the edge lengths can be computed on the fly), and, if so, we need to carry out edge flips. See notebook 03. We need to ensure that we do not immidiately “re-flip” an edge. This can be done via “cool down” period (an edge flipped at step <span class="math inline">\(t\)</span> cannot be flipped again for the next few steps).</p>
+<p>After each time step, we need to check if the Voronoi edge lengths are below some threshold (the edge lengths can be computed on the fly), and, if so, we need to carry out edge flips. We need to ensure that we do not “re-flip” an edge. This can be done via “cool down” period (an edge flipped at step <span class="math inline">\(t\)</span> cannot be flipped again for the next few steps).</p>
 <div id="d9a82f4e" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="at">@functools.partial</span>(jax.jit, static_argnames<span class="op">=</span>[<span class="st">'cooldown_steps'</span>, <span class="st">'max_flips'</span>])</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply_flips(geommesh: GeomMesh, hemesh: HeMesh, l_min_T1: <span class="bu">float</span>, </span>

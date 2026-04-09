@@ -211,7 +211,7 @@ Voronoi area associated with vertex *i*.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L142"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L148"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### mass_matrix_inv_sparse
@@ -219,12 +219,14 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def mass_matrix_inv_sparse(
-    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    hemesh:HeMesh, # Half-edge mesh connectivity.
+    area_type:str='voronoi', # Choice of dual-cell area definition used on the diagonal.
 )->BCOO: # Diagonal sparse inverse mass matrix.
 
 ```
 
-*Assemble inverse lumped mass matrix as a sparse matrix (BCOO).*
+*Assemble the inverse lumped mass matrix as a sparse matrix (BCOO).*
 
 ------------------------------------------------------------------------
 
@@ -239,13 +241,14 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def mass_matrix_sparse(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
     hemesh:HeMesh, # Half-edge mesh connectivity.
+    area_type:str='voronoi', # Choice of dual-cell area definition used on the diagonal.
 )->BCOO: # Diagonal sparse mass matrix.
 
 ```
 
 *Assemble lumped (diagonal) mass matrix as a sparse matrix (BCOO).*
 
-The lumped mass matrix is diagonal with entries equal to the Voronoi
+The lumped mass matrix is diagonal wiIn cth entries equal to the Voronoi
 dual area of each vertex: *M*<sub>*i**i*</sub> = *A*<sub>*i*</sub>.
 
 ``` python
@@ -270,7 +273,7 @@ only depend on mesh connectivity, not geometry.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L206"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L225"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_3d
@@ -288,7 +291,7 @@ def compute_gradient_3d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L196"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L215"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_2d
@@ -306,7 +309,7 @@ def compute_gradient_2d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L244"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L263"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_3d
@@ -332,7 +335,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L216"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L235"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_2d
@@ -358,7 +361,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L271"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L290"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### reshape_face_gradient
@@ -481,7 +484,7 @@ mat.shape
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L300"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L319"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### linear_op_to_sparse

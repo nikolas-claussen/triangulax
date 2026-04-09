@@ -275,12 +275,11 @@ grad_energy(geommesh, hemesh, a0=a_mean, p0=3*jnp.sqrt(a_mean))
 
 ### Edge flips
 
-After each timestep, we need to check if the Voronoi edge lengths are
+After each time step, we need to check if the Voronoi edge lengths are
 below some threshold (the edge lengths can be computed on the fly), and,
-if so, we need to carry out edge flips. See notebook 03. We need to
-ensure that we do not immidiately “re-flip” an edge. This can be done
-via “cool down” period (an edge flipped at step *t* cannot be flipped
-again for the next few steps).
+if so, we need to carry out edge flips. We need to ensure that we do not
+“re-flip” an edge. This can be done via “cool down” period (an edge
+flipped at step *t* cannot be flipped again for the next few steps).
 
 ``` python
 @functools.partial(jax.jit, static_argnames=['cooldown_steps', 'max_flips'])
