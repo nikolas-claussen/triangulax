@@ -175,8 +175,9 @@ def smooth_vertices_laplacian(vertices: Float[jax.Array, "n_vertices dim"], heme
     step_size : float
         Fraction of displacement to apply (1 = full step).
     bc : str
-        Boundary condition: ``'fixed'`` freezes boundary vertices,
-        ``'free'`` allows them to move.
+        Boundary condition: 'fixed' freezes boundary vertices,
+        'free' allows them to move, and 'slide' allows them to
+        move only tangentially along the boundary.
 
     Returns
     -------
@@ -198,4 +199,10 @@ def smooth_vertices_laplacian(vertices: Float[jax.Array, "n_vertices dim"], heme
     if bc == 'fixed':
         step = jnp.where(hemesh.is_bdry[:, None], 0.0, step)
 
+    if bc == 'slide':
+        edges = vertices[hemesh.orig]-vertices[hemesh.dest]
+        boundary_tangents = adj.sum_he_to_vertex_incoming(hemesh, edges * hemesh.is_bdry_he[:, None])
+        boundary_tangents = boundary_tangents / jnp.linalg.norm(boundary_tangents, axis=-1, keepdims=True)
+        step = jnp.where(hemesh.is_bdry[:, None], jax.vmap(trig.project_on_vector)(step, boundary_tangents), step)
+    
     return vertices + step
