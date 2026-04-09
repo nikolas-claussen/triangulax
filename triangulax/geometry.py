@@ -5,9 +5,10 @@ __all__ = ['get_he_length', 'get_triangle_areas', 'get_barycentric_cell_areas', 
            'get_triangle_normals', 'get_vertex_normals', 'get_dihedral_angles', 'get_volume', 'get_area',
            'get_voronoi_face_positions', 'set_voronoi_face_positions', 'get_dual_he_length',
            'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum', 'get_cotan_weights_per_he',
-           'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths', 'get_cell_areas_traversal', 'get_voronoi_areas',
-           'get_mean_curvature_dihedral', 'get_corner_scaled_angles', 'get_face_tangent_basis',
-           'get_vertex_tangent_basis', 'get_transport_across_halfedge', 'get_transport_along_halfedge']
+           'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths', 'get_voronoi_edge_areas',
+           'get_cell_areas_traversal', 'get_voronoi_areas', 'get_voronoi_areas_new', 'get_mean_curvature_dihedral',
+           'get_corner_scaled_angles', 'get_face_tangent_basis', 'get_vertex_tangent_basis',
+           'get_transport_across_halfedge', 'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -101,6 +102,7 @@ def set_voronoi_face_positions(geommesh: msh.GeomMesh, hemesh: msh.HeMesh
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d0391799
 ## Note: these quantities are currently accurate in 2D only (i.e. for planar dual cells)
+## On the other hand, the dual vertex positions can be arbitrary - they don't have to be circumcenters (Voronoi).
 
 def get_dual_he_length(face_positions: Float[jax.Array, "n_faces dim"], hemesh: msh.HeMesh
                        ) -> Float[jax.Array, " n_hes"]:
@@ -153,6 +155,14 @@ def get_voronoi_edge_lengths(vertices: Float[jax.Array, "n_vertices dim"],
     """Computed directly from angles. Accurate in any dimension"""
     return get_cotan_weights_per_egde(vertices, hemesh) * get_he_length(vertices, hemesh)
 
+def get_voronoi_edge_areas(vertices: Float[jax.Array, "n_vertices dim"],
+                           hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
+    """Voronoi "area" for an edge. Defined as dual edge length * primal edge length ** 2 / 4.
+    Summing over all edge areas adjacent to a vertex gives the area of the Voronoi cell around that vertex.
+    Computed directly from angles. Accurate in any dimension"""
+    return get_cotan_weights_per_egde(vertices, hemesh) * get_he_length(vertices, hemesh)**2 / 4
+
+
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #fbebd977-9ea6-4ab9-8188-d833f1bbba60
 def get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
@@ -172,7 +182,8 @@ def get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Floa
             areas[v] = trig.get_polygon_area(polygon)
     return -jnp.array(areas)
 
-def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) ->Float[jax.Array, " n_vertices"]:
+def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                     ) ->Float[jax.Array, " n_vertices"]:
     """Compute Voronoi area for each vertex."""
     a = hemesh.dest[hemesh.nxt]
     b = hemesh.dest[hemesh.prv]
@@ -183,6 +194,12 @@ def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.
     #corner_areas = jnp.clip(corner_areas, 0) # ??
     cell_areas = adj.sum_he_to_vertex_opposite(hemesh, corner_areas)
     return cell_areas
+
+def get_voronoi_areas_new(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                          ) ->Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi area for each vertex."""
+    edge_areas = get_voronoi_edge_areas(vertices, hemesh)
+    return adj.sum_he_to_vertex_incoming(hemesh, edge_areas)
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #a840388a
 def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh

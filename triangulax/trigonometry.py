@@ -4,9 +4,9 @@
 __all__ = ['get_circumcenter', 'get_oriented_triangle_area', 'get_triangle_area', 'get_polygon_area', 'project_on_vector',
            'project_out_vector', 'get_projector', 'get_signed_angle_between_vectors', 'get_angle_between_vectors',
            'get_cot_between_vectors', 'get_tetrahedron_volume', 'get_voronoi_corner_area',
-           'get_triangle_area_from_lengths', 'get_angles_from_lengths', 'get_cotangents_from_lengths', 'get_rot_mat',
-           'get_perp_2d', 'get_triangle_normal', 'quaternion_to_rot_max', 'get_barycentric_coordinates',
-           'rotate_around_axis']
+           'get_triangle_area_from_lengths', 'get_angles_from_lengths', 'get_cotangents_from_lengths',
+           'get_circumcenter_from_lengths', 'get_rot_mat', 'get_perp_2d', 'get_triangle_normal',
+           'quaternion_to_rot_max', 'get_barycentric_coordinates', 'rotate_around_axis']
 
 # %% ../nbs/src/00_trigonometry.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -193,6 +193,23 @@ def get_cotangents_from_lengths(la: Float[jax.Array, ""],
     l2_opp = jnp.roll(l2, -1) + jnp.roll(l2, -2) - l2
     area4 = jnp.clip(4 * get_triangle_area_from_lengths(la, lb, lc), 1e-12)
     return l2_opp / area4
+
+
+@functools.partial(jax.jit, static_argnames=['zero_clip'])
+def get_circumcenter_from_lengths(la: Float[jax.Array, ""],
+                                  lb: Float[jax.Array, ""],
+                                  lc: Float[jax.Array, ""], zero_clip: float = 1e-10) -> Float[jax.Array, "3"]:
+    """
+    Return circumcenter barycentric coordinates of triangle with edge lengths la, lb, lc.
+    
+    To compute the circumcenter u from the barycentric coordinates ba, bb, bc:
+    u = ba * a + bb * b + bc * c
+    where a, b, c are the triangle vertices.
+
+    """    
+    # compute using barycentric coordinates. Start by computing the edge lengths:
+    ba, bb, bc = (la**2*(lb**2+lc**2-la**2), lb**2*(lc**2+la**2-lb**2), lc**2*(la**2+lb**2-lc**2))
+    return jnp.array([ba, bb, bc])/jnp.clip(ba+bb+bc, zero_clip)  # avoid div by zero for degenerate triangles
 
 # %% ../nbs/src/00_trigonometry.ipynb #f5fabd40
 def get_rot_mat(theta: float) -> Float[jax.Array, "2 2"]:
