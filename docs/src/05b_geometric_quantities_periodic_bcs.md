@@ -12,7 +12,7 @@ are identified. This module contains tools for mesh geometry in periodic
 boundary conditions.
 
 In `triangulax`, mesh connectivity and geometry are decoupled, so
-periodic boundary conditions are easy to implement. One need two
+periodic boundary conditions are easy to implement. One needs two
 ingredients:
 
 1.  A triangulation whose connectivity has the desired periodicity
@@ -27,18 +27,29 @@ the mesh connectivity (like the
 [`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh)
 class) can be used without modification.
 
-2.  A distance function that takes into account the periodicity.
+2.  A displacement function that takes into account the periodicity.
 
-For a square domain with length *L* the displacement vector between two
-points **r**<sub>1</sub>, **r**<sub>2</sub> can be computed as
-$$\mathbf{d} = \mathbf{r}\_1 - \mathbf{r}\_2 - \mathrm{round}\left(\frac{|\mathbf{r}\_1 - \mathbf{r}\_2 |}{L} \right)L$$
+For a rectangular domain with lengths **L** the displacement vector
+between two points **r**<sub>1</sub>, **r**<sub>2</sub> can be computed
+as
+$$\mathbf{d} = \mathbf{r}\_2 - \mathbf{r}\_1 - \mathrm{round}\left(\frac{\mathbf{r}\_2 - \mathbf{r}\_1}{L} \right)\mathbf{L}$$
 
 This always gives the shortest displacement vector between the two
-points. With this distance function, one can compute edge lengths,
-angles, Voronoi duals, etc. Note: nothing prevents you from changing the
-shape of your domain, i.e. *L* dynamically during your simulation (for
-instance, to simulare growing tissues). You can even take gradients with
-respect to *L*.
+points (minimum-image convention). With this displacement function, one
+can compute edge lengths, angles, Voronoi duals, etc. Note: nothing
+prevents you from changing the shape of your domain, i.e. **L**
+dynamically during your simulation (for instance, to simulate growing
+tissues). You can even take gradients with respect to **L**.
+
+For sheared domains (e.g. to impose simple shear), we also provide a
+displacement function implementing [Lees-Edwards boundary
+conditions](https://doi.org/10.1088/0022-3719/5/15/006), which add an
+x-shift proportional to a shear factor *s* when wrapping in the
+y-direction.
+
+**Note:** throughout this module, the `displacement_fn` argument is a
+callable `(r_1, r_2) -> d` that returns a 2D displacement *vector*, not
+a scalar distance.
 
 ------------------------------------------------------------------------
 
@@ -52,12 +63,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def displacement_periodic_twisted(
     r_1:Float[Array, '2'], r_2:Float[Array, '2'], L:Float[Array, '2'], # Box lengths [L_x, L_y].
-    s:float, # Shear factor relating vertical wraps to an x-shift of s * L_x.
+    s:float, # Shear factor: wrapping in y shifts x by ``s * L_x``.
 )->Float[Array, '2']:
 
 ```
 
-*Return the minimum-image displacement on a sheared periodic torus.*
+*Return the minimum-image displacement on a sheared periodic torus
+(Lees-Edwards BCs).*
 
 ------------------------------------------------------------------------
 
@@ -156,9 +168,9 @@ hemesh.bdry_loops  # the mesh has no boundary
 # to compute angles, we use the intrinsic geometry of the mesh
 
 L = jnp.array([1.0, 1.0]) # box lengths
-def my_distance_function(r_1, r_2): return displacement_periodic(r_1, r_2, L)
+my_displacement_fn = lambda r_1, r_2: displacement_periodic(r_1, r_2, L)
 
-edge_lengths = jax.vmap(my_distance_function)(vertices[hemesh.orig], vertices[hemesh.dest])
+edge_lengths = jax.vmap(my_displacement_fn)(vertices[hemesh.orig], vertices[hemesh.dest])
 edge_lengths_nonperiodic = jnp.linalg.norm(vertices[hemesh.orig] - vertices[hemesh.dest], axis=1)
 
 edge_lengths.max(), edge_lengths_nonperiodic.max()
@@ -180,26 +192,76 @@ areas = jax.vmap(trig.get_triangle_area_from_lengths)(la, lb, lc)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L98"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L179"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_periodic_corner_cotangents
+### get_periodic_cotan_weights_per_edge
 
 ``` python
 
-def get_periodic_corner_cotangents(
-    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
-)->Float[Array, 'n_faces 3']:
+def get_periodic_cotan_weights_per_edge(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_hes']:
 
 ```
 
-*Compute all face corner cotangents using a periodic displacement
+*Average cotangent weight per edge, using a periodic displacement
 function.*
+
+Returns `(cot_he + cot_twin) / 2` (same convention as
+:func:`geometry.get_cotan_weights_per_edge`).
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L90"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L164"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_cotan_weights_per_he
+
+``` python
+
+def get_periodic_cotan_weights_per_he(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_hes']:
+
+```
+
+*Cotangent of the angle opposite to each half-edge, using a periodic
+displacement function.*
+
+Returns a per-half-edge array (same convention as
+:func:`geometry.get_cotan_weights_per_he`).
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L152"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_face_corner_cotangents
+
+``` python
+
+def get_periodic_face_corner_cotangents(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_faces 3']:
+
+```
+
+*Compute corner cotangents for each face using a periodic displacement
+function.*
+
+Returns an `(n_faces, 3)` array (same layout as
+:func:[`get_periodic_face_corner_angles`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_face_corner_angles)).
+See also
+:func:[`get_periodic_cotan_weights_per_he`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_cotan_weights_per_he)
+for per-half-edge indexing.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L137"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_corner_angles
@@ -207,12 +269,102 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_periodic_corner_angles(
-    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_hes']:
+
+```
+
+*Compute the angle opposite to each half-edge, using a periodic
+displacement function.*
+
+Returns a per-half-edge array (same convention as
+:func:`geometry.get_corner_angles`).
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L124"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_face_corner_angles
+
+``` python
+
+def get_periodic_face_corner_angles(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
 )->Float[Array, 'n_faces 3']:
 
 ```
 
-*Compute all face corner angles using a periodic distance function.*
+*Compute corner angles for each face using a periodic displacement
+function.*
+
+Returns an `(n_faces, 3)` array where columns correspond to the three
+corners of each face in half-edge order `(prv, face_incident, nxt)`. See
+also
+:func:[`get_periodic_corner_angles`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_corner_angles)
+for per-half-edge indexing.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L107"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_face_centroids
+
+``` python
+
+def get_periodic_face_centroids(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_faces 2']:
+
+```
+
+*Compute face centroids (barycenters) using a periodic displacement
+function.*
+
+Returns positions relative to vertex `a` of each face, not wrapped to
+the periodic box.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L96"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_barycentric_cell_areas
+
+``` python
+
+def get_periodic_barycentric_cell_areas(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_vertices']:
+
+```
+
+*Get area of barycentric dual cell around each vertex, using a periodic
+displacement function.*
+
+Defined as 1/3 \* sum of adjacent triangle areas.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L89"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_area
+
+``` python
+
+def get_periodic_area(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, '']:
+
+```
+
+*Total mesh area using a periodic displacement function.*
 
 ------------------------------------------------------------------------
 
@@ -220,18 +372,17 @@ def get_periodic_corner_angles(
 href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L81"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_periodicb_arycentric_cell_areas
+### get_periodic_triangle_areas
 
 ``` python
 
-def get_periodicb_arycentric_cell_areas(
-    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
+def get_periodic_triangle_areas(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
 )->Float[Array, 'n_faces']:
 
 ```
 
-*Get area of barycentric dual cell around each vertex, using a periodic
-distance function.* Defined as 1/3 \* sum of adjacent triangle areas.
+*Compute triangle areas using a periodic displacement function.*
 
 ------------------------------------------------------------------------
 
@@ -239,63 +390,79 @@ distance function.* Defined as 1/3 \* sum of adjacent triangle areas.
 href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L73"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_periodic_triangle_areas
+### get_periodic_he_lengths
 
 ``` python
 
-def get_periodic_triangle_areas(
-    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
-)->Float[Array, 'n_faces']:
+def get_periodic_he_lengths(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_hes']:
 
 ```
 
-*Compute triangle areas using a periodic distance function.*
+*Get lengths of half-edges using a periodic displacement function.*
 
 ``` python
-periodic_distance = lambda r_1, r_2: displacement_periodic(r_1, r_2, L)
+periodic_displacement = lambda r_1, r_2: displacement_periodic(r_1, r_2, L)
 
-periodic_areas = get_periodic_triangle_areas(vertices, hemesh, periodic_distance)
-periodic_angles = get_periodic_corner_angles(vertices, hemesh, periodic_distance)
-periodic_cotangents = get_periodic_corner_cotangents(vertices, hemesh, periodic_distance)
+periodic_areas = get_periodic_triangle_areas(vertices, hemesh, periodic_displacement)
+periodic_face_angles = get_periodic_face_corner_angles(vertices, hemesh, periodic_displacement)
+periodic_face_cotangents = get_periodic_face_corner_cotangents(vertices, hemesh, periodic_displacement)
+periodic_he_angles = get_periodic_corner_angles(vertices, hemesh, periodic_displacement)
+periodic_he_cotangents = get_periodic_cotan_weights_per_he(vertices, hemesh, periodic_displacement)
 
 manual_edge_lengths = jnp.linalg.norm(
-    jax.vmap(periodic_distance)(vertices[hemesh.orig], vertices[hemesh.dest]),
-    axis=-1,
- )
+    jax.vmap(periodic_displacement)(vertices[hemesh.orig], vertices[hemesh.dest]),
+    axis=-1,)
 la_test, lb_test, lc_test = (manual_edge_lengths[hemesh.prv[hemesh.face_incident]],
                              manual_edge_lengths[hemesh.face_incident],
                              manual_edge_lengths[hemesh.nxt[hemesh.face_incident]],)
 
+# shape checks
 assert periodic_areas.shape == (hemesh.n_faces,)
-assert periodic_angles.shape == (hemesh.n_faces, 3)
-assert periodic_cotangents.shape == (hemesh.n_faces, 3)
+assert periodic_face_angles.shape == (hemesh.n_faces, 3)
+assert periodic_face_cotangents.shape == (hemesh.n_faces, 3)
+assert periodic_he_angles.shape == (hemesh.n_hes,)
+assert periodic_he_cotangents.shape == (hemesh.n_hes,)
 
+# face-indexed consistency
 assert jnp.allclose(
     periodic_areas,
-    jax.vmap(trig.get_triangle_area_from_lengths)(la_test, lb_test, lc_test),
-)
+    jax.vmap(trig.get_triangle_area_from_lengths)(la_test, lb_test, lc_test),)
 assert jnp.allclose(
-    periodic_angles,
-    jax.vmap(trig.get_angles_from_lengths)(la_test, lb_test, lc_test),
-)
+    periodic_face_angles,
+    jax.vmap(trig.get_angles_from_lengths)(la_test, lb_test, lc_test),)
 assert jnp.allclose(
-    periodic_cotangents,
-    jax.vmap(trig.get_cotangents_from_lengths)(la_test, lb_test, lc_test),
-)
+    periodic_face_cotangents,
+    jax.vmap(trig.get_cotangents_from_lengths)(la_test, lb_test, lc_test),)
 
-zero_twist_distance = lambda r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, 0.0)
-assert jnp.allclose(
-    periodic_areas,
-    get_periodic_triangle_areas(vertices, hemesh, zero_twist_distance),
-)
-assert jnp.allclose(
-    periodic_angles,
-    get_periodic_corner_angles(vertices, hemesh, zero_twist_distance),
-)
-assert jnp.allclose(
-    periodic_cotangents,
-    get_periodic_corner_cotangents(vertices, hemesh, zero_twist_distance),
-)
+# per-halfedge vs per-face consistency
+assert jnp.allclose(periodic_he_angles[hemesh.face_incident], periodic_face_angles[:, 1])
+assert jnp.allclose(periodic_he_cotangents[hemesh.face_incident], periodic_face_cotangents[:, 1])
+
+# total area
+assert jnp.allclose(get_periodic_area(vertices, hemesh, periodic_displacement), periodic_areas.sum())
+
+# barycentric cell areas
+bary_areas = get_periodic_barycentric_cell_areas(vertices, hemesh, periodic_displacement)
+assert bary_areas.shape == (hemesh.n_vertices,)
+assert jnp.allclose(bary_areas.sum(), periodic_areas.sum())
+
+# he lengths
+he_lens = get_periodic_he_lengths(vertices, hemesh, periodic_displacement)
+assert he_lens.shape == (hemesh.n_hes,)
+assert jnp.allclose(he_lens, manual_edge_lengths)
+
+# face centroids
+centroids = get_periodic_face_centroids(vertices, hemesh, periodic_displacement)
+assert centroids.shape == (hemesh.n_faces, 2)
+
+# zero-twist equivalence
+zero_twist = lambda r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, 0.0)
+assert jnp.allclose(periodic_areas, get_periodic_triangle_areas(vertices, hemesh, zero_twist))
+assert jnp.allclose(periodic_face_angles, get_periodic_face_corner_angles(vertices, hemesh, zero_twist))
+assert jnp.allclose(periodic_face_cotangents, get_periodic_face_corner_cotangents(vertices, hemesh, zero_twist))
+assert jnp.allclose(periodic_he_angles, get_periodic_corner_angles(vertices, hemesh, zero_twist))
 
 print("periodic geometry tests passed")
 ```
@@ -304,13 +471,56 @@ print("periodic geometry tests passed")
 
 ### Voronoi dual
 
-We can also compute the Voronoi dual for a periodic boundary conditions.
-To do so, we use the intrisic “circumcenter” function.
+We can also compute the Voronoi dual for periodic boundary conditions.
+Since vertex coordinates cannot be subtracted directly across the
+periodic boundary, we compute the circumcenter in *intrinsic*
+(edge-length) barycentric coordinates via
+`trig.get_circumcenter_from_lengths`, then map back to Euclidean
+positions using displacement vectors that respect the periodicity.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L141"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L238"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_voronoi_perimeters
+
+``` python
+
+def get_periodic_voronoi_perimeters(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_vertices']:
+
+```
+
+*Compute Voronoi cell perimeters by summing dual edge lengths per
+vertex.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L225"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_dual_he_length
+
+``` python
+
+def get_periodic_dual_he_length(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_hes']:
+
+```
+
+*Voronoi dual edge lengths computed from cotangent weights.*
+
+Equivalent to `cotan_weights_per_edge * he_length`.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L201"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_face_positions
@@ -318,18 +528,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_periodic_voronoi_face_positions(
-    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
 )->Float[Array, 'n_faces 2']:
 
 ```
 
-*Compute periodic Voronoi dual positions from intrinsic circumcenter
+*Compute periodic Voronoi dual positions (circumcenters) from intrinsic
 barycentric coordinates.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L130"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L190"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_areas
@@ -337,7 +547,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_periodic_voronoi_areas(
-    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, distance_function:Callable
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
 )->Float[Array, 'n_vertices']:
 
 ```
@@ -346,29 +556,39 @@ def get_periodic_voronoi_areas(
 weights.*
 
 ``` python
-periodic_voronoi_areas = get_periodic_voronoi_areas(vertices, hemesh, periodic_distance)
-periodic_face_positions = get_periodic_voronoi_face_positions(vertices, hemesh, periodic_distance)
-
-periodic_he_lengths = _get_periodic_he_lengths(vertices, hemesh, periodic_distance)
-periodic_cotan_weights = _get_periodic_cotan_weights_per_edge(vertices, hemesh, periodic_distance)
+periodic_voronoi_areas = get_periodic_voronoi_areas(vertices, hemesh, periodic_displacement)
+periodic_face_positions = get_periodic_voronoi_face_positions(vertices, hemesh, periodic_displacement)
+periodic_he_lengths = get_periodic_he_lengths(vertices, hemesh, periodic_displacement)
+periodic_cotan_weights = get_periodic_cotan_weights_per_edge(vertices, hemesh, periodic_displacement)
+periodic_dual_lengths = get_periodic_dual_he_length(vertices, hemesh, periodic_displacement)
+periodic_perimeters = get_periodic_voronoi_perimeters(vertices, hemesh, periodic_displacement)
 
 assert periodic_voronoi_areas.shape == (hemesh.n_vertices,)
 assert periodic_face_positions.shape == (hemesh.n_faces, 2)
+assert periodic_dual_lengths.shape == (hemesh.n_hes,)
+assert periodic_perimeters.shape == (hemesh.n_vertices,)
 
+# voronoi areas from cotan weights
 assert jnp.allclose(
     periodic_voronoi_areas,
     adj.sum_he_to_vertex_incoming(
         hemesh,
-        periodic_cotan_weights * periodic_he_lengths**2 / 4,
-    ),
-)
+        periodic_cotan_weights * periodic_he_lengths**2 / 4,),)
 assert jnp.allclose(periodic_voronoi_areas.sum(), periodic_areas.sum())
 
+# dual edge lengths = cotan_weights_per_edge * he_length
+assert jnp.allclose(periodic_dual_lengths, periodic_cotan_weights * periodic_he_lengths)
+
+# perimeters = sum of dual edge lengths
+assert jnp.allclose(periodic_perimeters,
+                     adj.sum_he_to_vertex_incoming(hemesh, periodic_dual_lengths))
+
+# circumradius check: circumcenter equidistant from all three vertices
 face_hes = hemesh.face_incident
 a = vertices[hemesh.orig[face_hes]]
-ab = jax.vmap(periodic_distance)(vertices[hemesh.orig[face_hes]], vertices[hemesh.dest[face_hes]])
-bc = jax.vmap(periodic_distance)(vertices[hemesh.orig[hemesh.nxt[face_hes]]],
-                                 vertices[hemesh.dest[hemesh.nxt[face_hes]]])
+ab = jax.vmap(periodic_displacement)(vertices[hemesh.orig[face_hes]], vertices[hemesh.dest[face_hes]])
+bc = jax.vmap(periodic_displacement)(vertices[hemesh.orig[hemesh.nxt[face_hes]]],
+                                     vertices[hemesh.dest[hemesh.nxt[face_hes]]])
 b = a + ab
 c = b + bc
 radii_a = jnp.linalg.norm(periodic_face_positions - a, axis=1)
@@ -377,15 +597,11 @@ radii_c = jnp.linalg.norm(periodic_face_positions - c, axis=1)
 assert jnp.allclose(radii_a, radii_b)
 assert jnp.allclose(radii_b, radii_c)
 
-zero_twist_distance = lambda r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, 0.0)
-assert jnp.allclose(
-    periodic_voronoi_areas,
-    get_periodic_voronoi_areas(vertices, hemesh, zero_twist_distance),
-)
-assert jnp.allclose(
-    periodic_face_positions,
-    get_periodic_voronoi_face_positions(vertices, hemesh, zero_twist_distance),
-)
+# zero-twist equivalence
+zero_twist = lambda r_1, r_2: displacement_periodic_twisted(r_1, r_2, L, 0.0)
+assert jnp.allclose(periodic_voronoi_areas, get_periodic_voronoi_areas(vertices, hemesh, zero_twist))
+assert jnp.allclose(periodic_face_positions, get_periodic_voronoi_face_positions(vertices, hemesh, zero_twist))
+assert jnp.allclose(periodic_perimeters, get_periodic_voronoi_perimeters(vertices, hemesh, zero_twist))
 
 print("periodic Voronoi tests passed")
 ```

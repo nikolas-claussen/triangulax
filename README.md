@@ -5,9 +5,9 @@
 
 ## Overview
 
-This python package provides data-structures for triangular meshes and
-geometry processing tools based on JAX, fully compatible with automatic
-differentiation and just-in-time compilation.
+This Python package provides data-structures for triangular meshes and
+geometry processing tools based on `JAX`, fully compatible with
+automatic differentiation and just-in-time compilation.
 
 ### Use cases
 
@@ -16,19 +16,24 @@ computing, for example in the finite-element method. A major motivation
 for `triangulax` are simulations in soft-matter and biophysics. For
 example, with `triangulax`, you can simulate:
 
-1.  Cell-resolved models of two-dimensional tissue sheets like [active
-    tension networks](https://www.pnas.org/doi/10.1073/pnas.2321928121)
+1.  Cell-resolved models of two-dimensional tissue sheets like [the
+    self-propelled Voronoi
+    model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011)
     (tutorial 3).
 2.  Reaction-diffusion systems on 3D curved surfaces (tutorial 4)
 3.  Mechanics of membranes and thin elastic shells in 3D (tutorial 5)
 
-`triangulax` is for modularity and flexibility. The library includes a
-suite of geometry processing tools based on [discrete differential
-geometry](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/) (Voronoi duals,
-curvatures, Laplace operator, …) and represents surfaces as [half-edge
+`triangulax` is designed for modularity and flexibility. The library
+includes a suite of geometry processing tools based on [discrete
+differential geometry](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/)
+(Voronoi duals, curvatures, Laplace operator, …) and represents surfaces
+as [half-edge
 meshes](https://jerryyin.info/geometry-processing-algorithms/half-edge/),
 which allows implementing custom simulations and geometry operations in
 any dimension.
+
+**Prerequisites**: Using `triangulax` assumes familiarity with
+triangular meshes, and basic JAX usage. See tutorials 0 and 1.
 
 ### Automatic differentiation and just-in-time compilation
 
@@ -51,9 +56,7 @@ variational
 functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), the
 [Helfrich elastic
 energy](https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes), or
-the [Dirichlet
-functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), or the
-[area-perimeter
+the [area-perimeter
 energy](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
 respectively). JAX automatically computes their gradients, making it
 easy to optimize energies or to simulate forces. For “multiphysics”
@@ -94,16 +97,18 @@ need to do so that the tissue as a whole takes on a certain shape?
 
 - [libigl](https://libigl.github.io/libigl-python-bindings/) Geometry
   processing library with Python bindings. You can use `libigl`
-  functions on `triangulax` meshes.
+  functions on `triangulax` meshes via the `.faces` attribute
 
 - [VertAX](https://github.com/VirtualEmbryo/VertAX/) JAX-based
   simulations of 2D tissues.
 
 ## Developer guide and installation instructions
 
+**Currently, installation from source only - PyPi package coming soon**
+
 This package is developed based on Jupyter notebooks, which are
 converted into python modules using `nbdev`. Take a look at
-`.github/workflows/copilot-instructions.md` for details.
+`.github/copilot-instructions.md` for details.
 
 ### Install triangulax in Development mode
 
@@ -116,7 +121,7 @@ $ git clone https://github.com/nikolas-claussen/triangulax.git
 2.  Create a conda environment with all Python dependencies
 
 ``` sh
-$ conda env create -n triangulax -f triangulax.yml
+$ conda env create -n triangulax -f environment.yml
 $ conda activate triangulax
 ```
 
@@ -146,15 +151,23 @@ notebooks tutorials can be found in the `nbs/tutorials/` folder.
 
 ## Usage
 
-`triangulax` comprises the following modules:
+`triangulax` comprises the following modules (see [full
+documentation](https://nikolas-claussen.github.io/triangulax/) for
+details):
 
-- `trigonometry`: trigonometry and linear algebra
+- `trigonometry`: trigonometry and linear algebra utilities
 - `triangular`: input/output for triangular meshes
-- `mesh`: a half-edge data structure for triangular meshes compatible
-  with JAX.
-- `topology`: topological modifications (flip, collapse, and split)
-- `adjacency`, `geometry`, `periodic`, `linops`, `algorithms`: geometry
-  processing tools
+- `mesh`: half-edge data structure for triangular meshes, compatible
+  with JAX
+- `topology`: topological modifications (edge flip, collapse, and split)
+- `adjacency`: vertex-vertex, vertex-face, and face-face adjacency
+  operators
+- `geometry`: angles, edge lengths, triangle areas, Voronoi areas,
+  curvatures
+- `periodic`: geometry computations under periodic boundary conditions
+- `linops`: discrete differential operators (Laplacian, mass matrix,
+  gradient)
+- `algorithms`: Delaunay flipping, mesh quality improvement
 
 ### Minimal example
 
@@ -178,7 +191,7 @@ print("Mean coordination number:", coord_number.mean())
 
 # Let's define a simple geometric function and compute its gradient with JAX
 
-def mean_voronoi_area(vertices, hemesh: mesh.HeMesh) -> float:
+def mean_voronoi_area(vertices: jax.Array, hemesh: mesh.HeMesh) -> jax.Array:
     """Compute the mean Voronoi area per vertex."""
     voronoi_areas = geometry.get_voronoi_areas(vertices, hemesh)
     return jnp.mean(voronoi_areas)
@@ -191,4 +204,4 @@ print("Mean gradient norm:", jnp.linalg.norm(gradient, axis=1).mean())
       o flat_tri_ecmc
 
     Mean coordination number: 5.40458
-    Mean gradient norm: 0.00036383414
+    Mean gradient norm: 0.0003638338
