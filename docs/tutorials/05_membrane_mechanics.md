@@ -554,10 +554,13 @@ normal **n**
 
 ``` python
 def get_neo_hookean_energy(deformation, mod_bulk, mod_shear):
-    """Compute the neo-Hookean energy from Cauchy-Green deformation tensor"""
+    """Compute the neo-Hookean energy from Cauchy-Green deformation tensor.
+    See https://en.wikipedia.org/wiki/Neo-Hookean_solid
+    """
     I1 = jnp.trace(deformation)
     J = jnp.sqrt(jnp.linalg.det(deformation))
     return mod_shear/2*(I1 - 2 - 2*jnp.log(J)) + mod_bulk/2*(J-1)**2
+
 
 def get_metric(vertices, hemesh):
     """Compute the metric tensor per triangle of a triangulated surface"""
@@ -565,6 +568,7 @@ def get_metric(vertices, hemesh):
     J = jnp.stack([b-a, c-a], axis=1)
     return jnp.einsum("vix,vjx->vij", J, J)
 
+@jax.jit
 def get_elastic_energy(vertices, args):
     """Compute the elastic energy of a triangulated surface. args = (hemesh, metric_orig, mod_bulk, mod_shear)"""
     hemesh, metric_orig, mod_bulk, mod_shear = args
@@ -576,8 +580,8 @@ def get_elastic_energy(vertices, args):
 ```
 
 ``` python
-# this is how the elastic energy penalizes deformation, expressed in terms of the deformation gradient F
-# where F-I is the usual strain tensor.
+# this is how the elastic energy penalizes deformation, expressed in terms of the deformation gradient F,
+# so that F-I is the usual strain tensor.
 
 s = -0.1 # dilation
 t = 0. # shear
@@ -593,7 +597,55 @@ get_neo_hookean_energy(jnp.eye(2), 1, 1), get_neo_hookean_energy(deformation, 0,
     (Array(0., dtype=float64), Array(0.02072103, dtype=float64))
 
 ``` python
+A0 = geom.get_area(trimesh.vertices, hemesh)
+V0 = 0.75 * geom.get_volume(trimesh.vertices, hemesh)
 metric_orig = get_metric(trimesh.vertices, hemesh)
+
+kappa, H0 = 1.0, 0.0
+mu_A, mu_V = 300.0, 600.0
+args_helfrich_penalty = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
+
+mod_bulk, mod_shear = 0.0, 1.0
+args_elastic = (hemesh, metric_orig, mod_bulk, mod_shear)
+
+step_size = 0.01
+n_iterations = 4
+
+vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95]) # let's start from a stretched configuration
+```
+
+``` python
+vertices_iterated = [vertices_initial]
+
+for t in range(n_iterations):
+    grad_helfrich = jax.grad(get_helfrich_energy_with_penalty)(vertices_iterated[-1], args_helfrich_penalty)
+    grad_elastic = jax.grad(get_elastic_energy)(vertices_iterated[-1], args_elastic)
+    normals = geom.get_vertex_normals(vertices_iterated[-1], hemesh)
+    step = (jax.vmap(trig.project_out_vector)(grad_elastic, normals) +
+            jax.vmap(trig.project_on_vector)(grad_helfrich, normals))
+    vertices_iterated.append(vertices_iterated[-1] - step_size * step)
+```
+
+``` python
+jnp.linalg.norm(vertices_iterated[-1] - vertices_iterated[0], axis=-1).mean()
+```
+
+    Array(0.0305475, dtype=float64)
+
+``` python
+p = meshplot.plot(vertices_initial, hemesh.faces,
+                  shading={"wireframe":True}, return_plot=True)
+
+p.add_mesh(vertices_iterated[-1] + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":True})
+```
+
+    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
+
+    1
+
+``` python
+# looks like there is a strong discretization error in the gradient of the helricht energy
+# at 5-fold vertices. this is not good.
 ```
 
 ### Augmented Lagrangian method

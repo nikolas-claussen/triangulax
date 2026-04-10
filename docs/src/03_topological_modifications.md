@@ -11,6 +11,19 @@ edge flip (see below). It is the only modification that preserves the
 number of all mesh elements, and is thus relatively easy to make
 compatible with JAX and differentiable programming.
 
+**Design note**: for JIT-compatibility, none of the topology
+modification functions
+([`flip_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_edge),
+[`collapse_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#collapse_edge),
+[`split_vertex`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#split_vertex))
+check in advance whether they will produce a valid mesh. Separate
+predicate functions
+([`can_flip_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_flip_edge),
+[`can_collapse_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_collapse_edge),
+[`can_split_vertex`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_split_vertex))
+are provided for this purpose: call them before the modification if you
+need to guard against invalid operations.
+
 ### Edge flips / T1s
 
 In our simulations, cells will exchange neighbors (T1-event). In the
@@ -46,7 +59,7 @@ alt="image.png" />
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L34"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L35"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_edge
@@ -66,8 +79,34 @@ algorithm is slightly modified since we keep track of the origin and
 destination of a half-edge, and use arrays instead of pointers. Returns
 a new HeMesh, does not modify in-place.
 
+Does not check whether the flip produces a valid mesh. Use
+[`can_flip_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_flip_edge)
+to check first.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L75"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### can_flip_edge
+
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+
+def can_flip_edge(
+    hemesh:HeMesh, e:Int[Array, '']
+)->Bool[Array, '']:
+
+```
+
+*Check whether flipping half-edge e would produce a valid mesh.*
+
+An edge can be flipped if it is interior (not boundary) and the two
+opposite vertices are not already connected (which would create a
+duplicate edge).
+
+``` python
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 ```
@@ -90,13 +129,13 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_topological_modifications_files/figure-commonmark/cell-4-output-2.png)
+![](03_topological_modifications_files/figure-commonmark/cell-5-output-2.png)
 
 ``` python
 # flip edge and recompute face positions
 
 flipped_hemesh = flip_edge(hemesh, e=335)
-flipped_geommesh = msh.set_voronoi_face_positions(geommesh, flipped_hemesh)
+flipped_geommesh = geom.set_voronoi_face_positions(geommesh, flipped_hemesh)
 ```
 
 ``` python
@@ -127,22 +166,36 @@ plt.axis("equal")
 msh.label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](03_topological_modifications_files/figure-commonmark/cell-7-output-1.png)
+![](03_topological_modifications_files/figure-commonmark/cell-8-output-1.png)
 
 #### Repeated flips
 
 In a simulation, we need to carry out edge flips at every time step. The
-function `flip_edge(hemesh: HeMesh, e: int) -> HeMesh` does a single
-edge flip by modifying the connectivity arrays. Luckily, it is already
-JAX-compatible (we can JIT-compile it).
+function
+[`flip_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_edge)
+does a single edge flip by modifying the connectivity arrays, and is
+already JIT-compatible.
 
-To carry out multiple flips, we must do the flips in sequence
-(otherwise, you risk leaving the mesh in an invalid state). To make
-things JAX-compatible, we do a `jax.lax.scan` scan over *all*
-half-edges.
+To carry out multiple flips, we must do them in sequence (otherwise, you
+risk leaving the mesh in an invalid state). The simplest approach is
+[`flip_all`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_all),
+which does a `jax.lax.scan` over *all* half-edges. This is
+JIT-compatible because the scan length is fixed (= number of
+half-edges), but can be slow for large meshes since it visits every edge
+even if only a few need flipping.
+
+A more efficient alternative is
+[`flip_n_shortest`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_n_shortest),
+which sorts edges by length, selects the `max_flips` shortest
+candidates, and scans only over those. This is significantly faster
+(e.g., 100–110 μs for 10 flips vs. 600 μs for a full scan on a typical
+mesh). The `max_flips` parameter is a static argument: changing it
+triggers recompilation, but within a simulation it is typically
+constant. See `tutorials/03_vertex_models` for a full usage example with
+per-edge cooldowns.
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 ```
@@ -151,10 +204,34 @@ geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
       o flat_tri_ecmc
 
 ``` python
+from jaxtyping import Float
+
+def get_oriented_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
+                                face_positions: Float[jax.Array, "n_faces 2"],
+                                hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
+    """Compute lengths of dual edges. Boundary dual edges get length 1. Negative sign = flipped edge."""
+    dual_edges = face_positions[hemesh.heface]-face_positions[hemesh.heface[hemesh.twin]]
+
+    edges = vertices[hemesh.orig]-vertices[hemesh.dest]
+    edges_normalized = (edges.T / jnp.linalg.norm(edges, axis=-1)).T
+    signed_dual_length = jnp.einsum('vi,vi->v', edges_normalized,
+                                    dual_edges @ trig.get_rot_mat(-jnp.pi/2))
+    signed_dual_length = jnp.where(hemesh.is_bdry_edge, 1, signed_dual_length)
+    return signed_dual_length
+```
+
+``` python
+from importlib import reload
+reload(geom)
+```
+
+    <module 'triangulax.geometry' from '/Users/nc1333/Documents/Princeton/Coding/triangulax/triangulax/geometry.py'>
+
+``` python
 # let's detect all edges with negative dual length, and flip them.
 
-dual_lengths = msh.get_signed_dual_he_length(geommesh.vertices, geommesh.face_positions, hemesh)
-edges = jnp.where((dual_lengths < -0.05) & ~hemesh.is_bdry_edge & hemesh.is_unique)[0]
+dual_lengths = geom.get_oriented_dual_he_length(geommesh.vertices, geommesh.face_positions, hemesh)
+edges = jnp.where((dual_lengths < 0.0) & ~hemesh.is_bdry_edge & hemesh.is_unique)[0]
 # we only want to flip unique hes!
 edges, edges.size
 ```
@@ -164,7 +241,7 @@ edges, edges.size
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L81"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L102"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_all
@@ -180,10 +257,16 @@ def flip_all(
 *Flip all (unique) half-edges where to_flip is True in a half-edge mesh.
 Wraps flip_edge.*
 
+Note: scans over *all* half-edges, which can be slow for large meshes.
+See
+[`flip_n_shortest`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_n_shortest)
+for a more efficient alternative that only scans over a fixed number of
+candidate edges.
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L72"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L93"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_by_id
@@ -196,8 +279,34 @@ def flip_by_id(
 
 ```
 
-*Flip half-edges from ids array if the to_flip is True. Wraps
-flip_edge.*
+*Flip half-edges from ids array where to_flip is True. Wraps flip_edge.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L117"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### flip_n_shortest
+
+``` python
+
+def flip_n_shortest(
+    hemesh:HeMesh, # The half-edge mesh.
+    edge_lengths:Int[Array, 'n_hes'], # Per-half-edge edge lengths (e.g., dual/Voronoi edge lengths).
+    threshold:float, # Edges shorter than this are flipped.
+    max_flips:int=10, # Maximum number of edges to consider. Static argument (changing it triggers recompilation).
+)->tuple: # The mesh after flipping.
+
+```
+
+*Flip up to `max_flips` shortest edges below `threshold`.*
+
+Sorts edges by length, selects the `max_flips` shortest unique,
+non-boundary candidates, and flips those below `threshold`. Much faster
+than
+[`flip_all`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_all)
+for large meshes.
 
 ``` python
 to_flip = (dual_lengths < 0) & ~jnp.isnan(dual_lengths)
@@ -206,11 +315,17 @@ flipped_hemesh = flip_all(hemesh, to_flip=to_flip)
 ```
 
 ``` python
+igl.is_edge_manifold(flipped_hemesh.faces)[0], igl.is_vertex_manifold(flipped_hemesh.faces)[0]
+```
+
+    (True, np.True_)
+
+``` python
 flipped_hemesh = flip_all(hemesh, to_flip=(dual_lengths<0.02)) # no extra recompile
 ```
 
 ``` python
-flipped_geommesh = msh.set_voronoi_face_positions(geommesh, flipped_hemesh)
+flipped_geommesh = geom.set_voronoi_face_positions(geommesh, flipped_hemesh)
 ```
 
 ``` python
@@ -219,7 +334,6 @@ fig = plt.figure(figsize=(8,8))
 plt.triplot(*geommesh.vertices.T, hemesh.faces)
 plt.triplot(*flipped_geommesh.vertices.T, flipped_hemesh.faces)
 
-ax = plt.gca()
 ax = plt.gca()
 p1 = msh.cellplot(hemesh, geommesh.face_positions,
          cell_colors=np.array([0.,0.,0.,0.]), mpl_polygon_kwargs={"lw": 1, "ec": "k"})
@@ -232,7 +346,7 @@ plt.axis("equal")
 msh.label_plot(geommesh.vertices, hemesh.faces, fontsize=10, face_labels=False)
 ```
 
-![](03_topological_modifications_files/figure-commonmark/cell-15-output-1.png)
+![](03_topological_modifications_files/figure-commonmark/cell-20-output-1.png)
 
 ### Splitting and collapsing vertices
 
@@ -242,29 +356,30 @@ makes it especially easy, and compatible with JAX’s “static array size”
 paradigm.
 
 However, we may also want to simulate processes (like cell division or
-death) where the number of cells *does* change. Let’s implement two
-elementary operation, which are inverses of another: edge collapse and
-vertex split. Let’s start with edge collapse.
+death) where the number of cells *does* change. We implement two
+elementary operations, which are inverses of one another: **edge
+collapse** and **vertex split**.
 
-To split a half-edge `e` in a `hemesh`:
+To **collapse** a half-edge `e` in a `hemesh`:
 
 1.  Delete faces `hemesh.heface[e]`, `hemesh.heface[hemesh.twin[e]]`
 2.  Delete all the half-edges in those faces.
 3.  Glue the “gap” back together.
-4.  Merge the vertices `hemesh.orig[e]`, `hemesh.dest[e]` We must be
-    careful to preserve the manifold structure of the mesh, deal with
-    edge cases. We can test the resulting half-edge mesh via plots, and
-    use `libigl` to verify that the mesh is in a valid state.
+4.  Merge the vertices `hemesh.orig[e]`, `hemesh.dest[e]`
 
-Finally, we also need a data structure to keep track of the map from the
-vertices/edges/faces of the initial mesh to that of the modified one.
+We must be careful to preserve the manifold structure of the mesh and
+deal with edge cases. We test the resulting half-edge mesh via plots and
+use `libigl` to verify that the mesh is in a valid state.
 
-**WARNING**: code not fully tested
+We also need a data structure
+([`MeshReindexMap`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#meshreindexmap))
+to keep track of how vertices/edges/faces of the initial mesh map to
+those of the modified one.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L96"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L156"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### remap_inds_removal_reverse
@@ -282,7 +397,7 @@ def remap_inds_removal_reverse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L90"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L150"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### remap_inds_removal_forward
@@ -301,7 +416,7 @@ i).sum().*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L105"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L165"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MeshReindexMap
@@ -332,7 +447,31 @@ forward[6], reverse[2], jnp.allclose(forward[reverse], jnp.arange(N - removed.sh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L118"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L178"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### can_collapse_edge
+
+``` python
+
+def can_collapse_edge(
+    hemesh:HeMesh, e:Int[Array, '']
+)->Bool[Array, '']:
+
+```
+
+*Check whether collapsing half-edge e would produce a valid mesh (link
+condition).*
+
+An edge can be collapsed if it is interior and the two endpoint vertices
+share exactly two common neighbors (the opposite vertices of the two
+adjacent faces). This is the discrete “link condition” that ensures the
+collapse preserves manifoldness.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L199"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### collapse_edge
@@ -348,9 +487,13 @@ def collapse_edge(
 *Collapse half-edge e in a half-edge mesh. Keeps the origin vertex of
 e.*
 
-Returns a new HeMesh (does not modify in-place), and three arrays for
-remapping vertex, half-edge, and face indices from the original mesh to
-the new mesh.
+Returns a new HeMesh (does not modify in-place), and a MeshReindexMap
+for remapping vertex, half-edge, and face indices from the original mesh
+to the new mesh.
+
+Does not check whether the collapse produces a valid mesh. Use
+[`can_collapse_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_collapse_edge)
+to check first.
 
 JIT-compatible, but calling with different numbers of
 vertices/edges/faces will cause recompilation.
@@ -385,7 +528,7 @@ hemesh, hemesh_collapsed # removes 1 vertex, 6 half-edges, and 2 faces
 ``` python
 ```
 
-    40.6 μs ± 2.64 μs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+    44.8 μs ± 5.34 μs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
 
 ``` python
 # visualize before/after
@@ -414,20 +557,42 @@ plt.axis("off")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_topological_modifications_files/figure-commonmark/cell-26-output-2.png)
+![](03_topological_modifications_files/figure-commonmark/cell-32-output-2.png)
 
 #### Split vertex (“cell division”)
 
-Next, let’s create the opposite operation - splitting a vertex into two.
-To do so, we need to specify two half-edges, the “splitting axis”, which
-meet at a common vertex. Like before, we also need a map of how hold and
-new mesh elements are related. We append the newly created mesh elements
-at the end of the different arrays.
+The opposite of edge collapse: splitting a vertex into two. We specify
+two half-edges (the “splitting axis”) that originate at a common vertex.
+Like before, we need a
+[`MeshReindexMap`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#meshreindexmap)
+tracking how old and new mesh elements are related. New elements are
+appended at the end of the arrays.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L197"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L278"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### can_split_vertex
+
+``` python
+
+def can_split_vertex(
+    hemesh:HeMesh, e1:int, e2:int
+)->bool:
+
+```
+
+*Check whether splitting a vertex along half-edges e1 and e2 is valid.*
+
+Both half-edges must originate from the same vertex, and both must be on
+interior faces.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L288"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### split_vertex
@@ -441,7 +606,7 @@ def split_vertex(
 ```
 
 *Split a vertex into two along a “splitting axis” given by two
-half-edges whose originating at that vertex.*
+half-edges originating at that vertex.*
 
 New vertex inserted at origin of e2. The new vertex will be the final
 one in the array.
@@ -542,10 +707,23 @@ plt.axis("equal"); plt.axis("off")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](03_topological_modifications_files/figure-commonmark/cell-32-output-2.png)
+![](03_topological_modifications_files/figure-commonmark/cell-39-output-2.png)
 
-### Next steps
+### Not yet implemented
 
-Looks good - the JAX-compatible triangular-mesh data structures seem to
-work. In particular, the tricky T1/edge-flip function. Next steps:
-linear operators on meshes and geometry processing.
+The following topological operations are not yet available in
+`triangulax`:
+
+- **Edge split**: insert a new vertex on an existing edge, splitting it
+  and both adjacent faces. (Distinct from vertex split above.)
+- **Edge contraction with boundary support**: the current
+  [`collapse_edge`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#collapse_edge)
+  only handles interior edges.
+- **Batch collapse / split**: JIT-compatible routines for performing
+  multiple collapses or splits per time step, analogous to
+  [`flip_all`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_all)
+  /
+  [`flip_n_shortest`](https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_n_shortest)
+  for edge flips.
+- **Vertex removal**: remove a vertex and re-triangulate the resulting
+  hole.

@@ -24,10 +24,7 @@ from enum import IntEnum
 
 import dataclasses
 
-import functools
-
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #cef3ff0a
-from . import trigonometry as trig
 from .triangular import TriMesh
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #45616576-ecbd-46f3-998b-ff82c6aa7bef
@@ -387,21 +384,20 @@ def _canonical_faces_np(F: np.ndarray) -> np.ndarray:
 
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #4378ad6f
-def connect_boundary_to_infinity(vertices: Float[jax.Array, "n_vertices 2"],
-                                 faces: Int[jax.Array, "n_faces 3"]
+def connect_boundary_to_infinity(vertices: Float[jax.Array, "n_vertices 2"], faces: Int[jax.Array, "n_faces 3"]
                                 ) -> tuple[Float[jax.Array, "n_vertices_new 2"],
                                            Int[jax.Array, "n_faces_new 3"],
                                            tuple[int]]:
     """
     Connect boundary loop(s) to infinity.
     
-    New vertices are appeneded to the end of vertex array and have coordinates [np.inf, np.inf].
+    New vertices are appended to the end of vertex array and have coordinates [np.inf, np.inf].
 
     Parameters 
     ----------
     vertices : Float[jax.Array, "n_vertices 2"]
         Vertex positions.
-    faces : Int[jax.Array, "n_faces 2"]
+    faces : Int[jax.Array, "n_faces 3"]
         Faces (triangles) as list of vertex indices.
 
     Returns
@@ -409,22 +405,22 @@ def connect_boundary_to_infinity(vertices: Float[jax.Array, "n_vertices 2"],
     new_vertices : Float[jax.Array, "n_vertices_new 2"]
         Vertex positions with infinity vertices appended.
         One infinity vertex per boundary loop.
-    new_faces : Int[jax.Array, "n_faces_new 2"]
+    new_faces : Int[jax.Array, "n_faces_new 3"]
         Faces (triangles) as list of vertex indices, with new faces added to connect
         boundary loops to infinity vertices.
     inf_vertices : tuple[Int]
         Indices of infinity vertices in new_vertices.
         Will be (n_vertices, n_vertices+1, ..., n_vertices+n_boundaries-1).
     """
-    boundary_loops = igl.boundary_loop_all(mesh.faces)
+    boundary_loops = igl.boundary_loop_all(faces)
     new_vertices = jnp.copy(vertices)
     new_faces = jnp.copy(faces)
 
     for loop in boundary_loops:
-        inf_index = vertices.shape[0]
+        inf_index = new_vertices.shape[0]
         inf_faces = np.stack([[inf_index, v2, v1] for v1, v2 in zip(loop, np.roll(loop, -1))])
         new_vertices = jnp.vstack([new_vertices, jnp.inf*jnp.ones_like(new_vertices[:1])])
-        new_faces = jnp.vstack([faces, inf_faces])
+        new_faces = jnp.vstack([new_faces, inf_faces])
     
     return new_vertices, new_faces, tuple(range(vertices.shape[0], new_vertices.shape[0]))
 
@@ -444,6 +440,10 @@ class GeomMesh:
     The keys of the dictionary should be taken from a suitable 'enum'. The values are 
     ndarrays, whose 0th axis is (vertices/edges/faces). These attribute dicts are
     initialized empty and can be set afterwards.
+
+    Unlike `HeMesh`, this class is intentionally *not* frozen. Vertex positions and
+    per-mesh attributes may be updated directly (e.g. during a simulation step),
+    whereas mesh connectivity (`HeMesh`) should never be edited by hand.
 
     See documentation on HeMesh
     
@@ -471,7 +471,7 @@ class GeomMesh:
 
     **Static methods**
     
-    load : str -> GeomHeMesh
+    load : str -> GeomMesh
 
     """
 

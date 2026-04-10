@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>trigonometry – triangulax</title>
+<title>Trigonometry – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -135,10 +135,10 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="triangulax">
+<meta property="og:title" content="Trigonometry – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta property="og:site_name" content="triangulax">
-<meta name="twitter:title" content="triangulax">
+<meta name="twitter:title" content="Trigonometry – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta name="twitter:card" content="summary">
 </head>
@@ -164,7 +164,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Basic trigonometry</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/trigonometry.html">Trigonometry</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -210,8 +210,8 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Basic trigonometry</span></a>
+  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -321,9 +321,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#basic-trigonometry" id="toc-basic-trigonometry" class="nav-link active" data-scroll-target="#basic-trigonometry">Basic trigonometry</a>
-  <ul class="collapse">
-  <li><a href="#triangle-areas-and-circumcenters" id="toc-triangle-areas-and-circumcenters" class="nav-link" data-scroll-target="#triangle-areas-and-circumcenters">Triangle areas and circumcenters</a></li>
+  <li><a href="#triangle-areas-and-circumcenters" id="toc-triangle-areas-and-circumcenters" class="nav-link active" data-scroll-target="#triangle-areas-and-circumcenters">Triangle areas and circumcenters</a></li>
   <li><a href="#get_polygon_area" id="toc-get_polygon_area" class="nav-link" data-scroll-target="#get_polygon_area">get_polygon_area</a></li>
   <li><a href="#get_triangle_area" id="toc-get_triangle_area" class="nav-link" data-scroll-target="#get_triangle_area">get_triangle_area</a></li>
   <li><a href="#get_oriented_triangle_area" id="toc-get_oriented_triangle_area" class="nav-link" data-scroll-target="#get_oriented_triangle_area">get_oriented_triangle_area</a></li>
@@ -341,8 +339,8 @@ window.Quarto = {
   <li><a href="#get_cotangents_from_lengths" id="toc-get_cotangents_from_lengths" class="nav-link" data-scroll-target="#get_cotangents_from_lengths">get_cotangents_from_lengths</a></li>
   <li><a href="#get_angles_from_lengths" id="toc-get_angles_from_lengths" class="nav-link" data-scroll-target="#get_angles_from_lengths">get_angles_from_lengths</a></li>
   <li><a href="#get_triangle_area_from_lengths" id="toc-get_triangle_area_from_lengths" class="nav-link" data-scroll-target="#get_triangle_area_from_lengths">get_triangle_area_from_lengths</a></li>
-  <li><a href="#normals-and-rotation-matrices-in-3d" id="toc-normals-and-rotation-matrices-in-3d" class="nav-link" data-scroll-target="#normals-and-rotation-matrices-in-3d">Normals and rotation matrices in 3D</a></li>
-  <li><a href="#quaternion_to_rot_max" id="toc-quaternion_to_rot_max" class="nav-link" data-scroll-target="#quaternion_to_rot_max">quaternion_to_rot_max</a></li>
+  <li><a href="#rotation-matrices-and-normals" id="toc-rotation-matrices-and-normals" class="nav-link" data-scroll-target="#rotation-matrices-and-normals">Rotation matrices and normals</a></li>
+  <li><a href="#quaternion_to_rot_mat" id="toc-quaternion_to_rot_mat" class="nav-link" data-scroll-target="#quaternion_to_rot_mat">quaternion_to_rot_mat</a></li>
   <li><a href="#get_triangle_normal" id="toc-get_triangle_normal" class="nav-link" data-scroll-target="#get_triangle_normal">get_triangle_normal</a></li>
   <li><a href="#get_perp_2d" id="toc-get_perp_2d" class="nav-link" data-scroll-target="#get_perp_2d">get_perp_2d</a></li>
   <li><a href="#get_rot_mat" id="toc-get_rot_mat" class="nav-link" data-scroll-target="#get_rot_mat">get_rot_mat</a></li>
@@ -350,392 +348,392 @@ window.Quarto = {
   <li><a href="#get_barycentric_coordinates" id="toc-get_barycentric_coordinates" class="nav-link" data-scroll-target="#get_barycentric_coordinates">get_barycentric_coordinates</a></li>
   <li><a href="#rodrigues-rotation" id="toc-rodrigues-rotation" class="nav-link" data-scroll-target="#rodrigues-rotation">Rodrigues rotation</a></li>
   <li><a href="#rotate_around_axis" id="toc-rotate_around_axis" class="nav-link" data-scroll-target="#rotate_around_axis">rotate_around_axis</a></li>
-  </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="00_trigonometry.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="trigonometry.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Basic trigonometry</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/trigonometry.html">Trigonometry</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Trigonometry</h1>
+</div>
 
 
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="basic-trigonometry" class="level2">
-<h2 class="anchored" data-anchor-id="basic-trigonometry">Basic trigonometry</h2>
-<p>For example, the circumcenter of a triangle, which is the position of the dual Voronoi vertex.</p>
-<p><strong>Coding style notes</strong></p>
-<p>Throughout, we will (attempt to) provide a type signature for all functions. To do so for array-based functions, we use <a href="https://docs.kidger.site/jaxtyping">jaxtyping</a>.</p>
-<p><strong>Coding with JAX</strong></p>
-<p>The aim is to create a triangulation datastructure compatible with the JAX library for automatic differentiation and numerical computing. In practice, this means that we use <code>jnp</code> (=<code>jax.numpy</code>) instead of <code>numpy</code>, and make sure our code follows JAX’s functional programming paradigm (see <a href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html">JAX- the sharp bits</a>).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Coding style notes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Throughout, we provide type signatures for all functions using <a href="https://docs.kidger.site/jaxtyping">jaxtyping</a>. We use <code>jnp</code> (= <code>jax.numpy</code>) instead of <code>numpy</code>, and follow JAX’s functional programming paradigm (see <a href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html">JAX — the sharp bits</a>).</p>
+<p><strong>Safe division.</strong> To avoid division by zero in degenerate configurations (e.g.&nbsp;zero-area triangles), all divisors are clamped via <code>jnp.clip(x, 1e-12)</code>. The threshold <code>1e-12</code> is chosen to be well below any physically meaningful scale while staying above float64 precision limits (~<code>1e-16</code>).</p>
+</div>
+</div>
+</div>
 <section id="triangle-areas-and-circumcenters" class="level3">
 <h3 class="anchored" data-anchor-id="triangle-areas-and-circumcenters">Triangle areas and circumcenters</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L46" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L77" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_polygon_area" class="level3">
 <h3 class="anchored" data-anchor-id="get_polygon_area">get_polygon_area</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_polygon_area(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    pts:Float[Array, <span class="st">'n_vertices 2'</span>]</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    pts:Float[Array, <span class="st">'n_vertices 2'</span>], <span class="co"># Ordered polygon vertices.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Signed area.</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Area of 2D polygon assuming no self-intersection.</em></p>
+<p><em>Signed area of a 2D simple polygon (shoelace formula).</em></p>
+<p>Positive for counter-clockwise vertex ordering.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L40" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L59" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_triangle_area" class="level3">
 <h3 class="anchored" data-anchor-id="get_triangle_area">get_triangle_area</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_area(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Triangle area.</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Unoriented area of triangle with vertices a, b, c.&nbsp;Works in dim 2 or 3.</em></p>
+<p><em>Unsigned area of triangle with vertices a, b, c.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L34" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L41" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_oriented_triangle_area" class="level3">
 <h3 class="anchored" data-anchor-id="get_oriented_triangle_area">get_oriented_triangle_area</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_oriented_triangle_area(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'*'</span>]:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'*'</span>]: <span class="co"># Scalar (dim=2) or area-weighted normal vector (dim=3).</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Signed area of triangle with vertices a, b, c.&nbsp;If d=2, returns a scalar, if d=3, a vector.</em></p>
+<p><em>Signed area of triangle with vertices a, b, c.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L24" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L19" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_circumcenter" class="level3">
 <h3 class="anchored" data-anchor-id="get_circumcenter">get_circumcenter</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_circumcenter(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>], zero_clip:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-10</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]:</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]: <span class="co"># Circumcenter coordinates.</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Return circumcenter coordinates of triangle with vertices a, b, c</em></p>
+<p><em>Circumcenter of triangle with vertices a, b, c via barycentric coordinates.</em></p>
 </section>
 <section id="vector-operations" class="level3">
 <h3 class="anchored" data-anchor-id="vector-operations">Vector operations</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L94" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L185" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_cot_between_vectors" class="level3">
 <h3 class="anchored" data-anchor-id="get_cot_between_vectors">get_cot_between_vectors</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cot_between_vectors(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Cotangent value.</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Cotangent of angle between two vectors</em></p>
+<p><em>Cotangent of the angle between vectors a and b.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L88" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L168" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_angle_between_vectors" class="level3">
 <h3 class="anchored" data-anchor-id="get_angle_between_vectors">get_angle_between_vectors</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_angle_between_vectors(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Angle in radians, in $[0, \pi]$.</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Angle between two vectors</em></p>
+<p><em>Unsigned angle between vectors a and b.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L82" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L151" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_signed_angle_between_vectors" class="level3">
 <h3 class="anchored" data-anchor-id="get_signed_angle_between_vectors">get_signed_angle_between_vectors</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_signed_angle_between_vectors(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'2'</span>], b:Float[Array, <span class="st">'2'</span>]</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Signed angle in radians, in $(-\pi, \pi]$.</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Signed angle between two 2d vectors</em></p>
+<p><em>Signed angle from 2D vector a to b (CCW positive).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L65" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L134" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_projector" class="level3">
 <h3 class="anchored" data-anchor-id="get_projector">get_projector</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_projector(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    normal:Float[Array, <span class="st">'dim'</span>], <span class="co"># Normal vector.</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim dim'</span>]: <span class="co"># Projection matrix onto the tangent plane.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    normal:Float[Array, <span class="st">'dim'</span>], <span class="co"># Normal vector (need not be unit length).</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim dim'</span>]: <span class="co"># Projection matrix onto the plane orthogonal to normal.</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Projector matrix P = I - n⊗n for a (not necessarily normalized) normal vector n.</em></p>
+<p><em>Tangent-plane projector <span class="math inline">\(P = I - \hat{n} \otimes \hat{n}\)</span>.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="project_out_vector" class="level3">
 <h3 class="anchored" data-anchor-id="project_out_vector">project_out_vector</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> project_out_vector(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]:</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Project vector a onto the plane orthogonal to vector b</em></p>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], <span class="co"># Input vector.</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    b:Float[Array, <span class="st">'dim'</span>], <span class="co"># Normal direction to project out.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]: <span class="co"># Component of a orthogonal to b.</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Project vector a onto the plane orthogonal to b.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L51" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="project_on_vector" class="level3">
 <h3 class="anchored" data-anchor-id="project_on_vector">project_on_vector</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> project_on_vector(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]:</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Project vector a onto vector b</em></p>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], <span class="co"># Vector to project.</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    b:Float[Array, <span class="st">'dim'</span>], <span class="co"># Target direction.</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'dim'</span>]: <span class="co"># Projection of a onto b.</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Project vector a onto vector b.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L101" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L202" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_tetrahedron_volume" class="level3">
 <h3 class="anchored" data-anchor-id="get_tetrahedron_volume">get_tetrahedron_volume</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_tetrahedron_volume(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]:</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'3'</span>], b:Float[Array, <span class="st">'3'</span>], c:Float[Array, <span class="st">'3'</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Signed volume (positive if a, b, c form a right-handed frame).</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Volume of tetrahedron defined by side vectors a, b, c</em></p>
-<div id="50f207f4" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
-<pre><code>Array([0.5, 0.5], dtype=float64)</code></pre>
-</div>
-</div>
-<div id="a4accb88" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>get_signed_angle_between_vectors(jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.5</span>,<span class="fl">0.5</span>])) <span class="op">*</span> (<span class="dv">180</span><span class="op">/</span>jnp.pi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
-<pre><code>Array(45., dtype=float64)</code></pre>
-</div>
-</div>
-<div id="b7fb9419-37ca-4e80-870f-bcc96536f8d1" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>get_polygon_area(jnp.array([[<span class="fl">0.</span>,<span class="fl">0.</span>], [<span class="fl">0.</span>,<span class="fl">1.</span>], [<span class="fl">1.</span>,<span class="fl">0.</span>]]) ), get_triangle_area(<span class="op">*</span>jnp.array([[<span class="fl">0.</span>,<span class="fl">0.</span>], [<span class="fl">0.</span>,<span class="fl">1.</span>], [<span class="fl">1.</span>,<span class="fl">0.</span>]]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<pre><code>(Array(0.5, dtype=float64), Array(0.5, dtype=float64))</code></pre>
-</div>
-</div>
-<div id="68c95e23" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">0.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
-<pre><code>Array([0.5, 0.5], dtype=float64)</code></pre>
-</div>
-</div>
-<div id="16894cb9-04e7-4ed0-bef9-eddca16e61ba" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]),  jnp.array([<span class="fl">0.</span>,<span class="fl">1.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
-<pre><code>Array([0., 0.], dtype=float64)</code></pre>
-</div>
-</div>
-<div id="d136dadc" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>get_circumcenter(jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]), jnp.array([<span class="fl">2.</span>,<span class="fl">0.</span>]),  jnp.array([<span class="fl">1.</span>,<span class="fl">0.</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
-<pre><code>Array([0., 0.], dtype=float64)</code></pre>
-</div>
-</div>
+<p><em>Signed volume of tetrahedron with edge vectors a, b, c from a common vertex.</em></p>
 </section>
 <section id="intrinsic-geometry" class="level3">
 <h3 class="anchored" data-anchor-id="intrinsic-geometry">Intrinsic geometry</h3>
 <p>Many mesh quantities (angles, triangle areas, …) can be computed purely intrinsically from edge lengths <span class="math inline">\(\ell_{ij}\)</span> without explicit reference to the mesh vertex coordinates in 3d.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L184" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L295" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_circumcenter_from_lengths" class="level3">
 <h3 class="anchored" data-anchor-id="get_circumcenter_from_lengths">get_circumcenter_from_lengths</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_circumcenter_from_lengths(</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], lb:Float[Array, <span class="st">''</span>], lc:Float[Array, <span class="st">''</span>], zero_clip:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-10</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]:</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Return circumcenter barycentric coordinates of triangle with edge lengths la, lb, lc.</em></p>
-<p>To compute the circumcenter u from the barycentric coordinates ba, bb, bc: u = ba * a + bb * b + bc * c where a, b, c are the triangle vertices.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_circumcenter_from_lengths(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex a (i.e. edge bc).</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    lb:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex b (i.e. edge ca).</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    lc:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex c (i.e. edge ab).</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Normalized barycentric coordinates [lambda_a, lambda_b, lambda_c].</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Circumcenter in barycentric coordinates from edge lengths.</em></p>
+<p>To recover Cartesian coordinates: <span class="math inline">\(u = \lambda_a \, a + \lambda_b \, b + \lambda_c \, c\)</span>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L156" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L268" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_cotangents_from_lengths" class="level3">
 <h3 class="anchored" data-anchor-id="get_cotangents_from_lengths">get_cotangents_from_lengths</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cotangents_from_lengths(</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex a (i.e. edge bc).</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    lb:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex b (i.e. edge ca).</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    lc:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex c (i.e. edge ab).</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Cotangents [cot_alpha, cot_beta, cot_gamma] at vertices a, b, c.</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cotangents_from_lengths(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex a (i.e. edge bc).</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    lb:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex b (i.e. edge ca).</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    lc:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex c (i.e. edge ab).</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Cotangents [cot_alpha, cot_beta, cot_gamma] at vertices a, b, c.</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Cotangents of interior angles from side lengths.</em></p>
-<p>Uses cot(A) = (b²+c²-a²) / (4·area).</p>
+<p>Uses <span class="math inline">\(\cot(\alpha) = (b^2 + c^2 - a^2) / (4 \cdot \text{area})\)</span>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L130" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L242" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_angles_from_lengths" class="level3">
 <h3 class="anchored" data-anchor-id="get_angles_from_lengths">get_angles_from_lengths</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_angles_from_lengths(</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex a (i.e. edge bc).</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    lb:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex b (i.e. edge ca).</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    lc:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex c (i.e. edge ab).</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Angles [alpha, beta, gamma] at vertices a, b, c respectively.</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_angles_from_lengths(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex a (i.e. edge bc).</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    lb:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex b (i.e. edge ca).</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    lc:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex c (i.e. edge ab).</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Angles [alpha, beta, gamma] at vertices a, b, c respectively.</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Interior angles from side lengths using the law of cosines.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L107" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L219" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_triangle_area_from_lengths" class="level3">
 <h3 class="anchored" data-anchor-id="get_triangle_area_from_lengths">get_triangle_area_from_lengths</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_area_from_lengths(</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex a (i.e. edge bc).</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    lb:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex b (i.e. edge ca).</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    lc:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex c (i.e. edge ab).</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Area of the triangle.</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_area_from_lengths(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    la:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex a (i.e. edge bc).</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    lb:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex b (i.e. edge ca).</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    lc:Float[Array, <span class="st">''</span>], <span class="co"># Length of side opposite vertex c (i.e. edge ab).</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">''</span>]: <span class="co"># Area of the triangle.</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Triangle area from side lengths using Heron’s formula.</em></p>
-<div id="8366141b" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test intrinsic functions against extrinsic (vertex-based) implementations</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>triangles <span class="op">=</span> [</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>], [<span class="fl">0.</span>, <span class="fl">1.</span>]]),</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">3.</span>, <span class="fl">0.</span>], [<span class="fl">1.5</span>, <span class="fl">2.</span>]]),</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">1.</span>]]),</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">4.</span>, <span class="fl">6.</span>], [<span class="fl">7.</span>, <span class="fl">1.</span>]]),]</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tri <span class="kw">in</span> triangles:</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    a, b, c <span class="op">=</span> tri</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    la, lb, lc <span class="op">=</span> jnp.linalg.norm(b <span class="op">-</span> c), jnp.linalg.norm(c <span class="op">-</span> a), jnp.linalg.norm(a <span class="op">-</span> b)</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Area</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(get_triangle_area(a, b, c),</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>                         get_triangle_area_from_lengths(la, lb, lc), atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Angles</span></span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    angles_ext <span class="op">=</span> jnp.stack([get_angle_between_vectors(b <span class="op">-</span> a, c <span class="op">-</span> a),</span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>                            get_angle_between_vectors(a <span class="op">-</span> b, c <span class="op">-</span> b),</span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>                            get_angle_between_vectors(a <span class="op">-</span> c, b <span class="op">-</span> c)])</span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(angles_ext, get_angles_from_lengths(la, lb, lc), atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cotangents</span></span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>    cots_ext <span class="op">=</span> jnp.stack([get_cot_between_vectors(b <span class="op">-</span> a, c <span class="op">-</span> a),</span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>                          get_cot_between_vectors(a <span class="op">-</span> b, c <span class="op">-</span> b),</span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>                          get_cot_between_vectors(a <span class="op">-</span> c, b <span class="op">-</span> c)])</span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(cots_ext, get_cotangents_from_lengths(la, lb, lc), atol<span class="op">=</span><span class="fl">1e-10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="8366141b" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test intrinsic functions against extrinsic (vertex-based) implementations</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>triangles <span class="op">=</span> [</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>], [<span class="fl">0.</span>, <span class="fl">1.</span>]]),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">3.</span>, <span class="fl">0.</span>], [<span class="fl">1.5</span>, <span class="fl">2.</span>]]),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">1.</span>]]),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    jnp.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">4.</span>, <span class="fl">6.</span>], [<span class="fl">7.</span>, <span class="fl">1.</span>]]),]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tri <span class="kw">in</span> triangles:</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    a, b, c <span class="op">=</span> tri</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    la, lb, lc <span class="op">=</span> jnp.linalg.norm(b <span class="op">-</span> c), jnp.linalg.norm(c <span class="op">-</span> a), jnp.linalg.norm(a <span class="op">-</span> b)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Area</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(get_triangle_area(a, b, c),</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                         get_triangle_area_from_lengths(la, lb, lc), atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Angles</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    angles_ext <span class="op">=</span> jnp.stack([get_angle_between_vectors(b <span class="op">-</span> a, c <span class="op">-</span> a),</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>                            get_angle_between_vectors(a <span class="op">-</span> b, c <span class="op">-</span> b),</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>                            get_angle_between_vectors(a <span class="op">-</span> c, b <span class="op">-</span> c)])</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(angles_ext, get_angles_from_lengths(la, lb, lc), atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cotangents</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    cots_ext <span class="op">=</span> jnp.stack([get_cot_between_vectors(b <span class="op">-</span> a, c <span class="op">-</span> a),</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                          get_cot_between_vectors(a <span class="op">-</span> b, c <span class="op">-</span> b),</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>                          get_cot_between_vectors(a <span class="op">-</span> c, b <span class="op">-</span> c)])</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(cots_ext, get_cotangents_from_lengths(la, lb, lc), atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Circumcenter</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>    cc_ext <span class="op">=</span> get_circumcenter(a, b, c)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    bary <span class="op">=</span> get_circumcenter_from_lengths(la, lb, lc)</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    cc_int <span class="op">=</span> bary[<span class="dv">0</span>] <span class="op">*</span> a <span class="op">+</span> bary[<span class="dv">1</span>] <span class="op">*</span> b <span class="op">+</span> bary[<span class="dv">2</span>] <span class="op">*</span> c</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(cc_ext, cc_int, atol<span class="op">=</span><span class="fl">1e-10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="normals-and-rotation-matrices-in-3d" class="level3">
-<h3 class="anchored" data-anchor-id="normals-and-rotation-matrices-in-3d">Normals and rotation matrices in 3D</h3>
+<section id="rotation-matrices-and-normals" class="level3">
+<h3 class="anchored" data-anchor-id="rotation-matrices-and-normals">Rotation matrices and normals</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L374" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
-<section id="quaternion_to_rot_max" class="level3">
-<h3 class="anchored" data-anchor-id="quaternion_to_rot_max">quaternion_to_rot_max</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> quaternion_to_rot_max(</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    q:Float[Array, <span class="st">'4'</span>]</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3 3'</span>]:</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Convert unit quaternion into a 3d rotation matrix.</em></p>
-<p>See https://fr.wikipedia.org/wiki/Quaternions_et_rotation_dans_l%27espace</p>
+<section id="quaternion_to_rot_mat" class="level3">
+<h3 class="anchored" data-anchor-id="quaternion_to_rot_mat">quaternion_to_rot_mat</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> quaternion_to_rot_mat(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    q:Float[Array, <span class="st">'4'</span>], <span class="co"># Quaternion $[w, x, y, z]$ (normalized internally).</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3 3'</span>]: <span class="co"># Rotation matrix.</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Convert unit quaternion to 3D rotation matrix.</em></p>
+<p>See <code>Quaternion rotation &lt;https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation&gt;</code>_.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L208" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L355" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_triangle_normal" class="level3">
 <h3 class="anchored" data-anchor-id="get_triangle_normal">get_triangle_normal</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_normal(</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'3'</span>], b:Float[Array, <span class="st">'3'</span>], c:Float[Array, <span class="st">'3'</span>]</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]:</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Compute unit normal vector of triangle abc.</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_triangle_normal(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'3'</span>], b:Float[Array, <span class="st">'3'</span>], c:Float[Array, <span class="st">'3'</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Unit normal vector.</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Unit normal of triangle abc (right-hand rule on a -&gt; b -&gt; c).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L204" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L339" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_perp_2d" class="level3">
 <h3 class="anchored" data-anchor-id="get_perp_2d">get_perp_2d</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_perp_2d(</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    x:Float[Array, <span class="st">'... 2'</span>]</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'... 2'</span>]:</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Get perpendicular vector.</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_perp_2d(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    x:Float[Array, <span class="st">'... 2'</span>], <span class="co"># Input vector(s).</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'... 2'</span>]: <span class="co"># Perpendicular vector(s).</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>90-degree clockwise rotation of a 2D vector: <span class="math inline">\((x, y) \to (y, -x)\)</span>.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L200" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L322" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_rot_mat" class="level3">
 <h3 class="anchored" data-anchor-id="get_rot_mat">get_rot_mat</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_rot_mat(</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    theta:<span class="bu">float</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'2 2'</span>]:</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Get 2D rotation matrix from angle in radians.</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_rot_mat(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    theta:<span class="bu">float</span>, <span class="co"># Rotation angle in radians.</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'2 2'</span>]: <span class="co"># Rotation matrix.</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>2D counter-clockwise rotation matrix for angle theta.</em></p>
 </section>
 <section id="barycentric-coordinates" class="level3">
 <h3 class="anchored" data-anchor-id="barycentric-coordinates">Barycentric coordinates</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L228" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L395" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_barycentric_coordinates" class="level3">
 <h3 class="anchored" data-anchor-id="get_barycentric_coordinates">get_barycentric_coordinates</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_barycentric_coordinates(</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    point:Float[Array, <span class="st">'dim'</span>], a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>],</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    zero_clip:<span class="bu">float</span><span class="op">=</span><span class="fl">1e-10</span>, normalize:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]:</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Compute barycentric coordinates of point with respect to triangle abc.</em></p>
-<div id="a501004d" class="cell" data-execution_count="81">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>vertices <span class="op">=</span> jnp.array([[<span class="fl">0.</span>, <span class="dv">0</span> ], [<span class="fl">0.</span>, <span class="fl">1.</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>]])</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>point1 <span class="op">=</span> jnp.array([<span class="fl">0.5</span>, <span class="fl">0.2</span>])</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>get_barycentric_coordinates(point1, <span class="op">*</span>vertices, normalize<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="81">
-<pre><code>Array([0. , 0.2, 0.5], dtype=float64)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_barycentric_coordinates(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    point:Float[Array, <span class="st">'dim'</span>], <span class="co"># Query point.</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    a:Float[Array, <span class="st">'dim'</span>], b:Float[Array, <span class="st">'dim'</span>], c:Float[Array, <span class="st">'dim'</span>]</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Barycentric coordinates [lambda_a, lambda_b, lambda_c] summing to 1.</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Barycentric coordinates of point w.r.t. triangle abc.</em></p>
+<p>Uses the area-ratio method: each coordinate is the ratio of the sub-triangle area to the full triangle area. In 3D the point is projected onto the triangle plane (least-squares sense).</p>
+<div id="a501004d" class="cell" data-execution_count="41">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>vertices <span class="op">=</span> jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">0.</span>, <span class="fl">1.</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>]])</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>point1 <span class="op">=</span> jnp.array([<span class="fl">0.5</span>, <span class="fl">0.2</span>])</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>get_barycentric_coordinates(point1, <span class="op">*</span>vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+<pre><code>Array([0.3, 0.2, 0.5], dtype=float64)</code></pre>
 </div>
 </div>
-<div id="ab430f2e" class="cell" data-execution_count="83">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>vertices2 <span class="op">=</span> jnp.array([[<span class="fl">0.</span>, <span class="dv">0</span>, <span class="dv">0</span>], [<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="dv">0</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="dv">0</span>]])</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>point2 <span class="op">=</span> jnp.array([<span class="fl">0.5</span>, <span class="fl">0.2</span>, <span class="fl">0.</span>])</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>get_barycentric_coordinates(point2, <span class="op">*</span>vertices2, normalize<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="83">
-<pre><code>Array([0. , 0.2, 0.5], dtype=float64)</code></pre>
+<div id="ab430f2e" class="cell" data-execution_count="42">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>vertices2 <span class="op">=</span> jnp.array([[<span class="fl">0.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], [<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">0.</span>], [<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>]])</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>point2 <span class="op">=</span> jnp.array([<span class="fl">0.5</span>, <span class="fl">0.2</span>, <span class="fl">0.</span>])</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>get_barycentric_coordinates(point2, <span class="op">*</span>vertices2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
+<pre><code>Array([0.3, 0.2, 0.5], dtype=float64)</code></pre>
 </div>
 </div>
-<div id="6b390cf9" class="cell" data-execution_count="84">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>point3 <span class="op">=</span> jnp.array([<span class="fl">0.5</span>, <span class="fl">0.2</span>, <span class="fl">1.</span>])</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>get_barycentric_coordinates(point3, <span class="op">*</span>vertices2, normalize<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="84">
-<pre><code>Array([0. , 0.2, 0.5], dtype=float64)</code></pre>
+<div id="6b390cf9" class="cell" data-execution_count="43">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>point3 <span class="op">=</span> jnp.array([<span class="fl">0.5</span>, <span class="fl">0.2</span>, <span class="fl">1.</span>])</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>get_barycentric_coordinates(point3, <span class="op">*</span>vertices2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="43">
+<pre><code>Array([0.3, 0.2, 0.5], dtype=float64)</code></pre>
 </div>
 </div>
 </section>
 <section id="rodrigues-rotation" class="level3">
 <h3 class="anchored" data-anchor-id="rodrigues-rotation">Rodrigues rotation</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L240" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L426" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="rotate_around_axis" class="level3">
 <h3 class="anchored" data-anchor-id="rotate_around_axis">rotate_around_axis</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rotate_around_axis(</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    v:Float[Array, <span class="st">'3'</span>], <span class="co"># Vector to rotate.</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    axis:Float[Array, <span class="st">'3'</span>], <span class="co"># Unit rotation axis.</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    angle:Float[Array, <span class="st">''</span>], <span class="co"># Rotation angle in radians.</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Rotated vector.</span></span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rotate_around_axis(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    v:Float[Array, <span class="st">'3'</span>], <span class="co"># Vector to rotate.</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    axis:Float[Array, <span class="st">'3'</span>], <span class="co"># Unit rotation axis.</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    angle:Float[Array, <span class="st">''</span>], <span class="co"># Rotation angle in radians.</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'3'</span>]: <span class="co"># Rotated vector.</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Rotate 3D vector v by angle (radians) around unit axis using Rodrigues’ formula.</em></p>
-<div id="897e3a1a" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test: rotating x-axis by 90° around z-axis should give y-axis</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> jnp.array([<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>])</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> jnp.array([<span class="fl">0.</span>, <span class="fl">0.</span>, <span class="fl">1.</span>])</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> rotate_around_axis(x, z, jnp.pi<span class="op">/</span><span class="dv">2</span>)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(result, jnp.array([<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">0.</span>]), atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># test: rotating by 0 should return the same vector</span></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(rotate_around_axis(x, z, <span class="fl">0.</span>), x, atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co"># test: rotating around the vector itself should return it</span></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> jnp.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])</span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>axis <span class="op">=</span> v <span class="op">/</span> jnp.linalg.norm(v)</span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(rotate_around_axis(v, axis, <span class="fl">1.23</span>), v, atol<span class="op">=</span><span class="fl">1e-10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="897e3a1a" class="cell" data-execution_count="50">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test: rotating x-axis by 90° around z-axis should give y-axis</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> jnp.array([<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>])</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> jnp.array([<span class="fl">0.</span>, <span class="fl">0.</span>, <span class="fl">1.</span>])</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> rotate_around_axis(x, z, jnp.array(jnp.pi<span class="op">/</span><span class="dv">2</span>))</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(result, jnp.array([<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">0.</span>]), atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># test: rotating by 0 should return the same vector</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(rotate_around_axis(x, z, jnp.array(<span class="fl">0.</span>)), x, atol<span class="op">=</span><span class="fl">1e-10</span>)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># test: rotating around the vector itself should return it</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> jnp.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>axis <span class="op">=</span> v <span class="op">/</span> jnp.linalg.norm(v)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(rotate_around_axis(v, axis, jnp.array(<span class="fl">1.23</span>)), v, atol<span class="op">=</span><span class="fl">1e-10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

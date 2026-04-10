@@ -4,7 +4,7 @@
 
 ## Finite-element gradient and cotan-Laplacian
 
-Building on the mesh geometry and adjancency-based operators, we can now
+Building on the mesh geometry and adjacency-based operators, we can now
 define two important linear operators that depend both on mesh
 connectivity and on mesh geometry. They are the (discrete,
 triangulation-based) equivalent of the gradient and Laplace-Beltrami
@@ -34,7 +34,7 @@ The sum is over adjacent vertices, and
 *α*<sub>*j*</sub>, *β*<sub>*j*</sub> are the two triangle angles
 “opposite” to the edge *i**j*.
 
-To check for correctness, we can compare with [this `libgigl`
+To check for correctness, we can compare with [this `libigl`
 tutorial](https://libigl.github.io/libigl-python-bindings/tut-chapter1/),
 using the test mesh and some random test fields.
 
@@ -63,7 +63,7 @@ geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_posit
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L78"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L82"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### diag_jsparse
@@ -81,7 +81,7 @@ def diag_jsparse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L57"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L61"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bcoo_to_scipy
@@ -99,7 +99,7 @@ def bcoo_to_scipy(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L32"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L36"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### scipy_to_bcoo
@@ -117,10 +117,27 @@ without converting to dense.
 
 ### Cotan-Laplacian
 
+The cotangent Laplacian is the standard discretization of the
+Laplace-Beltrami operator on triangle meshes. It is *negative
+semi-definite* in our sign convention: for any field *u*,
+
+∑<sub>*i*</sub>*u*<sub>*i*</sub>(*Δ**u*)<sub>*i*</sub> = −∑<sub>*i**j*</sub>*w*<sub>*i**j*</sub>(*u*<sub>*i*</sub> − *u*<sub>*j*</sub>)<sup>2</sup> ≤ 0
+
+where $w\_{ij} = \frac{1}{2}(\cot\alpha\_{ij} + \cot\beta\_{ij})$ are
+the cotangent edge weights. On boundary edges only one opposite angle
+contributes.
+
+We provide two forms: -
+[`compute_cotan_laplace`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#compute_cotan_laplace):
+applies *L* to a vertex field via gather/scatter (works with `jax.jit`
+and `jax.grad`). -
+[`cotan_laplace_sparse`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#cotan_laplace_sparse):
+assembles *L* as a sparse BCOO matrix.
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L88"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L92"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_cotan_laplace
@@ -128,18 +145,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def compute_cotan_laplace(
-    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh, vertex_field:Float[Array, 'n_vertices ...']
-)->Float[Array, 'n_vertices ...']:
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    hemesh:HeMesh, # Half-edge mesh connectivity.
+    vertex_field:Float[Array, 'n_vertices ...'], # Per-vertex scalar, vector, or tensor field.
+    normalize:bool=False, # If True, return the area-normalized Laplace-Beltrami operator $M^{-1} L u$,
+dividing by the Voronoi cell area at each vertex.
+)->Float[Array, 'n_vertices ...']: # Cotangent Laplacian applied to the field, same shape as ``vertex_field``.
 
 ```
 
-*Compute cotangent laplacian of a per-vertex field (natural boundary
+*Compute cotangent Laplacian of a per-vertex field (natural boundary
 conditions).*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L99"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L124"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cotan_laplace_sparse
@@ -179,6 +200,10 @@ print("vector field rel. error:", rel_err_vec)
     vector field rel. error: 2.011929541056845e-16
 
 ``` python
+apply_and_normalize = compute_cotan_laplace(geommesh.vertices, hemesh, u_vec, normalize=True)
+```
+
+``` python
 # test sparse cotan Laplacian vs apply function
 key = jax.random.PRNGKey(0)
 u_test = jax.random.normal(key, (hemesh.n_vertices,))
@@ -201,6 +226,39 @@ bcoo_to_scipy(L_sparse), (scipy_to_bcoo(bcoo_to_scipy(L_sparse)).todense() == L_
         with 839 stored elements and shape (131, 131)>,
      Array(True, dtype=bool))
 
+### Periodic cotan-Laplacian (2D)
+
+For meshes on a periodic domain (torus), edge vectors must be computed
+with a periodic distance function. The function below takes a
+`distance_function` argument (as in `triangulax.periodic`) and uses
+periodic cotangent weights.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L144"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### compute_periodic_cotan_laplace
+
+``` python
+
+def compute_periodic_cotan_laplace(
+    vertices:Float[Array, 'n_vertices 2'], # Vertex positions, shape (n_vertices, 2).
+    hemesh:HeMesh, # Half-edge mesh connectivity.
+    vertex_field:Float[Array, 'n_vertices ...'], # Per-vertex scalar, vector, or tensor field.
+    distance_function:Callable, # Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``,
+e.g. :func:[`triangulax.periodic.displacement_periodic`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#displacement_periodic).
+    normalize:bool=False, # If True, divide by periodic Voronoi cell area at each vertex.
+)->Float[Array, 'n_vertices ...']: # Cotangent Laplacian applied to the field, same shape as ``vertex_field``.
+
+```
+
+*Compute cotangent Laplacian on a periodic domain (2D).*
+
+Uses a periodic distance function to compute edge cotangent weights,
+suitable for meshes on a torus.
+
 ### Mass matrix (lumped)
 
 The finite-element mass matrix *M* appears whenever we discretize a
@@ -211,7 +269,7 @@ Voronoi area associated with vertex *i*.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L148"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L213"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### mass_matrix_inv_sparse
@@ -231,7 +289,7 @@ def mass_matrix_inv_sparse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L119"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L183"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### mass_matrix_sparse
@@ -242,14 +300,16 @@ def mass_matrix_sparse(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
     hemesh:HeMesh, # Half-edge mesh connectivity.
     area_type:str='voronoi', # Choice of dual-cell area definition used on the diagonal.
+Use ``"voronoi"`` for the cotangent Laplacian; ``"barycentric"``
+for a simpler (always positive) approximation.
 )->BCOO: # Diagonal sparse mass matrix.
 
 ```
 
 *Assemble lumped (diagonal) mass matrix as a sparse matrix (BCOO).*
 
-The lumped mass matrix is diagonal wiIn cth entries equal to the Voronoi
-dual area of each vertex: *M*<sub>*i**i*</sub> = *A*<sub>*i*</sub>.
+The lumped mass matrix is diagonal with entries equal to the dual area
+of each vertex: *M*<sub>*i**i*</sub> = *A*<sub>*i*</sub>.
 
 ``` python
 # Test mass matrix against igl.massmatrix (Voronoi type)
@@ -261,9 +321,12 @@ print("mass matrix rel. error:", rel_err_mass)
 
 # Test inverse
 M_inv_jax = mass_matrix_inv_sparse(geommesh.vertices, hemesh)
-identity_check = (M_jax @ M_inv_jax.todense()).todense()
+identity_check = M_jax @ M_inv_jax.todense()
 print("M @ M_inv ~ I error:", np.linalg.norm(identity_check - np.eye(hemesh.n_vertices)))
 ```
+
+    mass matrix rel. error: 0.021744009243191195
+    M @ M_inv ~ I error: 4.577566798522237e-16
 
 ### Finite-element gradient
 
@@ -273,7 +336,7 @@ only depend on mesh connectivity, not geometry.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L225"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L287"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_3d
@@ -291,7 +354,7 @@ def compute_gradient_3d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L215"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L277"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_2d
@@ -309,7 +372,7 @@ def compute_gradient_2d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L263"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L325"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_3d
@@ -335,7 +398,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L235"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L297"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_2d
@@ -361,7 +424,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L290"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L352"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### reshape_face_gradient
@@ -449,6 +512,90 @@ print("2D grad (vector field) sparse vs apply rel. error:", rel_err_g2_vec)
     3D grad sparse vs apply rel. error: 9.602668379845331e-17
     2D grad (vector field) sparse vs apply rel. error: 8.285943150518157e-17
 
+### Divergence
+
+The discrete divergence maps a per-face vector field to a per-vertex
+scalar field. It is the negative adjoint of the gradient with respect to
+the area-weighted inner product:
+
+(div *V*)<sub>*i*</sub> = −∑<sub>*f* ∋ *i*</sub>*A*<sub>*f*</sub> *V*<sub>*f*</sub> ⋅ ∇*ϕ*<sub>*i*</sub><sup>(*f*)</sup>
+
+where *A*<sub>*f*</sub> is the face area. With this sign convention, the
+composed operator satisfies *L* = div ∘ ∇ (the negative semi-definite
+cotan-Laplacian). In matrix form, `div = -G^T @ diag(face_areas)`.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L419"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### compute_divergence_3d
+
+``` python
+
+def compute_divergence_3d(
+    vertices:Float[Array, 'n_vertices 3'], hemesh:HeMesh, face_field:Float[Array, 'n_faces 3 ...']
+)->Float[Array, 'n_vertices ...']:
+
+```
+
+*Compute the (integrated) FE divergence of a per-face vector field
+(3D).*
+
+Same as
+:func:[`compute_divergence_2d`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#compute_divergence_2d)
+but for surfaces embedded in 3D.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L381"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### compute_divergence_2d
+
+``` python
+
+def compute_divergence_2d(
+    vertices:Float[Array, 'n_vertices 2'], # Vertex positions, shape (n_vertices, 2).
+    hemesh:HeMesh, # Half-edge mesh connectivity.
+    face_field:Float[Array, 'n_faces 2 ...'], # Per-face vector (or tensor) field, shape (n_faces, 2, ...).
+)->Float[Array, 'n_vertices ...']: # Per-vertex field, shape (n_vertices, ...).
+
+```
+
+*Compute the (integrated) FE divergence of a per-face vector field
+(2D).*
+
+Maps a per-face vector field to a per-vertex scalar field. This is the
+negative adjoint of the FE gradient weighted by face areas. Satisfies
+`compute_cotan_laplace(v, h, u) ≈ compute_divergence_2d(v, h, compute_gradient_2d(v, h, u))`.
+
+``` python
+# Test: div(grad u) == cotan_laplace(u)
+key = jax.random.PRNGKey(42)
+u_div = jax.random.normal(key, (hemesh.n_vertices,))
+
+lap_direct = compute_cotan_laplace(geommesh.vertices, hemesh, u_div)
+grad_u = compute_gradient_2d(geommesh.vertices, hemesh, u_div)
+lap_via_div = compute_divergence_2d(geommesh.vertices, hemesh, grad_u)
+
+rel_err_div = jnp.linalg.norm(lap_direct - lap_via_div) / jnp.linalg.norm(lap_direct)
+print("div(grad u) vs L u rel. error:", rel_err_div)
+
+# same in 3D
+grad_u_3d = compute_gradient_3d(geommesh_3d.vertices, hemesh, u_div)
+lap_3d_direct = compute_cotan_laplace(geommesh_3d.vertices, hemesh, u_div)
+lap_3d_via_div = compute_divergence_3d(geommesh_3d.vertices, hemesh, grad_u_3d)
+
+rel_err_div_3d = jnp.linalg.norm(lap_3d_direct - lap_3d_via_div) / jnp.linalg.norm(lap_3d_direct)
+print("div(grad u) vs L u rel. error (3D):", rel_err_div_3d)
+```
+
+    div(grad u) vs L u rel. error: 1.343128503483087e-16
+    div(grad u) vs L u rel. error (3D): 1.6173638076009926e-16
+
 ### Wrapping as linear operators
 
 It’s often useful to think of functions like
@@ -481,10 +628,52 @@ mat.shape
 
     (131, 131)
 
+#### Example: implicit diffusion step
+
+A common use case in simulation is the implicit time step for the heat
+equation on a mesh. Given per-vertex temperatures *u*<sup>*n*</sup> and
+a time step *Δ**t*, one solves
+
+(*M* − *Δ**t* *L*) *u*<sup>*n* + 1</sup> = *M* *u*<sup>*n*</sup>
+
+where *M* is the mass matrix and *L* the cotan-Laplacian. Since *L* is
+negative semi-definite, the system matrix *M* − *Δ**t* *L* is positive
+definite and can be solved with a conjugate-gradient solver from
+`lineax`.
+
+``` python
+# Implicit diffusion step on the disk mesh
+
+dt = 0.01
+M = mass_matrix_sparse(geommesh.vertices, hemesh)
+L = cotan_laplace_sparse(geommesh.vertices, hemesh)
+
+# Initial condition: random temperature field
+key = jax.random.PRNGKey(7)
+u0 = jax.random.normal(key, (hemesh.n_vertices,))
+
+# Right-hand side: M u^n
+rhs = M @ u0
+
+# System matrix A = M - dt * L  (positive definite)
+# Wrap as a lineax operator so we can use an iterative solver.
+def apply_A(x):
+    return M @ x - dt * (L @ x)
+
+A_op = lineax.FunctionLinearOperator(apply_A, input_structure=jax.eval_shape(apply_A, u0),
+                                     tags=lineax.positive_semidefinite_tag)
+
+# Solve with conjugate gradient
+u1 = lineax.linear_solve(A_op, rhs, solver=lineax.CG(rtol=1e-6, atol=1e-10)).value
+print("implicit Euler step completed, |u1|_2 =", jnp.linalg.norm(u1))
+```
+
+    implicit Euler step completed, |u1|_2 = 13.946797843039743
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L319"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L439"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### linear_op_to_sparse
@@ -521,7 +710,7 @@ else:
 ``` python
 ## now let's try with a large mesh
 
-mesh = TriMesh.read_obj("test_meshes/torus_high_resolution.obj")
+mesh = TriMesh.read_obj("../test_meshes/torus_high_resolution.obj")
 hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommesh = msh.GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 

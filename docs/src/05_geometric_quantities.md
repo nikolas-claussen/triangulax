@@ -39,7 +39,7 @@ geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_posit
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L31"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L33"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_he_length
@@ -57,7 +57,7 @@ def get_he_length(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L70"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L77"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_dihedral_angles
@@ -66,7 +66,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_dihedral_angles(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_hes ...']:
+)->Float[Array, 'n_hes']:
 
 ```
 
@@ -75,7 +75,25 @@ def get_dihedral_angles(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L62"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L72"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_face_centroids
+
+``` python
+
+def get_face_centroids(
+    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
+)->Float[Array, 'n_faces dim']:
+
+```
+
+*Compute centroids (barycenters) of triangular faces.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L64"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_vertex_normals
@@ -84,16 +102,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_vertex_normals(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_faces ...']:
+)->Float[Array, 'n_vertices dim']:
 
 ```
 
-*Compute per-vertex normals by averaging over faces*
+*Compute per-vertex unit normals by area-weighted averaging over
+adjacent faces.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L55"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L57"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_normals
@@ -102,16 +121,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_triangle_normals(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_faces ...']:
+)->Float[Array, 'n_faces dim']:
 
 ```
 
-*Compute normals. In 2d, this just returns +/-1.*
+*Compute per-face unit normals. In 2d, this just returns +/-1.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L50"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L52"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_oriented_triangle_areas
@@ -120,7 +139,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_oriented_triangle_areas(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_faces ...']:
+)->Float[Array, 'n_faces dim']:
 
 ```
 
@@ -129,7 +148,7 @@ def get_oriented_triangle_areas(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L45"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L47"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_barycentric_cell_areas
@@ -148,7 +167,7 @@ sum of adjacent triangle areas.\*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L40"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L42"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_areas
@@ -157,16 +176,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_triangle_areas(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_faces ...']:
+)->Float[Array, 'n_faces']:
 
 ```
 
 *Compute triangle areas in a mesh.*
 
+### Total volume and surface area
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L85"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L92"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_area
@@ -184,7 +205,7 @@ def get_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L79"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L86"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_volume
@@ -205,7 +226,7 @@ relative to the origin).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L97"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L104"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### set_voronoi_face_positions
@@ -224,7 +245,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L91"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L98"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_face_positions
@@ -243,7 +264,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L113"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L120"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_oriented_dual_he_length
@@ -262,7 +283,7 @@ Negative sign = flipped edge.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L107"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L114"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_dual_he_length
@@ -313,7 +334,7 @@ jnp.where((dual_length < -0.0) & ~hemesh.is_bdry_edge )[0]
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L163"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L171"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_edge_areas
@@ -326,15 +347,15 @@ def get_voronoi_edge_areas(
 
 ```
 
-*Voronoi “area” for an edge. Defined as dual edge length * primal edge
-length \*\* 2 / 4.\* Summing over all edge areas adjacent to a vertex
-gives the area of the Voronoi cell around that vertex. Computed directly
-from angles. Accurate in any dimension
+*Voronoi “area” for an edge: `dual_length * primal_length / 4`.*
+
+Summing over all edges adjacent to a vertex gives the Voronoi cell area.
+Computed from cotangent weights. Accurate in any dimension.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L157"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L165"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_edge_lengths
@@ -347,19 +368,20 @@ def get_voronoi_edge_lengths(
 
 ```
 
-*Computed directly from angles. Accurate in any dimension*
+*Voronoi dual edge lengths computed from cotangent weights. Accurate in
+any dimension.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L149"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L157"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
-### get_cotan_weights_per_egde
+### get_cotan_weights_per_edge
 
 ``` python
 
-def get_cotan_weights_per_egde(
+def get_cotan_weights_per_edge(
     vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
 )->Float[Array, 'n_hes']:
 
@@ -370,7 +392,7 @@ def get_cotan_weights_per_egde(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L141"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L149"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cotan_weights_per_he
@@ -383,12 +405,12 @@ def get_cotan_weights_per_he(
 
 ```
 
-*Cotangent of angle opposite to half-edge*
+*Cotangent of angle opposite to half-edge.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L134"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L142"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_sum
@@ -401,12 +423,13 @@ def get_angle_sum(
 
 ```
 
-*Angle sum around vertices. 2*pi-angle sum measures Gaussian curvature\*
+*Angle sum around vertices. `2*pi - angle_sum` measures Gaussian
+curvature.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L126"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L134"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_corner_angles
@@ -465,12 +488,52 @@ Source:
 To compute the total area, we can sum over all half-edges (*r*, *p*)
 opposite to a vertex *q*.
 
-Via this approach, one can also compute cell perimeter, etc.
+Via this approach, one can also compute cell perimeter and many related
+quantities.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L191"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L213"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_gaussian_curvature
+
+``` python
+
+def get_gaussian_curvature(
+    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
+)->Float[Array, 'n_vertices']:
+
+```
+
+*Discrete Gaussian curvature via the angle defect: `(2π - Σθ_i) / A_i`.*
+
+Uses barycentric dual cell areas.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L206"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_voronoi_perimeters
+
+``` python
+
+def get_voronoi_perimeters(
+    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
+)->Float[Array, 'n_vertices']:
+
+```
+
+*Compute Voronoi cell perimeter for each vertex by summing dual edge
+lengths.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L199"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_areas
@@ -483,12 +546,12 @@ def get_voronoi_areas(
 
 ```
 
-*Compute Voronoi area for each vertex.*
+*Compute Voronoi cell area for each vertex by summing edge areas.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L173"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L181"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cell_areas_traversal
@@ -504,7 +567,9 @@ def get_cell_areas_traversal(
 *Compute areas of cells by mesh traversal (don’t use for simulation,
 inefficient).*
 
-Boundary vertices get area 0.
+Boundary vertices get area 0. The sign flip corrects for the winding
+order of `iterate_around_vertex` relative to
+`[`get_polygon_area`](https://nikolas-claussen.github.io/triangulax/src/trigonometry.html#get_polygon_area)`.
 
 ``` python
 # for comparison, compute the areas by mesh traversal
@@ -514,24 +579,64 @@ cell_areas = cell_areas.at[hemesh.is_bdry].set(0)
 
 cell_areas_iterative = get_cell_areas_traversal(geommesh, hemesh)
 
-np.abs(cell_areas_iterative-cell_areas).max() # works!
+print("Voronoi area max error:", jnp.abs(cell_areas_iterative-cell_areas).max())
+
+# Voronoi perimeters
+perimeters = get_voronoi_perimeters(mesh.vertices, hemesh)
+print("Voronoi perimeters (mean):", perimeters[~hemesh.is_bdry].mean())
+
+# Gaussian curvature should be 0 for a flat disk (interior vertices)
+K = get_gaussian_curvature(mesh.vertices, hemesh)
+print("Gaussian curvature (max interior):", jnp.abs(K[~hemesh.is_bdry]).max())
+
+# face centroids
+centroids = get_face_centroids(mesh.vertices, hemesh)
+print("Face centroids shape:", centroids.shape)
 ```
 
-    np.float64(4.85722573273506e-17)
+    Voronoi area max error: 4.85722573273506e-17
+    Voronoi perimeters (mean): 0.6346395879903053
+    Gaussian curvature (max interior): 6.078535117627845e-14
+    Face centroids shape: (224, 2)
 
 ### Mean curvature
 
-To computes the point-wise, per-vertex mean curvature of a mesh, one can
-use the Steiner formula
+Two methods are provided for computing pointwise, per-vertex mean
+curvature.
+
+**Steiner (dihedral angle) formula:**
 $$H_i = \frac{1}{4a_i} \sum\_{j\sim i} \ell\_{ij} \theta\_{ij} $$
-where the sum is over all *j* neighboring *i*, *θ*<sub>*i**j*</sub> are
-the dihedral angles between the adjacent triangles, and
-*a*<sub>*i*</sub> is the cell area around vertex *i*.
+where *θ*<sub>*i**j*</sub> are the dihedral angles between adjacent
+triangles, and *a*<sub>*i*</sub> is the barycentric cell area.
+
+**Cotangent Laplacian formula:** using *Δ***x** = 2*H***n**,
+$$H_i = -\frac{\mathbf{n}\_i \cdot (\Delta\mathbf{x})\_i}{2 A_i^{\mathrm{vor}}}$$
+where *A*<sub>*i*</sub><sup>vor</sup> is the Voronoi cell area and *Δ*
+is the cotangent Laplacian.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L198"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L246"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_mean_curvature_laplace
+
+``` python
+
+def get_mean_curvature_laplace(
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    hemesh:HeMesh, # Half-edge mesh.
+)->Float[Array, 'n_vertices']: # Per-vertex mean curvature.
+
+```
+
+*Compute mean curvature from the cotangent Laplacian: `Δx = 2Hn`.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L224"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_mean_curvature_dihedral
@@ -539,16 +644,93 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def get_mean_curvature_dihedral(
-    vertices:Float[Array, 'n_vertices dim'], hemesh:HeMesh
-)->Float[Array, 'n_vertices']:
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    hemesh:HeMesh, # Half-edge mesh.
+)->Float[Array, 'n_vertices']: # Per-vertex mean curvature.
 
 ```
 
-*Compute mean curvature of triangulated mesh using Steiner
-approximation:* H_i = 1/(4 A_i) \* sum_j \* theta_ij \* l_ij where
-theta_ij is the dihedral angle between faces adjacent to edge ij, l_ij
-is the length of edge ij, and A_i is the barycentric dual cell area
-around vertex i.
+*Compute mean curvature using the Steiner (dihedral angle)
+approximation.*
+
+``` python
+# --- Unit sphere: H should be 1 everywhere ---
+sphere_fine = TriMesh.read_obj("../test_meshes/sphere_fine.obj", dim=3)
+sphere_fine.vertices -= sphere_fine.vertices.mean(axis=0)
+sphere_fine.vertices = (sphere_fine.vertices.T / np.linalg.norm(sphere_fine.vertices, axis=1)).T
+hemesh_sf = msh.HeMesh.from_triangles(sphere_fine.vertices.shape[0], sphere_fine.faces)
+
+H_dihedral = get_mean_curvature_dihedral(sphere_fine.vertices, hemesh_sf)
+H_laplace = get_mean_curvature_laplace(sphere_fine.vertices, hemesh_sf)
+
+# igl reference
+_, _, k1_s, k2_s, _ = igl.principal_curvature(np.asarray(sphere_fine.vertices),
+                                               np.asarray(hemesh_sf.faces))
+H_igl_s = (k1_s + k2_s) / 2
+
+print("=== Unit sphere (H_exact = 1.0) ===")
+print(f"  Dihedral: mean={H_dihedral.mean():.4f}, std={H_dihedral.std():.4f}")
+print(f"  Laplace:  mean={H_laplace.mean():.4f}, std={H_laplace.std():.4f}")
+print(f"  igl:      mean={H_igl_s.mean():.4f}, std={H_igl_s.std():.4f}")
+```
+
+    === Unit sphere (H_exact = 1.0) ===
+      Dihedral: mean=1.0044, std=0.0196
+      Laplace:  mean=1.0000, std=0.0000
+      igl:      mean=1.1134, std=0.0033
+
+    Warning: readOBJ() ignored non-comment line 4:
+      o Icosphere
+
+``` python
+# --- Torus: compare dihedral and Laplacian against igl ---
+torus = TriMesh.read_obj("../test_meshes/torus.obj", dim=3)
+hemesh_t = msh.HeMesh.from_triangles(torus.vertices.shape[0], torus.faces)
+
+H_dihedral_t = get_mean_curvature_dihedral(torus.vertices, hemesh_t)
+H_laplace_t = get_mean_curvature_laplace(torus.vertices, hemesh_t)
+
+_, _, k1_t, k2_t, _ = igl.principal_curvature(np.asarray(torus.vertices),
+                                               np.asarray(hemesh_t.faces))
+H_igl_t = (k1_t + k2_t) / 2
+
+rel_err_dih_lap = np.linalg.norm(H_dihedral_t - H_laplace_t) / np.linalg.norm(H_laplace_t)
+
+rel_err_dih = np.linalg.norm(np.asarray(H_dihedral_t) - H_igl_t) / np.linalg.norm(H_igl_t)
+rel_err_lap = np.linalg.norm(np.asarray(H_laplace_t) - H_igl_t) / np.linalg.norm(H_igl_t)
+
+print("\n=== Torus ===")
+print(f"  Dihedral vs Laplace rel. error: {rel_err_dih_lap:.4f}")
+print(f"  Dihedral vs igl rel. error: {rel_err_dih:.4f}")
+print(f"  Laplace  vs igl rel. error: {rel_err_lap:.4f}")
+print(f"  Dihedral range: [{H_dihedral_t.min():.3f}, {H_dihedral_t.max():.3f}]")
+print(f"  Laplace  range: [{H_laplace_t.min():.3f}, {H_laplace_t.max():.3f}]")
+print(f"  igl      range: [{H_igl_t.min():.3f}, {H_igl_t.max():.3f}]")
+```
+
+
+    === Torus ===
+      Dihedral vs Laplace rel. error: 0.3822
+      Dihedral vs igl rel. error: 0.2612
+      Laplace  vs igl rel. error: 0.2950
+      Dihedral range: [1.621, 3.996]
+      Laplace  range: [1.343, 2.407]
+      igl      range: [1.734, 4.040]
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o Torus
+
+``` python
+import meshplot
+```
+
+``` python
+meshplot.plot(torus.vertices, hemesh_t.faces, np.array(H_dihedral_t), shading={"wireframe":True},)
+```
+
+    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
+
+    <meshplot.Viewer.Viewer at 0x3999fb230>
 
 ### Tangent spaces and parallel transport
 
@@ -565,6 +747,8 @@ namely:
 Based on [Geometry
 Central](https://geometry-central.net/surface/geometry/quantities/#tangent-vectors-and-transport).
 
+**Note:** These functions are for 3D meshes only (they use `jnp.cross`).
+
 ``` python
 # load a 3D mesh for testing tangent space functions
 
@@ -579,7 +763,7 @@ geommesh_s = msh.GeomMesh(*hemesh_s.n_items, sphere.vertices, sphere.face_positi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L212"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L270"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_corner_scaled_angles
@@ -616,7 +800,7 @@ assert jnp.allclose(scaled_sums_disk[hemesh.is_bdry], jnp.pi, atol=1e-10)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L242"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L300"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_tangent_basis
@@ -634,8 +818,10 @@ def get_face_tangent_basis(
 face.*
 
 Convention: basisX is aligned with the face’s incident halfedge
-projected onto the face tangent plane. basisY = cross(face_normal,
-basisX).
+projected onto the face tangent plane. basisY = cross(basisX,
+face_normal).
+
+Note: 3D meshes only (uses cross product).
 
 ``` python
 # test: face tangent basis orthonormality
@@ -661,7 +847,7 @@ assert jnp.allclose(jax.vmap(jnp.dot)(by, face_normals), 0., atol=1e-10)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L271"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L331"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_vertex_tangent_basis
@@ -679,8 +865,10 @@ def get_vertex_tangent_basis(
 vertex.*
 
 Convention: basisX is aligned with the vertex’ incident halfedge
-projected onto the vertex tangent plane. basisY = cross(vertex_normal,
-basisX).
+projected onto the vertex tangent plane. basisY = cross(basisX,
+vertex_normal).
+
+Note: 3D meshes only (uses cross product).
 
 ``` python
 # test: vertex tangent basis orthonormality
@@ -722,7 +910,7 @@ across (“f”) the half edge.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L298"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L360"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_transport_across_halfedge
@@ -732,7 +920,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def get_transport_across_halfedge(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
     hemesh:HeMesh, # Half-edge mesh.
-)->Float[Array, 'n_hes']: # Transport angle per halfedge (radians). NaN for boundary halfedges.
+)->Float[Array, 'n_hes']: # Transport angle per halfedge (radians). 0 for boundary halfedges.
 
 ```
 
@@ -740,8 +928,10 @@ def get_transport_across_halfedge(
 adjacent face across a halfedge.*
 
 Applying this rotation to a vector in the frame of heface\[he\] gives
-the same vector in the frame of heface\[twin\[he\]\]. For boundary half
-edges, this is set to 0 (no transport since there’s only one face).
+the same vector in the frame of heface\[twin\[he\]\]. Boundary
+half-edges are set to 0.
+
+Note: 3D meshes only.
 
 ``` python
 transports = get_transport_across_halfedge(geommesh_s.vertices, hemesh_s)
@@ -753,7 +943,7 @@ jnp.allclose(transports - transports[hemesh_s.twin], 0)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L332"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L395"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_transport_along_halfedge
@@ -763,17 +953,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def get_transport_along_halfedge(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
     hemesh:HeMesh, # Half-edge mesh.
-)->Float[Array, 'n_hes']: # Transport angle per halfedge (radians). NaN for boundary halfedges.
+)->Float[Array, 'n_hes']: # Transport angle per halfedge (radians). 0 for boundary halfedges.
 
 ```
 
 *Rotation angle to transport a tangent vector from one vertex to the
-next vertex along a halfedge.*
+next along a halfedge.*
 
-Applying this rotation to a vector in the frame of a vertex gives the
-same vector in the frame of the next vertex along the halfedge
+Applying this rotation to a vector in the frame of orig\[he\] gives the
+same vector in the frame of dest\[he\]. Boundary half-edges are set to
+0.
+
+Note: 3D meshes only.
 
 ``` python
 transports = get_transport_along_halfedge(geommesh_s.vertices, hemesh_s)
 jnp.allclose(transports - transports[hemesh_s.twin], 0)
 ```
+
+    Array(True, dtype=bool)

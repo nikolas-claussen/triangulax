@@ -170,7 +170,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/02_halfedge_datastructure.html">Half-edge meshes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/02_halfedge_datastructure.html">Half-edge meshes</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -216,8 +216,8 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Basic trigonometry</span></a>
+  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -353,7 +353,7 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="02_halfedge_datastructure.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/02_halfedge_datastructure.html">Half-edge meshes</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/02_halfedge_datastructure.html">Half-edge meshes</a></li></ol></nav></header>
 
 
 
@@ -364,15 +364,15 @@ window.Quarto = {
 <p>In the <a href="https://nikolas-claussen.github.io/triangulax/src/triangular_meshes.html#trimesh"><code>TriMesh</code></a> class, we represent a mesh a list of triangles. However, many common operations are difficult with this data structure. For example, how do you get all the neighbors of a given vertex, or compute the area of a dual cell?</p>
 <p>For simulation and geometry processing, we need a different representation of the adjacency information. Typically, this is achieved by a <a href="https://www.jerryyin.info/geometry-processing-algorithms/half-edge/">half-edge mesh</a> (HE) data structure. We represent the HE data structure by 3 sets of integer index arrays:</p>
 <ol type="1">
-<li>Vertices: 1 <span class="math inline">\((N_V,)\)</span> matrix, whose entry for vertex <span class="math inline">\(i\)</span> is an arbitrary HE incident on <span class="math inline">\(i\)</span></li>
-<li>Edges: 6 <span class="math inline">\((2N_E,)\)</span> matrices, [<code>origin</code>, <code>dest</code>, <code>nxt</code>, <code>prv</code>, <code>twin</code>, <code>face</code>] for each half-edge (<code>face</code> is undefined for boundary half-edges).</li>
-<li>Faces, 1 <span class="math inline">\((N_F, 1)\)</span> matrix, whose entry for face <span class="math inline">\(i\)</span> is an arbitrary HE in <span class="math inline">\(i\)</span>. (Not to be confused with the <span class="math inline">\((N_F, 3)\)</span> matrix of <em>vertex IDs</em> used previously).</li>
+<li>Vertices: 1 <span class="math inline">\((N_V,)\)</span> array, whose entry for vertex <span class="math inline">\(i\)</span> is an arbitrary HE incident on <span class="math inline">\(i\)</span></li>
+<li>Edges: 6 <span class="math inline">\((2N_E,)\)</span> arrays, [<code>origin</code>, <code>dest</code>, <code>nxt</code>, <code>prv</code>, <code>twin</code>, <code>face</code>] for each half-edge (<code>face</code> is undefined for boundary half-edges).</li>
+<li>Faces, 1 <span class="math inline">\((N_F, 1)\)</span> array, whose entry for face <span class="math inline">\(i\)</span> is an arbitrary HE in <span class="math inline">\(i\)</span>. (Not to be confused with the <span class="math inline">\((N_F, 3)\)</span> array of <em>vertex IDs</em> used previously).</li>
 </ol>
 <p>Additionally, there are two float arrays for vertex and face positions, as previously. However, we split <em>combinatorial</em> and <em>geometric</em> information - a <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> class for the combinatorics, and a couple of regular arrays for the vertex positions, face positions, and vertex/half-edge/face attributes. The latter are packaged into a <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> class. Together, the pair <code>(GeomMesh, HeMesh)</code> describes a mesh (like vertices/faces pair). A named tuple <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#mesh"><code>Mesh</code></a> combines the two.</p>
 <p>The first task is to create a helper function to plot mesh connectivity, and to create the half-edge connectivity matrices from the more conventional list-of-triangles format. The latter is somewhat involved.</p>
-<p>We follow the notes in notebook 02 to ensure JAX compatibility.</p>
+<p>For JAX compatibility, we use <code>jax.numpy</code> instead of standard <code>numpy</code> for all numerical arrays, follow a functional programming style (no in-place mutation), and register our dataclasses as JAX pytrees (this enables automatic differentiation and JIT-compilation with custom datastructures).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L34" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L31" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="label_plot" class="level3">
 <h3 class="anchored" data-anchor-id="label_plot">label_plot</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -382,8 +382,8 @@ window.Quarto = {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="va">None</span>:</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>For debugging purposes. Plot triangular mesh with face/vertex labels in black/blue.</em> If hemesh is not None, the connectivity info from it is used to plot the half-edge labels.</p>
-<div id="4b8abf3e-57c3-4210-9b7a-50ded06d7118" class="cell" data-scrolled="true" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<div id="4b8abf3e-57c3-4210-9b7a-50ded06d7118" class="cell" data-scrolled="true" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>mesh.vertices.T, mesh.faces)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>label_plot(mesh.vertices, mesh.faces, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
@@ -392,7 +392,7 @@ window.Quarto = {
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
  np.float64(-1.09934025),
@@ -407,7 +407,7 @@ window.Quarto = {
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L60" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L57" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_half_edge_arrays_vectorized" class="level3">
 <h3 class="anchored" data-anchor-id="get_half_edge_arrays_vectorized">get_half_edge_arrays_vectorized</h3>
@@ -418,9 +418,9 @@ window.Quarto = {
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Get half-edge data structure arrays from faces (vectorized).</em></p>
 <p>Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident</p>
-<div id="2ce164a2" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mesh_high_res <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/torus_high_resolution.obj"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="2ce164a2" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mesh_high_res <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/torus_high_resolution.obj"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o Torus
@@ -428,22 +428,22 @@ Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="fdfc9c16" class="cell" data-execution_count="14">
+<div id="fdfc9c16" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> get_half_edge_arrays(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>UsageError: Line magic function `%%timeit` not found.</code></pre>
 </div>
 </div>
-<div id="38ce78f6" class="cell" data-execution_count="15">
+<div id="38ce78f6" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test vectorized vs reference implementation for two meshes</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ref <span class="op">=</span> get_half_edge_arrays(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>fast <span class="op">=</span> get_half_edge_arrays_vectorized(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Equal?"</span>, <span class="bu">all</span>([jnp.array_equal(a, b) <span class="cf">for</span> a, b <span class="kw">in</span> <span class="bu">zip</span>(ref, fast)]))</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/sphere.obj"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere.obj"</span>)</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>ref <span class="op">=</span> get_half_edge_arrays(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>fast <span class="op">=</span> get_half_edge_arrays_vectorized(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
@@ -473,7 +473,7 @@ Wall time: 221 ms</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L142" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L139" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="hemesh" class="level3">
 <h3 class="anchored" data-anchor-id="hemesh">HeMesh</h3>
@@ -523,7 +523,7 @@ Wall time: 221 ms</code></pre>
 <p><strong>Static methods</strong></p>
 <p>load : str -&gt; HeMesh</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L367" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="test_mesh_validity" class="level3">
 <h3 class="anchored" data-anchor-id="test_mesh_validity">test_mesh_validity</h3>
@@ -533,67 +533,67 @@ Wall time: 221 ms</code></pre>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>):</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Test if a mesh is valid. Returns True if valid, fails otherwise.</em></p>
-<div id="5fe4070e-5447-4716-b0da-38adca86b921" class="cell" data-execution_count="600">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<div id="5fe4070e-5447-4716-b0da-38adca86b921" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="5011d01a" class="cell" data-execution_count="601">
+<div id="5011d01a" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>test_mesh_validity(hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="601">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>True</code></pre>
 </div>
 </div>
-<div id="b05bdc43-7033-420b-bbdf-0daf113ed228" class="cell">
+<div id="b05bdc43-7033-420b-bbdf-0daf113ed228" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hemeshes can be compared for equality and are registered as pytrees</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>leafs, ts <span class="op">=</span> jax.tree_util.tree_flatten(hemesh)</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>hemesh, hemesh <span class="op">==</span> hemesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="29">
 <pre><code>(HeMesh(N_V=131, N_HE=708, N_F=224), True)</code></pre>
 </div>
 </div>
-<div id="5363c9ed" class="cell" data-execution_count="22">
+<div id="5363c9ed" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test iteration around vertex</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>hemesh.dest[hemesh.iterate_around_vertex(<span class="dv">69</span>)], hemesh.orig[hemesh.iterate_around_vertex(<span class="dv">56</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="30">
 <pre><code>(Array([80, 68, 56, 46], dtype=int64),
  Array([56, 56, 56, 56, 56, 56, 56], dtype=int64))</code></pre>
 </div>
 </div>
-<div id="e19181b5" class="cell" data-execution_count="23">
+<div id="e19181b5" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># boundary in cc-wise order</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>(hemesh.orig[<span class="dv">187</span>], hemesh.dest[<span class="dv">187</span>]), hemesh.heface[<span class="dv">187</span>], hemesh.is_bdry_he[<span class="dv">187</span>],</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="31">
 <pre><code>((Array(58, dtype=int64), Array(70, dtype=int64)),
  Array(-1, dtype=int64),
  Array(True, dtype=bool))</code></pre>
 </div>
 </div>
-<div id="6525ab64" class="cell" data-execution_count="24">
+<div id="6525ab64" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>hemesh.is_bdry_he[<span class="dv">187</span>], hemesh.is_bdry_he[<span class="dv">541</span>], hemesh.heface[<span class="dv">541</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="32">
 <pre><code>(Array(True, dtype=bool), Array(False, dtype=bool), Array(145, dtype=int64))</code></pre>
 </div>
 </div>
-<div id="e6f9df51" class="cell" data-execution_count="25">
+<div id="e6f9df51" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to model mesh boundaries, we can add an "infinity" vertex. Not done here, see below</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>hemesh.has_inf_vertex, hemesh.inf_vertices</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
+<div class="cell-output cell-output-display" data-execution_count="33">
 <pre><code>(False, ())</code></pre>
 </div>
 </div>
-<div id="e5c1c05d" class="cell" data-execution_count="26">
+<div id="e5c1c05d" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>,<span class="dv">14</span>))</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>mesh.vertices.T, hemesh.faces)</span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>label_plot(mesh.vertices, hemesh.faces, fontsize<span class="op">=</span><span class="dv">10</span>, hemesh<span class="op">=</span>hemesh, face_labels<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div class="cell-output cell-output-display" data-execution_count="34">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
  np.float64(-1.09934025),
@@ -607,7 +607,7 @@ Wall time: 221 ms</code></pre>
 </div>
 </div>
 </div>
-<div id="9ffe63d8-0da6-4c74-bef7-c35727d76ff9" class="cell" data-execution_count="27">
+<div id="9ffe63d8-0da6-4c74-bef7-c35727d76ff9" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here is how you would do mesh traversal with jax.lax. The issues is that the output size needs to be fixed</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ahead of time, so </span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -617,14 +617,14 @@ Wall time: 221 ms</code></pre>
 <span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>initial <span class="op">=</span> jnp.hstack([jnp.array([<span class="va">self</span>.incident[v]]), <span class="op">-</span><span class="dv">1</span><span class="op">*</span>jnp.ones(max_valence<span class="op">-</span><span class="dv">1</span>, dtype<span class="op">=</span><span class="bu">int</span>)])</span>
 <span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>jax.lax.fori_loop(<span class="dv">1</span>, max_valence, <span class="kw">lambda</span> i, x: x.at[i].<span class="bu">set</span>(<span class="va">self</span>.twin[x[i<span class="op">-</span><span class="dv">1</span>]]), initial)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="35">
 <pre><code>Array([ 47, 401,  47, 401,  47, 401,  47, 401,  47, 401], dtype=int64)</code></pre>
 </div>
 </div>
 <section id="computing-with-half-edge-meshes" class="level4">
 <h4 class="anchored" data-anchor-id="computing-with-half-edge-meshes">Computing with half-edge meshes</h4>
 <p>By using the arrays of a half-edge meshes to index vertex- or face-positions (in increasingly complex ways), we can compute all sorts of quantities of interests associated with a mesh, for example the edge lengths.</p>
-<div id="45adee95" class="cell">
+<div id="45adee95" class="cell" data-execution_count="36">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> mesh.vertices[hemesh.orig]<span class="op">-</span>mesh.vertices[hemesh.dest]</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>lengths <span class="op">=</span> jnp.linalg.norm(edges, axis<span class="op">=-</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -637,7 +637,7 @@ Wall time: 221 ms</code></pre>
 <p>We generally assume that the mesh has only a single connected component.</p>
 <p>The <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> class can deal with both the -1-face and the <span class="math inline">\(\infty\)</span>-vertices conventions. The latter are listed in the <code>inf_vertices</code> attribute of a <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L390" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L387" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="connect_boundary_to_infinity" class="level3">
 <h3 class="anchored" data-anchor-id="connect_boundary_to_infinity">connect_boundary_to_infinity</h3>
@@ -649,22 +649,22 @@ Wall time: 221 ms</code></pre>
 <span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>One infinity vertex per boundary loop.</span>
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Connect boundary loop(s) to infinity.</em></p>
-<p>New vertices are appeneded to the end of vertex array and have coordinates [np.inf, np.inf].</p>
-<div id="0f81dc06" class="cell" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<p>New vertices are appended to the end of vertex array and have coordinates [np.inf, np.inf].</p>
+<div id="0f81dc06" class="cell" data-execution_count="39">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="8a429fcb" class="cell" data-execution_count="30">
+<div id="8a429fcb" class="cell" data-execution_count="40">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>new_vertices, new_faces, infinity_vertices <span class="op">=</span> connect_boundary_to_infinity(mesh.vertices, mesh.faces)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>mesh_infty <span class="op">=</span> TriMesh(vertices<span class="op">=</span>new_vertices, faces<span class="op">=</span>new_faces)</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>hemesh_infty <span class="op">=</span> HeMesh.from_triangles(mesh_infty.vertices.shape[<span class="dv">0</span>], mesh_infty.faces,</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                                     inf_vertices<span class="op">=</span>infinity_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="e2505ce7" class="cell">
+<div id="e2505ce7" class="cell" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to get back the original faces/vertices, do this:</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> hemesh_infty.faces[<span class="op">~</span>hemesh_infty.is_inf_face]</span>
@@ -672,9 +672,9 @@ Wall time: 221 ms</code></pre>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co"># if you want to re-index the triangles so they only refer to non-infinity vertices:</span></span>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> igl.remove_unreferenced(new_vertices, np.asarray(hemesh_infty.faces[<span class="op">~</span>hemesh_infty.is_inf_face]) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="7db747fb" class="cell" data-execution_count="904">
+<div id="7db747fb" class="cell" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>test_mesh_validity(hemesh_infty), (hemesh.is_bdry <span class="op">==</span> (hemesh_infty.is_bdry[:<span class="op">-</span><span class="dv">1</span>] <span class="op">&gt;</span><span class="dv">0</span>)).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="904">
+<div class="cell-output cell-output-display" data-execution_count="42">
 <pre><code>(True, Array(True, dtype=bool))</code></pre>
 </div>
 </div>
@@ -684,7 +684,7 @@ Wall time: 221 ms</code></pre>
 <h2 class="anchored" data-anchor-id="mesh-geometry-and-per-mesh-variables">Mesh geometry and per-mesh variables</h2>
 <p>Mesh geometry (vertex and face positions) and per-mesh-item (per-face, per-half-edge, per-vertex) variables are combined into a second data class, the <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L434" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L430" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="geommesh" class="level3">
 <h3 class="anchored" data-anchor-id="geommesh">GeomMesh</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -697,6 +697,7 @@ Wall time: 221 ms</code></pre>
 <p><em>Data class for holding mesh geometry and mesh-associated variables.</em> To be combined with a HeMesh to specify the connectivity.</p>
 <p>One array (for vertex positions) must always be present. A second, but optional, standard entry is a set of positions for each face. The mesh coordinates can live in 2d or 3d.</p>
 <p>Optionally, vertices, half-edges, and faces can have attributes (stored as dictionaries). The keys of the dictionary should be taken from a suitable ‘enum’. The values are ndarrays, whose 0th axis is (vertices/edges/faces). These attribute dicts are initialized empty and can be set afterwards.</p>
+<p>Unlike <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a>, this class is intentionally <em>not</em> frozen. Vertex positions and per-mesh attributes may be updated directly (e.g.&nbsp;during a simulation step), whereas mesh connectivity (<a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a>) should never be edited by hand.</p>
 <p>See documentation on HeMesh</p>
 <p><strong>Attributes</strong></p>
 <p>vertices : Float[jax.Array, “n_vertices 2”]</p>
@@ -710,7 +711,7 @@ Wall time: 221 ms</code></pre>
 <p><strong>Class methods</strong></p>
 <p>validate_dimensions : bool</p>
 <p><strong>Static methods</strong></p>
-<p>load : str -&gt; GeomHeMesh</p>
+<p>load : str -&gt; GeomMesh</p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L570" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
@@ -722,8 +723,8 @@ Wall time: 221 ms</code></pre>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>):</span>
 <span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Combine geometric and connectivity info into a single object.</em></p>
-<div id="c78f0f4a-6bea-40e5-baf3-628f777b1d0f" class="cell" data-execution_count="39">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<div id="c78f0f4a-6bea-40e5-baf3-628f777b1d0f" class="cell" data-execution_count="46">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>combined_mesh <span class="op">=</span> Mesh(geommesh, hemesh)</span>
@@ -732,20 +733,20 @@ Wall time: 221 ms</code></pre>
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="39">
+<div class="cell-output cell-output-display" data-execution_count="46">
 <pre><code>Mesh(geommesh=GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), hemesh=HeMesh(N_V=131, N_HE=708, N_F=224))</code></pre>
 </div>
 </div>
-<div id="fc035cf3-bf00-42e9-a2f3-103c240e3fe0" class="cell" data-execution_count="40">
+<div id="fc035cf3-bf00-42e9-a2f3-103c240e3fe0" class="cell" data-execution_count="47">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>leafs, ts <span class="op">=</span> jax.tree_util.tree_flatten(geommesh) <span class="co"># also a pytree</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>ts</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="40">
+<div class="cell-output cell-output-display" data-execution_count="47">
 <pre><code>PyTreeDef(CustomNode(GeomMesh[(131, 708, 224)], [*, *, {}, {}, {}]))</code></pre>
 </div>
 </div>
-<div id="c006504e-0193-4831-9ade-5c7cec6b3d47" class="cell" data-execution_count="41">
+<div id="c006504e-0193-4831-9ade-5c7cec6b3d47" class="cell" data-execution_count="48">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibility(hemesh), geommesh <span class="op">==</span> geommesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="41">
+<div class="cell-output cell-output-display" data-execution_count="48">
 <pre><code>(GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), 131, (131, 2), True, True)</code></pre>
 </div>
 </div>
@@ -761,7 +762,7 @@ Wall time: 221 ms</code></pre>
 <span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Plot a cell tesselation.</em></p>
 <p>cell_colors can be either a single color (for all cells) or a vector of rgba values. Only interior cells are plotted.</p>
-<div id="b4496688-152b-43d0-b66f-b1b11718c849" class="cell" data-execution_count="43">
+<div id="b4496688-152b-43d0-b66f-b1b11718c849" class="cell" data-execution_count="50">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>polygons <span class="op">=</span> cellplot(hemesh, geommesh.face_positions,</span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>                    cell_colors<span class="op">=</span>np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.5</span>]), mpl_polygon_kwargs<span class="op">=</span>{<span class="st">"lw"</span>: <span class="dv">1</span>, <span class="st">"ec"</span>: <span class="st">"k"</span>})</span>
@@ -769,7 +770,7 @@ Wall time: 221 ms</code></pre>
 <span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>ax.add_collection(polygons)</span>
 <span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="43">
+<div class="cell-output cell-output-display" data-execution_count="50">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
  np.float64(-1.09934025),
@@ -787,8 +788,8 @@ Wall time: 221 ms</code></pre>
 <section id="vertex-half-edge-and-face-properties" class="level3">
 <h3 class="anchored" data-anchor-id="vertex-half-edge-and-face-properties">Vertex, half-edge, and face properties</h3>
 <p>In simulations, we will often want to attach extra information to a mesh’s vertices/edges/faces. In the <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> class, these are saved in three dictionaries, <code>vertex_attribs</code>, <code>he_attribs</code>, <code>face_attribs</code>. Each key/value pair represents one property (for example, the cell target area). All values are arrays, and the first axis corresponds to the number of vertices/half-edges/faces, respectively. To keep track of the possible attributes, we use <code>IntEnum</code>’s as keys (this also ensures keys are hashable, as required by JAX).</p>
-<div id="452cebbe" class="cell" data-execution_count="44">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<div id="452cebbe" class="cell" data-execution_count="53">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>geommmesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -796,7 +797,7 @@ Wall time: 221 ms</code></pre>
   o flat_tri_ecmc</code></pre>
 </div>
 </div>
-<div id="c67dd9f0" class="cell" data-execution_count="45">
+<div id="c67dd9f0" class="cell" data-execution_count="54">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is how you set up an enum. It is important to use IntEnum, so we can _order_ the enums.</span></span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The precise Enum you will use depends on your application.</span></span>
 <span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -810,7 +811,7 @@ Wall time: 221 ms</code></pre>
 <span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FaceAttribs(IntEnum):</span>
 <span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>    FACE_AREA <span class="op">=</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a57c1f44" class="cell" data-execution_count="46">
+<div id="a57c1f44" class="cell" data-execution_count="55">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># you can iterate over enums, and they are hashable. The latter is essential for JAX!</span></span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([a <span class="cf">for</span> a <span class="kw">in</span> VertexAttribs])</span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co"># there are multiple ways to access enum entries:</span></span>
@@ -818,18 +819,18 @@ Wall time: 221 ms</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[&lt;VertexAttribs.TARGET_AREA: 1&gt;, &lt;VertexAttribs.TARGET_PERIMETER: 2&gt;]</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="46">
+<div class="cell-output cell-output-display" data-execution_count="55">
 <pre><code>(2, &lt;HeAttribs.EDGE_TENSION: 1&gt;, &lt;HeAttribs.EDGE_TENSION: 1&gt;, 'EDGE_TENSION')</code></pre>
 </div>
 </div>
-<div id="c78e5b0b" class="cell" data-execution_count="47">
+<div id="c78e5b0b" class="cell" data-execution_count="56">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># at initialization, a HeMesh's attribute dictionaries are empty</span></span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>geommmesh.vertex_attribs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="47">
+<div class="cell-output cell-output-display" data-execution_count="56">
 <pre><code>{}</code></pre>
 </div>
 </div>
-<div id="edd75cb5" class="cell" data-execution_count="48">
+<div id="edd75cb5" class="cell" data-execution_count="57">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set some attributes</span></span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>key1 <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
@@ -840,9 +841,9 @@ Wall time: 221 ms</code></pre>
 <span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>                                                           VertexAttribs.TARGET_PERIMETER: jax.random.normal(key<span class="op">=</span>key2, shape<span class="op">=</span>geommmesh.n_vertices)})</span>
 <span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>geommmesh <span class="op">=</span> dataclasses.replace(geommmesh, he_attribs<span class="op">=</span>{HeAttribs.EDGE_TENSION: jax.random.normal(key<span class="op">=</span>key3, shape<span class="op">=</span>geommmesh.n_hes)})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="595f136b" class="cell" data-execution_count="49">
+<div id="595f136b" class="cell" data-execution_count="58">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>geommmesh.he_attribs.keys()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="49">
+<div class="cell-output cell-output-display" data-execution_count="58">
 <pre><code>dict_keys([&lt;HeAttribs.EDGE_TENSION: 1&gt;])</code></pre>
 </div>
 </div>
@@ -873,7 +874,7 @@ Wall time: 221 ms</code></pre>
 <span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>PyTree:</span>
 <span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Stack a sequence of identical-structure pytrees along a new axis.</em></p>
-<div id="54eb9677" class="cell" data-execution_count="51">
+<div id="54eb9677" class="cell" data-execution_count="60">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let us create a bunch of meshes with different initial positions and see if we can batch over them using vmap</span></span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
@@ -887,14 +888,14 @@ Wall time: 221 ms</code></pre>
 <span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>    batch_geom.append(dataclasses.replace(geommmesh, vertices<span class="op">=</span>geommmesh.vertices<span class="op">+</span>sigma<span class="op">*</span>random_noise))</span>
 <span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>    batch_he.append(copy.copy(hemesh))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="5856c3c5" class="cell" data-execution_count="52">
+<div id="5856c3c5" class="cell" data-execution_count="61">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define a test function to appy over the batch</span></span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_function(geommesh: GeomMesh, hemesh: HeMesh) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">" n_vertices"</span>]:</span>
 <span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dummy test function."""</span></span>
 <span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.ones(geommesh.n_vertices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="24cb28d8" class="cell" data-execution_count="54">
+<div id="24cb28d8" class="cell" data-execution_count="63">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># naive batching does not work. JAX needs a "struct-of-arrays", but a list of HeMeshes is an "array-of-structs"</span></span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="co"># see https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees</span></span>
 <span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -909,33 +910,33 @@ Wall time: 221 ms</code></pre>
   * some axes (6 of them) had size 224, e.g. axis 0 of argument geommesh[0].face_positions of type float64[224,2]</code></pre>
 </div>
 </div>
-<div id="cea01cba" class="cell" data-execution_count="55">
+<div id="cea01cba" class="cell" data-execution_count="64">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># instead, we use a jax.tree.map to "push" the list axis into the underlying arrays.</span></span>
 <span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the resulting meshes have an extra batch dimension in all of their arrays.</span></span>
 <span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>batch_he_array <span class="op">=</span> tree_stack(batch_he)</span>
 <span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>batch_geom_array <span class="op">=</span> tree_stack(batch_geom)</span>
 <span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>batch_he_array, batch_geom_array, batch_geom_array.vertices.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="55">
+<div class="cell-output cell-output-display" data-execution_count="64">
 <pre><code>(HeMesh(N_V=131, N_HE=708, N_F=224),
  GeomMesh(D=2,N_V=131, N_HE=708, N_F=224),
  (3, 131, 2))</code></pre>
 </div>
 </div>
-<div id="db9cec51" class="cell" data-execution_count="56">
+<div id="db9cec51" class="cell" data-execution_count="65">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now it works! The result is a single object with batch axis</span></span>
 <span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>batch_out <span class="op">=</span>jax.vmap(test_function)(batch_geom_array, batch_he_array)</span>
 <span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>batch_out.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="56">
+<div class="cell-output cell-output-display" data-execution_count="65">
 <pre><code>(3, 131)</code></pre>
 </div>
 </div>
-<div id="4efdd241" class="cell" data-execution_count="57">
+<div id="4efdd241" class="cell" data-execution_count="66">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we can unpack things again into a list of meshes</span></span>
 <span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a><span class="bu">isinstance</span>(tree_unstack(batch_out), <span class="bu">list</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="57">
+<div class="cell-output cell-output-display" data-execution_count="66">
 <pre><code>True</code></pre>
 </div>
 </div>

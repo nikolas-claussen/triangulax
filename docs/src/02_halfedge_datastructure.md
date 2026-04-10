@@ -18,14 +18,14 @@ mesh](https://www.jerryyin.info/geometry-processing-algorithms/half-edge/)
 (HE) data structure. We represent the HE data structure by 3 sets of
 integer index arrays:
 
-1.  Vertices: 1 (*N*<sub>*V*</sub>,) matrix, whose entry for vertex *i*
+1.  Vertices: 1 (*N*<sub>*V*</sub>,) array, whose entry for vertex *i*
     is an arbitrary HE incident on *i*
-2.  Edges: 6 (2*N*<sub>*E*</sub>,) matrices, \[`origin`, `dest`, `nxt`,
+2.  Edges: 6 (2*N*<sub>*E*</sub>,) arrays, \[`origin`, `dest`, `nxt`,
     `prv`, `twin`, `face`\] for each half-edge (`face` is undefined for
     boundary half-edges).
-3.  Faces, 1 (*N*<sub>*F*</sub>, 1) matrix, whose entry for face *i* is
+3.  Faces, 1 (*N*<sub>*F*</sub>, 1) array, whose entry for face *i* is
     an arbitrary HE in *i*. (Not to be confused with the
-    (*N*<sub>*F*</sub>, 3) matrix of *vertex IDs* used previously).
+    (*N*<sub>*F*</sub>, 3) array of *vertex IDs* used previously).
 
 Additionally, there are two float arrays for vertex and face positions,
 as previously. However, we split *combinatorial* and *geometric*
@@ -44,12 +44,16 @@ The first task is to create a helper function to plot mesh connectivity,
 and to create the half-edge connectivity matrices from the more
 conventional list-of-triangles format. The latter is somewhat involved.
 
-We follow the notes in notebook 02 to ensure JAX compatibility.
+For JAX compatibility, we use `jax.numpy` instead of standard `numpy`
+for all numerical arrays, follow a functional programming style (no
+in-place mutation), and register our dataclasses as JAX pytrees (this
+enables automatic differentiation and JIT-compilation with custom
+datastructures).
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L34"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L31"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### label_plot
@@ -68,7 +72,7 @@ black/blue.* If hemesh is not None, the connectivity info from it is
 used to plot the half-edge labels.
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 
 plt.triplot(*mesh.vertices.T, mesh.faces)
 label_plot(mesh.vertices, mesh.faces, fontsize=10)
@@ -88,7 +92,7 @@ plt.axis("equal")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L60"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L57"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_half_edge_arrays_vectorized
@@ -106,8 +110,8 @@ def get_half_edge_arrays_vectorized(
 Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident
 
 ``` python
-mesh_high_res = TriMesh.read_obj("test_meshes/torus_high_resolution.obj")
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh_high_res = TriMesh.read_obj("../test_meshes/torus_high_resolution.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 ```
 
     Warning: readOBJ() ignored non-comment line 3:
@@ -124,13 +128,13 @@ results = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
 ``` python
 # test vectorized vs reference implementation for two meshes
 
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 ref = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
 fast = get_half_edge_arrays_vectorized(mesh.vertices.shape[0], mesh.faces)
 
 print("Equal?", all([jnp.array_equal(a, b) for a, b in zip(ref, fast)]))
 
-mesh = TriMesh.read_obj("test_meshes/sphere.obj")
+mesh = TriMesh.read_obj("../test_meshes/sphere.obj")
 ref = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
 fast = get_half_edge_arrays_vectorized(mesh.vertices.shape[0], mesh.faces)
 
@@ -159,7 +163,7 @@ print("Equal?", all([jnp.array_equal(a, b) for a, b in zip(ref, fast)]))
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L142"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L139"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HeMesh
@@ -274,7 +278,7 @@ load : str -\> HeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L367"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L364"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### test_mesh_validity
@@ -290,7 +294,7 @@ def test_mesh_validity(
 *Test if a mesh is valid. Returns True if valid, fails otherwise.*
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 ```
 
@@ -419,7 +423,7 @@ latter are listed in the `inf_vertices` attribute of a
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L390"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L387"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### connect_boundary_to_infinity
@@ -436,11 +440,11 @@ One infinity vertex per boundary loop.
 
 *Connect boundary loop(s) to infinity.*
 
-New vertices are appeneded to the end of vertex array and have
+New vertices are appended to the end of vertex array and have
 coordinates \[np.inf, np.inf\].
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 ```
 
@@ -479,7 +483,7 @@ class, the
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L434"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L430"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GeomMesh
@@ -507,6 +511,14 @@ suitable ‘enum’. The values are ndarrays, whose 0th axis is
 (vertices/edges/faces). These attribute dicts are initialized empty and
 can be set afterwards.
 
+Unlike
+[`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh),
+this class is intentionally *not* frozen. Vertex positions and per-mesh
+attributes may be updated directly (e.g. during a simulation step),
+whereas mesh connectivity
+([`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh))
+should never be edited by hand.
+
 See documentation on HeMesh
 
 **Attributes**
@@ -533,7 +545,7 @@ validate_dimensions : bool
 
 **Static methods**
 
-load : str -\> GeomHeMesh
+load : str -\> GeomMesh
 
 ------------------------------------------------------------------------
 
@@ -554,7 +566,7 @@ def Mesh(
 *Combine geometric and connectivity info into a single object.*
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 combined_mesh = Mesh(geommesh, hemesh)
@@ -631,7 +643,7 @@ respectively. To keep track of the possible attributes, we use
 JAX).
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommmesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
 ```

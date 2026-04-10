@@ -170,7 +170,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/01_triangular_meshes.html">Loading, processing, and saving triangular meshes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/01_triangular_meshes.html">Loading, processing, and saving triangular meshes</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -216,8 +216,8 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Basic trigonometry</span></a>
+  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -348,7 +348,7 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="01_triangular_meshes.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/01_triangular_meshes.html">Loading, processing, and saving triangular meshes</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/01_triangular_meshes.html">Loading, processing, and saving triangular meshes</a></li></ol></nav></header>
 
 
 
@@ -381,7 +381,7 @@ window.Quarto = {
 </ol>
 <p>The mapping between mesh vertices and texture vertices is provided by the <code>texture_vertex_to_vertex_map</code> and <code>vertex_to_texture_vertex_map</code> properties. These enable projecting per-vertex data (e.g.&nbsp;scalar fields, Laplacian eigenvectors) to the UV domain for 2D visualization.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L32" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L33" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="trimesh" class="level3">
 <h3 class="anchored" data-anchor-id="trimesh">TriMesh</h3>
@@ -515,7 +515,7 @@ window.Quarto = {
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L266" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L267" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_per_face_jacobian" class="level3">
 <h3 class="anchored" data-anchor-id="compute_per_face_jacobian">compute_per_face_jacobian</h3>
@@ -548,7 +548,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <li>Plot cell tesselation</li>
 </ol>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L330" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L331" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_triangular_lattice" class="level3">
 <h3 class="anchored" data-anchor-id="generate_triangular_lattice">generate_triangular_lattice</h3>
@@ -559,7 +559,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Get points for rectangular patch of triangular lattice with nx, ny points.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L322" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L323" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_poisson_points" class="level3">
 <h3 class="anchored" data-anchor-id="generate_poisson_points">generate_poisson_points</h3>
@@ -570,7 +570,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sample n_vertices points from the Poisson ensemble in rectangle</em> [-limit_x/2, limit_x/2] * [-limit_y/2, limit_y/2].</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L313" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L314" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_ginibre_points" class="level3">
 <h3 class="anchored" data-anchor-id="generate_ginibre_points">generate_ginibre_points</h3>
@@ -608,6 +608,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <section id="creating-2d-meshes-with-periodic-boundary-conditions-pbcs" class="level3">
 <h3 class="anchored" data-anchor-id="creating-2d-meshes-with-periodic-boundary-conditions-pbcs">Creating 2d meshes with periodic boundary conditions (PBCs)</h3>
 <hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L343" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_delaunay_faces" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_delaunay_faces">get_periodic_delaunay_faces</h3>
@@ -620,6 +621,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <p><em>Return faces of the periodic Delaunay triangulation on a rectangular torus.</em></p>
 <p>The input points are first wrapped into the fundamental domain <code>[0, L_x) x [0, L_y)</code>. The point cloud is then tiled into the eight neighboring copies of the box, triangulated in the extended domain, and mapped back to the original vertex ids.</p>
 <hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L404" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_faces_crossing_periodic_boundaries" class="level3">
 <h3 class="anchored" data-anchor-id="get_faces_crossing_periodic_boundaries">get_faces_crossing_periodic_boundaries</h3>
@@ -687,7 +689,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <section id="elementary-book-keeping-using-list-of-triangles-data-structure" class="level3">
 <h3 class="anchored" data-anchor-id="elementary-book-keeping-using-list-of-triangles-data-structure">Elementary book-keeping using list-of-triangles data structure</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L344" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L446" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_adjacent_vertex_indices" class="level3">
 <h3 class="anchored" data-anchor-id="get_adjacent_vertex_indices">get_adjacent_vertex_indices</h3>

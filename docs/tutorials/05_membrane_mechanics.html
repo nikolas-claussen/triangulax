@@ -220,8 +220,8 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Basic trigonometry</span></a>
+  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -864,31 +864,35 @@ Sphere volume: 4.1527 (exact 4π/3 = 4.1888)</code></pre>
 + (\mathbb{I}- P_{\mathbf{n}_i^{(t)}}) \cdot \nabla E_T)
 \right) \]</span></p>
 <p>where <span class="math inline">\(P_\mathbf{n} = \mathbb{I} - \mathbf{n}\otimes \mathbf{n}\)</span> is the projector on the normal <span class="math inline">\(\mathbf{n}\)</span></p>
-<div id="b0e197d2" class="cell" data-execution_count="156">
+<div id="b0e197d2" class="cell" data-execution_count="165">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_neo_hookean_energy(deformation, mod_bulk, mod_shear):</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the neo-Hookean energy from Cauchy-Green deformation tensor"""</span></span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>    I1 <span class="op">=</span> jnp.trace(deformation)</span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> jnp.sqrt(jnp.linalg.det(deformation))</span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mod_shear<span class="op">/</span><span class="dv">2</span><span class="op">*</span>(I1 <span class="op">-</span> <span class="dv">2</span> <span class="op">-</span> <span class="dv">2</span><span class="op">*</span>jnp.log(J)) <span class="op">+</span> mod_bulk<span class="op">/</span><span class="dv">2</span><span class="op">*</span>(J<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span></span>
-<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_metric(vertices, hemesh):</span>
-<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the metric tensor per triangle of a triangulated surface"""</span></span>
-<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>    a, b, c <span class="op">=</span> vertices[hemesh.faces.T]</span>
-<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> jnp.stack([b<span class="op">-</span>a, c<span class="op">-</span>a], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.einsum(<span class="st">"vix,vjx-&gt;vij"</span>, J, J)</span>
-<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_elastic_energy(vertices, args):</span>
-<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the elastic energy of a triangulated surface. args = (hemesh, metric_orig, mod_bulk, mod_shear)"""</span></span>
-<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a>    hemesh, metric_orig, mod_bulk, mod_shear <span class="op">=</span> args</span>
-<span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a>    triangle_areas <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh)</span>
-<span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a>    metric <span class="op">=</span> get_metric(vertices, hemesh)</span>
-<span id="cb70-18"><a href="#cb70-18" aria-hidden="true" tabindex="-1"></a>    deformation <span class="op">=</span> jnp.einsum(<span class="st">"vij,vjk-&gt;vik"</span>, jnp.linalg.inv(metric_orig), metric)</span>
-<span id="cb70-19"><a href="#cb70-19" aria-hidden="true" tabindex="-1"></a>    energies <span class="op">=</span> jax.vmap(get_neo_hookean_energy, in_axes<span class="op">=</span>(<span class="dv">0</span>,<span class="va">None</span>,<span class="va">None</span>))(deformation, mod_bulk, mod_shear)</span>
-<span id="cb70-20"><a href="#cb70-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (triangle_areas<span class="op">*</span>energies).<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the neo-Hookean energy from Cauchy-Green deformation tensor.</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="co">    See https://en.wikipedia.org/wiki/Neo-Hookean_solid</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    I1 <span class="op">=</span> jnp.trace(deformation)</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> jnp.sqrt(jnp.linalg.det(deformation))</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mod_shear<span class="op">/</span><span class="dv">2</span><span class="op">*</span>(I1 <span class="op">-</span> <span class="dv">2</span> <span class="op">-</span> <span class="dv">2</span><span class="op">*</span>jnp.log(J)) <span class="op">+</span> mod_bulk<span class="op">/</span><span class="dv">2</span><span class="op">*</span>(J<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_metric(vertices, hemesh):</span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the metric tensor per triangle of a triangulated surface"""</span></span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>    a, b, c <span class="op">=</span> vertices[hemesh.faces.T]</span>
+<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> jnp.stack([b<span class="op">-</span>a, c<span class="op">-</span>a], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.einsum(<span class="st">"vix,vjx-&gt;vij"</span>, J, J)</span>
+<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_elastic_energy(vertices, args):</span>
+<span id="cb70-18"><a href="#cb70-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the elastic energy of a triangulated surface. args = (hemesh, metric_orig, mod_bulk, mod_shear)"""</span></span>
+<span id="cb70-19"><a href="#cb70-19" aria-hidden="true" tabindex="-1"></a>    hemesh, metric_orig, mod_bulk, mod_shear <span class="op">=</span> args</span>
+<span id="cb70-20"><a href="#cb70-20" aria-hidden="true" tabindex="-1"></a>    triangle_areas <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh)</span>
+<span id="cb70-21"><a href="#cb70-21" aria-hidden="true" tabindex="-1"></a>    metric <span class="op">=</span> get_metric(vertices, hemesh)</span>
+<span id="cb70-22"><a href="#cb70-22" aria-hidden="true" tabindex="-1"></a>    deformation <span class="op">=</span> jnp.einsum(<span class="st">"vij,vjk-&gt;vik"</span>, jnp.linalg.inv(metric_orig), metric)</span>
+<span id="cb70-23"><a href="#cb70-23" aria-hidden="true" tabindex="-1"></a>    energies <span class="op">=</span> jax.vmap(get_neo_hookean_energy, in_axes<span class="op">=</span>(<span class="dv">0</span>,<span class="va">None</span>,<span class="va">None</span>))(deformation, mod_bulk, mod_shear)</span>
+<span id="cb70-24"><a href="#cb70-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (triangle_areas<span class="op">*</span>energies).<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="3b96e140" class="cell" data-execution_count="158">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is how the elastic energy penalizes deformation, expressed in terms of the deformation gradient F</span></span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="co"># where F-I is the usual strain tensor.</span></span>
+<div id="3b96e140" class="cell" data-execution_count="166">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is how the elastic energy penalizes deformation, expressed in terms of the deformation gradient F,</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="co"># so that F-I is the usual strain tensor.</span></span>
 <span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span> <span class="co"># dilation</span></span>
 <span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> <span class="fl">0.</span> <span class="co"># shear</span></span>
@@ -899,12 +903,61 @@ Sphere volume: 4.1527 (exact 4π/3 = 4.1888)</code></pre>
 <span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>deformation <span class="op">=</span> jnp.linalg.inv(g0) <span class="op">@</span> g1</span>
 <span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>get_neo_hookean_energy(jnp.eye(<span class="dv">2</span>), <span class="dv">1</span>, <span class="dv">1</span>), get_neo_hookean_energy(deformation, <span class="dv">0</span>, <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="158">
+<div class="cell-output cell-output-display" data-execution_count="166">
 <pre><code>(Array(0., dtype=float64), Array(0.02072103, dtype=float64))</code></pre>
 </div>
 </div>
-<div id="a0691fe2" class="cell" data-execution_count="157">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>metric_orig <span class="op">=</span> get_metric(trimesh.vertices, hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a0691fe2" class="cell" data-execution_count="202">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> geom.get_area(trimesh.vertices, hemesh)</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.75</span> <span class="op">*</span> geom.get_volume(trimesh.vertices, hemesh)</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>metric_orig <span class="op">=</span> get_metric(trimesh.vertices, hemesh)</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>mu_A, mu_V <span class="op">=</span> <span class="fl">300.0</span>, <span class="fl">600.0</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>args_helfrich_penalty <span class="op">=</span> (hemesh, H0, kappa, mu_A, mu_V, A0, V0)</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>mod_bulk, mod_shear <span class="op">=</span> <span class="fl">0.0</span>, <span class="fl">1.0</span></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>args_elastic <span class="op">=</span> (hemesh, metric_orig, mod_bulk, mod_shear)</span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a>step_size <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>n_iterations <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> trimesh.vertices <span class="op">*</span> np.array([<span class="fl">0.95</span>, <span class="fl">1.1</span>, <span class="fl">0.95</span>]) <span class="co"># let's start from a stretched configuration</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="624ddd85" class="cell" data-execution_count="203">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>vertices_iterated <span class="op">=</span> [vertices_initial]</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(n_iterations):</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>    grad_helfrich <span class="op">=</span> jax.grad(get_helfrich_energy_with_penalty)(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], args_helfrich_penalty)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>    grad_elastic <span class="op">=</span> jax.grad(get_elastic_energy)(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], args_elastic)</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>    normals <span class="op">=</span> geom.get_vertex_normals(vertices_iterated[<span class="op">-</span><span class="dv">1</span>], hemesh)</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    step <span class="op">=</span> (jax.vmap(trig.project_out_vector)(grad_elastic, normals) <span class="op">+</span></span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>            jax.vmap(trig.project_on_vector)(grad_helfrich, normals))</span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>    vertices_iterated.append(vertices_iterated[<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span> step_size <span class="op">*</span> step)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="9744825b" class="cell" data-execution_count="204">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>jnp.linalg.norm(vertices_iterated[<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span> vertices_iterated[<span class="dv">0</span>], axis<span class="op">=-</span><span class="dv">1</span>).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="204">
+<pre><code>Array(0.0305475, dtype=float64)</code></pre>
+</div>
+</div>
+<div id="191e4481" class="cell" data-execution_count="205">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> meshplot.plot(vertices_initial, hemesh.faces,</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>                  shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>p.add_mesh(vertices_iterated[<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> np.array([<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>]), hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"3a054de1731e496b9bdb207db34ccefd","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="205">
+<pre><code>1</code></pre>
+</div>
+</div>
+<div id="f08eb531" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># looks like there is a strong discretization error in the gradient of the helricht energy</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="co"># at 5-fold vertices. this is not good.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="augmented-lagrangian-method" class="level3">
@@ -927,67 +980,67 @@ for k = 0, 1, 2, . . .
     Increase penalty parameter μ
     Select new tolerance</code></pre>
 <div id="cee906df" class="cell" data-execution_count="275">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augmented_lagrangian(vertices, args):</span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian: E_H - λᵀc + (μ/2)|c|², where c = [A-A0, V-V0]."""</span></span>
-<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>    hemesh, H0, kappa, lam, mu, A0, V0 <span class="op">=</span> args</span>
-<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
-<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> jnp.array([get_area(vertices, hemesh) <span class="op">-</span> A0,</span>
-<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>                    get_volume(vertices, hemesh) <span class="op">-</span> V0])</span>
-<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>    area_penalty <span class="op">=</span> ((geom.get_triangle_areas(vertices, hemesh)<span class="op">-</span><span class="fl">0.146</span>)<span class="op">**</span><span class="dv">2</span>).<span class="bu">sum</span>()</span>
-<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E <span class="op">-</span> lam <span class="op">@</span> c <span class="op">+</span> (mu <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> (c <span class="op">@</span> c) <span class="op">+</span> area_penalty</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augmented_lagrangian(vertices, args):</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian: E_H - λᵀc + (μ/2)|c|², where c = [A-A0, V-V0]."""</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>    hemesh, H0, kappa, lam, mu, A0, V0 <span class="op">=</span> args</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> jnp.array([get_area(vertices, hemesh) <span class="op">-</span> A0,</span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>                    get_volume(vertices, hemesh) <span class="op">-</span> V0])</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>    area_penalty <span class="op">=</span> ((geom.get_triangle_areas(vertices, hemesh)<span class="op">-</span><span class="fl">0.146</span>)<span class="op">**</span><span class="dv">2</span>).<span class="bu">sum</span>()</span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E <span class="op">-</span> lam <span class="op">@</span> c <span class="op">+</span> (mu <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> (c <span class="op">@</span> c) <span class="op">+</span> area_penalty</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="e2da85e2" class="cell" data-execution_count="289">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> al_minimize(vertices, hemesh, H0, kappa, A0, V0,</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>                mu0<span class="op">=</span><span class="fl">1.0</span>, mu_growth<span class="op">=</span><span class="fl">1.5</span>, max_outer<span class="op">=</span><span class="dv">10</span>, tol<span class="op">=</span><span class="fl">1e-4</span>, max_inner<span class="op">=</span><span class="dv">500</span>):</span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian method for constrained Helfrich energy minimization."""</span></span>
-<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    lam <span class="op">=</span> jnp.zeros(<span class="dv">2</span>)</span>
-<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> mu0</span>
-<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-5</span>, atol<span class="op">=</span><span class="fl">1e-5</span>)</span>
-<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(max_outer):</span>
-<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>        args <span class="op">=</span> (hemesh, H0, kappa, lam, mu, A0, V0)</span>
-<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>        sol <span class="op">=</span> optimistix.minimise(augmented_lagrangian, solver, vertices, args,</span>
-<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>                                  max_steps<span class="op">=</span>max_inner, throw<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>        vertices <span class="op">=</span> sol.value</span>
-<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>        A <span class="op">=</span> get_area(vertices, hemesh)</span>
-<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>        V <span class="op">=</span> get_volume(vertices, hemesh)</span>
-<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> jnp.array([A <span class="op">-</span> A0, V <span class="op">-</span> V0])</span>
-<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>        E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
-<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># stationarity of the Lagrangian (μ=0): ∇_v L = 0 and ∇_λ L = -c = 0</span></span>
-<span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a>        lagrangian_args <span class="op">=</span> (hemesh, H0, kappa, lam, <span class="fl">0.0</span>, A0, V0)</span>
-<span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a>        grad_v <span class="op">=</span> jax.grad(augmented_lagrangian)(vertices, lagrangian_args)</span>
-<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a>        grad_norm <span class="op">=</span> jnp.sqrt(jnp.<span class="bu">sum</span>(grad_v<span class="op">**</span><span class="dv">2</span>) <span class="op">+</span> jnp.<span class="bu">sum</span>(c<span class="op">**</span><span class="dv">2</span>))</span>
-<span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  iter </span><span class="sc">{</span>k<span class="sc">:2d}</span><span class="ss"> | E_H=</span><span class="sc">{</span>E<span class="sc">:.4f}</span><span class="ss"> | A=</span><span class="sc">{</span>A<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">) | "</span></span>
-<span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"V=</span><span class="sc">{</span>V<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">) | |∇L|=</span><span class="sc">{</span>grad_norm<span class="sc">:.2e}</span><span class="ss"> | μ=</span><span class="sc">{</span>mu<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
-<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-27"><a href="#cb76-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> grad_norm <span class="op">&lt;</span> tol:</span>
-<span id="cb76-28"><a href="#cb76-28" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"Converged!"</span>)</span>
-<span id="cb76-29"><a href="#cb76-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
-<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-31"><a href="#cb76-31" aria-hidden="true" tabindex="-1"></a>        lam <span class="op">=</span> lam <span class="op">-</span> mu <span class="op">*</span> c</span>
-<span id="cb76-32"><a href="#cb76-32" aria-hidden="true" tabindex="-1"></a>        mu <span class="op">=</span> mu <span class="op">*</span> mu_growth</span>
-<span id="cb76-33"><a href="#cb76-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-34"><a href="#cb76-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vertices, lam</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> al_minimize(vertices, hemesh, H0, kappa, A0, V0,</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>                mu0<span class="op">=</span><span class="fl">1.0</span>, mu_growth<span class="op">=</span><span class="fl">1.5</span>, max_outer<span class="op">=</span><span class="dv">10</span>, tol<span class="op">=</span><span class="fl">1e-4</span>, max_inner<span class="op">=</span><span class="dv">500</span>):</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Augmented Lagrangian method for constrained Helfrich energy minimization."""</span></span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>    lam <span class="op">=</span> jnp.zeros(<span class="dv">2</span>)</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> mu0</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-5</span>, atol<span class="op">=</span><span class="fl">1e-5</span>)</span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(max_outer):</span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>        args <span class="op">=</span> (hemesh, H0, kappa, lam, mu, A0, V0)</span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>        sol <span class="op">=</span> optimistix.minimise(augmented_lagrangian, solver, vertices, args,</span>
+<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a>                                  max_steps<span class="op">=</span>max_inner, throw<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb82-12"><a href="#cb82-12" aria-hidden="true" tabindex="-1"></a>        vertices <span class="op">=</span> sol.value</span>
+<span id="cb82-13"><a href="#cb82-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-14"><a href="#cb82-14" aria-hidden="true" tabindex="-1"></a>        A <span class="op">=</span> get_area(vertices, hemesh)</span>
+<span id="cb82-15"><a href="#cb82-15" aria-hidden="true" tabindex="-1"></a>        V <span class="op">=</span> get_volume(vertices, hemesh)</span>
+<span id="cb82-16"><a href="#cb82-16" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> jnp.array([A <span class="op">-</span> A0, V <span class="op">-</span> V0])</span>
+<span id="cb82-17"><a href="#cb82-17" aria-hidden="true" tabindex="-1"></a>        E <span class="op">=</span> get_helfrich_energy(vertices, (hemesh, H0, kappa))</span>
+<span id="cb82-18"><a href="#cb82-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-19"><a href="#cb82-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># stationarity of the Lagrangian (μ=0): ∇_v L = 0 and ∇_λ L = -c = 0</span></span>
+<span id="cb82-20"><a href="#cb82-20" aria-hidden="true" tabindex="-1"></a>        lagrangian_args <span class="op">=</span> (hemesh, H0, kappa, lam, <span class="fl">0.0</span>, A0, V0)</span>
+<span id="cb82-21"><a href="#cb82-21" aria-hidden="true" tabindex="-1"></a>        grad_v <span class="op">=</span> jax.grad(augmented_lagrangian)(vertices, lagrangian_args)</span>
+<span id="cb82-22"><a href="#cb82-22" aria-hidden="true" tabindex="-1"></a>        grad_norm <span class="op">=</span> jnp.sqrt(jnp.<span class="bu">sum</span>(grad_v<span class="op">**</span><span class="dv">2</span>) <span class="op">+</span> jnp.<span class="bu">sum</span>(c<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb82-23"><a href="#cb82-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-24"><a href="#cb82-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  iter </span><span class="sc">{</span>k<span class="sc">:2d}</span><span class="ss"> | E_H=</span><span class="sc">{</span>E<span class="sc">:.4f}</span><span class="ss"> | A=</span><span class="sc">{</span>A<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">) | "</span></span>
+<span id="cb82-25"><a href="#cb82-25" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"V=</span><span class="sc">{</span>V<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">) | |∇L|=</span><span class="sc">{</span>grad_norm<span class="sc">:.2e}</span><span class="ss"> | μ=</span><span class="sc">{</span>mu<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb82-26"><a href="#cb82-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-27"><a href="#cb82-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> grad_norm <span class="op">&lt;</span> tol:</span>
+<span id="cb82-28"><a href="#cb82-28" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"Converged!"</span>)</span>
+<span id="cb82-29"><a href="#cb82-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb82-30"><a href="#cb82-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-31"><a href="#cb82-31" aria-hidden="true" tabindex="-1"></a>        lam <span class="op">=</span> lam <span class="op">-</span> mu <span class="op">*</span> c</span>
+<span id="cb82-32"><a href="#cb82-32" aria-hidden="true" tabindex="-1"></a>        mu <span class="op">=</span> mu <span class="op">*</span> mu_growth</span>
+<span id="cb82-33"><a href="#cb82-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-34"><a href="#cb82-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vertices, lam</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="2c326562" class="cell" data-execution_count="290">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># minimize Helfrich energy of a sphere with constrained area and reduced volume (deflated)</span></span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> get_area(trimesh.vertices, hemesh)</span>
-<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.6</span> <span class="op">*</span> get_volume(trimesh.vertices, hemesh)</span>
-<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
-<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a><span class="co"># small perturbation to break spherical symmetry</span></span>
-<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
-<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>v0 <span class="op">=</span> trimesh.vertices <span class="op">+</span> <span class="fl">0.02</span> <span class="op">*</span> jax.random.normal(key, trimesh.vertices.shape)</span>
-<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb77-11"><a href="#cb77-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Target: A0=</span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">, V0=</span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Initial: A=</span><span class="sc">{</span>get_area(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">, V=</span><span class="sc">{</span>get_volume(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb77-13"><a href="#cb77-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb77-14"><a href="#cb77-14" aria-hidden="true" tabindex="-1"></a>v_opt, lam_opt <span class="op">=</span> al_minimize(v0, hemesh, H0, kappa, A0, V0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># minimize Helfrich energy of a sphere with constrained area and reduced volume (deflated)</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> get_area(trimesh.vertices, hemesh)</span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.6</span> <span class="op">*</span> get_volume(trimesh.vertices, hemesh)</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a><span class="co"># small perturbation to break spherical symmetry</span></span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a>v0 <span class="op">=</span> trimesh.vertices <span class="op">+</span> <span class="fl">0.02</span> <span class="op">*</span> jax.random.normal(key, trimesh.vertices.shape)</span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-11"><a href="#cb83-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Target: A0=</span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">, V0=</span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb83-12"><a href="#cb83-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Initial: A=</span><span class="sc">{</span>get_area(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">, V=</span><span class="sc">{</span>get_volume(v0, hemesh)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb83-13"><a href="#cb83-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-14"><a href="#cb83-14" aria-hidden="true" tabindex="-1"></a>v_opt, lam_opt <span class="op">=</span> al_minimize(v0, hemesh, H0, kappa, A0, V0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Target: A0=11.6659, V0=2.1952
 Initial: A=11.6992, V=3.6646
@@ -1004,16 +1057,16 @@ Initial: A=11.6992, V=3.6646
 </div>
 </div>
 <div id="407841d2" class="cell" data-execution_count="291">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize the deflated shape</span></span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>E_final <span class="op">=</span> get_helfrich_energy(v_opt, (hemesh, H0, kappa))</span>
-<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>E_sphere <span class="op">=</span> get_helfrich_energy(trimesh.vertices, (hemesh, H0, kappa))</span>
-<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Helfrich energy: sphere=</span><span class="sc">{</span>E_sphere<span class="sc">:.4f}</span><span class="ss">, deflated=</span><span class="sc">{</span>E_final<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final area: </span><span class="sc">{</span>get_area(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
-<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final volume: </span><span class="sc">{</span>get_volume(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
-<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Lagrange multipliers (tension, pressure): </span><span class="sc">{</span>lam_opt<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>meshplot.plot(v_opt, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize the deflated shape</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>E_final <span class="op">=</span> get_helfrich_energy(v_opt, (hemesh, H0, kappa))</span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>E_sphere <span class="op">=</span> get_helfrich_energy(trimesh.vertices, (hemesh, H0, kappa))</span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Helfrich energy: sphere=</span><span class="sc">{</span>E_sphere<span class="sc">:.4f}</span><span class="ss">, deflated=</span><span class="sc">{</span>E_final<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final area: </span><span class="sc">{</span>get_area(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>A0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final volume: </span><span class="sc">{</span>get_volume(v_opt, hemesh)<span class="sc">:.4f}</span><span class="ss"> (target </span><span class="sc">{</span>V0<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
+<span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Lagrange multipliers (tension, pressure): </span><span class="sc">{</span>lam_opt<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb85-9"><a href="#cb85-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-10"><a href="#cb85-10" aria-hidden="true" tabindex="-1"></a>meshplot.plot(v_opt, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Helfrich energy: sphere=6.5831, deflated=12.7386
 Final area: 11.7214 (target 11.6659)
@@ -1042,49 +1095,49 @@ Lagrange multipliers (tension, pressure): [  1.66632623 -54.26580124]</code></pr
 <p><span class="math display">\[\nabla_\lambda \mathcal{L} = 0 \quad \mathrm{and} \quad \nabla_{\mathbf{v}} \mathcal{L} = 0 \]</span></p>
 <p>We can attempt to solve this non-linear system of equations using the Newton method, or using non-linear least squares.</p>
 <div id="7a5d6252" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lagrangian(vertices, lagrange_mult, bdry_verts, bdry_pos, hemesh):</span>
-<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the Lagrangian for the area minimization problem with boundary conditions."""</span></span>
-<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>    area <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh).<span class="bu">sum</span>()</span>
-<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>    lagrange_term <span class="op">=</span> jax.vmap(jnp.dot)(lagrange_mult, vertices[bdry_verts] <span class="op">-</span> bdry_pos).<span class="bu">sum</span>()</span>
-<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> area <span class="op">-</span> lagrange_term</span>
-<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stationarity_condition(y, args):</span>
-<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>    vertices, lagrange_mult <span class="op">=</span> y</span>
-<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>    v_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">0</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
-<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a>    l_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">1</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
-<span id="cb82-12"><a href="#cb82-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb82-13"><a href="#cb82-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (v_term, l_term)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lagrangian(vertices, lagrange_mult, bdry_verts, bdry_pos, hemesh):</span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the Lagrangian for the area minimization problem with boundary conditions."""</span></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>    area <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh).<span class="bu">sum</span>()</span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>    lagrange_term <span class="op">=</span> jax.vmap(jnp.dot)(lagrange_mult, vertices[bdry_verts] <span class="op">-</span> bdry_pos).<span class="bu">sum</span>()</span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> area <span class="op">-</span> lagrange_term</span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stationarity_condition(y, args):</span>
+<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a>    vertices, lagrange_mult <span class="op">=</span> y</span>
+<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>    v_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">0</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
+<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>    l_term <span class="op">=</span> jax.grad(get_lagrangian, argnums<span class="op">=</span><span class="dv">1</span>)(vertices, lagrange_mult, <span class="op">*</span>args)</span>
+<span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (v_term, l_term)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="09e641fc" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (jnp.array(bdry_verts), jnp.array(bdry_pos), hemesh)</span>
-<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> jnp.array(vertices_bdry_imposed)</span>
-<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>lagrange_mult_initial <span class="op">=</span> <span class="dv">1</span><span class="op">*</span>jnp.ones_like(bdry_pos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> (jnp.array(bdry_verts), jnp.array(bdry_pos), hemesh)</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> jnp.array(vertices_bdry_imposed)</span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>lagrange_mult_initial <span class="op">=</span> <span class="dv">1</span><span class="op">*</span>jnp.ones_like(bdry_pos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="a197f8c8" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> stationarity_condition((vertices_initial, lagrange_mult_initial), args)</span>
-<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>get_lagrangian(vertices_initial, lagrange_mult_initial, <span class="op">*</span>args)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> stationarity_condition((vertices_initial, lagrange_mult_initial), args)</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>get_lagrangian(vertices_initial, lagrange_mult_initial, <span class="op">*</span>args)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>Array(4.36495664, dtype=float64)</code></pre>
 </div>
 </div>
 <div id="a6207b75" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.LevenbergMarquardt(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>, ) </span>
-<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> (vertices_initial, lagrange_mult_initial)</span>
-<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.root_find(stationarity_condition, solver, y0, args, max_steps<span class="op">=</span><span class="dv">50</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>vertices_final, lagrange_mult_final <span class="op">=</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> optimistix.LevenbergMarquardt(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>, ) </span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>y0 <span class="op">=</span> (vertices_initial, lagrange_mult_initial)</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> optimistix.root_find(stationarity_condition, solver, y0, args, max_steps<span class="op">=</span><span class="dv">50</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>vertices_final, lagrange_mult_final <span class="op">=</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="bb390d8e" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>vertices_final.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>), vertices_final.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="co"># that doesn't look good</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>vertices_final.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>), vertices_final.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="co"># that doesn't look good</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
 <pre><code>(Array([1.00112636, 0.98954106, 0.49702471], dtype=float64),
  Array([-0.99658605, -0.99661577, -0.4918562 ], dtype=float64))</code></pre>
 </div>
 </div>
 <div id="557d37ee" class="cell" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>meshplot.plot(vertices_final, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>meshplot.plot(vertices_final, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id":"c7a38a217355452ab44cb063f09dd7fc","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}

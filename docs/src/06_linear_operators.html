@@ -164,7 +164,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/06_linear_operators.html">Finite-element gradient and cotan-Laplacian</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/06_linear_operators.html">Finite-element gradient and cotan-Laplacian</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -210,8 +210,8 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Basic trigonometry</span></a>
+  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -330,6 +330,8 @@ window.Quarto = {
   <li><a href="#cotan-laplacian" id="toc-cotan-laplacian" class="nav-link" data-scroll-target="#cotan-laplacian">Cotan-Laplacian</a></li>
   <li><a href="#compute_cotan_laplace" id="toc-compute_cotan_laplace" class="nav-link" data-scroll-target="#compute_cotan_laplace">compute_cotan_laplace</a></li>
   <li><a href="#cotan_laplace_sparse" id="toc-cotan_laplace_sparse" class="nav-link" data-scroll-target="#cotan_laplace_sparse">cotan_laplace_sparse</a></li>
+  <li><a href="#periodic-cotan-laplacian-2d" id="toc-periodic-cotan-laplacian-2d" class="nav-link" data-scroll-target="#periodic-cotan-laplacian-2d">Periodic cotan-Laplacian (2D)</a></li>
+  <li><a href="#compute_periodic_cotan_laplace" id="toc-compute_periodic_cotan_laplace" class="nav-link" data-scroll-target="#compute_periodic_cotan_laplace">compute_periodic_cotan_laplace</a></li>
   <li><a href="#mass-matrix-lumped" id="toc-mass-matrix-lumped" class="nav-link" data-scroll-target="#mass-matrix-lumped">Mass matrix (lumped)</a></li>
   <li><a href="#mass_matrix_inv_sparse" id="toc-mass_matrix_inv_sparse" class="nav-link" data-scroll-target="#mass_matrix_inv_sparse">mass_matrix_inv_sparse</a></li>
   <li><a href="#mass_matrix_sparse" id="toc-mass_matrix_sparse" class="nav-link" data-scroll-target="#mass_matrix_sparse">mass_matrix_sparse</a></li>
@@ -339,6 +341,9 @@ window.Quarto = {
   <li><a href="#gradient_sparse_3d" id="toc-gradient_sparse_3d" class="nav-link" data-scroll-target="#gradient_sparse_3d">gradient_sparse_3d</a></li>
   <li><a href="#gradient_sparse_2d" id="toc-gradient_sparse_2d" class="nav-link" data-scroll-target="#gradient_sparse_2d">gradient_sparse_2d</a></li>
   <li><a href="#reshape_face_gradient" id="toc-reshape_face_gradient" class="nav-link" data-scroll-target="#reshape_face_gradient">reshape_face_gradient</a></li>
+  <li><a href="#divergence" id="toc-divergence" class="nav-link" data-scroll-target="#divergence">Divergence</a></li>
+  <li><a href="#compute_divergence_3d" id="toc-compute_divergence_3d" class="nav-link" data-scroll-target="#compute_divergence_3d">compute_divergence_3d</a></li>
+  <li><a href="#compute_divergence_2d" id="toc-compute_divergence_2d" class="nav-link" data-scroll-target="#compute_divergence_2d">compute_divergence_2d</a></li>
   <li><a href="#wrapping-as-linear-operators" id="toc-wrapping-as-linear-operators" class="nav-link" data-scroll-target="#wrapping-as-linear-operators">Wrapping as linear operators</a></li>
   <li><a href="#linear_op_to_sparse" id="toc-linear_op_to_sparse" class="nav-link" data-scroll-target="#linear_op_to_sparse">linear_op_to_sparse</a></li>
   </ul></li>
@@ -346,7 +351,7 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="06_linear_operators.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/06_linear_operators.html">Finite-element gradient and cotan-Laplacian</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/06_linear_operators.html">Finite-element gradient and cotan-Laplacian</a></li></ol></nav></header>
 
 
 
@@ -354,7 +359,7 @@ window.Quarto = {
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 <section id="finite-element-gradient-and-cotan-laplacian" class="level2">
 <h2 class="anchored" data-anchor-id="finite-element-gradient-and-cotan-laplacian">Finite-element gradient and cotan-Laplacian</h2>
-<p>Building on the mesh geometry and adjancency-based operators, we can now define two important linear operators that depend both on mesh connectivity and on mesh geometry. They are the (discrete, triangulation-based) equivalent of the gradient and Laplace-Beltrami operator. The latter is known as the <em>cotan Laplacian</em>.</p>
+<p>Building on the mesh geometry and adjacency-based operators, we can now define two important linear operators that depend both on mesh connectivity and on mesh geometry. They are the (discrete, triangulation-based) equivalent of the gradient and Laplace-Beltrami operator. The latter is known as the <em>cotan Laplacian</em>.</p>
 <p>We now implement gradient (per-vertex scalar field -&gt; per-face vector field) and the cotan-Laplacian (vertex -&gt; vertex) using gather/scatter ops. In both cases, we start with a scalar field <span class="math inline">\(u_i\)</span> defined per vertex <span class="math inline">\(i\)</span> of the triangulation. The finite-element gradient is defined for each face <span class="math inline">\(ijk\)</span>, like so: <span class="math display">\[
 (\nabla u)_{ijk} = \sum_{l\in \{i,j,k\}} u_l \nabla\phi_l
 \]</span> where <span class="math inline">\(\phi_i\)</span> is a linear finite element test function (linear Lagrange element) and has gradient <span class="math display">\[
@@ -363,11 +368,11 @@ window.Quarto = {
 <p>The cot-Laplacian computes the following per-vertex field: <span class="math display">\[
 (\Delta u)_i = \frac{1}{2} \sum_{j} (\cot\alpha_j +\cot\beta_j) (u_j-u_i)
 \]</span> The sum is over adjacent vertices, and <span class="math inline">\(\alpha_j, \beta_j\)</span> are the two triangle angles “opposite” to the edge <span class="math inline">\(ij\)</span>.</p>
-<p>To check for correctness, we can compare with <a href="https://libigl.github.io/libigl-python-bindings/tut-chapter1/">this <code>libgigl</code> tutorial</a>, using the test mesh and some random test fields.</p>
-<div id="9e8eeb1a" class="cell" data-execution_count="8">
+<p>To check for correctness, we can compare with <a href="https://libigl.github.io/libigl-python-bindings/tut-chapter1/">this <code>libigl</code> tutorial</a>, using the test mesh and some random test fields.</p>
+<div id="9e8eeb1a" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.triangular <span class="im">import</span> TriMesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="4006c7fb-56a2-445c-9647-017dc017074e" class="cell" data-execution_count="10">
+<div id="4006c7fb-56a2-445c-9647-017dc017074e" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load test data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
@@ -386,7 +391,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <section id="sparse-matrix-utility-functions" class="level3">
 <h3 class="anchored" data-anchor-id="sparse-matrix-utility-functions">Sparse matrix utility functions</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L78" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L82" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="diag_jsparse" class="level3">
 <h3 class="anchored" data-anchor-id="diag_jsparse">diag_jsparse</h3>
@@ -397,7 +402,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Construct a diagonal jax.sparse array. Plugin replacement for np.diag</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L57" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L61" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="bcoo_to_scipy" class="level3">
 <h3 class="anchored" data-anchor-id="bcoo_to_scipy">bcoo_to_scipy</h3>
@@ -408,7 +413,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Convert a JAX BCOO sparse matrix to a SciPy CSR sparse matrix.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L32" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L36" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="scipy_to_bcoo" class="level3">
 <h3 class="anchored" data-anchor-id="scipy_to_bcoo">scipy_to_bcoo</h3>
@@ -421,19 +426,29 @@ Warning: readOBJ() ignored non-comment line 3:
 </section>
 <section id="cotan-laplacian" class="level3">
 <h3 class="anchored" data-anchor-id="cotan-laplacian">Cotan-Laplacian</h3>
+<p>The cotangent Laplacian is the standard discretization of the Laplace-Beltrami operator on triangle meshes. It is <em>negative semi-definite</em> in our sign convention: for any field <span class="math inline">\(u\)</span>,</p>
+<p><span class="math display">\[
+\sum_i u_i (\Delta u)_i = -\sum_{ij} w_{ij}(u_i - u_j)^2 \leq 0
+\]</span></p>
+<p>where <span class="math inline">\(w_{ij} = \frac{1}{2}(\cot\alpha_{ij} + \cot\beta_{ij})\)</span> are the cotangent edge weights. On boundary edges only one opposite angle contributes.</p>
+<p>We provide two forms: - <a href="https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#compute_cotan_laplace"><code>compute_cotan_laplace</code></a>: applies <span class="math inline">\(L\)</span> to a vertex field via gather/scatter (works with <code>jax.jit</code> and <code>jax.grad</code>). - <a href="https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#cotan_laplace_sparse"><code>cotan_laplace_sparse</code></a>: assembles <span class="math inline">\(L\)</span> as a sparse BCOO matrix.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L88" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L92" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_cotan_laplace" class="level3">
 <h3 class="anchored" data-anchor-id="compute_cotan_laplace">compute_cotan_laplace</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_cotan_laplace(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], hemesh:HeMesh, vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices ...'</span>]:</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Compute cotangent laplacian of a per-vertex field (natural boundary conditions).</em></p>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>], <span class="co"># Per-vertex scalar, vector, or tensor field.</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    normalize:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>, <span class="co"># If True, return the area-normalized Laplace-Beltrami operator $M^{-1} L u$,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>dividing by the Voronoi cell area at each vertex.</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices ...'</span>]: <span class="co"># Cotangent Laplacian applied to the field, same shape as ``vertex_field``.</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Compute cotangent Laplacian of a per-vertex field (natural boundary conditions).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L99" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L124" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="cotan_laplace_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="cotan_laplace_sparse">cotan_laplace_sparse</h3>
@@ -443,7 +458,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Assemble cotangent Laplacian as a sparse matrix (BCOO).</em></p>
-<div id="1a781550" class="cell" data-execution_count="14">
+<div id="1a781550" class="cell" data-execution_count="37">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test against libigl cotmatrix (natural boundary conditions)</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
@@ -467,198 +482,228 @@ Warning: readOBJ() ignored non-comment line 3:
 vector field rel. error: 2.011929541056845e-16</code></pre>
 </div>
 </div>
-<div id="95677f8d" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test sparse cotan Laplacian vs apply function</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>u_test <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>L_sparse <span class="op">=</span> cotan_laplace_sparse(geommesh.vertices, hemesh)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>lap_sparse <span class="op">=</span> L_sparse <span class="op">@</span> u_test</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>lap_apply <span class="op">=</span> compute_cotan_laplace(geommesh.vertices, hemesh, u_test)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>rel_err_sparse <span class="op">=</span> jnp.linalg.norm(lap_sparse <span class="op">-</span> lap_apply) <span class="op">/</span> jnp.linalg.norm(lap_apply)</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"cotan sparse vs apply rel. error:"</span>, rel_err_sparse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="f20f70c6" class="cell" data-execution_count="39">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>apply_and_normalize <span class="op">=</span> compute_cotan_laplace(geommesh.vertices, hemesh, u_vec, normalize<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="95677f8d" class="cell" data-execution_count="40">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test sparse cotan Laplacian vs apply function</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>u_test <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>L_sparse <span class="op">=</span> cotan_laplace_sparse(geommesh.vertices, hemesh)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>lap_sparse <span class="op">=</span> L_sparse <span class="op">@</span> u_test</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>lap_apply <span class="op">=</span> compute_cotan_laplace(geommesh.vertices, hemesh, u_test)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>rel_err_sparse <span class="op">=</span> jnp.linalg.norm(lap_sparse <span class="op">-</span> lap_apply) <span class="op">/</span> jnp.linalg.norm(lap_apply)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"cotan sparse vs apply rel. error:"</span>, rel_err_sparse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>cotan sparse vs apply rel. error: 1.302894564211555e-16</code></pre>
 </div>
 </div>
-<div id="c6eddade" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>bcoo_to_scipy(L_sparse), (scipy_to_bcoo(bcoo_to_scipy(L_sparse)).todense() <span class="op">==</span> L_sparse.todense()).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div id="c6eddade" class="cell" data-execution_count="41">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>bcoo_to_scipy(L_sparse), (scipy_to_bcoo(bcoo_to_scipy(L_sparse)).todense() <span class="op">==</span> L_sparse.todense()).<span class="bu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
 <pre><code>(&lt;Compressed Sparse Row sparse matrix of dtype 'float64'
     with 839 stored elements and shape (131, 131)&gt;,
  Array(True, dtype=bool))</code></pre>
 </div>
 </div>
 </section>
+<section id="periodic-cotan-laplacian-2d" class="level3">
+<h3 class="anchored" data-anchor-id="periodic-cotan-laplacian-2d">Periodic cotan-Laplacian (2D)</h3>
+<p>For meshes on a periodic domain (torus), edge vectors must be computed with a periodic distance function. The function below takes a <code>distance_function</code> argument (as in <code>triangulax.periodic</code>) and uses periodic cotangent weights.</p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L144" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_periodic_cotan_laplace" class="level3">
+<h3 class="anchored" data-anchor-id="compute_periodic_cotan_laplace">compute_periodic_cotan_laplace</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_periodic_cotan_laplace(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], <span class="co"># Vertex positions, shape (n_vertices, 2).</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>], <span class="co"># Per-vertex scalar, vector, or tensor field.</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    distance_function:Callable, <span class="co"># Periodic displacement function ``(r1, r2) -&gt; r2 - r1 (mod L)``,</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>e.g. :func:[`triangulax.periodic.displacement_periodic`](https:<span class="op">//</span>nikolas<span class="op">-</span>claussen.github.io<span class="op">/</span>triangulax<span class="op">/</span>src<span class="op">/</span>geometric_quantities_periodic_bcs.html<span class="co">#displacement_periodic).</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    normalize:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>, <span class="co"># If True, divide by periodic Voronoi cell area at each vertex.</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices ...'</span>]: <span class="co"># Cotangent Laplacian applied to the field, same shape as ``vertex_field``.</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Compute cotangent Laplacian on a periodic domain (2D).</em></p>
+<p>Uses a periodic distance function to compute edge cotangent weights, suitable for meshes on a torus.</p>
+</section>
 <section id="mass-matrix-lumped" class="level3">
 <h3 class="anchored" data-anchor-id="mass-matrix-lumped">Mass matrix (lumped)</h3>
 <p>The finite-element mass matrix <span class="math inline">\(M\)</span> appears whenever we discretize a time-dependent PDE. For a lumped (diagonal) mass matrix, <span class="math inline">\(M_{ii} = A_i\)</span> where <span class="math inline">\(A_i\)</span> is the Voronoi area associated with vertex <span class="math inline">\(i\)</span>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L148" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L213" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="mass_matrix_inv_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="mass_matrix_inv_sparse">mass_matrix_inv_sparse</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mass_matrix_inv_sparse(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    area_type:<span class="bu">str</span><span class="op">=</span><span class="st">'voronoi'</span>, <span class="co"># Choice of dual-cell area definition used on the diagonal.</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse inverse mass matrix.</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mass_matrix_inv_sparse(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    area_type:<span class="bu">str</span><span class="op">=</span><span class="st">'voronoi'</span>, <span class="co"># Choice of dual-cell area definition used on the diagonal.</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse inverse mass matrix.</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Assemble the inverse lumped mass matrix as a sparse matrix (BCOO).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L119" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L183" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="mass_matrix_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="mass_matrix_sparse">mass_matrix_sparse</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mass_matrix_sparse(</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    area_type:<span class="bu">str</span><span class="op">=</span><span class="st">'voronoi'</span>, <span class="co"># Choice of dual-cell area definition used on the diagonal.</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse mass matrix.</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mass_matrix_sparse(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    area_type:<span class="bu">str</span><span class="op">=</span><span class="st">'voronoi'</span>, <span class="co"># Choice of dual-cell area definition used on the diagonal.</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>Use ``<span class="st">"voronoi"</span>`` <span class="cf">for</span> the cotangent Laplacian<span class="op">;</span> ``<span class="st">"barycentric"</span>``</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a simpler (always positive) approximation.</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO: <span class="co"># Diagonal sparse mass matrix.</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Assemble lumped (diagonal) mass matrix as a sparse matrix (BCOO).</em></p>
-<p>The lumped mass matrix is diagonal wiIn cth entries equal to the Voronoi dual area of each vertex: <span class="math inline">\(M_{ii} = A_i\)</span>.</p>
-<div id="c63d4943" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test mass matrix against igl.massmatrix (Voronoi type)</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>M_jax <span class="op">=</span> mass_matrix_sparse(geommesh.vertices, hemesh)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>M_igl <span class="op">=</span> igl.massmatrix(np.asarray(geommesh.vertices), np.asarray(hemesh.faces), igl.MASSMATRIX_TYPE_VORONOI)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>rel_err_mass <span class="op">=</span> np.linalg.norm(M_jax.todense() <span class="op">-</span> M_igl.todense()) <span class="op">/</span> np.linalg.norm(M_igl.todense())</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mass matrix rel. error:"</span>, rel_err_mass)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Test inverse</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>M_inv_jax <span class="op">=</span> mass_matrix_inv_sparse(geommesh.vertices, hemesh)</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>identity_check <span class="op">=</span> (M_jax <span class="op">@</span> M_inv_jax.todense()).todense()</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"M @ M_inv ~ I error:"</span>, np.linalg.norm(identity_check <span class="op">-</span> np.eye(hemesh.n_vertices)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The lumped mass matrix is diagonal with entries equal to the dual area of each vertex: <span class="math inline">\(M_{ii} = A_i\)</span>.</p>
+<div id="c63d4943" class="cell" data-execution_count="44">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test mass matrix against igl.massmatrix (Voronoi type)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>M_jax <span class="op">=</span> mass_matrix_sparse(geommesh.vertices, hemesh)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>M_igl <span class="op">=</span> igl.massmatrix(np.asarray(geommesh.vertices), np.asarray(hemesh.faces), igl.MASSMATRIX_TYPE_VORONOI)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>rel_err_mass <span class="op">=</span> np.linalg.norm(M_jax.todense() <span class="op">-</span> M_igl.todense()) <span class="op">/</span> np.linalg.norm(M_igl.todense())</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mass matrix rel. error:"</span>, rel_err_mass)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Test inverse</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>M_inv_jax <span class="op">=</span> mass_matrix_inv_sparse(geommesh.vertices, hemesh)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>identity_check <span class="op">=</span> M_jax <span class="op">@</span> M_inv_jax.todense()</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"M @ M_inv ~ I error:"</span>, np.linalg.norm(identity_check <span class="op">-</span> np.eye(hemesh.n_vertices)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mass matrix rel. error: 0.021744009243191195
+M @ M_inv ~ I error: 4.577566798522237e-16</code></pre>
+</div>
 </div>
 </section>
 <section id="finite-element-gradient" class="level3">
 <h3 class="anchored" data-anchor-id="finite-element-gradient">Finite-element gradient</h3>
 <p>Not to be confused with the discrete-exterior-calculus operators, which only depend on mesh connectivity, not geometry.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L225" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L287" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_gradient_3d" class="level3">
 <h3 class="anchored" data-anchor-id="compute_gradient_3d">compute_gradient_3d</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_3d(</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 3'</span>], hemesh:HeMesh, vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 3 ...'</span>]:</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_3d(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 3'</span>], hemesh:HeMesh, vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 3 ...'</span>]:</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute the linear finite-element gradient (constant per face).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L277" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_gradient_2d" class="level3">
 <h3 class="anchored" data-anchor-id="compute_gradient_2d">compute_gradient_2d</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_2d(</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh, vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 2 ...'</span>]:</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient_2d(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh, vertex_field:Float[Array, <span class="st">'n_vertices ...'</span>]</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 2 ...'</span>]:</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute the linear finite-element gradient (constant per face).</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L263" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L325" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="gradient_sparse_3d" class="level3">
 <h3 class="anchored" data-anchor-id="gradient_sparse_3d">gradient_sparse_3d</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradient_sparse_3d(</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 3'</span>], hemesh:HeMesh</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradient_sparse_3d(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 3'</span>], hemesh:HeMesh</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Assemble FE gradient in 3D as a sparse matrix (BCOO).</em></p>
 <p>Returns a matrix G with shape (3<em>n_faces, n_vertices) such that for a scalar per-vertex field u (n_vertices,), the per-face gradients are obtained via: g_flat = G @ u # (3</em>n_faces,) g = g_flat.reshape((3, n_faces)).T # (n_faces, 3)</p>
 <p>This row layout matches libigl’s <code>grad</code> operator convention (component blocks).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L235" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L297" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="gradient_sparse_2d" class="level3">
 <h3 class="anchored" data-anchor-id="gradient_sparse_2d">gradient_sparse_2d</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradient_sparse_2d(</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradient_sparse_2d(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], hemesh:HeMesh</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Assemble FE gradient in 2D as a sparse matrix (BCOO).</em></p>
 <p>Returns a matrix G with shape (2<em>n_faces, n_vertices) such that for a scalar per-vertex field u (n_vertices,), the per-face gradients are obtained via: g_flat = G @ u # (2</em>n_faces,) g = g_flat.reshape((2, n_faces)).T # (n_faces, 2)</p>
 <p>This row layout matches libigl’s <code>grad</code> operator convention (component blocks).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L290" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L352" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="reshape_face_gradient" class="level3">
 <h3 class="anchored" data-anchor-id="reshape_face_gradient">reshape_face_gradient</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> reshape_face_gradient(</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    grad_flat:Float[Array, <span class="st">'dim_n_faces ...'</span>], <span class="co"># Output of `G @ u`, with shape `(dim*n_faces, ...)`.</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    n_faces:<span class="bu">int</span>, <span class="co"># Number of mesh faces.</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    dim:<span class="bu">int</span>, <span class="co"># Spatial dimension (2 or 3).</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces dim ...'</span>]: <span class="co"># Reshaped gradient with shape `(n_faces, dim, ...)`, matching the output convention</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>of `compute_gradient_2d<span class="op">/</span><span class="dv">3</span><span class="er">d</span>`.</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> reshape_face_gradient(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    grad_flat:Float[Array, <span class="st">'dim_n_faces ...'</span>], <span class="co"># Output of `G @ u`, with shape `(dim*n_faces, ...)`.</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    n_faces:<span class="bu">int</span>, <span class="co"># Number of mesh faces.</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    dim:<span class="bu">int</span>, <span class="co"># Spatial dimension (2 or 3).</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces dim ...'</span>]: <span class="co"># Reshaped gradient with shape `(n_faces, dim, ...)`, matching the output convention</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>of `compute_gradient_2d<span class="op">/</span><span class="dv">3</span><span class="er">d</span>`.</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Reshape a flattened FE gradient into per-face vectors.</em></p>
 <p>This is meant to be used with <code>gradient_sparse_2d/3d</code> (and any similar operator that stacks components in blocks), where applying the sparse matrix yields an array of shape <code>(dim*n_faces, ...)</code> (for scalar/vector/tensor per-vertex fields).</p>
-<div id="92537afc" class="cell" data-execution_count="118">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here's how to compute the gradient in libigl</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>grad_matrix <span class="op">=</span> igl.grad(np.asarray(geommesh.vertices), np.asarray(hemesh.faces))</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the gradient of field by matrix multiplication</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_matrix <span class="op">@</span> np.asarray(u)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># order='F' copied from igl tutorial</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_igl.reshape((hemesh.n_faces, geommesh.dim), order<span class="op">=</span><span class="st">'F'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="92537afc" class="cell" data-execution_count="48">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here's how to compute the gradient in libigl</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>grad_matrix <span class="op">=</span> igl.grad(np.asarray(geommesh.vertices), np.asarray(hemesh.faces))</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the gradient of field by matrix multiplication</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_matrix <span class="op">@</span> np.asarray(u)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># order='F' copied from igl tutorial</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>grad_igl <span class="op">=</span> grad_igl.reshape((hemesh.n_faces, geommesh.dim), order<span class="op">=</span><span class="st">'F'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="58db395a" class="cell" data-execution_count="119">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test jax and libigl implementations</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>grad_jax <span class="op">=</span> compute_gradient_2d(geommesh.vertices, hemesh, u)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>rel_err_grad <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax) <span class="op">-</span> grad_igl) <span class="op">/</span> np.linalg.norm(grad_igl)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="58db395a" class="cell" data-execution_count="49">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test jax and libigl implementations</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>grad_jax <span class="op">=</span> compute_gradient_2d(geommesh.vertices, hemesh, u)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>rel_err_grad <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax) <span class="op">-</span> grad_igl) <span class="op">/</span> np.linalg.norm(grad_igl)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>gradient rel. error: 1.413315746703021e-16</code></pre>
 </div>
 </div>
-<div id="fedbb5c6" class="cell" data-execution_count="120">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same test, in 3d</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>grad_matrix_3d <span class="op">=</span> igl.grad(np.asarray(geommesh_3d.vertices), np.asarray(hemesh.faces))</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_matrix_3d <span class="op">@</span> np.asarray(u)</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_igl_3d.reshape((hemesh.n_faces, geommesh_3d.dim), order<span class="op">=</span><span class="st">'F'</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>grad_jax_3d <span class="op">=</span> compute_gradient_3d(geommesh_3d.vertices, hemesh, u)</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>rel_err_grad_3d <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax_3d) <span class="op">-</span> grad_igl_3d) <span class="op">/</span> np.linalg.norm(grad_igl_3d)</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad_3d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="fedbb5c6" class="cell" data-execution_count="50">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same test, in 3d</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>grad_matrix_3d <span class="op">=</span> igl.grad(np.asarray(geommesh_3d.vertices), np.asarray(hemesh.faces))</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_matrix_3d <span class="op">@</span> np.asarray(u)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>grad_igl_3d <span class="op">=</span> grad_igl_3d.reshape((hemesh.n_faces, geommesh_3d.dim), order<span class="op">=</span><span class="st">'F'</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>grad_jax_3d <span class="op">=</span> compute_gradient_3d(geommesh_3d.vertices, hemesh, u)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>rel_err_grad_3d <span class="op">=</span> np.linalg.norm(np.asarray(grad_jax_3d) <span class="op">-</span> grad_igl_3d) <span class="op">/</span> np.linalg.norm(grad_igl_3d)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"gradient rel. error:"</span>, rel_err_grad_3d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>gradient rel. error: 1.5657863888820882e-16</code></pre>
 </div>
 </div>
-<div id="9ee1aaf1" class="cell" data-execution_count="123">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test sparse gradient operators vs apply functions</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">123</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>u_test <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> gradient_sparse_2d(geommesh.vertices, hemesh)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>g2 <span class="op">=</span> reshape_face_gradient(G2 <span class="op">@</span> u_test, hemesh.n_faces, dim<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>g2_apply <span class="op">=</span> compute_gradient_2d(geommesh.vertices, hemesh, u_test)</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>rel_err_g2 <span class="op">=</span> jnp.linalg.norm(g2 <span class="op">-</span> g2_apply) <span class="op">/</span> jnp.linalg.norm(g2_apply)</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"2D grad sparse vs apply rel. error:"</span>, rel_err_g2)</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>G3 <span class="op">=</span> gradient_sparse_3d(geommesh_3d.vertices, hemesh)</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>g3 <span class="op">=</span> reshape_face_gradient(G3 <span class="op">@</span> u_test, hemesh.n_faces, dim<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>g3_apply <span class="op">=</span> compute_gradient_3d(geommesh_3d.vertices, hemesh, u_test)</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>rel_err_g3 <span class="op">=</span> jnp.linalg.norm(g3 <span class="op">-</span> g3_apply) <span class="op">/</span> jnp.linalg.norm(g3_apply)</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"3D grad sparse vs apply rel. error:"</span>, rel_err_g3)</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># quick sanity check for vector/tensor fields: u has extra axes</span></span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>u_vec <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices, <span class="dv">3</span>))</span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>g2_vec <span class="op">=</span> reshape_face_gradient(G2 <span class="op">@</span> u_vec, hemesh.n_faces, dim<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>g2_vec_apply <span class="op">=</span> compute_gradient_2d(geommesh.vertices, hemesh, u_vec)</span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>rel_err_g2_vec <span class="op">=</span> jnp.linalg.norm(g2_vec <span class="op">-</span> g2_vec_apply) <span class="op">/</span> jnp.linalg.norm(g2_vec_apply)</span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"2D grad (vector field) sparse vs apply rel. error:"</span>, rel_err_g2_vec)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9ee1aaf1" class="cell" data-execution_count="51">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test sparse gradient operators vs apply functions</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">123</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>u_test <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>G2 <span class="op">=</span> gradient_sparse_2d(geommesh.vertices, hemesh)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>g2 <span class="op">=</span> reshape_face_gradient(G2 <span class="op">@</span> u_test, hemesh.n_faces, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>g2_apply <span class="op">=</span> compute_gradient_2d(geommesh.vertices, hemesh, u_test)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>rel_err_g2 <span class="op">=</span> jnp.linalg.norm(g2 <span class="op">-</span> g2_apply) <span class="op">/</span> jnp.linalg.norm(g2_apply)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"2D grad sparse vs apply rel. error:"</span>, rel_err_g2)</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>G3 <span class="op">=</span> gradient_sparse_3d(geommesh_3d.vertices, hemesh)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>g3 <span class="op">=</span> reshape_face_gradient(G3 <span class="op">@</span> u_test, hemesh.n_faces, dim<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>g3_apply <span class="op">=</span> compute_gradient_3d(geommesh_3d.vertices, hemesh, u_test)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>rel_err_g3 <span class="op">=</span> jnp.linalg.norm(g3 <span class="op">-</span> g3_apply) <span class="op">/</span> jnp.linalg.norm(g3_apply)</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"3D grad sparse vs apply rel. error:"</span>, rel_err_g3)</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co"># quick sanity check for vector/tensor fields: u has extra axes</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>u_vec <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices, <span class="dv">3</span>))</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>g2_vec <span class="op">=</span> reshape_face_gradient(G2 <span class="op">@</span> u_vec, hemesh.n_faces, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>g2_vec_apply <span class="op">=</span> compute_gradient_2d(geommesh.vertices, hemesh, u_vec)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>rel_err_g2_vec <span class="op">=</span> jnp.linalg.norm(g2_vec <span class="op">-</span> g2_vec_apply) <span class="op">/</span> jnp.linalg.norm(g2_vec_apply)</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"2D grad (vector field) sparse vs apply rel. error:"</span>, rel_err_g2_vec)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>2D grad sparse vs apply rel. error: 8.71017994729607e-17
 3D grad sparse vs apply rel. error: 9.602668379845331e-17
@@ -666,69 +711,164 @@ vector field rel. error: 2.011929541056845e-16</code></pre>
 </div>
 </div>
 </section>
+<section id="divergence" class="level3">
+<h3 class="anchored" data-anchor-id="divergence">Divergence</h3>
+<p>The discrete divergence maps a per-face vector field to a per-vertex scalar field. It is the negative adjoint of the gradient with respect to the area-weighted inner product:</p>
+<p><span class="math display">\[
+(\mathrm{div}\, V)_i = -\sum_{f \ni i} A_f \, V_f \cdot \nabla\phi_i^{(f)}
+\]</span></p>
+<p>where <span class="math inline">\(A_f\)</span> is the face area. With this sign convention, the composed operator satisfies <span class="math inline">\(L = \mathrm{div} \circ \nabla\)</span> (the negative semi-definite cotan-Laplacian). In matrix form, <code>div = -G^T @ diag(face_areas)</code>.</p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L419" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_divergence_3d" class="level3">
+<h3 class="anchored" data-anchor-id="compute_divergence_3d">compute_divergence_3d</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_divergence_3d(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 3'</span>], hemesh:HeMesh, face_field:Float[Array, <span class="st">'n_faces 3 ...'</span>]</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices ...'</span>]:</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Compute the (integrated) FE divergence of a per-face vector field (3D).</em></p>
+<p>Same as :func:<a href="https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#compute_divergence_2d"><code>compute_divergence_2d</code></a> but for surfaces embedded in 3D.</p>
+<hr>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L381" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_divergence_2d" class="level3">
+<h3 class="anchored" data-anchor-id="compute_divergence_2d">compute_divergence_2d</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_divergence_2d(</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices 2'</span>], <span class="co"># Vertex positions, shape (n_vertices, 2).</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    face_field:Float[Array, <span class="st">'n_faces 2 ...'</span>], <span class="co"># Per-face vector (or tensor) field, shape (n_faces, 2, ...).</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices ...'</span>]: <span class="co"># Per-vertex field, shape (n_vertices, ...).</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Compute the (integrated) FE divergence of a per-face vector field (2D).</em></p>
+<p>Maps a per-face vector field to a per-vertex scalar field. This is the negative adjoint of the FE gradient weighted by face areas. Satisfies <code>compute_cotan_laplace(v, h, u) ≈ compute_divergence_2d(v, h, compute_gradient_2d(v, h, u))</code>.</p>
+<div id="4ffcdf12" class="cell" data-execution_count="53">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test: div(grad u) == cotan_laplace(u)</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">42</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>u_div <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>lap_direct <span class="op">=</span> compute_cotan_laplace(geommesh.vertices, hemesh, u_div)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>grad_u <span class="op">=</span> compute_gradient_2d(geommesh.vertices, hemesh, u_div)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>lap_via_div <span class="op">=</span> compute_divergence_2d(geommesh.vertices, hemesh, grad_u)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>rel_err_div <span class="op">=</span> jnp.linalg.norm(lap_direct <span class="op">-</span> lap_via_div) <span class="op">/</span> jnp.linalg.norm(lap_direct)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"div(grad u) vs L u rel. error:"</span>, rel_err_div)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># same in 3D</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>grad_u_3d <span class="op">=</span> compute_gradient_3d(geommesh_3d.vertices, hemesh, u_div)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>lap_3d_direct <span class="op">=</span> compute_cotan_laplace(geommesh_3d.vertices, hemesh, u_div)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>lap_3d_via_div <span class="op">=</span> compute_divergence_3d(geommesh_3d.vertices, hemesh, grad_u_3d)</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>rel_err_div_3d <span class="op">=</span> jnp.linalg.norm(lap_3d_direct <span class="op">-</span> lap_3d_via_div) <span class="op">/</span> jnp.linalg.norm(lap_3d_direct)</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"div(grad u) vs L u rel. error (3D):"</span>, rel_err_div_3d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>div(grad u) vs L u rel. error: 1.343128503483087e-16
+div(grad u) vs L u rel. error (3D): 1.6173638076009926e-16</code></pre>
+</div>
+</div>
+</section>
 <section id="wrapping-as-linear-operators" class="level3">
 <h3 class="anchored" data-anchor-id="wrapping-as-linear-operators">Wrapping as linear operators</h3>
 <p>It’s often useful to think of functions like <a href="https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#compute_cotan_laplace"><code>compute_cotan_laplace()</code></a> as a linear operator on fields on meshes. For example, imagine you want to solve the Laplace equation on a mesh with fixed vertex positions and connectivity. You will want to use a linear solver. Luckily, most such solvers only need to be able to compute the action of a linear operator on an input vector, and don’t need an explicit matrix representation.</p>
 <p>In the JAX ecosystem, the <code>lineax</code> library defines linear solvers. We can <em>wrap</em> <a href="https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#compute_cotan_laplace"><code>compute_cotan_laplace()</code></a> as a linear operator, which allows us to pass it into iterative linear algebra algorithms.</p>
-<div id="ae8e6189" class="cell" data-execution_count="54">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># "bake in" the connectivity and vertex positions</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> functools.partial(compute_cotan_laplace, geommesh.vertices, hemesh)</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> laplace_op(u) <span class="co"># you can apply this to vertex-fields</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># define the linear operator</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>laplace_op_lx <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op, input_structure<span class="op">=</span>jax.eval_shape(laplace_op, u))</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co"># now you can use the linear operator to compute matrix representations, solve linear systems, etc.</span></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> laplace_op_lx.as_matrix()</span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>mat.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="54">
+<div id="ae8e6189" class="cell" data-execution_count="55">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># "bake in" the connectivity and vertex positions</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> functools.partial(compute_cotan_laplace, geommesh.vertices, hemesh)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> laplace_op(u) <span class="co"># you can apply this to vertex-fields</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># define the linear operator</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>laplace_op_lx <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op, input_structure<span class="op">=</span>jax.eval_shape(laplace_op, u))</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co"># now you can use the linear operator to compute matrix representations, solve linear systems, etc.</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> laplace_op_lx.as_matrix()</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>mat.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="55">
 <pre><code>(131, 131)</code></pre>
 </div>
 </div>
+<section id="example-implicit-diffusion-step" class="level4">
+<h4 class="anchored" data-anchor-id="example-implicit-diffusion-step">Example: implicit diffusion step</h4>
+<p>A common use case in simulation is the implicit time step for the heat equation on a mesh. Given per-vertex temperatures <span class="math inline">\(u^n\)</span> and a time step <span class="math inline">\(\Delta t\)</span>, one solves</p>
+<p><span class="math display">\[
+(M - \Delta t \, L)\, u^{n+1} = M\, u^n
+\]</span></p>
+<p>where <span class="math inline">\(M\)</span> is the mass matrix and <span class="math inline">\(L\)</span> the cotan-Laplacian. Since <span class="math inline">\(L\)</span> is negative semi-definite, the system matrix <span class="math inline">\(M - \Delta t\, L\)</span> is positive definite and can be solved with a conjugate-gradient solver from <code>lineax</code>.</p>
+<div id="ad16a123" class="cell" data-execution_count="64">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Implicit diffusion step on the disk mesh</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>dt <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> mass_matrix_sparse(geommesh.vertices, hemesh)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> cotan_laplace_sparse(geommesh.vertices, hemesh)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Initial condition: random temperature field</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">7</span>)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>u0 <span class="op">=</span> jax.random.normal(key, (hemesh.n_vertices,))</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Right-hand side: M u^n</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>rhs <span class="op">=</span> M <span class="op">@</span> u0</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="co"># System matrix A = M - dt * L  (positive definite)</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Wrap as a lineax operator so we can use an iterative solver.</span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply_A(x):</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> M <span class="op">@</span> x <span class="op">-</span> dt <span class="op">*</span> (L <span class="op">@</span> x)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>A_op <span class="op">=</span> lineax.FunctionLinearOperator(apply_A, input_structure<span class="op">=</span>jax.eval_shape(apply_A, u0),</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>                                     tags<span class="op">=</span>lineax.positive_semidefinite_tag)</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve with conjugate gradient</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>u1 <span class="op">=</span> lineax.linear_solve(A_op, rhs, solver<span class="op">=</span>lineax.CG(rtol<span class="op">=</span><span class="fl">1e-6</span>, atol<span class="op">=</span><span class="fl">1e-10</span>)).value</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"implicit Euler step completed, |u1|_2 ="</span>, jnp.linalg.norm(u1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>implicit Euler step completed, |u1|_2 = 13.946797843039743</code></pre>
+</div>
+</div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L319" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L439" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
 </section>
 <section id="linear_op_to_sparse" class="level3">
 <h3 class="anchored" data-anchor-id="linear_op_to_sparse">linear_op_to_sparse</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> linear_op_to_sparse(</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    op:<span class="bu">callable</span>, in_shape:<span class="bu">tuple</span>, out_shape:<span class="bu">tuple</span>, dtype:Union<span class="op">=</span><span class="va">None</span>, chunk_size:<span class="bu">int</span><span class="op">=</span><span class="dv">256</span>, tol:<span class="bu">float</span><span class="op">=</span><span class="fl">0.0</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> linear_op_to_sparse(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    op:<span class="bu">callable</span>, in_shape:<span class="bu">tuple</span>, out_shape:<span class="bu">tuple</span>, dtype:Union<span class="op">=</span><span class="va">None</span>, chunk_size:<span class="bu">int</span><span class="op">=</span><span class="dv">256</span>, tol:<span class="bu">float</span><span class="op">=</span><span class="fl">0.0</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>BCOO:</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Build a sparse matrix for a linear map using batched one-hot probes.</em></p>
 <p>Note: this function is general, but not necessarily very efficient for large matrix sizes.</p>
-<div id="a9ed5a07" class="cell" data-execution_count="57">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare sparse construction to lineax dense matrix (small meshes only)</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hemesh.n_vertices <span class="op">&lt;=</span> <span class="dv">2000</span>:</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    laplace_op_local <span class="op">=</span> functools.partial(compute_cotan_laplace, geommesh.vertices, hemesh)</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    laplace_op_lx_local <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op_local,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                                                        input_structure<span class="op">=</span>jax.eval_shape(laplace_op_local, u))</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    sp_mat <span class="op">=</span> linear_op_to_sparse(laplace_op_local, (hemesh.n_vertices,), (hemesh.n_vertices,))</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    mat_dense <span class="op">=</span> laplace_op_lx_local.as_matrix()</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    rel_err_sparse <span class="op">=</span> jnp.linalg.norm(sp_mat.todense() <span class="op">-</span> mat_dense) <span class="op">/</span> jnp.linalg.norm(mat_dense)</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"sparse vs lineax rel. error:"</span>, rel_err_sparse)</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Skipping dense comparison for large mesh."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a9ed5a07" class="cell" data-execution_count="58">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare sparse construction to lineax dense matrix (small meshes only)</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hemesh.n_vertices <span class="op">&lt;=</span> <span class="dv">2000</span>:</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    laplace_op_local <span class="op">=</span> functools.partial(compute_cotan_laplace, geommesh.vertices, hemesh)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    laplace_op_lx_local <span class="op">=</span> lineax.FunctionLinearOperator(laplace_op_local,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                                                        input_structure<span class="op">=</span>jax.eval_shape(laplace_op_local, u))</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    sp_mat <span class="op">=</span> linear_op_to_sparse(laplace_op_local, (hemesh.n_vertices,), (hemesh.n_vertices,))</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    mat_dense <span class="op">=</span> laplace_op_lx_local.as_matrix()</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    rel_err_sparse <span class="op">=</span> jnp.linalg.norm(sp_mat.todense() <span class="op">-</span> mat_dense) <span class="op">/</span> jnp.linalg.norm(mat_dense)</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"sparse vs lineax rel. error:"</span>, rel_err_sparse)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Skipping dense comparison for large mesh."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>sparse vs lineax rel. error: 0.0</code></pre>
 </div>
 </div>
 <div id="1cc5f280" class="cell" data-execution_count="60">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">## now let's try with a large mesh</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/torus_high_resolution.obj"</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> msh.GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> jax.jit(functools.partial(compute_cotan_laplace, geommesh.vertices, hemesh))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">## now let's try with a large mesh</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/torus_high_resolution.obj"</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> msh.GeomMesh(<span class="op">*</span>hemesh.n_items, mesh.vertices, mesh.face_positions)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>laplace_op <span class="op">=</span> jax.jit(functools.partial(compute_cotan_laplace, geommesh.vertices, hemesh))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o Torus</code></pre>
 </div>
 </div>
 <div id="81a0ffb5" class="cell" data-execution_count="61">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>sparse_laplace_op <span class="op">=</span> linear_op_to_sparse(laplace_op, (hemesh.n_vertices,), (hemesh.n_vertices,))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>sparse_laplace_op <span class="op">=</span> linear_op_to_sparse(laplace_op, (hemesh.n_vertices,), (hemesh.n_vertices,))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

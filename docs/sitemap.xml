@@ -2,70 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/05b_geometric_quantities_periodic_bcs.html</loc>
-    <lastmod>2026-04-09T17:12:59.385Z</lastmod>
+    <lastmod>2026-04-10T10:52:40.020Z</lastmod>
   </url>
   <url>
-    <loc>https://nikolas-claussen.github.io/triangulax/src/00_trigonometry.html</loc>
-    <lastmod>2026-04-09T17:12:59.265Z</lastmod>
+    <loc>https://nikolas-claussen.github.io/triangulax/src/trigonometry.html</loc>
+    <lastmod>2026-04-10T10:52:39.874Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/05_geometric_quantities.html</loc>
-    <lastmod>2026-04-09T17:12:59.491Z</lastmod>
+    <lastmod>2026-04-10T10:52:40.150Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/07_algorithms.html</loc>
-    <lastmod>2026-04-09T17:12:59.488Z</lastmod>
+    <lastmod>2026-04-10T10:52:40.092Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/04_adjacency_operators.html</loc>
-    <lastmod>2026-04-09T17:12:59.420Z</lastmod>
+    <lastmod>2026-04-10T10:52:40.059Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization.html</loc>
-    <lastmod>2026-04-09T17:12:58.792Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.362Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/tutorials/00_triangular_meshes.html</loc>
-    <lastmod>2026-04-09T17:12:58.768Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.350Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/tutorials/01_coding_with_JAX.html</loc>
-    <lastmod>2026-04-09T17:12:58.777Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.371Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/previous_projects/01 Simulation of non-reciprocal Cahn Hillard 1D.html</loc>
-    <lastmod>2026-04-09T17:12:58.772Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.350Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/tutorials/05_membrane_mechanics.html</loc>
-    <lastmod>2026-04-09T17:12:58.830Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.413Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/tutorials/04_PDEs_on_curved_surfaces.html</loc>
-    <lastmod>2026-04-09T17:12:58.817Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.399Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/tutorials/03_vertex_models.html</loc>
-    <lastmod>2026-04-09T17:12:58.805Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.389Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/index.html</loc>
-    <lastmod>2026-04-09T17:12:58.767Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.344Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/03_topological_modifications.html</loc>
-    <lastmod>2026-04-09T17:12:59.431Z</lastmod>
+    <lastmod>2026-04-10T10:52:40.085Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/06_linear_operators.html</loc>
-    <lastmod>2026-04-09T17:12:59.469Z</lastmod>
+    <lastmod>2026-04-10T10:52:40.088Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/01_triangular_meshes.html</loc>
-    <lastmod>2026-04-09T17:12:59.382Z</lastmod>
+    <lastmod>2026-04-10T10:52:39.947Z</lastmod>
   </url>
   <url>
     <loc>https://nikolas-claussen.github.io/triangulax/src/02_halfedge_datastructure.html</loc>
-    <lastmod>2026-04-09T17:12:59.435Z</lastmod>
+    <lastmod>2026-04-10T10:52:40.073Z</lastmod>
   </url>
 </urlset>

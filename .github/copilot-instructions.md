@@ -30,8 +30,6 @@ my_function(arg1, arg2,
             arg3, arg4,)
 ```
 
-
-
 ## External libraries
 
 - Avoid using 3rd party libraries unless necessary beyond the ones already in the project (see `environment.yml`).
@@ -39,8 +37,9 @@ my_function(arg1, arg2,
 - Use **igl** for all geometrry processing not done in JAX (loading and saving meshes etc), and to test that JAX computations are correct (compare to igl results).
 - Use `equinox` for neural network functionality if needed. `diffrax`, `lineax` and `optimistix` for numerics.
 
-## Packaging & docs (nbdev)
+## Virtual environment, packaging & docs (nbdev)
 
+- Use the `triangulax` conda environment for development.
 - All code is developed in **Jupyter Notebooks** in the `nbdocs` folder.
 - Use **nbdev** to export code via the `ndbdev_export` command. Do not edit the code files in `triangulax/` directly. Cells to be exported should be marked with `#| export` at the top. Cells with time-consuming computations should be marked with `#| notest`.
 - Documentation webpage is in the `docs` folder. To generate documentation, use `nbdev_docs` and `nbdev_readme`. Nbdev places docs in the `_docs` folder. To update the documentation webpage, delete the old `docs` folder, run the nbdev commands, then move `_docs` to `docs`.

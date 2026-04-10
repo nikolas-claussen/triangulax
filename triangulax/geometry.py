@@ -2,16 +2,18 @@
 
 # %% auto #0
 __all__ = ['get_he_length', 'get_triangle_areas', 'get_barycentric_cell_areas', 'get_oriented_triangle_areas',
-           'get_triangle_normals', 'get_vertex_normals', 'get_dihedral_angles', 'get_volume', 'get_area',
-           'get_voronoi_face_positions', 'set_voronoi_face_positions', 'get_dual_he_length',
+           'get_triangle_normals', 'get_vertex_normals', 'get_face_centroids', 'get_dihedral_angles', 'get_volume',
+           'get_area', 'get_voronoi_face_positions', 'set_voronoi_face_positions', 'get_dual_he_length',
            'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum', 'get_cotan_weights_per_he',
-           'get_cotan_weights_per_egde', 'get_voronoi_edge_lengths', 'get_voronoi_edge_areas',
-           'get_cell_areas_traversal', 'get_voronoi_areas', 'get_mean_curvature_dihedral', 'get_corner_scaled_angles',
+           'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths', 'get_voronoi_edge_areas',
+           'get_cell_areas_traversal', 'get_voronoi_areas', 'get_voronoi_perimeters', 'get_gaussian_curvature',
+           'get_mean_curvature_dihedral', 'get_mean_curvature_laplace', 'get_corner_scaled_angles',
            'get_face_tangent_basis', 'get_vertex_tangent_basis', 'get_transport_across_halfedge',
            'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
+import igl
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -38,7 +40,7 @@ def get_he_length(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMe
 ## triangle areas and normals
 
 def get_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                       ) ->Float[jax.Array, "n_faces ..."]:
+                       ) -> Float[jax.Array, " n_faces"]:
     """Compute triangle areas in a mesh."""
     return jax.vmap(trig.get_triangle_area)(*vertices[hemesh.faces.T])
 
@@ -48,27 +50,32 @@ def get_barycentric_cell_areas(vertices: Float[jax.Array, "n_vertices dim"], hem
     return adj.sum_face_to_vertex(hemesh, get_triangle_areas(vertices, hemesh)) / 3.0
 
 def get_oriented_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                                ) ->Float[jax.Array, "n_faces ..."]:
+                                ) -> Float[jax.Array, "n_faces dim"]:
     """Compute oriented triangle areas in a mesh. In 3d, this is a vector."""
     return jax.vmap(trig.get_oriented_triangle_area)(*vertices[hemesh.faces.T])
 
 def get_triangle_normals(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                         ) ->Float[jax.Array, "n_faces ..."]:
-    """Compute normals. In 2d, this just returns +/-1."""
+                         ) -> Float[jax.Array, "n_faces dim"]:
+    """Compute per-face unit normals. In 2d, this just returns +/-1."""
     oriented_areas = get_oriented_triangle_areas(vertices, hemesh)
-    norm = jnp.clip(jnp.linalg.norm(oriented_areas, axis=-1), 1e-12)
+    norm = jnp.maximum(jnp.linalg.norm(oriented_areas, axis=-1), 1e-12)
     return (oriented_areas.T / norm).T
 
 def get_vertex_normals(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                       ) ->Float[jax.Array, "n_faces ..."]:
-    """Compute per-vertex normals by averaging over faces"""
+                       ) -> Float[jax.Array, "n_vertices dim"]:
+    """Compute per-vertex unit normals by area-weighted averaging over adjacent faces."""
     oriented_areas = get_oriented_triangle_areas(vertices, hemesh)
     oriented_areas_vertex = adj.sum_face_to_vertex(hemesh, oriented_areas)
-    norm = jnp.clip(jnp.linalg.norm(oriented_areas_vertex, axis=-1), 1e-12)
+    norm = jnp.maximum(jnp.linalg.norm(oriented_areas_vertex, axis=-1), 1e-12)
     return (oriented_areas_vertex.T / norm).T
 
+def get_face_centroids(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                       ) -> Float[jax.Array, "n_faces dim"]:
+    """Compute centroids (barycenters) of triangular faces."""
+    return vertices[hemesh.faces].mean(axis=1)
+
 def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                       ) ->Float[jax.Array, "n_hes ..."]:
+                       ) -> Float[jax.Array, " n_hes"]:
     """Get dihedral angles (angle between adjacent face normals)."""
     oriented_areas = get_oriented_triangle_areas(vertices, hemesh)
     dihedral = jax.vmap(trig.get_angle_between_vectors)(oriented_areas[hemesh.heface],
@@ -118,12 +125,13 @@ def get_oriented_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
 
     edges = vertices[hemesh.orig]-vertices[hemesh.dest]
     edges_normalized = (edges.T / jnp.linalg.norm(edges, axis=-1)).T
-    signed_dual_length = jnp.einsum('vi,vi->v', edges_normalized, dual_edges @ trig.get_rot_mat(np.pi/2))
+    signed_dual_length = jnp.einsum('vi,vi->v', edges_normalized,
+                                    dual_edges @ trig.get_rot_mat(-jnp.pi/2))
     signed_dual_length = jnp.where(hemesh.is_bdry_edge, 1, signed_dual_length)
     return signed_dual_length
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #96c8a576
-def get_corner_angles(vertices: Float[jax.Array, "n_vertices dim"],hemesh: msh.HeMesh
+def get_corner_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                       ) -> Float[jax.Array, " n_hes"]:
     """Get angles in mesh corners (opposite to half-edges)."""
     b, c = vertices[hemesh.orig], vertices[hemesh.dest]
@@ -131,22 +139,22 @@ def get_corner_angles(vertices: Float[jax.Array, "n_vertices dim"],hemesh: msh.H
     return jax.vmap(trig.get_angle_between_vectors)(b-a, c-a)
 
 
-def get_angle_sum(vertices: Float[jax.Array, "n_vertices dim"],hemesh: msh.HeMesh
+def get_angle_sum(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                   ) -> Float[jax.Array, " n_vertices"]:
-    """Angle sum around vertices. 2*pi-angle sum measures Gaussian curvature"""
+    """Angle sum around vertices. ``2*pi - angle_sum`` measures Gaussian curvature."""
     angles = get_corner_angles(vertices, hemesh)
     return adj.sum_he_to_vertex_opposite(hemesh, angles)
 
 
 def get_cotan_weights_per_he(vertices: Float[jax.Array, "n_vertices dim"],
                              hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Cotangent of angle opposite to half-edge """
+    """Cotangent of angle opposite to half-edge."""
     b, c = vertices[hemesh.orig], vertices[hemesh.dest]
     a = vertices[hemesh.dest[hemesh.nxt]]
     return jax.vmap(trig.get_cot_between_vectors)(b-a, c-a)
 
 
-def get_cotan_weights_per_egde(vertices: Float[jax.Array, "n_vertices dim"],
+def get_cotan_weights_per_edge(vertices: Float[jax.Array, "n_vertices dim"],
                                hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
     """Average of cotangent of angles opposite to edge."""
     per_he = get_cotan_weights_per_he(vertices, hemesh)
@@ -156,57 +164,107 @@ def get_cotan_weights_per_egde(vertices: Float[jax.Array, "n_vertices dim"],
 
 def get_voronoi_edge_lengths(vertices: Float[jax.Array, "n_vertices dim"],
                              hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Computed directly from angles. Accurate in any dimension"""
-    return get_cotan_weights_per_egde(vertices, hemesh) * get_he_length(vertices, hemesh)
+    """Voronoi dual edge lengths computed from cotangent weights. Accurate in any dimension."""
+    return get_cotan_weights_per_edge(vertices, hemesh) * get_he_length(vertices, hemesh)
 
 
 def get_voronoi_edge_areas(vertices: Float[jax.Array, "n_vertices dim"],
                            hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Voronoi "area" for an edge. Defined as dual edge length * primal edge length ** 2 / 4.
-    Summing over all edge areas adjacent to a vertex gives the area of the Voronoi cell around that vertex.
-    Computed directly from angles. Accurate in any dimension"""
-    return get_cotan_weights_per_egde(vertices, hemesh) * get_he_length(vertices, hemesh)**2 / 4
+    """Voronoi "area" for an edge: ``dual_length * primal_length / 4``.
 
-
+    Summing over all edges adjacent to a vertex gives the Voronoi cell area.
+    Computed from cotangent weights. Accurate in any dimension.
+    """
+    return get_cotan_weights_per_edge(vertices, hemesh) * get_he_length(vertices, hemesh)**2 / 4
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #fbebd977-9ea6-4ab9-8188-d833f1bbba60
 def get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
-    """
-    Compute areas of cells by mesh traversal (don't use for simulation, inefficient).
+    """Compute areas of cells by mesh traversal (don't use for simulation, inefficient).
 
-    Boundary vertices get area 0.
+    Boundary vertices get area 0.  The sign flip corrects for the winding
+    order of ``iterate_around_vertex`` relative to ``get_polygon_area``.
     """
-    areas = np.zeros(hemesh.n_vertices)
+    areas = jnp.zeros(hemesh.n_vertices)
     bdry = hemesh.is_bdry
     for v in range(hemesh.n_vertices):
         if bdry[v]:
-            areas[v] = 0
+            pass
         else:
             adjacent_faces = hemesh.heface[hemesh.iterate_around_vertex(v)]
             polygon = geommesh.face_positions[adjacent_faces]
-            areas[v] = trig.get_polygon_area(polygon)
-    return -jnp.array(areas)
+            areas = areas.at[v].set(-trig.get_polygon_area(polygon))
+    return areas
 
 
 def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                      ) ->Float[jax.Array, " n_vertices"]:
-    """Compute Voronoi area for each vertex."""
+                      ) -> Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi cell area for each vertex by summing edge areas."""
     edge_areas = get_voronoi_edge_areas(vertices, hemesh)
     return adj.sum_he_to_vertex_incoming(hemesh, edge_areas)
 
+
+def get_voronoi_perimeters(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                           ) -> Float[jax.Array, " n_vertices"]:
+    """Compute Voronoi cell perimeter for each vertex by summing dual edge lengths."""
+    dual_lengths = get_voronoi_edge_lengths(vertices, hemesh)
+    return adj.sum_he_to_vertex_incoming(hemesh, dual_lengths)
+
+
+def get_gaussian_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                           ) -> Float[jax.Array, " n_vertices"]:
+    """Discrete Gaussian curvature via the angle defect: ``(2π - Σθ_i) / A_i``.
+
+    Uses barycentric dual cell areas.
+    """
+    angle_defect = 2 * jnp.pi - get_angle_sum(vertices, hemesh)
+    cell_areas = get_barycentric_cell_areas(vertices, hemesh)
+    return angle_defect / cell_areas
+
 # %% ../nbs/src/05_geometric_quantities.ipynb #a840388a
 def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                                ) ->Float[jax.Array, " n_vertices"]:
+                                ) -> Float[jax.Array, " n_vertices"]:
+    """Compute mean curvature using the Steiner (dihedral angle) approximation.
 
-    """Compute mean curvature of triangulated mesh using Steiner approximation:
-        H_i = 1/(4 A_i) * sum_j * theta_ij * l_ij
-    where theta_ij is the dihedral angle between faces adjacent to edge ij, l_ij is the length of edge ij,
-    and A_i is the barycentric dual cell area around vertex i.
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices dim"]
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh.
+
+    Returns
+    -------
+    Float[Array, "n_vertices"]
+        Per-vertex mean curvature.
     """
     dihedral_angles = get_dihedral_angles(vertices, hemesh)
     edge_lengths = get_he_length(vertices, hemesh)
     cell_areas = get_barycentric_cell_areas(vertices, hemesh)
-    return  1/4 * adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles*edge_lengths) / cell_areas
+    return 1/4 * adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles*edge_lengths) / cell_areas
+
+
+def get_mean_curvature_laplace(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                               ) -> Float[jax.Array, " n_vertices"]:
+    """Compute mean curvature from the cotangent Laplacian: ``Δx = 2Hn``.
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices dim"]
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh.
+
+    Returns
+    -------
+    Float[Array, "n_vertices"]
+        Per-vertex mean curvature.
+    """
+    w_edge = get_cotan_weights_per_edge(vertices, hemesh)
+    diff = vertices[hemesh.dest] - vertices[hemesh.orig]
+    l_vec = -adj.sum_he_to_vertex_incoming(hemesh, (w_edge * diff.T).T)
+    n_vec = get_vertex_normals(vertices, hemesh)
+    cell_areas = get_voronoi_areas(vertices, hemesh)
+    return -jnp.linalg.vecdot(l_vec, n_vec) / (2 * cell_areas)
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #e27886c1
 def get_corner_scaled_angles(vertices: Float[jax.Array, "n_vertices dim"],
@@ -233,18 +291,20 @@ def get_corner_scaled_angles(vertices: Float[jax.Array, "n_vertices dim"],
     angle_sums = adj.sum_he_to_vertex_opposite(hemesh, angles)
     # scale factor: 2π/sum at interior, π/sum at boundary
     target = jnp.where(hemesh.is_bdry, jnp.pi, 2 * jnp.pi)
-    scale = target / jnp.clip(angle_sums, 1e-10)
+    scale = target / jnp.maximum(angle_sums, 1e-10)
     # corner_angles[he] is the angle at vertex dest[nxt[he]]
     vertex_of_corner = hemesh.dest[hemesh.nxt]
     return angles * scale[vertex_of_corner]
 
-# %% ../nbs/src/05_geometric_quantities.ipynb #38cd5b95
+# %% ../nbs/src/05_geometric_quantities.ipynb #7f22ad27
 def get_face_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                            ) -> Float[jax.Array, "n_faces 2 dim"]:
     """Orthonormal tangent basis (basisX, basisY) in 3D world coordinates per face.
 
     Convention: basisX is aligned with the face's incident halfedge projected onto
-    the face tangent plane. basisY = cross(face_normal, basisX).
+    the face tangent plane. basisY = cross(basisX, face_normal).
+
+    Note: 3D meshes only (uses cross product).
 
     Parameters
     ----------
@@ -263,7 +323,7 @@ def get_face_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
     edge_vecs = vertices[hemesh.dest[hemesh.face_incident]] - vertices[hemesh.orig[hemesh.face_incident]]
     # project onto tangent plane and normalize
     basis_X = jax.vmap(trig.project_out_vector)(edge_vecs, normals)
-    basis_X = basis_X / jnp.clip(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
+    basis_X = basis_X / jnp.maximum(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
     basis_Y = jnp.cross(basis_X, normals)
     return jnp.stack([basis_X, basis_Y], axis=1)
 
@@ -273,7 +333,9 @@ def get_vertex_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemes
     """Orthonormal tangent basis (basisX, basisY) in 3D world coordinates per vertex.
 
     Convention: basisX is aligned with the vertex' incident halfedge projected onto
-    the vertex tangent plane. basisY = cross(vertex_normal, basisX).
+    the vertex tangent plane. basisY = cross(basisX, vertex_normal).
+
+    Note: 3D meshes only (uses cross product).
 
     Parameters
     ----------
@@ -290,7 +352,7 @@ def get_vertex_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemes
     normals = get_vertex_normals(vertices, hemesh)
     edge_vecs = vertices[hemesh.dest[hemesh.incident]] - vertices[hemesh.orig[hemesh.incident]]
     basis_X = jax.vmap(trig.project_out_vector)(edge_vecs, normals)
-    basis_X = basis_X / jnp.clip(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
+    basis_X = basis_X / jnp.maximum(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
     basis_Y = jnp.cross(basis_X, normals)
     return jnp.stack([basis_X, basis_Y], axis=1)
 
@@ -300,8 +362,9 @@ def get_transport_across_halfedge(vertices: Float[jax.Array, "n_vertices dim"], 
     """Rotation angle to transport a tangent vector from one face to the adjacent face across a halfedge.
 
     Applying this rotation to a vector in the frame of heface[he] gives the same vector
-    in the frame of heface[twin[he]]. For boundary half edges, this is set to 0
-    (no transport since there's only one face).
+    in the frame of heface[twin[he]]. Boundary half-edges are set to 0.
+
+    Note: 3D meshes only.
 
     Parameters
     ----------
@@ -313,7 +376,7 @@ def get_transport_across_halfedge(vertices: Float[jax.Array, "n_vertices dim"], 
     Returns
     -------
     Float[Array, "n_hes"]
-        Transport angle per halfedge (radians). NaN for boundary halfedges.
+        Transport angle per halfedge (radians). 0 for boundary halfedges.
     """
     # get vector of shared half edge in 3d world coordinates
     edge_vec = vertices[hemesh.orig] - vertices[hemesh.dest]
@@ -331,10 +394,12 @@ def get_transport_across_halfedge(vertices: Float[jax.Array, "n_vertices dim"], 
 # %% ../nbs/src/05_geometric_quantities.ipynb #c3e7ad42
 def get_transport_along_halfedge(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                                  ) -> Float[jax.Array, " n_hes"]:
-    """Rotation angle to transport a tangent vector from one vertex to the next vertex along a halfedge.
+    """Rotation angle to transport a tangent vector from one vertex to the next along a halfedge.
 
-    Applying this rotation to a vector in the frame of a vertex gives the same vector
-    in the frame of the next vertex along the halfedge
+    Applying this rotation to a vector in the frame of orig[he] gives the same vector
+    in the frame of dest[he]. Boundary half-edges are set to 0.
+
+    Note: 3D meshes only.
 
     Parameters
     ----------
@@ -346,7 +411,7 @@ def get_transport_along_halfedge(vertices: Float[jax.Array, "n_vertices dim"], h
     Returns
     -------
     Float[Array, "n_hes"]
-        Transport angle per halfedge (radians). NaN for boundary halfedges.
+        Transport angle per halfedge (radians). 0 for boundary halfedges.
     """
     # get vector of shared half edge in 3d world coordinates
     edge_vec = vertices[hemesh.orig] - vertices[hemesh.dest]

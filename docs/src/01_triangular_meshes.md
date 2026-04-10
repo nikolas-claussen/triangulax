@@ -72,7 +72,7 @@ Laplacian eigenvectors) to the UV domain for 2D visualization.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L32"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L33"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TriMesh
@@ -250,7 +250,7 @@ print("2D mesh (no UV) backward compatibility: OK")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L266"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L267"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_per_face_jacobian
@@ -295,7 +295,7 @@ Some functions for plotting meshes:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L330"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L331"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_triangular_lattice
@@ -314,7 +314,7 @@ points.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L322"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L323"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_poisson_points
@@ -333,7 +333,7 @@ def generate_poisson_points(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L313"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L314"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_ginibre_points
@@ -372,6 +372,10 @@ plt.axis("equal")
 
 ------------------------------------------------------------------------
 
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L343"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
 ### get_periodic_delaunay_faces
 
 ``` python
@@ -392,6 +396,10 @@ neighboring copies of the box, triangulated in the extended domain, and
 mapped back to the original vertex ids.
 
 ------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L404"
+target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_faces_crossing_periodic_boundaries
 
@@ -462,7 +470,7 @@ print("Periodic Delaunay triangulations are manifold and boundary-free.")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L344"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L446"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_adjacent_vertex_indices

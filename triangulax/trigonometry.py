@@ -5,103 +5,215 @@ __all__ = ['get_circumcenter', 'get_oriented_triangle_area', 'get_triangle_area'
            'project_out_vector', 'get_projector', 'get_signed_angle_between_vectors', 'get_angle_between_vectors',
            'get_cot_between_vectors', 'get_tetrahedron_volume', 'get_triangle_area_from_lengths',
            'get_angles_from_lengths', 'get_cotangents_from_lengths', 'get_circumcenter_from_lengths', 'get_rot_mat',
-           'get_perp_2d', 'get_triangle_normal', 'quaternion_to_rot_max', 'get_barycentric_coordinates',
+           'get_perp_2d', 'get_triangle_normal', 'quaternion_to_rot_mat', 'get_barycentric_coordinates',
            'rotate_around_axis']
 
 # %% ../nbs/src/00_trigonometry.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
 import jax.numpy as jnp
 
-import functools
-
 # %% ../nbs/src/00_trigonometry.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float
 
 # %% ../nbs/src/00_trigonometry.ipynb #7f22d2ad-1ddb-4cf3-b782-ef29639cb724
-## trig functions - we can use vmap to vectorize them
-
-@functools.partial(jax.jit, static_argnames=['zero_clip'])
 def get_circumcenter(a: Float[jax.Array, " dim"],
                      b: Float[jax.Array, " dim"],
-                     c: Float[jax.Array, " dim"], zero_clip: float = 1e-10) -> Float[jax.Array, " dim"]:
-    """Return circumcenter coordinates of triangle with vertices a, b, c"""    
-    # compute using barycentric coordinates. Start by computing the edge lengths:
-    la, lb, lc = (jnp.linalg.norm(b-c), jnp.linalg.norm(c-a), jnp.linalg.norm(a-b,))
-    ba, bb, bc = (la**2*(lb**2+lc**2-la**2), lb**2*(lc**2+la**2-lb**2), lc**2*(la**2+lb**2-lc**2))
-    u = (ba*a+bb*b+bc*c)/jnp.clip(ba+bb+bc, zero_clip)  # avoid div by zero for degenerate triangles
-    return u
+                     c: Float[jax.Array, " dim"]) -> Float[jax.Array, " dim"]:
+    """Circumcenter of triangle with vertices a, b, c via barycentric coordinates.
+
+    Parameters
+    ----------
+    a, b, c : Float[Array, "dim"]
+        Triangle vertex positions.
+
+    Returns
+    -------
+    Float[Array, "dim"]
+        Circumcenter coordinates.
+    """
+    la, lb, lc = jnp.linalg.norm(b - c), jnp.linalg.norm(c - a), jnp.linalg.norm(a - b)
+    ba = la**2 * (lb**2 + lc**2 - la**2)
+    bb = lb**2 * (lc**2 + la**2 - lb**2)
+    bc = lc**2 * (la**2 + lb**2 - lc**2)
+    return (ba * a + bb * b + bc * c) / jnp.clip(ba + bb + bc, 1e-12)
+
 
 def get_oriented_triangle_area(a: Float[jax.Array, " dim"],
                                b: Float[jax.Array, " dim"],
                                c: Float[jax.Array, " dim"]) -> Float[jax.Array, "*"]:
-    """Signed area of triangle with vertices a, b, c. If d=2, returns a scalar, if d=3, a vector."""
+    """Signed area of triangle with vertices a, b, c.
+
+    Parameters
+    ----------
+    a, b, c : Float[Array, "dim"]
+        Triangle vertex positions (dim = 2 or 3).
+
+    Returns
+    -------
+    Float[Array, "*"]
+        Scalar (dim=2) or area-weighted normal vector (dim=3).
+    """
     return 0.5 * jnp.cross(b - a, c - a)
+
 
 def get_triangle_area(a: Float[jax.Array, " dim"],
                       b: Float[jax.Array, " dim"],
                       c: Float[jax.Array, " dim"]) -> Float[jax.Array, ""]:
-    """Unoriented area of triangle with vertices a, b, c. Works in dim 2 or 3."""
+    """Unsigned area of triangle with vertices a, b, c.
+
+    Parameters
+    ----------
+    a, b, c : Float[Array, "dim"]
+        Triangle vertex positions (dim = 2 or 3).
+
+    Returns
+    -------
+    Float[Array, ""]
+        Triangle area.
+    """
     return 0.5 * jnp.linalg.norm(jnp.cross(b - a, c - a))
 
+
 def get_polygon_area(pts: Float[jax.Array, "n_vertices 2"]) -> Float[jax.Array, ""]:
-    """Area of 2D polygon assuming no self-intersection."""
-    return jnp.sum(pts[:,0]*jnp.roll(pts[:,1], 1) - jnp.roll(pts[:,0], 1)*pts[:,1])/2
+    """Signed area of a 2D simple polygon (shoelace formula).
+
+    Positive for counter-clockwise vertex ordering.
+
+    Parameters
+    ----------
+    pts : Float[Array, "n_vertices 2"]
+        Ordered polygon vertices.
+
+    Returns
+    -------
+    Float[Array, ""]
+        Signed area.
+    """
+    return jnp.sum(pts[:, 0] * jnp.roll(pts[:, 1], 1)
+                   - jnp.roll(pts[:, 0], 1) * pts[:, 1]) / 2
 
 # %% ../nbs/src/00_trigonometry.ipynb #48180c1b
 def project_on_vector(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"]
-                       ) -> Float[jax.Array, " dim"]:
-    """Project vector a onto vector b"""
-    norm = jnp.clip(jnp.dot(b, b), 1e-12)
-    return jnp.dot(a, b) / norm * b
+                      ) -> Float[jax.Array, " dim"]:
+    """Project vector a onto vector b.
+
+    Parameters
+    ----------
+    a : Float[Array, "dim"]
+        Vector to project.
+    b : Float[Array, "dim"]
+        Target direction.
+
+    Returns
+    -------
+    Float[Array, "dim"]
+        Projection of a onto b.
+    """
+    return jnp.dot(a, b) / jnp.clip(jnp.dot(b, b), 1e-12) * b
 
 
 def project_out_vector(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"]
                        ) -> Float[jax.Array, " dim"]:
-    """Project vector a onto the plane orthogonal to vector b"""
-    norm = jnp.clip(jnp.dot(b, b), 1e-12)
-    return a - jnp.dot(a, b) / norm * b
+    """Project vector a onto the plane orthogonal to b.
+
+    Parameters
+    ----------
+    a : Float[Array, "dim"]
+        Input vector.
+    b : Float[Array, "dim"]
+        Normal direction to project out.
+
+    Returns
+    -------
+    Float[Array, "dim"]
+        Component of a orthogonal to b.
+    """
+    return a - jnp.dot(a, b) / jnp.clip(jnp.dot(b, b), 1e-12) * b
 
 
 def get_projector(normal: Float[jax.Array, " dim"]) -> Float[jax.Array, "dim dim"]:
-    """Projector matrix P = I - n⊗n for a (not necessarily normalized) normal vector n.
+    """Tangent-plane projector $P = I - \\hat{n} \\otimes \\hat{n}$.
 
     Parameters
     ----------
     normal : Float[Array, "dim"]
-        Normal vector.
+        Normal vector (need not be unit length).
 
     Returns
     -------
     Float[Array, "dim dim"]
-        Projection matrix onto the tangent plane.
+        Projection matrix onto the plane orthogonal to normal.
     """
-    normal = normal / jnp.clip(jnp.linalg.norm(normal), 1e-12)  # normalize to avoid scaling issues
+    normal = normal / jnp.clip(jnp.linalg.norm(normal), 1e-12)
     return jnp.eye(normal.shape[0]) - jnp.outer(normal, normal)
 
 
 def get_signed_angle_between_vectors(a: Float[jax.Array, "2"], b: Float[jax.Array, "2"]
                                      ) -> Float[jax.Array, ""]:
-    """Signed angle between two 2d vectors"""
+    """Signed angle from 2D vector a to b (CCW positive).
+
+    Parameters
+    ----------
+    a, b : Float[Array, "2"]
+        2D vectors.
+
+    Returns
+    -------
+    Float[Array, ""]
+        Signed angle in radians, in $(-\\pi, \\pi]$.
+    """
     return jnp.atan2(jnp.cross(a, b), jnp.dot(a, b))
 
 
 def get_angle_between_vectors(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"]
                               ) -> Float[jax.Array, ""]:
-    """Angle between two vectors"""
+    """Unsigned angle between vectors a and b.
+
+    Parameters
+    ----------
+    a, b : Float[Array, "dim"]
+        Input vectors.
+
+    Returns
+    -------
+    Float[Array, ""]
+        Angle in radians, in $[0, \\pi]$.
+    """
     return jnp.atan2(jnp.linalg.norm(jnp.cross(a, b)), jnp.dot(a, b))
 
 
 def get_cot_between_vectors(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"]
                             ) -> Float[jax.Array, ""]:
-    """Cotangent of angle between two vectors"""
-    divisor = jnp.clip(jnp.linalg.norm(jnp.cross(a, b)), 1e-12)
-    return jnp.dot(a, b) / divisor
+    """Cotangent of the angle between vectors a and b.
+
+    Parameters
+    ----------
+    a, b : Float[Array, "dim"]
+        Input vectors.
+
+    Returns
+    -------
+    Float[Array, ""]
+        Cotangent value.
+    """
+    return jnp.dot(a, b) / jnp.clip(jnp.linalg.norm(jnp.cross(a, b)), 1e-12)
 
 # %% ../nbs/src/00_trigonometry.ipynb #e04b3dfe
-def get_tetrahedron_volume(a: Float[jax.Array, " dim"], b: Float[jax.Array, " dim"], c: Float[jax.Array, " dim"]
-                           ) -> Float[jax.Array, ""]:
-    """Volume of tetrahedron defined by side vectors a, b, c"""
-    return jnp.linalg.vecdot(a, jnp.cross(b,c)) / 6
+def get_tetrahedron_volume(a: Float[jax.Array, "3"], b: Float[jax.Array, "3"],
+                           c: Float[jax.Array, "3"]) -> Float[jax.Array, ""]:
+    """Signed volume of tetrahedron with edge vectors a, b, c from a common vertex.
+
+    Parameters
+    ----------
+    a, b, c : Float[Array, "3"]
+        Edge vectors from a shared origin vertex.
+
+    Returns
+    -------
+    Float[Array, ""]
+        Signed volume (positive if a, b, c form a right-handed frame).
+    """
+    return jnp.linalg.vecdot(a, jnp.cross(b, c)) / 6
 
 # %% ../nbs/src/00_trigonometry.ipynb #07ef8c20
 def get_triangle_area_from_lengths(la: Float[jax.Array, ""],
@@ -158,7 +270,7 @@ def get_cotangents_from_lengths(la: Float[jax.Array, ""],
                                 lc: Float[jax.Array, ""]) -> Float[jax.Array, "3"]:
     """Cotangents of interior angles from side lengths.
 
-    Uses cot(A) = (b²+c²-a²) / (4·area).
+    Uses $\\cot(\\alpha) = (b^2 + c^2 - a^2) / (4 \\cdot \\text{area})$.
 
     Parameters
     ----------
@@ -180,43 +292,99 @@ def get_cotangents_from_lengths(la: Float[jax.Array, ""],
     return l2_opp / area4
 
 
-@functools.partial(jax.jit, static_argnames=['zero_clip'])
 def get_circumcenter_from_lengths(la: Float[jax.Array, ""],
                                   lb: Float[jax.Array, ""],
-                                  lc: Float[jax.Array, ""], zero_clip: float = 1e-10) -> Float[jax.Array, "3"]:
-    """
-    Return circumcenter barycentric coordinates of triangle with edge lengths la, lb, lc.
-    
-    To compute the circumcenter u from the barycentric coordinates ba, bb, bc:
-    u = ba * a + bb * b + bc * c
-    where a, b, c are the triangle vertices.
+                                  lc: Float[jax.Array, ""]) -> Float[jax.Array, "3"]:
+    """Circumcenter in barycentric coordinates from edge lengths.
 
-    """    
-    # compute using barycentric coordinates. Start by computing the edge lengths:
-    ba, bb, bc = (la**2*(lb**2+lc**2-la**2), lb**2*(lc**2+la**2-lb**2), lc**2*(la**2+lb**2-lc**2))
-    return jnp.array([ba, bb, bc])/jnp.clip(ba+bb+bc, zero_clip)  # avoid div by zero for degenerate triangles
+    To recover Cartesian coordinates: $u = \\lambda_a \\, a + \\lambda_b \\, b + \\lambda_c \\, c$.
+
+    Parameters
+    ----------
+    la : Float[Array, ""]
+        Length of side opposite vertex a (i.e. edge bc).
+    lb : Float[Array, ""]
+        Length of side opposite vertex b (i.e. edge ca).
+    lc : Float[Array, ""]
+        Length of side opposite vertex c (i.e. edge ab).
+
+    Returns
+    -------
+    Float[Array, "3"]
+        Normalized barycentric coordinates [lambda_a, lambda_b, lambda_c].
+    """
+    ba = la**2 * (lb**2 + lc**2 - la**2)
+    bb = lb**2 * (lc**2 + la**2 - lb**2)
+    bc = lc**2 * (la**2 + lb**2 - lc**2)
+    return jnp.array([ba, bb, bc]) / jnp.clip(ba + bb + bc, 1e-12)
 
 # %% ../nbs/src/00_trigonometry.ipynb #f5fabd40
 def get_rot_mat(theta: float) -> Float[jax.Array, "2 2"]:
-    """Get 2D rotation matrix from angle in radians."""
-    return jnp.array([[jnp.cos(theta), jnp.sin(theta)],[-jnp.sin(theta), jnp.cos(theta)]])
+    """2D counter-clockwise rotation matrix for angle theta.
+
+    Parameters
+    ----------
+    theta : float
+        Rotation angle in radians.
+
+    Returns
+    -------
+    Float[Array, "2 2"]
+        Rotation matrix.
+    """
+    return jnp.array([[jnp.cos(theta), -jnp.sin(theta)],
+                      [jnp.sin(theta), jnp.cos(theta)]])
+
 
 def get_perp_2d(x: Float[jax.Array, "... 2"]) -> Float[jax.Array, "... 2"]:
-    """Get perpendicular vector."""
+    """90-degree clockwise rotation of a 2D vector: $(x, y) \\to (y, -x)$.
+
+    Parameters
+    ----------
+    x : Float[Array, "... 2"]
+        Input vector(s).
+
+    Returns
+    -------
+    Float[Array, "... 2"]
+        Perpendicular vector(s).
+    """
     return jnp.stack([x[..., 1], -x[..., 0]], axis=-1)
+
 
 def get_triangle_normal(a: Float[jax.Array, "3"],
                         b: Float[jax.Array, "3"],
                         c: Float[jax.Array, "3"]) -> Float[jax.Array, "3"]:
-    """Compute unit normal vector of triangle abc."""
-    n = jnp.cross(b - a, c - a)
-    return n / jnp.linalg.norm(n)
+    """Unit normal of triangle abc (right-hand rule on a -> b -> c).
 
-def quaternion_to_rot_max(q: Float[jax.Array, "4"]) -> Float[jax.Array, "3 3"]:
+    Parameters
+    ----------
+    a, b, c : Float[Array, "3"]
+        Triangle vertex positions.
+
+    Returns
+    -------
+    Float[Array, "3"]
+        Unit normal vector.
     """
-    Convert unit quaternion into a 3d rotation matrix.
-    
-    See https://fr.wikipedia.org/wiki/Quaternions_et_rotation_dans_l%27espace
+    n = jnp.cross(b - a, c - a)
+    return n / jnp.clip(jnp.linalg.norm(n), 1e-12)
+
+
+def quaternion_to_rot_mat(q: Float[jax.Array, "4"]) -> Float[jax.Array, "3 3"]:
+    """Convert unit quaternion to 3D rotation matrix.
+
+    See `Quaternion rotation <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`_.
+
+    Parameters
+    ----------
+    q : Float[Array, "4"]
+        Quaternion $[w, x, y, z]$ (normalized internally).
+
+    Returns
+    -------
+    Float[Array, "3 3"]
+        Rotation matrix.
     """
     a, b, c, d = q / jnp.linalg.norm(q)
     return jnp.array([[a**2+b**2-c**2-d**2, 2*b*c-2*a*d, 2*a*c+2*b*d],
@@ -224,17 +392,35 @@ def quaternion_to_rot_max(q: Float[jax.Array, "4"]) -> Float[jax.Array, "3 3"]:
                       [2*b*d-2*a*c, 2*a*b+2*c*d, a**2-b**2-c**2+d**2]])
 
 # %% ../nbs/src/00_trigonometry.ipynb #8f94dd08
-@functools.partial(jax.jit, static_argnames=['zero_clip', 'normalize'])
 def get_barycentric_coordinates(point: Float[jax.Array, " dim"],
                                 a: Float[jax.Array, " dim"],
                                 b: Float[jax.Array, " dim"],
-                                c: Float[jax.Array, " dim"],
-                                zero_clip: float = 1e-10, normalize: bool = True) -> Float[jax.Array, "3"]:
-    """Compute barycentric coordinates of point with respect to triangle abc."""
-    bary, _, _, _ = jnp.linalg.lstsq(jnp.stack([a,b,c], axis=1), point)
-    if normalize:
-        bary = bary / jnp.clip(bary.sum(), zero_clip)
-    return bary
+                                c: Float[jax.Array, " dim"]) -> Float[jax.Array, "3"]:
+    """Barycentric coordinates of point w.r.t. triangle abc.
+
+    Uses the area-ratio method: each coordinate is the ratio of the
+    sub-triangle area to the full triangle area. In 3D the point is
+    projected onto the triangle plane (least-squares sense).
+
+    Parameters
+    ----------
+    point : Float[Array, "dim"]
+        Query point.
+    a, b, c : Float[Array, "dim"]
+        Triangle vertex positions.
+
+    Returns
+    -------
+    Float[Array, "3"]
+        Barycentric coordinates [lambda_a, lambda_b, lambda_c] summing to 1.
+    """
+    v0, v1, v2 = b - a, c - a, point - a
+    d00, d01, d11 = jnp.dot(v0, v0), jnp.dot(v0, v1), jnp.dot(v1, v1)
+    d20, d21 = jnp.dot(v2, v0), jnp.dot(v2, v1)
+    denom = jnp.clip(d00 * d11 - d01 * d01, 1e-12)
+    lb = (d11 * d20 - d01 * d21) / denom
+    lc = (d00 * d21 - d01 * d20) / denom
+    return jnp.array([1 - lb - lc, lb, lc])
 
 # %% ../nbs/src/00_trigonometry.ipynb #649715eb
 def rotate_around_axis(v: Float[jax.Array, "3"],

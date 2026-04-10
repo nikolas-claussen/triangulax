@@ -2,8 +2,9 @@
 
 # %% auto #0
 __all__ = ['scipy_to_bcoo', 'bcoo_to_scipy', 'diag_jsparse', 'compute_cotan_laplace', 'cotan_laplace_sparse',
-           'mass_matrix_sparse', 'mass_matrix_inv_sparse', 'compute_gradient_2d', 'compute_gradient_3d',
-           'gradient_sparse_2d', 'gradient_sparse_3d', 'reshape_face_gradient', 'linear_op_to_sparse']
+           'compute_periodic_cotan_laplace', 'mass_matrix_sparse', 'mass_matrix_inv_sparse', 'compute_gradient_2d',
+           'compute_gradient_3d', 'gradient_sparse_2d', 'gradient_sparse_3d', 'reshape_face_gradient',
+           'compute_divergence_2d', 'compute_divergence_3d', 'linear_op_to_sparse']
 
 # %% ../nbs/src/06_linear_operators.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -23,10 +24,13 @@ import functools
 from jaxtyping import Float 
 
 # %% ../nbs/src/06_linear_operators.ipynb #cef3ff0a
+from collections.abc import Callable
+
 from . import trigonometry as trig
 from . import mesh as msh
 from . import adjacency as adj
 from . import geometry as geom
+from . import periodic as per
 
 # %% ../nbs/src/06_linear_operators.ipynb #4cc0c0fb
 def scipy_to_bcoo(A) -> jsparse.BCOO:
@@ -86,21 +90,42 @@ def diag_jsparse(v : Float[jax.Array, " N"], k: int =0) -> jsparse.BCOO:
 
 # %% ../nbs/src/06_linear_operators.ipynb #66b2e04f
 def compute_cotan_laplace(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
-                          vertex_field: Float[jax.Array, "n_vertices ..."]
+                          vertex_field: Float[jax.Array, "n_vertices ..."],
+                          normalize: bool = False,
                           ) -> Float[jax.Array, "n_vertices ..."]:
+    """Compute cotangent Laplacian of a per-vertex field (natural boundary conditions).
+
+    Parameters
+    ----------
+    vertices
+        Vertex positions.
+    hemesh
+        Half-edge mesh connectivity.
+    vertex_field
+        Per-vertex scalar, vector, or tensor field.
+    normalize
+        If True, return the area-normalized Laplace-Beltrami operator $M^{-1} L u$,
+        dividing by the Voronoi cell area at each vertex.
+
+    Returns
+    -------
+    result
+        Cotangent Laplacian applied to the field, same shape as ``vertex_field``.
     """
-    Compute cotangent laplacian of a per-vertex field (natural boundary conditions).
-    """
-    w_edge = geom.get_cotan_weights_per_egde(vertices, hemesh)
+    w_edge = geom.get_cotan_weights_per_edge(vertices, hemesh)
     diff = vertex_field[hemesh.dest] - vertex_field[hemesh.orig]
-    return -adj.sum_he_to_vertex_incoming(hemesh, (w_edge*diff.T).T)
+    result = -adj.sum_he_to_vertex_incoming(hemesh, (w_edge*diff.T).T)
+    if normalize:
+        areas = geom.get_voronoi_areas(vertices, hemesh)
+        result = result / jnp.expand_dims(areas, jnp.arange(1, result.ndim)) # for broadcasting
+    return result
 
 # %% ../nbs/src/06_linear_operators.ipynb #b9c6f5cc
 def cotan_laplace_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                          ) -> jsparse.BCOO:
     """Assemble cotangent Laplacian as a sparse matrix (BCOO)."""
 
-    w_edge = geom.get_cotan_weights_per_egde(vertices, hemesh)
+    w_edge = geom.get_cotan_weights_per_edge(vertices, hemesh)
     unique = hemesh.is_unique
 
     i = hemesh.orig[unique]
@@ -115,12 +140,51 @@ def cotan_laplace_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: m
                        shape=(hemesh.n_vertices, hemesh.n_vertices))
     return mat.sum_duplicates()
 
+# %% ../nbs/src/06_linear_operators.ipynb #9cbc5491
+def compute_periodic_cotan_laplace(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,
+                                   vertex_field: Float[jax.Array, "n_vertices ..."],
+                                   distance_function: Callable,
+                                   normalize: bool = False,
+                                   ) -> Float[jax.Array, "n_vertices ..."]:
+    """Compute cotangent Laplacian on a periodic domain (2D).
+
+    Uses a periodic distance function to compute edge cotangent weights,
+    suitable for meshes on a torus.
+
+    Parameters
+    ----------
+    vertices
+        Vertex positions, shape (n_vertices, 2).
+    hemesh
+        Half-edge mesh connectivity.
+    vertex_field
+        Per-vertex scalar, vector, or tensor field.
+    distance_function
+        Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``,
+        e.g. :func:`triangulax.periodic.displacement_periodic`.
+    normalize
+        If True, divide by periodic Voronoi cell area at each vertex.
+
+    Returns
+    -------
+    result
+        Cotangent Laplacian applied to the field, same shape as ``vertex_field``.
+    """
+    w_edge = per._get_periodic_cotan_weights_per_edge(vertices, hemesh, distance_function)
+    diff = vertex_field[hemesh.dest] - vertex_field[hemesh.orig]
+    result = -adj.sum_he_to_vertex_incoming(hemesh, (w_edge*diff.T).T)
+    if normalize:
+        areas = per.get_periodic_voronoi_areas(vertices, hemesh, distance_function)
+        shape = (hemesh.n_vertices,) + (1,) * (result.ndim - 1)
+        result = result / areas.reshape(shape)
+    return result
+
 # %% ../nbs/src/06_linear_operators.ipynb #c45f21b2
 def mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
                        area_type: str = "voronoi") -> jsparse.BCOO:
     """Assemble lumped (diagonal) mass matrix as a sparse matrix (BCOO).
 
-    The lumped mass matrix is diagonal wiIn cth entries equal to the Voronoi dual
+    The lumped mass matrix is diagonal with entries equal to the dual
     area of each vertex: $M_{ii} = A_i$.
 
     Parameters
@@ -131,7 +195,8 @@ def mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh
         Half-edge mesh connectivity.
     area_type : {"voronoi", "barycentric"}, default="voronoi"
         Choice of dual-cell area definition used on the diagonal.
-
+        Use ``"voronoi"`` for the cotangent Laplacian; ``"barycentric"``
+        for a simpler (always positive) approximation.
 
     Returns
     -------
@@ -157,7 +222,6 @@ def mass_matrix_inv_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
         Half-edge mesh connectivity.
     area_type : {"voronoi", "barycentric"}, default="voronoi"
         Choice of dual-cell area definition used on the diagonal.
-
 
     Returns
     -------
@@ -201,13 +265,11 @@ def _fe_grad_phi_3d(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMe
     v0, v1, v2 = (vertices[faces[:, 0]], vertices[faces[:, 1]], vertices[faces[:, 2]])
 
     n = jnp.cross(v1 - v0, v2 - v0)
-    area2 = jnp.linalg.norm(n, axis=-1)[:, None]**2
-    mask = area2 > 1e-12
-    
-    mask = jnp.abs(area2) > 1e-12
-    grad_phi0 = jnp.where(mask, jnp.cross(v1 - v2, n)/area2, 0)
-    grad_phi1 = jnp.where(mask, jnp.cross(v2 - v0, n)/area2, 0)
-    grad_phi2 = jnp.where(mask, jnp.cross(v0 - v1, n)/area2, 0)
+    norm_n_sq = jnp.linalg.norm(n, axis=-1, keepdims=True)**2
+    mask = norm_n_sq > 1e-12
+    grad_phi0 = jnp.where(mask, jnp.cross(v1 - v2, n)/norm_n_sq, 0)
+    grad_phi1 = jnp.where(mask, jnp.cross(v2 - v0, n)/norm_n_sq, 0)
+    grad_phi2 = jnp.where(mask, jnp.cross(v0 - v1, n)/norm_n_sq, 0)
 
     return jnp.stack([grad_phi0, grad_phi1, grad_phi2], axis=1)
 
@@ -314,6 +376,64 @@ def reshape_face_gradient(grad_flat: Float[jax.Array, "dim_n_faces ..."], n_face
         raise ValueError(f"Expected grad_flat.shape[0] == dim*n_faces = {dim*n_faces}, got {grad_flat.shape[0]}")
     grad = jnp.reshape(grad_flat, (dim, n_faces) + grad_flat.shape[1:])
     return jnp.swapaxes(grad, 0, 1)
+
+# %% ../nbs/src/06_linear_operators.ipynb #f7ff66ae
+def compute_divergence_2d(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,
+                          face_field: Float[jax.Array, "n_faces 2 ..."]
+                          ) -> Float[jax.Array, "n_vertices ..."]:
+    """Compute the (integrated) FE divergence of a per-face vector field (2D).
+
+    Maps a per-face vector field to a per-vertex scalar field. This is the
+    negative adjoint of the FE gradient weighted by face areas.
+    Satisfies ``compute_cotan_laplace(v, h, u) ≈ compute_divergence_2d(v, h, compute_gradient_2d(v, h, u))``.
+
+    Parameters
+    ----------
+    vertices
+        Vertex positions, shape (n_vertices, 2).
+    hemesh
+        Half-edge mesh connectivity.
+    face_field
+        Per-face vector (or tensor) field, shape (n_faces, 2, ...).
+
+    Returns
+    -------
+    result
+        Per-vertex field, shape (n_vertices, ...).
+    """
+    faces = hemesh.faces
+    grads = _fe_grad_phi_2d(vertices, hemesh)                  # (n_faces, 3, 2)
+    areas = geom.get_triangle_areas(vertices, hemesh)          # (n_faces,)
+
+    # contract over spatial dim, weight by area → per-corner contributions
+    contrib = -jnp.einsum("fvd,fd...->fv...", grads, face_field) * areas[:, None]
+
+    # scatter-add per-corner contributions to vertices
+    trailing = face_field.shape[2:]
+    result = jnp.zeros((hemesh.n_vertices,) + trailing)
+    for l in range(3):
+        result = result.at[faces[:, l]].add(contrib[:, l])
+    return result
+
+
+def compute_divergence_3d(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMesh,
+                          face_field: Float[jax.Array, "n_faces 3 ..."]
+                          ) -> Float[jax.Array, "n_vertices ..."]:
+    """Compute the (integrated) FE divergence of a per-face vector field (3D).
+
+    Same as :func:`compute_divergence_2d` but for surfaces embedded in 3D.
+    """
+    faces = hemesh.faces
+    grads = _fe_grad_phi_3d(vertices, hemesh)                  # (n_faces, 3, 3)
+    areas = geom.get_triangle_areas(vertices, hemesh)          # (n_faces,)
+
+    contrib = -jnp.einsum("fvd,fd...->fv...", grads, face_field) * areas[:, None]
+
+    trailing = face_field.shape[2:]
+    result = jnp.zeros((hemesh.n_vertices,) + trailing)
+    for l in range(3):
+        result = result.at[faces[:, l]].add(contrib[:, l])
+    return result
 
 # %% ../nbs/src/06_linear_operators.ipynb #3d9366df
 def linear_op_to_sparse(op: callable,

@@ -2,7 +2,8 @@
 
 # %% auto #0
 __all__ = ['TriMesh', 'compute_per_face_jacobian', 'generate_ginibre_points', 'generate_poisson_points',
-           'generate_triangular_lattice', 'get_adjacent_vertex_indices']
+           'generate_triangular_lattice', 'get_periodic_delaunay_faces', 'get_faces_crossing_periodic_boundaries',
+           'get_adjacent_vertex_indices']
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -17,7 +18,7 @@ import jax
 import jax.numpy as jnp
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
-from jaxtyping import Float, Int 
+from jaxtyping import Bool, Float, Int 
 from pathlib import Path
 
 import dataclasses
@@ -325,7 +326,7 @@ def generate_poisson_points(n_vertices: int, limit_x: float = 1, limit_y: float 
     [-limit_x/2, limit_x/2] * [-limit_y/2, limit_y/2]."""
     pos = np.stack([np.random.uniform(size=n_vertices, low=-limit_x/2, high=limit_x/2),
                     np.random.uniform(size=n_vertices, low=-limit_y/2, high=limit_y/2)])
-    return jnp.array(pos)
+    return jnp.array(pos.T)
 
 def generate_triangular_lattice(nx: int, ny: int) -> Float[jax.Array, "nx*ny 2"]:
     """Get points for rectangular patch of triangular lattice with nx, ny points."""
@@ -337,6 +338,107 @@ def generate_triangular_lattice(nx: int, ny: int) -> Float[jax.Array, "nx*ny 2"]
     X = (X.T+(np.arange(ny)%2)/2).T
     pts = np.stack([X, Y]).reshape((2,nx*ny))    
     return jnp.array(pts.T)
+
+# %% ../nbs/src/01_triangular_meshes.ipynb #3f86d32a
+def get_periodic_delaunay_faces(points: Float[jax.Array, "n_vertices 2"], L: Float[jax.Array, "2"],
+                                ) -> Int[jax.Array, "n_faces 3"]:
+    """Return faces of the periodic Delaunay triangulation on a rectangular torus.
+
+    The input points are first wrapped into the fundamental domain
+    ``[0, L_x) x [0, L_y)``. The point cloud is then tiled into the eight neighboring
+    copies of the box, triangulated in the extended domain, and mapped back to the
+    original vertex ids.
+
+    Parameters
+    ----------
+    points : Float[jax.Array, "n_vertices 2"]
+        Seed points in 2D. Points may lie outside the fundamental domain.
+    L : Float[jax.Array, "2"]
+        Domain size ``[L_x, L_y]`` with positive entries.
+
+    Returns
+    -------
+    faces : Int[jax.Array, "n_faces 3"]
+        Triangle indices for the periodic Delaunay triangulation of the wrapped points.
+    """
+    points_np = np.asarray(points, dtype=float)
+    L_np = np.asarray(L, dtype=float)
+
+    wrapped_points = np.mod(points_np, L_np[None, :])
+    n_vertices = wrapped_points.shape[0]
+    rounded_points = np.round(wrapped_points, decimals=12)
+    assert np.unique(rounded_points, axis=0).shape[0] == n_vertices, (
+        "points must remain distinct after wrapping into the periodic box")
+
+    shifts = np.array([[dx, dy]
+                       for dx in (-L_np[0], 0.0, L_np[0])
+                       for dy in (-L_np[1], 0.0, L_np[1])], dtype=float)
+    tiled_points = np.concatenate([wrapped_points + shift[None, :] for shift in shifts], axis=0)
+    origin_ids = np.tile(np.arange(n_vertices, dtype=np.int64), shifts.shape[0])
+
+    simplices = spatial.Delaunay(tiled_points).simplices
+    simplex_centers = tiled_points[simplices].mean(axis=1)
+    keep = np.all((simplex_centers >= 0.0) & (simplex_centers < L_np[None, :]), axis=1)
+    faces = origin_ids[simplices[keep]]
+    distinct_vertices = np.all(np.diff(np.sort(faces, axis=1), axis=1) > 0, axis=1)
+    faces = faces[distinct_vertices]
+
+    _, unique_idx = np.unique(np.sort(faces, axis=1), axis=0, return_index=True)
+    faces = faces[np.sort(unique_idx)]
+
+    edge_ab = wrapped_points[faces[:, 1]] - wrapped_points[faces[:, 0]]
+    edge_ac = wrapped_points[faces[:, 2]] - wrapped_points[faces[:, 0]]
+    edge_ab -= L_np[None, :] * np.round(edge_ab / L_np[None, :])
+    edge_ac -= L_np[None, :] * np.round(edge_ac / L_np[None, :])
+    signed_area = edge_ab[:, 0] * edge_ac[:, 1] - edge_ab[:, 1] * edge_ac[:, 0]
+    nondegenerate = ~np.isclose(signed_area, 0.0)
+    faces = faces[nondegenerate]
+    signed_area = signed_area[nondegenerate]
+
+    faces = np.array(faces, copy=True)
+    flip = signed_area < 0
+    faces[flip] = faces[flip][:, [0, 2, 1]]
+    return jnp.array(faces, dtype=jnp.int64)
+
+# %% ../nbs/src/01_triangular_meshes.ipynb #ff7da388
+def get_faces_crossing_periodic_boundaries(vertices: Float[jax.Array, "n_vertices 2"],
+                                           faces: Int[jax.Array, "n_faces 3"],
+                                           L_x: float, L_y: float,
+                                           ) -> Int[jax.Array, "n_faces"]:
+    """Return a boolean mask for faces that cross a periodic box boundary.
+
+    A face is marked as boundary-crossing if at least one of its edges is shorter
+    under the minimum-image convention than in the direct coordinates inside the
+    fundamental domain.
+
+    Parameters
+    ----------
+    vertices : Float[jax.Array, "n_vertices 2"]
+        Vertex positions. They may lie outside the fundamental domain and are wrapped
+        into ``[0, L_x) x [0, L_y)`` internally.
+    faces : Int[jax.Array, "n_faces 3"]
+        Triangle indices.
+    L_x, L_y : float
+        Side lengths of the rectangular periodic domain.
+
+    Returns
+    -------
+    crosses_boundary : Bool[jax.Array, "n_faces"]
+        Boolean mask whose entry ``i`` is True when ``faces[i]`` crosses a domain boundary.
+    """
+    vertices_np = np.asarray(vertices, dtype=float)
+    faces_np = np.asarray(faces, dtype=np.int64)
+    L = np.array([L_x, L_y], dtype=float)
+    assert np.all(L > 0), "box lengths must be positive"
+
+    wrapped_vertices = np.mod(vertices_np, L[None, :])
+    face_vertices = wrapped_vertices[faces_np]
+    edge_vectors = np.stack([face_vertices[:, 1] - face_vertices[:, 0],
+                             face_vertices[:, 2] - face_vertices[:, 1],
+                             face_vertices[:, 0] - face_vertices[:, 2]], axis=1)
+    periodic_edge_vectors = edge_vectors - L[None, None, :] * np.round(edge_vectors / L[None, None, :])
+    crosses_boundary = np.any(~np.isclose(edge_vectors, periodic_edge_vectors), axis=(1, 2))
+    return jnp.array(crosses_boundary, dtype=bool)
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #2c4a0e23-ac42-4264-9a38-f8745e02a131
 # find the vertices and faces which are adjacent to a given vertex, in the correct counter-clockwise order.
