@@ -5,8 +5,8 @@ __all__ = ['get_he_length', 'get_triangle_areas', 'get_barycentric_cell_areas', 
            'get_triangle_normals', 'get_vertex_normals', 'get_face_centroids', 'get_dihedral_angles', 'get_volume',
            'get_area', 'get_voronoi_face_positions', 'set_voronoi_face_positions', 'get_dual_he_length',
            'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum', 'get_cotan_weights_per_he',
-           'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths', 'get_voronoi_edge_areas',
-           'get_cell_areas_traversal', 'get_voronoi_areas', 'get_voronoi_perimeters', 'get_gaussian_curvature',
+           'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths', 'get_voronoi_corner_areas', 'get_voronoi_areas',
+           'get_voronoi_perimeters', 'get_gaussian_curvature', 'get_voronoi_areas_robust', 'get_cell_areas_traversal',
            'get_mean_curvature_dihedral', 'get_mean_curvature_laplace', 'get_corner_scaled_angles',
            'get_face_tangent_basis', 'get_vertex_tangent_basis', 'get_transport_across_halfedge',
            'get_transport_along_halfedge']
@@ -103,8 +103,8 @@ def get_area(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
     return get_triangle_areas(vertices, hemesh).sum()
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #b30791e6
-def get_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh
-                               ) -> Float[jax.Array, "n_faces 2"]:
+def get_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                               ) -> Float[jax.Array, "n_faces dim"]:
     """Get face positions of geommesh to the circumcenters of the faces defined by hemesh."""
     face_positions = jax.vmap(trig.get_circumcenter)(*vertices[hemesh.faces].transpose((1,0,2)))
     return face_positions
@@ -139,12 +139,14 @@ def get_oriented_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
     return signed_dual_length
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #96c8a576
+# to do: ensure the corner weights and angles return 0 for boundary half-edges, where they are note meaningful.
+
 def get_corner_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                       ) -> Float[jax.Array, " n_hes"]:
-    """Get angles in mesh corners (opposite to half-edges)."""
+    """Get angles in mesh corners (opposite to half-edges). 0 for boundary half-edges."""
     b, c = vertices[hemesh.orig], vertices[hemesh.dest]
     a = vertices[hemesh.dest[hemesh.nxt]]
-    return jax.vmap(trig.get_angle_between_vectors)(b-a, c-a)
+    return jnp.where(hemesh.is_bdry_he, 0.0, jax.vmap(trig.get_angle_between_vectors)(b-a, c-a))
 
 
 def get_angle_sum(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
@@ -154,61 +156,48 @@ def get_angle_sum(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMe
     return adj.sum_he_to_vertex_opposite(hemesh, angles)
 
 
-def get_cotan_weights_per_he(vertices: Float[jax.Array, "n_vertices dim"],
-                             hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Cotangent of angle opposite to half-edge."""
+def get_cotan_weights_per_he(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                             ) -> Float[jax.Array, " n_hes"]:
+    """Cotangent of angle opposite to half-edge. 0 for boundary half-edges."""
     b, c = vertices[hemesh.orig], vertices[hemesh.dest]
     a = vertices[hemesh.dest[hemesh.nxt]]
-    return jax.vmap(trig.get_cot_between_vectors)(b-a, c-a)
+    return jnp.where(hemesh.is_bdry_he, 0.0, jax.vmap(trig.get_cot_between_vectors)(b-a, c-a))
 
 
-def get_cotan_weights_per_edge(vertices: Float[jax.Array, "n_vertices dim"],
-                               hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
+def get_cotan_weights_per_edge(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                               ) -> Float[jax.Array, " n_hes"]:
     """Average of cotangent of angles opposite to edge."""
     per_he = get_cotan_weights_per_he(vertices, hemesh)
     per_he = jnp.where(hemesh.is_bdry_he, 0.0, per_he)
     return (per_he + per_he[hemesh.twin])/2
 
 
-def get_voronoi_edge_lengths(vertices: Float[jax.Array, "n_vertices dim"],
-                             hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
+def get_voronoi_edge_lengths(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                             ) -> Float[jax.Array, " n_hes"]:
     """Voronoi dual edge lengths computed from cotangent weights. Accurate in any dimension."""
     return get_cotan_weights_per_edge(vertices, hemesh) * get_he_length(vertices, hemesh)
 
 
-def get_voronoi_edge_areas(vertices: Float[jax.Array, "n_vertices dim"],
-                           hemesh: msh.HeMesh) -> Float[jax.Array, " n_hes"]:
-    """Voronoi "area" for an edge: ``dual_length * primal_length / 4``.
+def get_voronoi_corner_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                           ) -> Float[jax.Array, " n_hes"]:
+    """Per-triangle Voronoi area of vertex x = dest[he]:
+    A_vor(x, T) = (||e(he)||^2 * cot(opp_he) + ||e(nxt)||^2 * cot(opp_nxt)) / 8
 
-    Summing over all edges adjacent to a vertex gives the Voronoi cell area.
+    Summing over all half-edges incident to a vertex gives the Voronoi cell area.
     Computed from cotangent weights. Accurate in any dimension.
     """
-    return get_cotan_weights_per_edge(vertices, hemesh) * get_he_length(vertices, hemesh)**2 / 4
+    edge_lengths = get_he_length(vertices, hemesh)
+    cot_per_he = get_cotan_weights_per_he(vertices, hemesh)
+    return (edge_lengths**2 * cot_per_he + edge_lengths[hemesh.nxt]**2 * cot_per_he[hemesh.nxt]) / 8
+
+    #return get_cotan_weights_per_edge(vertices, hemesh) * get_he_length(vertices, hemesh)**2 / 4
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #fbebd977-9ea6-4ab9-8188-d833f1bbba60
-def get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
-    """Compute areas of cells by mesh traversal (don't use for simulation, inefficient).
-
-    Boundary vertices get area 0.  The sign flip corrects for the winding
-    order of ``iterate_around_vertex`` relative to ``get_polygon_area``.
-    """
-    areas = jnp.zeros(hemesh.n_vertices)
-    bdry = hemesh.is_bdry
-    for v in range(hemesh.n_vertices):
-        if bdry[v]:
-            pass
-        else:
-            adjacent_faces = hemesh.heface[hemesh.iterate_around_vertex(v)]
-            polygon = geommesh.face_positions[adjacent_faces]
-            areas = areas.at[v].set(-trig.get_polygon_area(polygon))
-    return areas
-
-
 def get_voronoi_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                       ) -> Float[jax.Array, " n_vertices"]:
-    """Compute Voronoi cell area for each vertex by summing edge areas."""
-    edge_areas = get_voronoi_edge_areas(vertices, hemesh)
-    return adj.sum_he_to_vertex_incoming(hemesh, edge_areas)
+    """Compute Voronoi cell area for each vertex by summing the areas in adjacent triangles (incoming half-edges)."""
+    corner_areas = get_voronoi_corner_areas(vertices, hemesh)
+    return adj.sum_he_to_vertex_incoming(hemesh, corner_areas)
 
 
 def get_voronoi_perimeters(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
@@ -228,6 +217,51 @@ def get_gaussian_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
     cell_areas = get_barycentric_cell_areas(vertices, hemesh)
     return angle_defect / cell_areas
 
+# %% ../nbs/src/05_geometric_quantities.ipynb #1e654728
+def get_voronoi_areas_robust(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                             ) -> Float[jax.Array, " n_vertices"]:
+    """Compute mixed Voronoi cell area (AMixed) for each vertex.
+
+    Uses the robust formula from Meyer et al. that handles obtuse triangles:
+    - Non-obtuse triangle: use Voronoi region area
+    - Obtuse at vertex x: use area(T)/2
+    - Obtuse elsewhere: use area(T)/4
+
+    Fig 4 from M Meyer, M Desbrun, P Schröder, A H Barr: "Discrete Differential-Geometry Operators
+    for Triangulated 2-Manifolds"
+    """
+    tri_areas = get_triangle_areas(vertices, hemesh)[hemesh.heface]
+    voronoi_per_tri = get_voronoi_corner_areas(vertices, hemesh)
+
+    corner_angles = get_corner_angles(vertices, hemesh)
+    is_obtuse_at_x = corner_angles[hemesh.prv] > jnp.pi/2
+    is_obtuse_elsewhere = (corner_angles > jnp.pi/2) | (corner_angles[hemesh.nxt] > jnp.pi/2)
+
+    amixed = jnp.select([is_obtuse_at_x, is_obtuse_elsewhere],
+                        [tri_areas / 2, tri_areas / 4], default=voronoi_per_tri)
+    amixed = jnp.where(hemesh.is_bdry_he, 0.0, amixed)
+
+    return adj.sum_he_to_vertex_incoming(hemesh, amixed)
+
+
+# %% ../nbs/src/05_geometric_quantities.ipynb #f94d592a
+def get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Float[jax.Array, " n_vertices"]:
+    """Compute areas of 2D cells by mesh traversal (don't use for simulation, inefficient).
+
+    Boundary vertices get area 0.  The sign flip corrects for the winding
+    order of ``iterate_around_vertex`` relative to ``get_polygon_area``.
+    """
+    areas = jnp.zeros(hemesh.n_vertices)
+    bdry = hemesh.is_bdry
+    for v in range(hemesh.n_vertices):
+        if bdry[v]:
+            pass
+        else:
+            adjacent_faces = hemesh.heface[hemesh.iterate_around_vertex(v)]
+            polygon = geommesh.face_positions[adjacent_faces]
+            areas = areas.at[v].set(-trig.get_polygon_area(polygon))
+    return areas
+
 # %% ../nbs/src/05_geometric_quantities.ipynb #621feb80
 def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
                                 normalize: bool = True) ->Float[jax.Array, " n_vertices"]:
@@ -235,7 +269,7 @@ def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], he
     """Compute mean curvature of triangulated mesh using Steiner approximation:
         H_i = 1/(4 A_i) * sum_j * theta_ij * l_ij
     where theta_ij is the dihedral angle between faces adjacent to edge ij, l_ij is the length of edge ij,
-    and A_i is the barycentric dual cell area around vertex i.
+    and A_i is the robust Voronoi cell area around vertex i.
 
     Parameters
     ----------
@@ -244,7 +278,7 @@ def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], he
     hemesh : HeMesh
         Half-edge mesh.
     normalize : bool, optional
-        Whether to normalize by the barycentric cell area. If False, returns the integrated mean curvature.
+        Whether to normalize by the robust Voronoi cell area. If False, returns the integrated mean curvature.
 
     Returns
     -------
@@ -256,7 +290,7 @@ def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], he
     edge_lengths = get_he_length(vertices, hemesh)
     result = adj.sum_he_to_vertex_incoming(hemesh, dihedral_angles*edge_lengths) / 4
     if normalize:
-        cell_areas = get_barycentric_cell_areas(vertices, hemesh)
+        cell_areas = get_voronoi_areas_robust(vertices, hemesh)
         return result / cell_areas
     return result
 
@@ -264,6 +298,9 @@ def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices dim"], he
 def get_mean_curvature_laplace(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
                                normalize: bool = True) -> Float[jax.Array, " n_vertices"]:
     """Compute mean curvature from the cotangent Laplacian: ``Δx = 2Hn``.
+
+    Generally more accurate than the dihedral method, but can be unstable for meshes with
+    very deformed (non-Delaunay) triangles. 
 
     Parameters
     ----------
@@ -280,13 +317,13 @@ def get_mean_curvature_laplace(vertices: Float[jax.Array, "n_vertices dim"], hem
     Float[Array, "n_vertices"]
         Per-vertex mean curvature.
     """
-    w_edge = get_cotan_weights_per_edge(vertices, hemesh)
+    w_edge = get_cotan_weights_per_edge(vertices, hemesh) # Re-implementing the cotan Laplace to avoid circular imports.
     diff = vertices[hemesh.dest] - vertices[hemesh.orig]    
     l_vec = -adj.sum_he_to_vertex_incoming(hemesh, w_edge[:, None] * diff)
     n_vec = get_vertex_normals(vertices, hemesh)
     result = -jnp.linalg.vecdot(l_vec, n_vec) / 2
     if normalize:
-        cell_areas = get_voronoi_areas(vertices, hemesh)
+        cell_areas = get_voronoi_areas_robust(vertices, hemesh)
         return result / cell_areas
     return result
 

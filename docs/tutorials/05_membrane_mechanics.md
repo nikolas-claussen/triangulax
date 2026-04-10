@@ -57,8 +57,8 @@ normal vectors of adjacent triangles. The mean curvature at vertex *i*
 can be approximated by
 $$H_i = \frac{1}{4a_i} \sum\_{j\sim i} \ell\_{ij} \theta\_{ij} $$
 where the sum is over all *j* neighboring *i*, and *a*<sub>*i*</sub> is
-the barycentric area around vertex *i*. This discretization turns out to
-be more robust numerically, and is already implemented in the `geometry`
+the barycentric area around vertex *i*. This discretization can be more
+robust numerically. Both are already implemented in the `geometry`
 module.
 
 ``` python
@@ -69,15 +69,14 @@ hemesh_torus = HeMesh.from_triangles(torus.vertices.shape[0], torus.faces)
 
 H_torus_lap = geom.get_mean_curvature_laplace(torus.vertices, hemesh_torus, normalize=True)
 H_torus_dihed = geom.get_mean_curvature_dihedral(torus.vertices, hemesh_torus, normalize=True)
-
-_, _, k1_t, k2_t, _ = igl.principal_curvature(torus.vertices.astype(np.float64), hemesh_torus.faces)
-H_torus_dihed_igl = (k1_t + k2_t) / 2
 ```
 
     Warning: readOBJ() ignored non-comment line 3:
       o Torus
 
 ``` python
+# two methods for discretizing the mean curvature give similar results
+
 plt.scatter(H_torus_lap, H_torus_dihed)
 plt.plot(H_torus_lap, H_torus_lap)
 ```
@@ -85,52 +84,10 @@ plt.plot(H_torus_lap, H_torus_lap)
 ![](05_membrane_mechanics_files/figure-commonmark/cell-8-output-1.png)
 
 ``` python
-dihedral_angles = geom.get_dihedral_angles(torus.vertices, hemesh_torus)
-edge_lengths = geom.get_he_length(torus.vertices, hemesh_torus)
-
-barycentric_areas = geom.get_barycentric_cell_areas(torus.vertices, hemesh_torus)
-
-H_dihedral = 1/4 * adj.sum_he_to_vertex_incoming(hemesh_torus, dihedral_angles*edge_lengths) #/ barycentric_areas
-```
-
-``` python
-def sum_face_to_vertex(hemesh, f_field):
-    out_shape = (hemesh.n_vertices,) + f_field.shape[1:]
-    v_field = jnp.zeros(out_shape, dtype=f_field.dtype)
-
-    return v_field
-```
-
-``` python
-voronoi_areas = geom.get_voronoi_areas(torus.vertices, hemesh_torus)
-barycentric_areas = adj.sum_face_to_vertex(hemesh_torus, geom.get_triangle_areas(torus.vertices, hemesh_torus)) / 3
-```
-
-``` python
-jnp.corrcoef(voronoi_areas, barycentric_areas)[0,1]
-```
-
-    Array(0.75766347, dtype=float64)
-
-``` python
-plt.plot(voronoi_areas, voronoi_areas)
-plt.scatter(voronoi_areas, barycentric_areas)
-plt.axis("equal")
-```
-
-    (np.float64(0.012526973519759777),
-     np.float64(0.02118819260173175),
-     np.float64(0.007494206881595273),
-     np.float64(0.02879906913864483))
-
-![](05_membrane_mechanics_files/figure-commonmark/cell-13-output-2.png)
-
-``` python
-#meshplot.plot(torus.vertices, hemesh_torus.faces , np.array(H_torus), shading={"wireframe": True})
-
-meshplot.plot(torus.vertices, hemesh_torus.faces , np.array(H_torus_dihed_igl), shading={"wireframe": True})
+meshplot.plot(torus.vertices, hemesh_torus.faces , np.array(H_torus_lap), shading={"wireframe": True})
 
 #meshplot.plot(torus.vertices, hemesh_torus.faces , np.array(H_torus_dihed), shading={"wireframe": True})
+
 
 # add a colorbar
 fig, ax = plt.subplots(figsize=(5, 0.5))
@@ -143,7 +100,7 @@ plt.show()
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-16-output-2.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-9-output-2.png)
 
 ## Minimal surfaces
 
@@ -186,7 +143,7 @@ plt.axis("equal");
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-18-output-2.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-10-output-2.png)
 
 ``` python
 # let's impose some boundary conditions on the disk mesh - think of this as finding the shape of a "soap film"
@@ -212,7 +169,7 @@ meshplot.plot(vertices_bdry_imposed, hemesh.faces, shading={"wireframe":False}, 
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(-0.001874…
 
-    <meshplot.Viewer.Viewer at 0x34c86e350>
+    <meshplot.Viewer.Viewer at 0x35e8f9d10>
 
 ``` python
 # compute the area of the initial configuration - this is the energy we will minimize
@@ -263,7 +220,7 @@ meshplot.plot(vertices_iterated[-1], hemesh.faces, shading={"wireframe":True}, r
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(-0.001874…
 
-    <meshplot.Viewer.Viewer at 0x373708f50>
+    <meshplot.Viewer.Viewer at 0x37487c050>
 
 ``` python
 final_area = geom.get_area(vertices_iterated[-1], hemesh)
@@ -283,11 +240,11 @@ print(f"Initial area: {initial_area:.4f}", f"Final area: {final_area:.4f}")
 
 ``` python
 # the mean curvature is also very small after optimization, as expected for a minimal surface:
-H_laplace = get_mean_curvature_laplace(vertices_iterated[-1], hemesh)
+H_laplace = geom.get_mean_curvature_laplace(vertices_iterated[-1], hemesh)
 jnp.abs(H_laplace).mean()
 ```
 
-    Array(0.06984846, dtype=float64)
+    Array(0.06962044, dtype=float64)
 
 ### Helfrich energy
 
@@ -328,7 +285,7 @@ meshplot.plot(trimesh.vertices, hemesh.faces, shading={"wireframe":True})
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x34c8a43e0>
+    <meshplot.Viewer.Viewer at 0x358cd3230>
 
 ``` python
 # let's define the discrete Helfrich energy.
@@ -337,35 +294,23 @@ meshplot.plot(trimesh.vertices, hemesh.faces, shading={"wireframe":True})
 def get_helfrich_energy(vertices, args):
     """Compute the discrete Helfrich energy of a triangulated surface. args = (hemesh, H0, kappa)"""
     hemesh, H0, kappa = args
-    H = geom.get_mean_curvature_dihedral(vertices, hemesh)
-    #H = get_mean_curvature_laplace(vertices, hemesh)
-    cell_areas = geom.get_barycentric_cell_areas(vertices, hemesh)
+    # the cell areas are needed to discretize the area integral
+    cell_areas = geom.get_voronoi_areas_robust(vertices, hemesh)
+    #H = geom.get_mean_curvature_laplace(vertices, hemesh)
+    H = geom.get_mean_curvature_dihedral(vertices, hemesh, normalize=True)
+
     return (kappa/2) * ((H - H0) **2 * cell_areas).sum()
 ```
 
 ``` python
-# let's check the mean-curvature of the sphere using the Laplace operator - this should be constant across all vertices
-
-vertices = trimesh.vertices
-H_laplace = get_mean_curvature_laplace(vertices, hemesh)
-H_dihedral = geom.get_mean_curvature_dihedral(vertices, hemesh)
-
-# let's compute the radius of the sphere:
-R = jnp.linalg.norm(vertices-vertices.mean(axis=0), axis=-1).mean()
-print("H (Laplace)", H_laplace.mean(), "H - 1/R:", jnp.abs(H_laplace - 1/R).mean())
-print("H (Dihedral)", H_dihedral.mean(), "H - 1/R:", jnp.abs(H_dihedral - 1/R).mean())
-```
-
-    H (Laplace) 1.0000076108652165 H - 1/R: 7.6108652156698455e-06
-    H (Dihedral) 1.0044138499642183 H - 1/R: 0.004413849964217461
-
-``` python
 args = (hemesh, 0, 1)
 # exact helfrich for a sphere is 2*pi, here smaller due to discretization error. The energy is scale invariant.
-get_helfrich_energy(trimesh.vertices, args), get_helfrich_energy(2*trimesh.vertices, args)
+get_helfrich_energy(trimesh.vertices, args), get_helfrich_energy(2*trimesh.vertices, args), 2*np.pi
 ```
 
-    (Array(6.29466847, dtype=float64), Array(6.29466847, dtype=float64))
+    (Array(6.29326108, dtype=float64),
+     Array(6.29326108, dtype=float64),
+     6.283185307179586)
 
 ``` python
 # now, let's deform the sphere and minimize the Helfrich energy to find the equilibrium shape.
@@ -377,7 +322,7 @@ print("Minimum vs deformed energy:", get_helfrich_energy(trimesh.vertices, args)
                                      get_helfrich_energy(deformed_vertices, args))
 ```
 
-    Minimum vs deformed energy: 6.294668468631172 7.159011639563514
+    Minimum vs deformed energy: 6.293261081171555 7.118657237550066
 
 ``` python
 meshplot.plot(deformed_vertices, hemesh.faces, shading={"wireframe":True})
@@ -385,71 +330,35 @@ meshplot.plot(deformed_vertices, hemesh.faces, shading={"wireframe":True})
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x37ca7ecf0>
+    <meshplot.Viewer.Viewer at 0x37e730050>
 
 ``` python
-# we can compute the energy gradient
+# we can compute the energy gradient using JAX
 
 grad = jax.grad(get_helfrich_energy)(deformed_vertices, args)
 normal = geom.get_vertex_normals(deformed_vertices, hemesh)
 grad_norm = jnp.linalg.norm(grad, axis=-1)
 
-(jnp.abs(jnp.linalg.vecdot(grad, normal)) / grad_norm).mean() # gradient is along normal
+ # gradient is along normal
+
+(jnp.abs(jnp.linalg.vecdot(grad, normal)) / grad_norm).mean()
 ```
 
-    Array(0.98613633, dtype=float64)
+    Array(0.99466172, dtype=float64)
 
 ``` python
-import jax.test_util
+# the gradient computed via autodiff matches the finite difference approximation
+
+eps = 1e-2
+step = eps * normal / jnp.linalg.norm(normal)
+
+grad_autodiff = jnp.sum(grad * step)
+grad_fd = (get_helfrich_energy(deformed_vertices+step, args) - get_helfrich_energy(deformed_vertices, args))
+
+1e4*grad_autodiff, 1e4*grad_fd
 ```
 
-``` python
-jax.test_util.check_grads(get_helfrich_energy, (deformed_vertices, args), order=1, modes=('fwd', 'rev'),
-                          atol=None, rtol=None, eps=None)
-```
-
-    TypeError: primal and tangent arguments to jax.jvp do not match; dtypes must be equal, or in case of int/bool primal dtype the tangent dtype must be float0.Got primal dtype int64 and so expected tangent dtype [('float0', 'V')], but got tangent dtype int64 instead.
-    [31m---------------------------------------------------------------------------[39m
-    [31mTypeError[39m                                 Traceback (most recent call last)
-    [36mCell[39m[36m [39m[32mIn[43][39m[32m, line 1[39m
-    [32m----> [39m[32m1[39m [43mjax[49m[43m.[49m[43mtest_util[49m[43m.[49m[43mcheck_grads[49m[43m([49m[43mget_helfrich_energy[49m[43m,[49m[43m [49m[43m([49m[43mdeformed_vertices[49m[43m,[49m[43m [49m[43margs[49m[43m)[49m[43m,[49m[43m [49m[43morder[49m[43m=[49m[32;43m1[39;49m[43m,[49m[43m [49m[43mmodes[49m[43m=[49m[43m([49m[33;43m'[39;49m[33;43mfwd[39;49m[33;43m'[39;49m[43m,[49m[43m [49m[33;43m'[39;49m[33;43mrev[39;49m[33;43m'[39;49m[43m)[49m[43m,[49m
-    [32m      2[39m [43m                          [49m[43matol[49m[43m=[49m[38;5;28;43;01mNone[39;49;00m[43m,[49m[43m [49m[43mrtol[49m[43m=[49m[38;5;28;43;01mNone[39;49;00m[43m,[49m[43m [49m[43meps[49m[43m=[49m[38;5;28;43;01mNone[39;49;00m[43m)[49m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/public_test_util.py:368[39m, in [36mcheck_grads[39m[34m(f, args, order, modes, atol, rtol, eps)[39m
-    [32m    365[39m     [38;5;28;01mif[39;00m order > [32m1[39m:
-    [32m    366[39m       _check_grads(partial(_jvp_from_lin, f), (args, args), order - [32m1[39m, lin_msg)
-    [32m--> [39m[32m368[39m [43m_check_grads[49m[43m([49m[43mf[49m[43m,[49m[43m [49m[43margs[49m[43m,[49m[43m [49m[43morder[49m[43m)[49m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/public_test_util.py:349[39m, in [36mcheck_grads.<locals>._check_grads[39m[34m(f, args, order, err_msg)[39m
-    [32m    347[39m [38;5;28;01mif[39;00m [33m"[39m[33mfwd[39m[33m"[39m [38;5;129;01min[39;00m modes:
-    [32m    348[39m   fwd_msg = [33mf[39m[33m'[39m[33mJVP of [39m[38;5;132;01m{[39;00merr_msg[38;5;132;01m}[39;00m[33m'[39m [38;5;28;01mif[39;00m err_msg [38;5;28;01melse[39;00m [33m'[39m[33mJVP[39m[33m'[39m
-    [32m--> [39m[32m349[39m   [43m_check_jvp[49m[43m([49m[43mf[49m[43m,[49m[43m [49m[43mpartial[49m[43m([49m[43mapi[49m[43m.[49m[43mjvp[49m[43m,[49m[43m [49m[43mf[49m[43m)[49m[43m,[49m[43m [49m[43margs[49m[43m,[49m[43m [49m[43merr_msg[49m[43m=[49m[43mfwd_msg[49m[43m)[49m
-    [32m    350[39m   [38;5;28;01mif[39;00m order > [32m1[39m:
-    [32m    351[39m     _check_grads(partial(api.jvp, f), (args, args), order - [32m1[39m, fwd_msg)
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/public_test_util.py:268[39m, in [36mcheck_jvp[39m[34m(f, f_jvp, args, atol, rtol, eps, err_msg)[39m
-    [32m    266[39m rng = np.random.RandomState([32m0[39m)
-    [32m    267[39m tangent = tree_map(partial(rand_like, rng), args)
-    [32m--> [39m[32m268[39m v_out, t_out = [43mf_jvp[49m[43m([49m[43margs[49m[43m,[49m[43m [49m[43mtangent[49m[43m)[49m
-    [32m    269[39m _check_dtypes_match(v_out, t_out)
-    [32m    270[39m v_out_expected = f(*args)
-
-        [31m[... skipping hidden 2 frame][39m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/api.py:1851[39m, in [36m_jvp[39m[34m(fun, primals, tangents, has_aux)[39m
-    [32m   1849[39m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m [38;5;28misinstance[39m(core.typeof(p), ShapedArray): [38;5;28;01mcontinue[39;00m
-    [32m   1850[39m [38;5;28;01mif[39;00m core.primal_dtype_to_tangent_dtype(_dtype(p)) != _dtype(t):
-    [32m-> [39m[32m1851[39m   [38;5;28;01mraise[39;00m [38;5;167;01mTypeError[39;00m([33m"[39m[33mprimal and tangent arguments to jax.jvp do not match; [39m[33m"[39m
-    [32m   1852[39m                   [33m"[39m[33mdtypes must be equal, or in case of int/bool primal dtype [39m[33m"[39m
-    [32m   1853[39m                   [33m"[39m[33mthe tangent dtype must be float0.[39m[33m"[39m
-    [32m   1854[39m                   [33mf[39m[33m"[39m[33mGot primal dtype [39m[38;5;132;01m{[39;00m_dtype(p)[38;5;132;01m}[39;00m[33m and so expected tangent dtype [39m[33m"[39m
-    [32m   1855[39m                   [33mf[39m[33m"[39m[38;5;132;01m{[39;00mcore.primal_dtype_to_tangent_dtype(_dtype(p))[38;5;132;01m}[39;00m[33m, but got [39m[33m"[39m
-    [32m   1856[39m                   [33mf[39m[33m"[39m[33mtangent dtype [39m[38;5;132;01m{[39;00m_dtype(t)[38;5;132;01m}[39;00m[33m instead.[39m[33m"[39m)
-    [32m   1857[39m [38;5;28;01mif[39;00m np.shape(p) != np.shape(t):
-    [32m   1858[39m   [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m([33m"[39m[33mjvp called with different primal and tangent shapes;[39m[33m"[39m
-    [32m   1859[39m                    [33mf[39m[33m"[39m[33mGot primal shape [39m[38;5;132;01m{[39;00mnp.shape(p)[38;5;132;01m}[39;00m[33m and tangent shape as [39m[38;5;132;01m{[39;00mnp.shape(t)[38;5;132;01m}[39;00m[33m"[39m)
-
-    [31mTypeError[39m: primal and tangent arguments to jax.jvp do not match; dtypes must be equal, or in case of int/bool primal dtype the tangent dtype must be float0.Got primal dtype int64 and so expected tangent dtype [('float0', 'V')], but got tangent dtype int64 instead.
+    (Array(-9.05360294, dtype=float64), Array(-9.04334675, dtype=float64))
 
 #### Nonlinear minimization
 
@@ -459,12 +368,13 @@ can compute using JAX. Here, we use the JAX-based optimization library
 `optimistix`.
 
 ``` python
-solver = optimistix.BFGS(rtol=1e-8, atol=1e-8)
+#solver = optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=0.5*1e-2)
+solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
 
 y0 = deformed_vertices
 args = (hemesh, 0, 1) 
 
-sol = optimistix.minimise(get_helfrich_energy, solver, y0, args, max_steps=2000, throw=False)
+sol = optimistix.minimise(get_helfrich_energy, solver, y0, args, max_steps=10000, throw=False)
 vertices_final = sol.value
 ```
 
@@ -474,7 +384,7 @@ print("Initial/final/minimal energy:", get_helfrich_energy(y0, args),
                                        get_helfrich_energy(trimesh.vertices, args))
 ```
 
-    Initial/final/minimal energy: 7.064731463226383 5.66644072931026 6.2531824128234526
+    Initial/final/minimal energy: 7.118657237550066 6.300880738246545 6.293261081171555
 
 ``` python
 # displacement from initial condition.
@@ -482,18 +392,18 @@ print("Initial/final/minimal energy:", get_helfrich_energy(y0, args),
 jnp.linalg.norm(y0-sol.value, axis=-1).mean(), jnp.linalg.norm(y0-trimesh.vertices, axis=-1).mean()
 ```
 
-    (Array(0.04425016, dtype=float64), Array(0.12507872, dtype=float64))
+    (Array(0.03848122, dtype=float64), Array(0.12507872, dtype=float64))
 
 ``` python
 # after minimization, the deviation from being a perfect sphere is fairly low
 
-center = jnp.average(vertices_final, weights=geom.get_barycentric_cell_areas(vertices_final, hemesh), axis=0)
+center = jnp.average(vertices_final, weights=geom.get_voronoi_areas(vertices_final, hemesh), axis=0)
 Rs =  jnp.linalg.norm(vertices_final - center, axis=1)
 
 Rs.std() / Rs.mean()
 ```
 
-    Array(0.04188804, dtype=float64)
+    Array(0.01461819, dtype=float64)
 
 ``` python
 p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),shading={"wireframe":True}, return_plot=True)
@@ -513,7 +423,7 @@ quadratic penalty terms in the energy:
 *E*<sub>*P*</sub> = *μ*<sub>*V*</sub>(*V* − *V*<sub>0</sub>)<sup>2</sup>/(2*V*<sub>0</sub>) + *μ*<sub>*A*</sub>(*A* − *A*<sub>0</sub>)<sup>2</sup>/(2*A*<sub>0</sub>)
 
 ``` python
-trimesh = TriMesh.read_obj("../test_meshes/sphere_fine.obj", dim=3) # let's load a finer mesh
+trimesh = TriMesh.read_obj("../test_meshes/sphere_fine.obj", dim=3)
 trimesh.vertices -= trimesh.vertices.mean(axis=0)
 trimesh.vertices = (trimesh.vertices.T / np.linalg.norm(trimesh.vertices, axis=1)).T
 
@@ -543,51 +453,40 @@ def get_helfrich_energy_with_penalty(vertices, args):
     E = get_helfrich_energy(vertices, (hemesh, H0, kappa))
     contraint_area = mu_A/2 * (geom.get_area(vertices, hemesh) - A0)**2/A0
     constraint_volume = mu_V/2 *(geom.get_volume(vertices, hemesh) - V0)**2 / V0**2
-    return E + contraint_area + contraint_area  + constraint_volume
+
+    # penalty to avaoid degenerate meshes
+    #parametrization_penalty = 1e-3 * ((geom.get_corner_angles(vertices, hemesh) - jnp.pi/3)**2).sum()
+
+    return E + contraint_area + contraint_area  + constraint_volume #+ parametrization_penalty
 ```
 
 ``` python
 A0 = geom.get_area(trimesh.vertices, hemesh)
-V0 = 0.8 * geom.get_volume(trimesh.vertices, hemesh)
+V0 = 0.9 * geom.get_volume(trimesh.vertices, hemesh)
 kappa, H0 = 1.0, 0.0
 mu_A = 300.0
 mu_V = 600.0
 args = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
 
-y0 = trimesh.vertices * np.array([0.95, 1.1, 0.95]) # let's start from a stretched configuration
+y0 = trimesh.vertices * np.array([1, 1.05, 1]) # let's start from a stretched configuration
 ```
 
 ``` python
-solver = optimistix.LBFGS(rtol=1e-8, atol=1e-8,) #   learning_rate=0.001
-sol = optimistix.minimise(get_helfrich_energy_with_penalty, solver, y0, args, max_steps=10000, throw=True)
+solver = optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=1e-3)
+#solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
+
+sol = optimistix.minimise(get_helfrich_energy_with_penalty, solver, y0, args, max_steps=10000, throw=False)
+
+
 vertices_final = sol.value
 ```
 
 ``` python
-grad_norm = jnp.linalg.norm(jax.grad(get_helfrich_energy_with_penalty)(y0, args), axis=-1)
-```
-
-``` python
-grad_norm.std() / grad_norm.mean()
-```
-
-    Array(0.14677809, dtype=float64)
-
-``` python
-z = adj.get_coordination_number(hemesh)
-```
-
-``` python
-grad_norm[z==5].mean(), grad_norm[z==6].mean()
-```
-
-    (Array(0.24017291, dtype=float64), Array(0.82794438, dtype=float64))
-
-``` python
+# constraints are approximately satisfied after optimization
 geom.get_area(vertices_final, hemesh)/A0, geom.get_volume(vertices_final, hemesh)/V0
 ```
 
-    (Array(0.99524543, dtype=float64), Array(1.02675628, dtype=float64))
+    (Array(0.99693748, dtype=float64), Array(1.0253752, dtype=float64))
 
 ``` python
 p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),
@@ -603,23 +502,22 @@ p.add_mesh(sol.value + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":T
 ### Regularization tangential mesh motion
 
 If you play around with the above code, you will notice that it is
-rather unstable. The reason is the *reparametrization* invariance of the
-Helfrich energy we already alluded to - moving vertices in the local
-tangent plane does not change the energy. Therefore, the triangles of
-the mesh can easily degenerate during energy minimization, leading to
-numerical instability. To avoid this, we can add a smoothing step that
-repositions the vertices tangentially to improve mesh quality between
-energy minimization steps.
+rather unstable (try using a different minimizer). The reason is the
+*reparametrization* invariance of the Helfrich energy we already alluded
+to - moving vertices in the local tangent plane does not change the
+energy. Therefore, the triangles of the mesh can easily degenerate
+during energy minimization, leading to numerical instability. To avoid
+this, we can add a smoothing step that repositions the vertices
+tangentially to improve mesh quality between energy minimization steps.
 
 ``` python
-solver = optimistix.LBFGS(rtol=1e-8, atol=1e-8,) #   learning_rate=0.001
+solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
 
 vertices_smoothed = y0
-n_iterations = 100
+n_iterations = 50
 n_smoothing = 10
 smoothing_step_size = 0.1
-n_minimization = 50
-
+n_minimization = 100
 
 for i in range(n_iterations):
     sol = optimistix.minimise(get_helfrich_energy_with_penalty, solver, vertices_smoothed, args,
@@ -633,7 +531,7 @@ for i in range(n_iterations):
 geom.get_area(vertices_smoothed, hemesh)/A0, geom.get_volume(vertices_smoothed, hemesh)/V0
 ```
 
-    (Array(0.96978456, dtype=float64), Array(0.99362936, dtype=float64))
+    (Array(0.99779543, dtype=float64), Array(1.01800399, dtype=float64))
 
 ``` python
 p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),
@@ -702,10 +600,10 @@ g0 = jnp.eye(2)
 g1 = F @ F.T
 deformation = jnp.linalg.inv(g0) @ g1
 
-get_neo_hookean_energy(jnp.eye(2), 1, 1), get_neo_hookean_energy(deformation, 0, 1)
+get_neo_hookean_energy(jnp.eye(2), 1, 1), get_neo_hookean_energy(deformation, 1, 1)
 ```
 
-    (Array(0., dtype=float64), Array(0.02072103, dtype=float64))
+    (Array(0., dtype=float64), Array(0.03877103, dtype=float64))
 
 ``` python
 A0 = geom.get_area(trimesh.vertices, hemesh)
@@ -716,160 +614,54 @@ kappa, H0 = 1.0, 0.0
 mu_A, mu_V = 300.0, 600.0
 args_helfrich_penalty = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
 
-mod_bulk, mod_shear = 0.0, 1.0
+mod_bulk, mod_shear = 1.0, 1.0
 args_elastic = (hemesh, metric_orig, mod_bulk, mod_shear)
 
-step_size = 0.01
-n_iterations = 4
+step_size = 0.5*1e-3
 
-vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95]) # let's start from a stretched configuration
-```
-
-``` python
-vertices_iterated = [vertices_initial]
-
-for t in range(n_iterations):
-    grad_helfrich = jax.grad(get_helfrich_energy_with_penalty)(vertices_iterated[-1], args_helfrich_penalty)
-    grad_elastic = jax.grad(get_elastic_energy)(vertices_iterated[-1], args_elastic)
-    normals = geom.get_vertex_normals(vertices_iterated[-1], hemesh)
+@jax.jit
+def get_step(vertices):
+    grad_helfrich = jax.grad(get_helfrich_energy_with_penalty)(vertices, args_helfrich_penalty)
+    grad_elastic = jax.grad(get_elastic_energy)(vertices, args_elastic)
+    normals = geom.get_vertex_normals(vertices, hemesh)
     step = (jax.vmap(trig.project_out_vector)(grad_elastic, normals) +
             jax.vmap(trig.project_on_vector)(grad_helfrich, normals))
-    vertices_iterated.append(vertices_iterated[-1] - step_size * step)
+    return step
 ```
-
-    Invalid nan value encountered in the output of a jax.jit function. Calling the de-optimized version.
-    Invalid nan value encountered in the output of a jax.jit function. Calling the de-optimized version.
-    Invalid nan value encountered in the output of a jax.jit function. Calling the de-optimized version.
-    Invalid nan value encountered in the output of a jax.jit function. Calling the de-optimized version.
-
-    FloatingPointError: invalid value (nan) encountered in dot_general
-    [31m---------------------------------------------------------------------------[39m
-    [31mFloatingPointError[39m                        Traceback (most recent call last)
-    [36mCell[39m[36m [39m[32mIn[309][39m[32m, line 4[39m
-    [32m      1[39m vertices_iterated = [vertices_initial]
-    [32m      3[39m [38;5;28;01mfor[39;00m t [38;5;129;01min[39;00m [38;5;28mrange[39m(n_iterations):
-    [32m----> [39m[32m4[39m     grad_helfrich = [43mjax[49m[43m.[49m[43mgrad[49m[43m([49m[43mget_helfrich_energy_with_penalty[49m[43m)[49m[43m([49m[43mvertices_iterated[49m[43m[[49m[43m-[49m[32;43m1[39;49m[43m][49m[43m,[49m[43m [49m[43margs_helfrich_penalty[49m[43m)[49m
-    [32m      5[39m     grad_elastic = jax.grad(get_elastic_energy)(vertices_iterated[-[32m1[39m], args_elastic)
-    [32m      6[39m     normals = geom.get_vertex_normals(vertices_iterated[-[32m1[39m], hemesh)
-
-        [31m[... skipping hidden 17 frame][39m
-
-    [36mCell[39m[36m [39m[32mIn[240][39m[32m, line 6[39m, in [36mget_helfrich_energy_with_penalty[39m[34m(vertices, args)[39m
-    [32m      3[39m [38;5;250m[39m[33;03m"""Compute the discrete Helfrich energy of a triangulated surface with a penalty method.[39;00m
-    [32m      4[39m [33;03margs = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)"""[39;00m
-    [32m      5[39m hemesh, H0, kappa, mu_A, mu_V, A0, V0 = args
-    [32m----> [39m[32m6[39m E = [43mget_helfrich_energy[49m[43m([49m[43mvertices[49m[43m,[49m[43m [49m[43m([49m[43mhemesh[49m[43m,[49m[43m [49m[43mH0[49m[43m,[49m[43m [49m[43mkappa[49m[43m)[49m[43m)[49m
-    [32m      7[39m contraint_area = mu_A/[32m2[39m * (geom.get_area(vertices, hemesh) - A0)**[32m2[39m/A0
-    [32m      8[39m constraint_volume = mu_V/[32m2[39m *(geom.get_volume(vertices, hemesh) - V0)**[32m2[39m / V0**[32m2[39m
-
-        [31m[... skipping hidden 5 frame][39m
-
-    [36mCell[39m[36m [39m[32mIn[227][39m[32m, line 8[39m, in [36mget_helfrich_energy[39m[34m(vertices, args)[39m
-    [32m      6[39m hemesh, H0, kappa = args
-    [32m      7[39m [38;5;66;03m#H = geom.get_mean_curvature_dihedral(vertices, hemesh)[39;00m
-    [32m----> [39m[32m8[39m H = [43mget_mean_curvature_laplace[49m[43m([49m[43mvertices[49m[43m,[49m[43m [49m[43mhemesh[49m[43m)[49m
-    [32m      9[39m cell_areas = geom.get_barycentric_cell_areas(vertices, hemesh)
-    [32m     10[39m [38;5;28;01mreturn[39;00m (kappa/[32m2[39m) * ((H - H0) **[32m2[39m * cell_areas).sum()
-
-        [31m[... skipping hidden 5 frame][39m
-
-    [36mCell[39m[36m [39m[32mIn[6][39m[32m, line 5[39m, in [36mget_mean_curvature_laplace[39m[34m(vertices, hemesh)[39m
-    [32m      1[39m [38;5;129m@jax[39m.jit
-    [32m      2[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mget_mean_curvature_laplace[39m(vertices, hemesh):
-    [32m      4[39m [38;5;250m    [39m[33;03m"""Compute mean curvature of triangulated mesh using cotan laplacian and voronoi areas"""[39;00m
-    [32m----> [39m[32m5[39m     l_vec = [43mlin[49m[43m.[49m[43mcompute_cotan_laplace[49m[43m([49m[43mvertices[49m[43m,[49m[43m [49m[43mhemesh[49m[43m,[49m[43m [49m[43mvertices[49m[43m)[49m
-    [32m      6[39m     n_vec = geom.get_vertex_normals(vertices, hemesh)
-    [32m      7[39m     cell_areas = geom.get_voronoi_areas(vertices, hemesh)
-
-    [36mFile [39m[32m~/Documents/Princeton/Coding/triangulax/triangulax/linops.py:94[39m, in [36mcompute_cotan_laplace[39m[34m(vertices, hemesh, vertex_field)[39m
-    [32m     88[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mcompute_cotan_laplace[39m(vertices: Float[jax.Array, [33m"[39m[33mn_vertices dim[39m[33m"[39m], hemesh: msh.HeMesh,
-    [32m     89[39m                           vertex_field: Float[jax.Array, [33m"[39m[33mn_vertices ...[39m[33m"[39m]
-    [32m     90[39m                           ) -> Float[jax.Array, [33m"[39m[33mn_vertices ...[39m[33m"[39m]:
-    [32m     91[39m [38;5;250m    [39m[33;03m"""[39;00m
-    [32m     92[39m [33;03m    Compute cotangent laplacian of a per-vertex field (natural boundary conditions).[39;00m
-    [32m     93[39m [33;03m    """[39;00m
-    [32m---> [39m[32m94[39m     w_edge = [43mgeom[49m[43m.[49m[43mget_cotan_weights_per_egde[49m[43m([49m[43mvertices[49m[43m,[49m[43m [49m[43mhemesh[49m[43m)[49m
-    [32m     95[39m     diff = vertex_field[hemesh.dest] - vertex_field[hemesh.orig]
-    [32m     96[39m     [38;5;28;01mreturn[39;00m -adj.sum_he_to_vertex_incoming(hemesh, (w_edge*diff.T).T)
-
-    [36mFile [39m[32m~/Documents/Princeton/Coding/triangulax/triangulax/geometry.py:149[39m, in [36mget_cotan_weights_per_egde[39m[34m(vertices, hemesh)[39m
-    [32m    145[39m     a = vertices[hemesh.dest[hemesh.nxt]]
-    [32m    146[39m     [38;5;28;01mreturn[39;00m jax.vmap(trig.get_cot_between_vectors)(b-a, c-a)
-    [32m--> [39m[32m149[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mget_cotan_weights_per_egde[39m(vertices: Float[jax.Array, [33m"[39m[33mn_vertices dim[39m[33m"[39m],
-    [32m    150[39m                                hemesh: msh.HeMesh) -> Float[jax.Array, [33m"[39m[33m n_hes[39m[33m"[39m]:
-    [32m    151[39m [38;5;250m    [39m[33;03m"""Average of cotangent of angles opposite to edge."""[39;00m
-    [32m    152[39m     per_he = get_cotan_weights_per_he(vertices, hemesh)
-
-    [36mFile [39m[32m~/Documents/Princeton/Coding/triangulax/triangulax/geometry.py:144[39m, in [36mget_cotan_weights_per_he[39m[34m(vertices, hemesh)[39m
-    [32m    141[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mget_cotan_weights_per_he[39m(vertices: Float[jax.Array, [33m"[39m[33mn_vertices dim[39m[33m"[39m],
-    [32m    142[39m                              hemesh: msh.HeMesh) -> Float[jax.Array, [33m"[39m[33m n_hes[39m[33m"[39m]:
-    [32m    143[39m [38;5;250m    [39m[33;03m"""Cotangent of angle opposite to half-edge """[39;00m
-    [32m--> [39m[32m144[39m     b, c = vertices[hemesh.orig], vertices[hemesh.dest]
-    [32m    145[39m     a = vertices[hemesh.dest[hemesh.nxt]]
-    [32m    146[39m     [38;5;28;01mreturn[39;00m jax.vmap(trig.get_cot_between_vectors)(b-a, c-a)
-
-        [31m[... skipping hidden 7 frame][39m
-
-    [36mFile [39m[32m~/Documents/Princeton/Coding/triangulax/triangulax/trigonometry.py:98[39m, in [36mget_cot_between_vectors[39m[34m(a, b)[39m
-    [32m     96[39m [38;5;250m[39m[33;03m"""Cotangent of angle between two vectors"""[39;00m
-    [32m     97[39m divisor = jnp.clip(jnp.linalg.norm(jnp.cross(a, b)), [32m1e-12[39m)
-    [32m---> [39m[32m98[39m [38;5;28;01mreturn[39;00m [43mjnp[49m[43m.[49m[43mdot[49m[43m([49m[43ma[49m[43m,[49m[43m [49m[43mb[49m[43m)[49m / divisor
-
-        [31m[... skipping hidden 5 frame][39m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/numpy/tensor_contractions.py:122[39m, in [36mdot[39m[34m(a, b, precision, preferred_element_type, out_sharding)[39m
-    [32m    120[39m   [38;5;28;01melse[39;00m:
-    [32m    121[39m     contract_dims = ((a_ndim - [32m1[39m,), (b_ndim - [32m2[39m,))
-    [32m--> [39m[32m122[39m result = [43mlax[49m[43m.[49m[43mdot_general[49m[43m([49m[43ma[49m[43m,[49m[43m [49m[43mb[49m[43m,[49m[43m [49m[43mdimension_numbers[49m[43m=[49m[43m([49m[43mcontract_dims[49m[43m,[49m[43m [49m[43mbatch_dims[49m[43m)[49m[43m,[49m
-    [32m    123[39m [43m                         [49m[43mprecision[49m[43m=[49m[43mprecision[49m[43m,[49m
-    [32m    124[39m [43m                         [49m[43mpreferred_element_type[49m[43m=[49m[43mpreferred_element_type[49m[43m,[49m
-    [32m    125[39m [43m                         [49m[43mout_sharding[49m[43m=[49m[43mout_sharding[49m[43m)[49m
-    [32m    126[39m [38;5;28;01mreturn[39;00m lax._convert_element_type(result, preferred_element_type,
-    [32m    127[39m                                  output_weak_type)
-
-        [31m[... skipping hidden 28 frame][39m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/pjit.py:177[39m, in [36m_python_pjit_helper[39m[34m(fun, jit_info, *args, **kwargs)[39m
-    [32m    175[39m [38;5;28;01mexcept[39;00m api_util.InternalFloatingPointError [38;5;28;01mas[39;00m e:
-    [32m    176[39m   [38;5;28;01mif[39;00m [38;5;28mgetattr[39m(fun, [33m'[39m[33m_apply_primitive[39m[33m'[39m, [38;5;28;01mFalse[39;00m):
-    [32m--> [39m[32m177[39m     [38;5;28;01mraise[39;00m [38;5;167;01mFloatingPointError[39;00m([33mf[39m[33m"[39m[33minvalid value ([39m[38;5;132;01m{[39;00me.ty[38;5;132;01m}[39;00m[33m) encountered in [39m[38;5;132;01m{[39;00mfun.[34m__qualname__[39m[38;5;132;01m}[39;00m[33m"[39m) [38;5;28;01mfrom[39;00m[38;5;250m [39m[38;5;28;01mNone[39;00m
-    [32m    178[39m   api_util.maybe_recursive_nan_check(e, fun, args, kwargs)
-    [32m    180[39m outs = tree_unflatten(p.out_tree, out_flat)
-
-    [31mFloatingPointError[39m: invalid value (nan) encountered in dot_general
 
 ``` python
-jnp.linalg.norm(vertices_iterated[-1] - vertices_iterated[0], axis=-1).mean()
-```
+n_iterations = 10000
 
-    Array(0.01900834, dtype=float64)
+vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95]) # let's start from a stretched configuration
+vertices_iterated = jnp.copy(vertices_initial)
+for t in range(n_iterations):
+    vertices_iterated = vertices_iterated - step_size * get_step(vertices_iterated)
+```
 
 ``` python
-# something is going wrong with the gradient of the Helfrich energy wtf
+jnp.linalg.norm(vertices_iterated - vertices_initial, axis=-1).mean()
 ```
+
+    Array(0.21841703, dtype=float64)
 
 ``` python
 p = meshplot.plot(vertices_initial, hemesh.faces,
                   shading={"wireframe":True}, return_plot=True)
 
-p.add_mesh(vertices_iterated[-1] + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":True})
+p.add_mesh(vertices_iterated + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":True})
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    /Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/meshplot/Viewer.py:88: RuntimeWarning: invalid value encountered in add
-      mean = ((ma - mi) / 2 + mi).tolist()
-    /Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/jupyter_client/session.py:727: UserWarning: Message serialization failed with:
-    Out of range float values are not JSON compliant: nan
-    Supporting this message is deprecated in jupyter-client 7, please make sure your message is JSON-compliant
-      content = self.pack(content)
-
     1
 
 ``` python
-# looks like there is a strong discretization error in the gradient of the helricht energy
-# at 5-fold vertices. this is not good.
+# something is going wrong with the gradient of the Helfrich energy - it loooks like it depends strongly
+# on the local coordination number, with more displacement near the 5-fold coordinated vertices.
+# this is clearly visible when computing a smaller number of gradient descent steps (say 1000)
 ```
+
+## Below - work in progress, ignore
 
 ### Augmented Lagrangian method
 
@@ -1016,8 +808,6 @@ meshplot.plot(v_opt, hemesh.faces, shading={"wireframe": True})
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0167619…
 
     <meshplot.Viewer.Viewer at 0x464ec5310>
-
-## Below - work in progress, ignore
 
 ### Non-linear optimization
 
