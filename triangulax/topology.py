@@ -7,8 +7,6 @@ __all__ = ['flip_edge', 'can_flip_edge', 'flip_by_id', 'flip_all', 'flip_n_short
 
 # %% ../nbs/src/03_topological_modifications.ipynb #03827561
 import numpy as np
-import matplotlib.pyplot as plt
-
 import igl
 
 # %% ../nbs/src/03_topological_modifications.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f

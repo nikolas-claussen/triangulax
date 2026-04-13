@@ -5,8 +5,6 @@ __all__ = ['get_face_angles', 'get_mesh_quality_stats', 'is_locally_delaunay', '
 
 # %% ../nbs/src/07_algorithms.ipynb #eb9cca6d
 import numpy as np
-import matplotlib.pyplot as plt
-import meshplot
 
 # %% ../nbs/src/07_algorithms.ipynb #d16e3883
 import jax

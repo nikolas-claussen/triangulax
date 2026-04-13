@@ -7,10 +7,7 @@ __all__ = ['TriMesh', 'compute_per_face_jacobian', 'generate_ginibre_points', 'g
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
-import matplotlib.pyplot as plt
-
 import igl
-
 from scipy import spatial
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
