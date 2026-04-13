@@ -69,7 +69,7 @@ seamlessly with the JAX ecosystem like
 [optimistix](https://docs.kidger.site/optimistix/) (optimization) and
 [diffrax](https://github.com/patrick-kidger/diffrax) (ODE integration).
 
-### Inverse problems and bilevel optimization
+### Inverse problems
 
 Since `triangulax` is fully JAX-compatible, you can differentiate a
 simulation w.r.t. its parameters. This means one can apply
@@ -80,7 +80,7 @@ initial conditions to simulation results. `triangulax` can be used with
 [diffrax](https://github.com/patrick-kidger/diffrax) which allows
 straight-through and adjoint-based differentiation.
 
-For concreteness, consider an elastic energy
+For example, consider an elastic energy
 $E(\{\mathbf{v}_i\}_i ; \boldsymbol{\theta})$ that depends on both mesh
 vertex positions $\mathbf{v}_i$ and parameters $\boldsymbol{\theta}$
 (elastic moduli, spring rest lengths, etc). The minimum-energy
@@ -104,9 +104,8 @@ need to do so that the tissue as a whole takes on a certain shape?
 
 \## Installation instructions
 
-`triangulax` is hosted on
-[PyPI](https://pypi.org/project/triangulax/0.0.1/). Install it as
-follows:
+`triangulax` is hosted on [PyPI](https://pypi.org/project/triangulax/).
+Install it as follows:
 
 1.  (Recommended) initialize a virtual environment, for instance with
     `conda`:
@@ -115,6 +114,10 @@ follows:
 $ conda env create -n triangulax 
 $ conda activate triangulax
 ```
+
+Please see the [JAX
+documentation](https://docs.jax.dev/en/latest/installation.html) for how
+to install with GPU support.
 
 2.  Install with `pip`:
 
