@@ -103,7 +103,7 @@ from importlib import reload
 ### Read in test data
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("tutorial_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommesh = GeomMesh(*hemesh.n_items, vertices=mesh.vertices)
 geommesh = geom.set_voronoi_face_positions(geommesh, hemesh)
@@ -192,7 +192,7 @@ gradients with respect to them.
 
 import igl
 
-vertices, _, _, faces, _, _ = igl.readOBJ("test_meshes/torus_2d.obj")
+vertices, _, _, faces, _, _ = igl.readOBJ("tutorial_meshes/torus_2d.obj")
 
 plt.triplot(vertices[:,0], vertices[:,1], faces, lw=0.5, color="k")
 plt.axis("equal")

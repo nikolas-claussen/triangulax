@@ -41,7 +41,7 @@ angle, summary statistics, and a human-readable quality report.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L30"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L28"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_angles
@@ -74,7 +74,7 @@ assert jnp.all(max_angles >= jnp.pi / 3 - 1e-6)  # max angle >= 60° always
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L55"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L53"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_mesh_quality_stats
@@ -121,7 +121,7 @@ mesh, but generally improves quality in practice.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L95"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L93"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### is_locally_delaunay
@@ -153,7 +153,7 @@ assert jnp.all(delaunay[hemesh.is_bdry_edge])  # boundary edges are always Delau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L121"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L119"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### fix_delaunay
@@ -233,7 +233,7 @@ Smoothing](https://geometry-central.net/surface/algorithms/remeshing/#tangential
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L163"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L161"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### smooth_vertices_laplacian

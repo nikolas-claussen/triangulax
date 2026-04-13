@@ -53,8 +53,8 @@ loading and saving meshes, plotting them, and interfacing with external
 geometry-processing tools.
 
 ``` python
-disk = TriMesh.read_obj("../test_meshes/disk.obj")
-torus = TriMesh.read_obj("../test_meshes/torus.obj", dim=3)
+disk = TriMesh.read_obj("tutorial_meshes/disk.obj")
+torus = TriMesh.read_obj("tutorial_meshes/torus.obj", dim=3)
 
 manual_mesh = TriMesh(
     vertices=jnp.array([[0.0, 0.0],
@@ -71,14 +71,15 @@ print("manual mesh faces:")
 print(np.array(manual_mesh.faces))
 ```
 
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+
     disk mesh: 131 vertices, 224 faces
     torus mesh: 576 vertices, 1152 faces
     manual mesh faces:
     [[0 1 2]
      [0 2 3]]
 
-    Warning: readOBJ() ignored non-comment line 3:
-      o flat_tri_ecmc
     Warning: readOBJ() ignored non-comment line 3:
       o Torus
 

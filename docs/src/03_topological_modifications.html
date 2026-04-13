@@ -349,7 +349,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L35" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L33" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="flip_edge" class="level3">
 <h3 class="anchored" data-anchor-id="flip_edge">flip_edge</h3>
@@ -362,7 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>See https://jerryyin.info/geometry-processing-algorithms/half-edge/. The algorithm is slightly modified since we keep track of the origin and destination of a half-edge, and use arrays instead of pointers. Returns a new HeMesh, does not modify in-place.</p>
 <p>Does not check whether the flip produces a valid mesh. Use <a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_flip_edge"><code>can_flip_edge</code></a> to check first.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L75" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L73" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="can_flip_edge" class="level3">
 <h3 class="anchored" data-anchor-id="can_flip_edge">can_flip_edge</h3>
@@ -493,7 +493,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L102" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L100" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 </section>
 <section id="flip_all" class="level3">
@@ -506,7 +506,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><em>Flip all (unique) half-edges where to_flip is True in a half-edge mesh. Wraps flip_edge.</em></p>
 <p>Note: scans over <em>all</em> half-edges, which can be slow for large meshes. See <a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_n_shortest"><code>flip_n_shortest</code></a> for a more efficient alternative that only scans over a fixed number of candidate edges.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L93" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L91" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="flip_by_id" class="level3">
 <h3 class="anchored" data-anchor-id="flip_by_id">flip_by_id</h3>
@@ -517,7 +517,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Flip half-edges from ids array where to_flip is True. Wraps flip_edge.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L117" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="flip_n_shortest" class="level3">
 <h3 class="anchored" data-anchor-id="flip_n_shortest">flip_n_shortest</h3>
@@ -587,7 +587,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We must be careful to preserve the manifold structure of the mesh and deal with edge cases. We test the resulting half-edge mesh via plots and use <code>libigl</code> to verify that the mesh is in a valid state.</p>
 <p>We also need a data structure (<a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#meshreindexmap"><code>MeshReindexMap</code></a>) to keep track of how vertices/edges/faces of the initial mesh map to those of the modified one.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L156" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L154" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remap_inds_removal_reverse" class="level3">
 <h3 class="anchored" data-anchor-id="remap_inds_removal_reverse">remap_inds_removal_reverse</h3>
@@ -598,7 +598,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Remap indices after removal. Reverse of remap_inds_removal_forward.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L150" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L148" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remap_inds_removal_forward" class="level3">
 <h3 class="anchored" data-anchor-id="remap_inds_removal_forward">remap_inds_removal_forward</h3>
@@ -609,7 +609,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Remap indices after removal. Returns array arr[i] = i - (removed &lt; i).sum().</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L165" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L163" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="meshreindexmap" class="level3">
 <h3 class="anchored" data-anchor-id="meshreindexmap">MeshReindexMap</h3>
@@ -633,7 +633,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L178" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L176" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="can_collapse_edge" class="level3">
 <h3 class="anchored" data-anchor-id="can_collapse_edge">can_collapse_edge</h3>
@@ -645,7 +645,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><em>Check whether collapsing half-edge e would produce a valid mesh (link condition).</em></p>
 <p>An edge can be collapsed if it is interior and the two endpoint vertices share exactly two common neighbors (the opposite vertices of the two adjacent faces). This is the discrete “link condition” that ensures the collapse preserves manifoldness.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L199" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L197" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="collapse_edge" class="level3">
 <h3 class="anchored" data-anchor-id="collapse_edge">collapse_edge</h3>
@@ -729,7 +729,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 class="anchored" data-anchor-id="split-vertex-cell-division">Split vertex (“cell division”)</h4>
 <p>The opposite of edge collapse: splitting a vertex into two. We specify two half-edges (the “splitting axis”) that originate at a common vertex. Like before, we need a <a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#meshreindexmap"><code>MeshReindexMap</code></a> tracking how old and new mesh elements are related. New elements are appended at the end of the arrays.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L278" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L276" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 </section>
 <section id="can_split_vertex" class="level3">
@@ -742,7 +742,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><em>Check whether splitting a vertex along half-edges e1 and e2 is valid.</em></p>
 <p>Both half-edges must originate from the same vertex, and both must be on interior faces.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L288" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L286" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="split_vertex" class="level3">
 <h3 class="anchored" data-anchor-id="split_vertex">split_vertex</h3>

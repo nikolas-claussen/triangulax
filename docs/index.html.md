@@ -101,9 +101,46 @@ do so that the tissue as a whole takes on a certain shape?
 - [VertAX](https://github.com/VirtualEmbryo/VertAX/) JAX-based
   simulations of 2D tissues.
 
-## Developer guide and installation instructions
+\## Installation instructions
 
-**Currently, installation from source only - PyPi package coming soon**
+`triangulax` is hosted on
+[PyPI](https://pypi.org/project/triangulax/0.0.1/). Install it as
+follows:
+
+1.  (Recommended) initialize a virtual environment, for instance with
+    `conda`:
+
+``` sh
+$ conda env create -n triangulax 
+$ conda activate triangulax
+```
+
+2.  Install with `pip`:
+
+``` sh
+$ pip install triangulax 
+```
+
+(Optional) Install optional dependencies for running the tutorials:
+
+``` sh
+$ pip install triangulax[tutorials]
+```
+
+This installs `tqdm`, `diffrax`, `equinox`, `optimistix`, and
+`meshplot`.
+
+3.  Verify installation:
+
+``` sh
+conda run -n triangulax python -c "from triangulax import mesh, geometry"
+```
+
+4.  (Optional) Download jupyter notebooks to run tutorials interactively
+    from
+    [GitHub](https://github.com/nikolas-claussen/triangulax/tree/main/nbs/tutorials)
+
+## Developer guide
 
 This package is developed based on Jupyter notebooks, which are
 converted into python modules using `nbdev`. Take a look at
@@ -124,20 +161,26 @@ $ conda env create -n triangulax -f environment.yml
 $ conda activate triangulax
 ```
 
-3.  Install the `triangulax` package
+3.  Optional: install `nbdev` if you want to edit the package notebooks
+
+``` sh
+pip install nbdev
+```
+
+4.  Install the `triangulax` package
 
 ``` sh
 # make sure triangulax package is installed in development mode
 $ pip install -e .
 ```
 
-4.  If necessary, edit the package notebooks and export
+5.  Optional: edit the package notebooks and export
 
 ``` sh
 # make changes under nbs/ directory
 # ...
 
-# compile to have changes apply to triangulax
+# export to have changes apply to triangulax
 $ nbdev_export
 ```
 

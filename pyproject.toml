@@ -12,7 +12,19 @@ license = {text = "Apache-2.0"}
 authors = [{name = "Nikolas Claussen", email = "nhclaussen@gmail.com"}]
 keywords = ['nbdev', 'jupyter', 'notebook', 'python']
 classifiers = ["Natural Language :: English", "Intended Audience :: Developers", "Development Status :: 3 - Alpha", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3 :: Only"]
-dependencies = []
+dependencies = [
+    "numpy",
+    "jax",
+    "jaxlib",
+    "jaxtyping",
+    "scipy",
+    "libigl",
+    "lineax",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+tutorials = ["tqdm", "diffrax", "equinox", "optimistix", "meshplot"]
 
 [project.urls]
 Repository = "https://github.com/nikolas-claussen/triangulax"

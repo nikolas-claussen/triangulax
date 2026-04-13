@@ -416,8 +416,8 @@ window.Quarto = {
 </section>
 <section id="read-in-test-data" class="level3">
 <h3 class="anchored" data-anchor-id="read-in-test-data">Read in test data</h3>
-<div id="68c8a57e" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<div id="68c8a57e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/disk.obj"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, vertices<span class="op">=</span>mesh.vertices)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> geom.set_voronoi_face_positions(geommesh, hemesh)</span>
@@ -470,13 +470,13 @@ window.Quarto = {
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> d.at[<span class="dv">0</span>].<span class="bu">set</span>(d[<span class="dv">0</span>] <span class="op">+</span> twist)</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> d – L<span class="op">*</span>jnp.<span class="bu">round</span>(d<span class="op">/</span>L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Note: nothing prevents you from changing the shape of your domain, i.e.&nbsp;<span class="math inline">\(\mathbf{L}, s\)</span> dynamically during your simulation! You can even take gradients with respect to them.</p>
-<div id="9004ec7a" class="cell" data-execution_count="63">
+<div id="9004ec7a" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is an example of a 2d mesh with "periodic boundary conditions" - topologically, it is just a torus.</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># you can see the faces that wrap around the boundary.</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>vertices, _, _, faces, _, _ <span class="op">=</span> igl.readOBJ(<span class="st">"test_meshes/torus_2d.obj"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>vertices, _, _, faces, _, _ <span class="op">=</span> igl.readOBJ(<span class="st">"tutorial_meshes/torus_2d.obj"</span>)</span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>plt.triplot(vertices[:,<span class="dv">0</span>], vertices[:,<span class="dv">1</span>], faces, lw<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">"k"</span>)</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>

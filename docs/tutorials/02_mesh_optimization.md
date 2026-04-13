@@ -65,7 +65,7 @@ from triangulax import linops as lin
 **Load example mesh**
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("tutorial_meshes/disk.obj")
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 geommesh = GeomMesh(*hemesh.n_items, vertices=mesh.vertices)
 

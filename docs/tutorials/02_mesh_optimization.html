@@ -393,7 +393,7 @@ window.Quarto = {
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dataclasses</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> functools</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell" data-execution_count="11">
+<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import previously defined modules</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> trigonometry <span class="im">as</span> trg</span>
@@ -404,8 +404,8 @@ window.Quarto = {
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops <span class="im">as</span> lin</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Load example mesh</strong></p>
-<div id="a1466484-c167-4d4e-97fc-3f622728062d" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<div id="a1466484-c167-4d4e-97fc-3f622728062d" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/disk.obj"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, vertices<span class="op">=</span>mesh.vertices)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -414,11 +414,11 @@ window.Quarto = {
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>HeMesh(N_V=131, N_HE=708, N_F=224)</code></pre>
 </div>
 </div>
-<div id="82e699dd-6ad6-4fcd-aa23-bdfdb170fe0a" class="cell" data-execution_count="13">
+<div id="82e699dd-6ad6-4fcd-aa23-bdfdb170fe0a" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, mesh.faces)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>

@@ -329,7 +329,7 @@ window.Quarto = {
   <li><a href="#inverse-problems-and-bilevel-optimization" id="toc-inverse-problems-and-bilevel-optimization" class="nav-link" data-scroll-target="#inverse-problems-and-bilevel-optimization">Inverse problems and bilevel optimization</a></li>
   <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See also</a></li>
   </ul></li>
-  <li><a href="#developer-guide-and-installation-instructions" id="toc-developer-guide-and-installation-instructions" class="nav-link" data-scroll-target="#developer-guide-and-installation-instructions">Developer guide and installation instructions</a>
+  <li><a href="#developer-guide" id="toc-developer-guide" class="nav-link" data-scroll-target="#developer-guide">Developer guide</a>
   <ul class="collapse">
   <li><a href="#install-triangulax-in-development-mode" id="toc-install-triangulax-in-development-mode" class="nav-link" data-scroll-target="#install-triangulax-in-development-mode">Install triangulax in Development mode</a></li>
   </ul></li>
@@ -409,36 +409,60 @@ window.Quarto = {
 <li><p><a href="https://libigl.github.io/libigl-python-bindings/">libigl</a> Geometry processing library with Python bindings. You can use <code>libigl</code> functions on <code>triangulax</code> meshes via the <code>.faces</code> attribute</p></li>
 <li><p><a href="https://github.com/VirtualEmbryo/VertAX/">VertAX</a> JAX-based simulations of 2D tissues.</p></li>
 </ul>
+<p>## Installation instructions</p>
+<p><code>triangulax</code> is hosted on <a href="https://pypi.org/project/triangulax/0.0.1/">PyPI</a>. Install it as follows:</p>
+<ol type="1">
+<li>(Recommended) initialize a virtual environment, for instance with <code>conda</code>:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda env create <span class="at">-n</span> triangulax </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda activate triangulax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li>Install with <code>pip</code>:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install triangulax </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>(Optional) Install optional dependencies for running the tutorials:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install triangulax<span class="pp">[</span><span class="ss">tutorials</span><span class="pp">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This installs <code>tqdm</code>, <code>diffrax</code>, <code>equinox</code>, <code>optimistix</code>, and <code>meshplot</code>.</p>
+<ol start="3" type="1">
+<li>Verify installation:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> triangulax python <span class="at">-c</span> <span class="st">"from triangulax import mesh, geometry"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="4" type="1">
+<li>(Optional) Download jupyter notebooks to run tutorials interactively from <a href="https://github.com/nikolas-claussen/triangulax/tree/main/nbs/tutorials">GitHub</a></li>
+</ol>
 </section>
 </section>
-<section id="developer-guide-and-installation-instructions" class="level2">
-<h2 class="anchored" data-anchor-id="developer-guide-and-installation-instructions">Developer guide and installation instructions</h2>
-<p><strong>Currently, installation from source only - PyPi package coming soon</strong></p>
+<section id="developer-guide" class="level2">
+<h2 class="anchored" data-anchor-id="developer-guide">Developer guide</h2>
 <p>This package is developed based on Jupyter notebooks, which are converted into python modules using <code>nbdev</code>. Take a look at <code>.github/copilot-instructions.md</code> for details.</p>
 <section id="install-triangulax-in-development-mode" class="level3">
 <h3 class="anchored" data-anchor-id="install-triangulax-in-development-mode">Install triangulax in Development mode</h3>
 <ol type="1">
 <li>Clone the GitHub repository</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone https://github.com/nikolas-claussen/triangulax.git</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone https://github.com/nikolas-claussen/triangulax.git</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="2" type="1">
 <li>Create a conda environment with all Python dependencies</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda env create <span class="at">-n</span> triangulax <span class="at">-f</span> environment.yml</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda activate triangulax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda env create <span class="at">-n</span> triangulax <span class="at">-f</span> environment.yml</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda activate triangulax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="3" type="1">
+<li>Optional: install <code>nbdev</code> if you want to edit the package notebooks</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install nbdev</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="4" type="1">
 <li>Install the <code>triangulax</code> package</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure triangulax package is installed in development mode</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install <span class="at">-e</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="4" type="1">
-<li>If necessary, edit the package notebooks and export</li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure triangulax package is installed in development mode</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install <span class="at">-e</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="5" type="1">
+<li>Optional: edit the package notebooks and export</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make changes under nbs/ directory</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># compile to have changes apply to triangulax</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nbdev_export</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make changes under nbs/ directory</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># export to have changes apply to triangulax</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nbdev_export</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="documentation" class="level2">
@@ -461,33 +485,33 @@ window.Quarto = {
 </ul>
 <section id="minimal-example" class="level3">
 <h3 class="anchored" data-anchor-id="minimal-example">Minimal example</h3>
-<div id="8d8e3d24" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh, geometry</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># load example mesh and convert to half-edge mesh</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>vertices, _, _, faces, _, _ <span class="op">=</span> igl.readOBJ(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> mesh.HeMesh.from_triangles(vertices.shape[<span class="dv">0</span>], faces)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># with the half-edge mesh, you can carry out various operations, for example</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the coordination number by summing incoming half-edges per vertex</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> jnp.zeros(hemesh.n_vertices)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> coord_number.at[hemesh.dest].add(jnp.ones(hemesh.n_hes))</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mean coordination number:"</span>, coord_number.mean())</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's define a simple geometric function and compute its gradient with JAX</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_voronoi_area(vertices: jax.Array, hemesh: mesh.HeMesh) <span class="op">-&gt;</span> jax.Array:</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the mean Voronoi area per vertex."""</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    voronoi_areas <span class="op">=</span> geometry.get_voronoi_areas(vertices, hemesh)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean(voronoi_areas)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>value, gradient <span class="op">=</span> jax.value_and_grad(mean_voronoi_area)(vertices, hemesh)</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mean gradient norm:"</span>, jnp.linalg.norm(gradient, axis<span class="op">=</span><span class="dv">1</span>).mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a424a4bc" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh, geometry</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># load example mesh and convert to half-edge mesh</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>vertices, _, _, faces, _, _ <span class="op">=</span> igl.readOBJ(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> mesh.HeMesh.from_triangles(vertices.shape[<span class="dv">0</span>], faces)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># with the half-edge mesh, you can carry out various operations, for example</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the coordination number by summing incoming half-edges per vertex</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> jnp.zeros(hemesh.n_vertices)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> coord_number.at[hemesh.dest].add(jnp.ones(hemesh.n_hes))</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mean coordination number:"</span>, coord_number.mean())</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's define a simple geometric function and compute its gradient with JAX</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_voronoi_area(vertices: jax.Array, hemesh: mesh.HeMesh) <span class="op">-&gt;</span> jax.Array:</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the mean Voronoi area per vertex."""</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    voronoi_areas <span class="op">=</span> geometry.get_voronoi_areas(vertices, hemesh)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean(voronoi_areas)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>value, gradient <span class="op">=</span> jax.value_and_grad(mean_voronoi_area)(vertices, hemesh)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mean gradient norm:"</span>, jnp.linalg.norm(gradient, axis<span class="op">=</span><span class="dv">1</span>).mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>

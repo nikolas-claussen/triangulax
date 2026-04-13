@@ -59,7 +59,7 @@ alt="image.png" />
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L35"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L33"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_edge
@@ -86,7 +86,7 @@ to check first.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L75"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L73"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### can_flip_edge
@@ -241,7 +241,7 @@ edges, edges.size
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L102"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L100"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_all
@@ -266,7 +266,7 @@ candidate edges.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L93"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L91"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_by_id
@@ -284,7 +284,7 @@ def flip_by_id(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L117"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L115"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### flip_n_shortest
@@ -379,7 +379,7 @@ those of the modified one.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L156"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L154"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### remap_inds_removal_reverse
@@ -397,7 +397,7 @@ def remap_inds_removal_reverse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L150"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L148"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### remap_inds_removal_forward
@@ -416,7 +416,7 @@ i).sum().*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L165"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L163"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MeshReindexMap
@@ -447,7 +447,7 @@ forward[6], reverse[2], jnp.allclose(forward[reverse], jnp.arange(N - removed.sh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L178"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L176"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### can_collapse_edge
@@ -471,7 +471,7 @@ collapse preserves manifoldness.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L199"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L197"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### collapse_edge
@@ -571,7 +571,7 @@ appended at the end of the arrays.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L278"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L276"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### can_split_vertex
@@ -592,7 +592,7 @@ interior faces.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L288"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/topology.py#L286"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### split_vertex

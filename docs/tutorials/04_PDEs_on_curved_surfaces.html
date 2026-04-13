@@ -405,9 +405,9 @@ window.Quarto = {
 <section id="load-mesh-and-build-operators" class="level3">
 <h3 class="anchored" data-anchor-id="load-mesh-and-build-operators">Load mesh and build operators</h3>
 <p>We load a torus mesh and construct the half-edge connectivity, geometry, and the FEM operators: the cotangent Laplacian <span class="math inline">\(L\)</span> and the lumped mass matrix <span class="math inline">\(M\)</span> (diagonal, with Voronoi dual areas per vertex).</p>
-<div id="dda1d604" class="cell" data-execution_count="15">
+<div id="dda1d604" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load 3D torus mesh</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/torus.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/torus.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(trimesh.vertices.shape[<span class="dv">0</span>], trimesh.faces)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Torus: </span><span class="sc">{</span>trimesh<span class="sc">.</span>vertices<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> vertices, </span><span class="sc">{</span>trimesh<span class="sc">.</span>faces<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> faces"</span>)</span>

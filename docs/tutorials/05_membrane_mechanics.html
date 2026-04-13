@@ -405,10 +405,10 @@ window.Quarto = {
 <section id="computing-the-mean-curvature" class="level2">
 <h2 class="anchored" data-anchor-id="computing-the-mean-curvature">Computing the mean curvature</h2>
 <p>The mean curvature of a surface (see <a href="https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces">wikipedia</a>, and <a href="https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf">Crane, Chpt. 5</a>) can be computed from the Laplace operator, applied to the vertex positions <span class="math inline">\(\mathbf{v}\)</span> as <span class="math inline">\(\Delta\mathbf{v} = 2H\mathbf{n}\)</span>, where <span class="math inline">\(\mathbf{n}\)</span> is the surface normal. To compute the curvature <span class="math inline">\(H\)</span> numerically, one can also use the <em>dihedral angles</em> <span class="math inline">\(\theta_{ij}\)</span> of each edge <span class="math inline">\(ij\)</span>: the angles between the normal vectors of adjacent triangles. The mean curvature at vertex <span class="math inline">\(i\)</span> can be approximated by <span class="math display">\[H_i = \frac{1}{4a_i} \sum_{j\sim i} \ell_{ij} \theta_{ij} \]</span> where the sum is over all <span class="math inline">\(j\)</span> neighboring <span class="math inline">\(i\)</span>, and <span class="math inline">\(a_i\)</span> is the Voronoi area around vertex <span class="math inline">\(i\)</span>. This discretization can be more robust numerically. Both are already implemented in the <code>geometry</code> module.</p>
-<div id="81191bb4" class="cell" data-execution_count="10">
+<div id="81191bb4" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's look at a torus which has varying mean curvature</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>torus <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/torus.obj"</span>,dim <span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>torus <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/torus.obj"</span>,dim <span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>hemesh_torus <span class="op">=</span> HeMesh.from_triangles(torus.vertices.shape[<span class="dv">0</span>], torus.faces)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># we can compute the mean curvature using two different methods</span></span>
@@ -483,10 +483,10 @@ window.Quarto = {
 <li>Given the vertex-positions <span class="math inline">\(\mathbf{v}_i^{(t)}\)</span> at step <span class="math inline">\(t\)</span>, compute the cotan-Laplacian matrix <span class="math inline">\(\Delta^{(t)}_{ij}\)</span></li>
 <li>Solve <span class="math inline">\(\Delta^{(t)}_{ij} \cdot \mathbf{v}_i^{(t+1)} =0\)</span>, subject to fixed boundary conditions.</li>
 </ol>
-<div id="f31d6411" class="cell" data-execution_count="16">
+<div id="f31d6411" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's load a simple test mesh</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/disk.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(trimesh.vertices.shape[<span class="dv">0</span>], trimesh.faces)</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>,<span class="dv">4</span>))</span>
@@ -615,10 +615,10 @@ window.Quarto = {
 <p>The <em>Helfrich energy</em> is an elegant, geometric model of bending energy. It uses the mean and Gaussian curvatures <span class="math inline">\(H, K\)</span> of the surface <span class="math inline">\(\mathcal{M}\)</span>. The energy reads:</p>
 <p><span class="math display">\[E_H  =\int dA \left( \frac{\kappa_H}{2}(H-H_0)^2 + \kappa_G K \right) \]</span></p>
 <p>If the surface is closed, the <span class="math inline">\(\int K\)</span>-term is a topological invariant and can be dropped (and we will do so here). A nonzero <em>spontaneous curvature</em> <span class="math inline">\(H_0\)</span> means that the membrane “prefers” to be curved; this can result, for instance, from molecules that bind to the membrane.</p>
-<div id="ab811553" class="cell" data-execution_count="6">
+<div id="ab811553" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's load a sphere as a test mesh for the Helfrich energy</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere_fine.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>) <span class="co"># sphere_fine sphere</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/sphere_fine.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>) <span class="co"># sphere_fine sphere</span></span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">-=</span> trimesh.vertices.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">=</span> (trimesh.vertices.T <span class="op">/</span> np.linalg.norm(trimesh.vertices, axis<span class="op">=</span><span class="dv">1</span>)).T</span>
@@ -773,8 +773,8 @@ window.Quarto = {
 <section id="constrained-minimization-using-penalty-and-augmented-lagrangian-methods" class="level2">
 <h2 class="anchored" data-anchor-id="constrained-minimization-using-penalty-and-augmented-lagrangian-methods">Constrained minimization using Penalty and Augmented Lagrangian methods</h2>
 <p>Much of the physics of membranes arises from balancing the Helfrich bending energy with constraints on the volume <span class="math inline">\(V\)</span> and area <span class="math inline">\(A\)</span> of the membrane. For simplicity, we softly enforce these contrstraints with quadratic penalty terms in the energy: <span class="math display">\[E_P =  \mu_V(V-V_0)^2/(2V_0) + \mu_A(A-A_0)^2/(2A_0)\]</span></p>
-<div id="1006f3cb" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere_fine.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
+<div id="1006f3cb" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>trimesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/sphere_fine.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">-=</span> trimesh.vertices.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>trimesh.vertices <span class="op">=</span> (trimesh.vertices.T <span class="op">/</span> np.linalg.norm(trimesh.vertices, axis<span class="op">=</span><span class="dv">1</span>)).T</span>
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -894,7 +894,12 @@ Sphere volume: 4.1527 (exact 4π/3 = 4.1888)</code></pre>
 <li><strong>Tangential phase</strong>: minimize a conformal regularization energy <span class="math inline">\(E_T\)</span> by moving vertices only in the tangent plane.</li>
 </ol>
 <p>We <strong>reparametrize</strong> each sub-problem and express vertex displacements in the local normal/tangent basis (recomputed each outer iteration), then run a standard unconstrained optimizer on the reduced coordinates. This is compatible with any optimizer (CG, L-BFGS, …).</p>
-<p><strong>Conformal energy.</strong> For <span class="math inline">\(E_T\)</span>, we use the LSCM (Least Squares Conformal Mapping) energy, which penalizes triangle shear relative to a reference configuration but is invariant to uniform area changes: <span class="math display">\[E_{\mathrm{LSCM}} = \sum_f A_f \left(\frac{\mathrm{tr}(C_f)}{2\sqrt{\det C_f}} - 1\right), \qquad C_f = G_0^{-1} G\]</span> Here, <span class="math inline">\(C_f\)</span> is the Cauchy-Green tensor (a nonlinear measure of strain), computed from <span class="math inline">\(G\)</span>, <span class="math inline">\(G_0\)</span> the current and reference metric tensors for each face.</p>
+<p><strong>Parametrization energy.</strong> For <span class="math inline">\(E_T\)</span>, many choices are possible. We use the <em>neo-Hookean</em> energy:</p>
+<p><span class="math display">\[E_{\mathrm{NH}} = \sum_f A_f \left[ \frac{K}{2}\left(\frac{\mathrm{tr}(C_f)}{\sqrt{\det C_f}} - 2\right)
++\frac{G}{2}\left(\sqrt{\det C_f} - 1\right)^2
+\right], \qquad C_f = G_0^{-1} G\]</span></p>
+<p>Here, <span class="math inline">\(C_f\)</span> is the Cauchy-Green tensor (a nonlinear measure of strain), computed from <span class="math inline">\(G\)</span>, <span class="math inline">\(G_0\)</span> the current and reference metric tensors. They are easily evaluated for each triangle <span class="math inline">\(f\)</span>. The total energy sums over all faces, weighted by area <span class="math inline">\(A_f\)</span>. <span class="math inline">\(K\)</span> and <span class="math inline">\(G\)</span> are the bulk and shear moduli</p>
+<p>An important special case is <span class="math inline">\(G=0\)</span> (zero bulk modulus), in which triangle shear relative to a reference is penalized. The energy reduces to the LSCM (Least Squares Conformal Mapping) energy, which is invariant to uniform area changes. Penalizing shear is particularly important, since it more rapidly leads to numerical divergence than area changes, which only result in loosing detail.</p>
 <div id="b0e197d2" class="cell" data-execution_count="243">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Mesh energies ---</span></span>
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1069,7 +1074,7 @@ Helfrich energy: 9.3103</code></pre>
 <span id="cb79-32"><a href="#cb79-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Reconstruct vertices from base + tangential displacement."""</span></span>
 <span id="cb79-33"><a href="#cb79-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> v0 <span class="op">+</span> jnp.einsum(<span class="st">"vi,vid-&gt;vd"</span>, t, basis)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a0691fe2" class="cell" data-execution_count="155">
+<div id="a0691fe2" class="cell" data-execution_count="257">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> alternating_minimize(energy_normal_fn, args_normal,</span>
 <span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>                        energy_tangential_fn, args_tangential,</span>
 <span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>                        vertices, hemesh,</span>
@@ -1134,18 +1139,18 @@ Helfrich energy: 9.3103</code></pre>
 <span id="cb80-62"><a href="#cb80-62" aria-hidden="true" tabindex="-1"></a>        <span class="co"># --- Diagnostics ---</span></span>
 <span id="cb80-63"><a href="#cb80-63" aria-hidden="true" tabindex="-1"></a>        stats <span class="op">=</span> algo.get_mesh_quality_stats(vertices, hemesh)</span>
 <span id="cb80-64"><a href="#cb80-64" aria-hidden="true" tabindex="-1"></a>        E_phys <span class="op">=</span> <span class="bu">float</span>(energy_normal_fn(vertices, args_normal))</span>
-<span id="cb80-65"><a href="#cb80-65" aria-hidden="true" tabindex="-1"></a>        E_conf <span class="op">=</span> <span class="bu">float</span>(energy_tangential_fn(vertices, args_tangential))</span>
-<span id="cb80-66"><a href="#cb80-66" aria-hidden="true" tabindex="-1"></a>        record <span class="op">=</span> {<span class="st">"iter"</span>: k, <span class="st">"E_phys"</span>: E_phys, <span class="st">"E_conf"</span>: E_conf, <span class="op">**</span>stats}</span>
+<span id="cb80-65"><a href="#cb80-65" aria-hidden="true" tabindex="-1"></a>        E_param <span class="op">=</span> <span class="bu">float</span>(energy_tangential_fn(vertices, args_tangential))</span>
+<span id="cb80-66"><a href="#cb80-66" aria-hidden="true" tabindex="-1"></a>        record <span class="op">=</span> {<span class="st">"iter"</span>: k, <span class="st">"E_phys"</span>: E_phys, <span class="st">"E_param"</span>: E_param, <span class="op">**</span>stats}</span>
 <span id="cb80-67"><a href="#cb80-67" aria-hidden="true" tabindex="-1"></a>        history.append(record)</span>
 <span id="cb80-68"><a href="#cb80-68" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb80-69"><a href="#cb80-69" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> verbose:</span>
-<span id="cb80-70"><a href="#cb80-70" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>k<span class="sc">:3d}</span><span class="ss"> | E_phys=</span><span class="sc">{</span>E_phys<span class="sc">:.4f}</span><span class="ss"> | E_conf=</span><span class="sc">{</span>E_conf<span class="sc">:.6f}</span><span class="ss"> | "</span></span>
+<span id="cb80-70"><a href="#cb80-70" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>k<span class="sc">:3d}</span><span class="ss"> | E_phys=</span><span class="sc">{</span>E_phys<span class="sc">:.4f}</span><span class="ss"> | E_param=</span><span class="sc">{</span>E_param<span class="sc">:.6f}</span><span class="ss"> | "</span></span>
 <span id="cb80-71"><a href="#cb80-71" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f"angles=[</span><span class="sc">{</span>stats[<span class="st">'min_angle'</span>]<span class="sc">:.1f}</span><span class="ss">°, </span><span class="sc">{</span>stats[<span class="st">'max_angle'</span>]<span class="sc">:.1f}</span><span class="ss">°] | "</span></span>
 <span id="cb80-72"><a href="#cb80-72" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f"degen=</span><span class="sc">{</span>stats[<span class="st">'n_degenerate'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb80-73"><a href="#cb80-73" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb80-74"><a href="#cb80-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vertices, history</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="624ddd85" class="cell" data-execution_count="231">
+<div id="624ddd85" class="cell" data-execution_count="258">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Demo: deflated sphere with alternating minimization ---</span></span>
 <span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> geom.get_area(trimesh.vertices, hemesh)</span>
@@ -1157,55 +1162,45 @@ Helfrich energy: 9.3103</code></pre>
 <span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>args_helfrich <span class="op">=</span> (hemesh, H0, kappa, mu_A, mu_V, A0, V0)</span>
 <span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>args_conformal <span class="op">=</span> (hemesh, metric_ref)</span>
 <span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a><span class="co"># start from a slightly stretched configuration to break spherical symmetry</span></span>
-<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> trimesh.vertices <span class="op">*</span> np.array([<span class="fl">0.95</span>, <span class="fl">1.1</span>, <span class="fl">0.95</span>])</span>
+<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a>mod_bulk, mod_shear <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">1.0</span></span>
+<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a>args_elastic <span class="op">=</span> (hemesh, metric_ref, mod_bulk, mod_shear)</span>
 <span id="cb81-14"><a href="#cb81-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb81-15"><a href="#cb81-15" aria-hidden="true" tabindex="-1"></a>solver_normal <span class="op">=</span>  optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>) <span class="co"># NonlinearCG, BFGS OK. LBFGS bad. </span></span>
-<span id="cb81-16"><a href="#cb81-16" aria-hidden="true" tabindex="-1"></a>solver_tangential <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>)</span>
+<span id="cb81-15"><a href="#cb81-15" aria-hidden="true" tabindex="-1"></a><span class="co"># start from a slightly stretched configuration to break spherical symmetry</span></span>
+<span id="cb81-16"><a href="#cb81-16" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> trimesh.vertices <span class="op">*</span> np.array([<span class="fl">0.95</span>, <span class="fl">1.1</span>, <span class="fl">0.95</span>])</span>
 <span id="cb81-17"><a href="#cb81-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb81-18"><a href="#cb81-18" aria-hidden="true" tabindex="-1"></a><span class="co">#solver_normal =  optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=1e-3)</span></span>
-<span id="cb81-19"><a href="#cb81-19" aria-hidden="true" tabindex="-1"></a><span class="co">#solver_tangential = optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=1e-3)</span></span>
+<span id="cb81-18"><a href="#cb81-18" aria-hidden="true" tabindex="-1"></a>solver_normal <span class="op">=</span>  optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>) <span class="co"># NonlinearCG, BFGS OK. LBFGS bad. </span></span>
+<span id="cb81-19"><a href="#cb81-19" aria-hidden="true" tabindex="-1"></a>solver_tangential <span class="op">=</span> optimistix.NonlinearCG(rtol<span class="op">=</span><span class="fl">1e-8</span>, atol<span class="op">=</span><span class="fl">1e-8</span>)</span>
 <span id="cb81-20"><a href="#cb81-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb81-21"><a href="#cb81-21" aria-hidden="true" tabindex="-1"></a>v_opt, history <span class="op">=</span> alternating_minimize(</span>
-<span id="cb81-22"><a href="#cb81-22" aria-hidden="true" tabindex="-1"></a>    get_helfrich_energy_with_penalty, args_helfrich,</span>
-<span id="cb81-23"><a href="#cb81-23" aria-hidden="true" tabindex="-1"></a>    get_conformal_energy, args_conformal,</span>
-<span id="cb81-24"><a href="#cb81-24" aria-hidden="true" tabindex="-1"></a>    vertices_initial, hemesh,</span>
-<span id="cb81-25"><a href="#cb81-25" aria-hidden="true" tabindex="-1"></a>    solver_normal<span class="op">=</span>solver_normal, solver_tangential<span class="op">=</span>solver_tangential,</span>
-<span id="cb81-26"><a href="#cb81-26" aria-hidden="true" tabindex="-1"></a>    n_outer<span class="op">=</span><span class="dv">30</span>, n_inner_normal<span class="op">=</span><span class="dv">100</span>, n_inner_tangential<span class="op">=</span><span class="dv">50</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb81-21"><a href="#cb81-21" aria-hidden="true" tabindex="-1"></a><span class="co">#solver_normal =  optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=1e-3)</span></span>
+<span id="cb81-22"><a href="#cb81-22" aria-hidden="true" tabindex="-1"></a><span class="co">#solver_tangential = optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=1e-3)</span></span>
+<span id="cb81-23"><a href="#cb81-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-24"><a href="#cb81-24" aria-hidden="true" tabindex="-1"></a>v_opt, history <span class="op">=</span> alternating_minimize(</span>
+<span id="cb81-25"><a href="#cb81-25" aria-hidden="true" tabindex="-1"></a>    get_helfrich_energy_with_penalty, args_helfrich,</span>
+<span id="cb81-26"><a href="#cb81-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">#get_conformal_energy, args_conformal,</span></span>
+<span id="cb81-27"><a href="#cb81-27" aria-hidden="true" tabindex="-1"></a>    get_neo_hookean_energy, args_elastic,</span>
+<span id="cb81-28"><a href="#cb81-28" aria-hidden="true" tabindex="-1"></a>    vertices_initial, hemesh,</span>
+<span id="cb81-29"><a href="#cb81-29" aria-hidden="true" tabindex="-1"></a>    solver_normal<span class="op">=</span>solver_normal, solver_tangential<span class="op">=</span>solver_tangential,</span>
+<span id="cb81-30"><a href="#cb81-30" aria-hidden="true" tabindex="-1"></a>    n_outer<span class="op">=</span><span class="dv">16</span>, n_inner_normal<span class="op">=</span><span class="dv">100</span>, n_inner_tangential<span class="op">=</span><span class="dv">50</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    0 | E_phys=56.9693 | E_conf=0.032839 | angles=[50.5°, 71.3°] | degen=0
-    1 | E_phys=21.4879 | E_conf=0.044949 | angles=[46.1°, 76.8°] | degen=0
-    2 | E_phys=16.8893 | E_conf=0.039122 | angles=[50.2°, 74.7°] | degen=0
-    3 | E_phys=14.1063 | E_conf=0.080341 | angles=[50.3°, 74.2°] | degen=0
-    4 | E_phys=13.1481 | E_conf=0.087272 | angles=[50.5°, 74.7°] | degen=0
-    5 | E_phys=12.2152 | E_conf=0.105630 | angles=[50.2°, 74.7°] | degen=0
-    6 | E_phys=11.6935 | E_conf=0.109416 | angles=[50.5°, 74.9°] | degen=0
-    7 | E_phys=10.9567 | E_conf=0.124573 | angles=[50.4°, 74.5°] | degen=0
-    8 | E_phys=10.7852 | E_conf=0.126359 | angles=[50.2°, 74.7°] | degen=0
-    9 | E_phys=10.6208 | E_conf=0.138603 | angles=[50.1°, 74.4°] | degen=0
-   10 | E_phys=10.2291 | E_conf=0.138352 | angles=[50.1°, 74.3°] | degen=0
-   11 | E_phys=10.0966 | E_conf=0.143651 | angles=[49.7°, 74.2°] | degen=0
-   12 | E_phys=9.9495 | E_conf=0.146272 | angles=[50.0°, 74.1°] | degen=0
-   13 | E_phys=9.9191 | E_conf=0.146751 | angles=[49.9°, 74.1°] | degen=0
-   14 | E_phys=9.6652 | E_conf=0.175995 | angles=[49.5°, 74.6°] | degen=0
-   15 | E_phys=9.6207 | E_conf=0.174535 | angles=[49.5°, 74.1°] | degen=0
-   16 | E_phys=9.6035 | E_conf=0.173019 | angles=[49.5°, 74.2°] | degen=0
-   17 | E_phys=9.5859 | E_conf=0.172879 | angles=[49.6°, 74.1°] | degen=0
-   18 | E_phys=9.5722 | E_conf=0.171375 | angles=[49.6°, 74.1°] | degen=0
-   19 | E_phys=9.5637 | E_conf=0.171210 | angles=[49.6°, 74.1°] | degen=0
-   20 | E_phys=9.5214 | E_conf=0.152493 | angles=[49.5°, 73.7°] | degen=0
-   21 | E_phys=9.4623 | E_conf=0.152362 | angles=[49.5°, 74.0°] | degen=0
-   22 | E_phys=9.4451 | E_conf=0.153145 | angles=[49.4°, 74.0°] | degen=0
-   23 | E_phys=9.4385 | E_conf=0.153664 | angles=[49.4°, 74.1°] | degen=0
-   24 | E_phys=9.4321 | E_conf=0.154982 | angles=[49.4°, 74.1°] | degen=0
-   25 | E_phys=9.4298 | E_conf=0.155501 | angles=[49.4°, 74.1°] | degen=0
-   26 | E_phys=9.4168 | E_conf=0.162182 | angles=[49.4°, 74.3°] | degen=0
-   27 | E_phys=9.4158 | E_conf=0.163712 | angles=[49.4°, 74.3°] | degen=0
-   28 | E_phys=9.4157 | E_conf=0.164219 | angles=[49.4°, 74.3°] | degen=0
-   29 | E_phys=9.4156 | E_conf=0.164336 | angles=[49.4°, 74.3°] | degen=0</code></pre>
+<pre><code>    0 | E_phys=19.6097 | E_param=0.447931 | angles=[41.4°, 79.0°] | degen=0
+    1 | E_phys=17.9398 | E_param=0.823723 | angles=[38.5°, 82.9°] | degen=0
+    2 | E_phys=14.9286 | E_param=0.976312 | angles=[37.2°, 84.4°] | degen=0
+    3 | E_phys=14.0853 | E_param=1.080985 | angles=[35.9°, 85.4°] | degen=0
+    4 | E_phys=12.2305 | E_param=1.689302 | angles=[32.1°, 90.3°] | degen=0
+    5 | E_phys=11.4809 | E_param=1.772981 | angles=[31.6°, 91.2°] | degen=0
+    6 | E_phys=11.0485 | E_param=1.864032 | angles=[30.6°, 92.9°] | degen=0
+    7 | E_phys=10.6734 | E_param=1.955797 | angles=[30.0°, 93.9°] | degen=0
+    8 | E_phys=10.1673 | E_param=2.168007 | angles=[29.3°, 96.7°] | degen=0
+    9 | E_phys=9.8707 | E_param=2.204691 | angles=[29.1°, 96.7°] | degen=0
+   10 | E_phys=9.8247 | E_param=2.242903 | angles=[28.8°, 97.3°] | degen=0
+   11 | E_phys=9.6464 | E_param=2.317396 | angles=[28.4°, 98.0°] | degen=0
+   12 | E_phys=9.3863 | E_param=2.703190 | angles=[27.3°, 101.9°] | degen=0
+   13 | E_phys=9.3516 | E_param=2.694162 | angles=[27.0°, 101.7°] | degen=0
+   14 | E_phys=9.3487 | E_param=2.699914 | angles=[27.0°, 101.6°] | degen=0
+   15 | E_phys=9.3399 | E_param=2.790376 | angles=[26.6°, 101.9°] | degen=0</code></pre>
 </div>
 </div>
-<div id="f0decc4b" class="cell" data-execution_count="235">
+<div id="f0decc4b" class="cell" data-execution_count="259">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check constraints and mesh quality</span></span>
 <span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>grad_helfrich <span class="op">=</span> jax.grad(get_helfrich_energy_with_penalty)(v_opt, args_helfrich_penalty)</span>
 <span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"gradient norm: </span><span class="sc">{</span>jnp<span class="sc">.</span>linalg<span class="sc">.</span>norm(grad_helfrich, axis<span class="op">=-</span><span class="dv">1</span>)<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
@@ -1213,29 +1208,29 @@ Helfrich energy: 9.3103</code></pre>
 <span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Helfrich energy: </span><span class="sc">{</span>get_helfrich_energy(v_opt, (hemesh, H0, kappa))<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>algo.get_mesh_quality_stats(v_opt, hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>gradient norm: 0.0058
-A/A0 = 0.9975,  V/V0 = 1.0206
-Helfrich energy: 9.2638</code></pre>
+<pre><code>gradient norm: 0.0566
+A/A0 = 0.9970,  V/V0 = 1.0192
+Helfrich energy: 9.1949</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="235">
-<pre><code>{'areas_min': 0.00252,
- 'areas_max': 0.07619,
- 'areas_cv': 1.39742,
- 'max_angle': 74.2838,
- 'min_angle': 49.37831,
- 'angles_std': 5.10258,
+<div class="cell-output cell-output-display" data-execution_count="259">
+<pre><code>{'areas_min': 0.00538,
+ 'areas_max': 0.01633,
+ 'areas_cv': 0.34612,
+ 'max_angle': 101.94608,
+ 'min_angle': 26.64748,
+ 'angles_std': 19.08289,
  'n_degenerate': 0,
  'n_total_faces': 1280}</code></pre>
 </div>
 </div>
-<div id="764d95f5" class="cell" data-execution_count="236">
+<div id="764d95f5" class="cell" data-execution_count="262">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convergence plot</span></span>
 <span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">3</span>))</span>
 <span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>iters <span class="op">=</span> [h[<span class="st">"iter"</span>] <span class="cf">for</span> h <span class="kw">in</span> history]</span>
 <span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].plot(iters, [h[<span class="st">"E_phys"</span>] <span class="cf">for</span> h <span class="kw">in</span> history])</span>
 <span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"outer iter"</span>, ylabel<span class="op">=</span><span class="st">"E_phys"</span>, title<span class="op">=</span><span class="st">"Physical energy"</span>)</span>
-<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot(iters, [h[<span class="st">"E_conf"</span>] <span class="cf">for</span> h <span class="kw">in</span> history])</span>
-<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"outer iter"</span>, ylabel<span class="op">=</span><span class="st">"E_conf"</span>, title<span class="op">=</span><span class="st">"Conformal energy"</span>)</span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot(iters, [h[<span class="st">"E_param"</span>] <span class="cf">for</span> h <span class="kw">in</span> history])</span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"outer iter"</span>, ylabel<span class="op">=</span><span class="st">"E_param"</span>, title<span class="op">=</span><span class="st">"Parametrization energy"</span>)</span>
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].plot(iters, [h[<span class="st">"max_angle"</span>] <span class="cf">for</span> h <span class="kw">in</span> history], label<span class="op">=</span><span class="st">"max"</span>)</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].plot(iters, [h[<span class="st">"min_angle"</span>] <span class="cf">for</span> h <span class="kw">in</span> history], label<span class="op">=</span><span class="st">"min"</span>)</span>
 <span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].axhline(<span class="dv">60</span>, ls<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"k"</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
@@ -1250,16 +1245,16 @@ Helfrich energy: 9.2638</code></pre>
 </div>
 </div>
 </div>
-<div id="9744825b" class="cell" data-execution_count="237">
+<div id="9744825b" class="cell" data-execution_count="263">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize initial and optimized shape</span></span>
 <span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> meshplot.plot(vertices_initial, hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>p.add_mesh(v_opt <span class="op">+</span> np.array([<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>]), hemesh.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"a7d554f3182c40068e5e38dbef722c5a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"0506fc9e46b2479d842ea6df01e80589","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="237">
+<div class="cell-output cell-output-display" data-execution_count="263">
 <pre><code>1</code></pre>
 </div>
 </div>
@@ -1376,40 +1371,45 @@ Helfrich energy: 9.2638</code></pre>
 <span id="cb90-9"><a href="#cb90-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.array([geom.get_area(vertices, hemesh) <span class="op">-</span> A0,</span>
 <span id="cb90-10"><a href="#cb90-10" aria-hidden="true" tabindex="-1"></a>                      geom.get_volume(vertices, hemesh) <span class="op">-</span> V0])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="2c326562" class="cell" data-execution_count="207">
+<div id="2c326562" class="cell" data-execution_count="264">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Run: deflated sphere with AL + normal/tangential optimization ---</span></span>
 <span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>A0 <span class="op">=</span> geom.get_area(trimesh.vertices, hemesh)</span>
 <span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>V0 <span class="op">=</span> <span class="fl">0.75</span> <span class="op">*</span> geom.get_volume(trimesh.vertices, hemesh)</span>
 <span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>kappa, H0 <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">0.0</span></span>
 <span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a>metric_ref <span class="op">=</span> get_metric(trimesh.vertices, hemesh)</span>
-<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a>args_conformal <span class="op">=</span> (hemesh, metric_ref)</span>
+<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a><span class="co">#args_conformal = (hemesh, metric_ref)</span></span>
 <span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a><span class="co"># start from a slightly stretched sphere to break symmetry</span></span>
-<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> trimesh.vertices <span class="op">*</span> np.array([<span class="fl">0.95</span>, <span class="fl">1.1</span>, <span class="fl">0.95</span>])</span>
+<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a>mod_bulk, mod_shear <span class="op">=</span> <span class="fl">1.0</span>, <span class="fl">1.0</span></span>
+<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a>args_elastic <span class="op">=</span> (hemesh, metric_ref, mod_bulk, mod_shear)</span>
 <span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a><span class="co"># inner minimizer: alternating normal/tangential with conformal regularization</span></span>
-<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> minimize_fn(energy_fn, vertices):</span>
-<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a>    v_opt, _ <span class="op">=</span> alternating_minimize(</span>
-<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">lambda</span> v, args: energy_fn(v), <span class="va">None</span>,</span>
-<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a>        get_conformal_energy, args_conformal,</span>
-<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a>        vertices, hemesh,</span>
-<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a>        n_outer<span class="op">=</span><span class="dv">15</span>, n_inner_normal<span class="op">=</span><span class="dv">100</span>, n_inner_tangential<span class="op">=</span><span class="dv">50</span>,</span>
-<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a>        verbose<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb91-20"><a href="#cb91-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> v_opt</span>
-<span id="cb91-21"><a href="#cb91-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-22"><a href="#cb91-22" aria-hidden="true" tabindex="-1"></a><span class="co"># run the augmented Lagrangian method</span></span>
-<span id="cb91-23"><a href="#cb91-23" aria-hidden="true" tabindex="-1"></a>v_al, lam_al, history_al <span class="op">=</span> augmented_lagrangian_method(</span>
-<span id="cb91-24"><a href="#cb91-24" aria-hidden="true" tabindex="-1"></a>    helfrich_objective, helfrich_constraints, minimize_fn,</span>
-<span id="cb91-25"><a href="#cb91-25" aria-hidden="true" tabindex="-1"></a>    vertices_initial,</span>
-<span id="cb91-26"><a href="#cb91-26" aria-hidden="true" tabindex="-1"></a>    mu0<span class="op">=</span><span class="fl">10.0</span>, mu_growth<span class="op">=</span><span class="fl">2.0</span>, max_outer<span class="op">=</span><span class="dv">6</span>, tol<span class="op">=</span><span class="fl">1e-4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a><span class="co"># start from a slightly stretched sphere to break symmetry</span></span>
+<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a>vertices_initial <span class="op">=</span> trimesh.vertices <span class="op">*</span> np.array([<span class="fl">0.95</span>, <span class="fl">1.1</span>, <span class="fl">0.95</span>])</span>
+<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a><span class="co"># inner minimizer: alternating normal/tangential with conformal regularization</span></span>
+<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> minimize_fn(energy_fn, vertices):</span>
+<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a>    v_opt, _ <span class="op">=</span> alternating_minimize(</span>
+<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">lambda</span> v, args: energy_fn(v), <span class="va">None</span>,</span>
+<span id="cb91-20"><a href="#cb91-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">#get_conformal_energy, args_conformal,</span></span>
+<span id="cb91-21"><a href="#cb91-21" aria-hidden="true" tabindex="-1"></a>        get_neo_hookean_energy, args_elastic,</span>
+<span id="cb91-22"><a href="#cb91-22" aria-hidden="true" tabindex="-1"></a>        vertices, hemesh,</span>
+<span id="cb91-23"><a href="#cb91-23" aria-hidden="true" tabindex="-1"></a>        n_outer<span class="op">=</span><span class="dv">15</span>, n_inner_normal<span class="op">=</span><span class="dv">100</span>, n_inner_tangential<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb91-24"><a href="#cb91-24" aria-hidden="true" tabindex="-1"></a>        verbose<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb91-25"><a href="#cb91-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> v_opt</span>
+<span id="cb91-26"><a href="#cb91-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-27"><a href="#cb91-27" aria-hidden="true" tabindex="-1"></a><span class="co"># run the augmented Lagrangian method</span></span>
+<span id="cb91-28"><a href="#cb91-28" aria-hidden="true" tabindex="-1"></a>v_al, lam_al, history_al <span class="op">=</span> augmented_lagrangian_method(</span>
+<span id="cb91-29"><a href="#cb91-29" aria-hidden="true" tabindex="-1"></a>    helfrich_objective, helfrich_constraints, minimize_fn,</span>
+<span id="cb91-30"><a href="#cb91-30" aria-hidden="true" tabindex="-1"></a>    vertices_initial,</span>
+<span id="cb91-31"><a href="#cb91-31" aria-hidden="true" tabindex="-1"></a>    mu0<span class="op">=</span><span class="fl">10.0</span>, mu_growth<span class="op">=</span><span class="fl">2.0</span>, max_outer<span class="op">=</span><span class="dv">6</span>, tol<span class="op">=</span><span class="fl">1e-4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  AL  0 | obj=7.7317 | c=[-1.96e-01, 4.65e-01] | |∇L|=2.51e+00 | λ=[0.0000, 0.0000] | μ=10.0
-  AL  1 | obj=9.5037 | c=[-1.90e-03, 5.93e-02] | |∇L|=3.20e+00 | λ=[1.9632, -4.6526] | μ=20.0
-  AL  2 | obj=9.6974 | c=[1.23e-02, -2.44e-02] | |∇L|=1.22e+00 | λ=[2.0013, -5.8383] | μ=40.0
-  AL  3 | obj=9.5926 | c=[-7.67e-04, -7.99e-03] | |∇L|=7.19e-01 | λ=[1.5112, -4.8618] | μ=80.0
-  AL  4 | obj=9.5661 | c=[4.79e-04, -1.47e-03] | |∇L|=9.89e-02 | λ=[1.5726, -4.2225] | μ=160.0
-  AL  5 | obj=9.5601 | c=[3.45e-05, -1.31e-04] | |∇L|=9.30e-02 | λ=[1.4960, -3.9878] | μ=320.0</code></pre>
+<pre><code>  AL  0 | obj=7.6403 | c=[-2.03e-01, 4.90e-01] | |∇L|=2.39e+00 | λ=[0.0000, 0.0000] | μ=10.0
+  AL  1 | obj=9.3853 | c=[8.24e-03, 2.57e-02] | |∇L|=3.16e+00 | λ=[2.0316, -4.8952] | μ=20.0
+  AL  2 | obj=9.6090 | c=[9.55e-03, -3.48e-02] | |∇L|=2.58e-01 | λ=[1.8669, -5.4091] | μ=40.0
+  AL  3 | obj=9.4756 | c=[1.03e-03, -3.35e-03] | |∇L|=9.64e-02 | λ=[1.4848, -4.0174] | μ=80.0
+  AL  4 | obj=9.4602 | c=[-1.23e-04, 3.13e-04] | |∇L|=1.41e-02 | λ=[1.4024, -3.7496] | μ=160.0
+  AL  5 | obj=9.4615 | c=[-4.15e-06, 1.16e-05] | |∇L|=1.17e-02 | λ=[1.4220, -3.7997] | μ=320.0</code></pre>
 </div>
 </div>
 <div id="407841d2" class="cell" data-execution_count="211">

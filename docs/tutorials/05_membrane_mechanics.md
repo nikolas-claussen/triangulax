@@ -68,7 +68,7 @@ module.
 ``` python
 # let's look at a torus which has varying mean curvature
 
-torus = TriMesh.read_obj("../test_meshes/torus.obj",dim =3)
+torus = TriMesh.read_obj("tutorial_meshes/torus.obj",dim =3)
 hemesh_torus = HeMesh.from_triangles(torus.vertices.shape[0], torus.faces)
 
 # we can compute the mean curvature using two different methods
@@ -150,7 +150,7 @@ works as follows.
 ``` python
 # let's load a simple test mesh
 
-trimesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=3)
+trimesh = TriMesh.read_obj("tutorial_meshes/disk.obj", dim=3)
 hemesh = HeMesh.from_triangles(trimesh.vertices.shape[0], trimesh.faces)
 
 fig = plt.figure(figsize=(4,4))
@@ -286,7 +286,7 @@ membrane.
 ``` python
 # let's load a sphere as a test mesh for the Helfrich energy
 
-trimesh = TriMesh.read_obj("../test_meshes/sphere_fine.obj", dim=3) # sphere_fine sphere
+trimesh = TriMesh.read_obj("tutorial_meshes/sphere_fine.obj", dim=3) # sphere_fine sphere
 
 trimesh.vertices -= trimesh.vertices.mean(axis=0)
 trimesh.vertices = (trimesh.vertices.T / np.linalg.norm(trimesh.vertices, axis=1)).T
@@ -441,7 +441,7 @@ quadratic penalty terms in the energy:
 *E*<sub>*P*</sub> = *μ*<sub>*V*</sub>(*V* − *V*<sub>0</sub>)<sup>2</sup>/(2*V*<sub>0</sub>) + *μ*<sub>*A*</sub>(*A* − *A*<sub>0</sub>)<sup>2</sup>/(2*A*<sub>0</sub>)
 
 ``` python
-trimesh = TriMesh.read_obj("../test_meshes/sphere_fine.obj", dim=3)
+trimesh = TriMesh.read_obj("tutorial_meshes/sphere_fine.obj", dim=3)
 trimesh.vertices -= trimesh.vertices.mean(axis=0)
 trimesh.vertices = (trimesh.vertices.T / np.linalg.norm(trimesh.vertices, axis=1)).T
 
@@ -575,14 +575,25 @@ in the local normal/tangent basis (recomputed each outer iteration),
 then run a standard unconstrained optimizer on the reduced coordinates.
 This is compatible with any optimizer (CG, L-BFGS, …).
 
-**Conformal energy.** For *E*<sub>*T*</sub>, we use the LSCM (Least
-Squares Conformal Mapping) energy, which penalizes triangle shear
-relative to a reference configuration but is invariant to uniform area
-changes:
-$$E\_{\mathrm{LSCM}} = \sum_f A_f \left(\frac{\mathrm{tr}(C_f)}{2\sqrt{\det C_f}} - 1\right), \qquad C_f = G_0^{-1} G$$
+**Parametrization energy.** For *E*<sub>*T*</sub>, many choices are
+possible. We use the *neo-Hookean* energy:
+
+$$E\_{\mathrm{NH}} = \sum_f A_f \left\[ \frac{K}{2}\left(\frac{\mathrm{tr}(C_f)}{\sqrt{\det C_f}} - 2\right)
++\frac{G}{2}\left(\sqrt{\det C_f} - 1\right)^2
+\right\], \qquad C_f = G_0^{-1} G$$
+
 Here, *C*<sub>*f*</sub> is the Cauchy-Green tensor (a nonlinear measure
 of strain), computed from *G*, *G*<sub>0</sub> the current and reference
-metric tensors for each face.
+metric tensors. They are easily evaluated for each triangle *f*. The
+total energy sums over all faces, weighted by area *A*<sub>*f*</sub>.
+*K* and *G* are the bulk and shear moduli
+
+An important special case is *G* = 0 (zero bulk modulus), in which
+triangle shear relative to a reference is penalized. The energy reduces
+to the LSCM (Least Squares Conformal Mapping) energy, which is invariant
+to uniform area changes. Penalizing shear is particularly important,
+since it more rapidly leads to numerical divergence than area changes,
+which only result in loosing detail.
 
 ``` python
 # --- Mesh energies ---
@@ -833,12 +844,12 @@ def alternating_minimize(energy_normal_fn, args_normal,
         # --- Diagnostics ---
         stats = algo.get_mesh_quality_stats(vertices, hemesh)
         E_phys = float(energy_normal_fn(vertices, args_normal))
-        E_conf = float(energy_tangential_fn(vertices, args_tangential))
-        record = {"iter": k, "E_phys": E_phys, "E_conf": E_conf, **stats}
+        E_param = float(energy_tangential_fn(vertices, args_tangential))
+        record = {"iter": k, "E_phys": E_phys, "E_param": E_param, **stats}
         history.append(record)
 
         if verbose:
-            print(f"  {k:3d} | E_phys={E_phys:.4f} | E_conf={E_conf:.6f} | "
+            print(f"  {k:3d} | E_phys={E_phys:.4f} | E_param={E_param:.6f} | "
                   f"angles=[{stats['min_angle']:.1f}°, {stats['max_angle']:.1f}°] | "
                   f"degen={stats['n_degenerate']}")
 
@@ -857,6 +868,9 @@ mu_A, mu_V = 300.0, 600.0
 args_helfrich = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
 args_conformal = (hemesh, metric_ref)
 
+mod_bulk, mod_shear = 1.0, 1.0
+args_elastic = (hemesh, metric_ref, mod_bulk, mod_shear)
+
 # start from a slightly stretched configuration to break spherical symmetry
 vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95])
 
@@ -868,42 +882,29 @@ solver_tangential = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
 
 v_opt, history = alternating_minimize(
     get_helfrich_energy_with_penalty, args_helfrich,
-    get_conformal_energy, args_conformal,
+    #get_conformal_energy, args_conformal,
+    get_neo_hookean_energy, args_elastic,
     vertices_initial, hemesh,
     solver_normal=solver_normal, solver_tangential=solver_tangential,
-    n_outer=30, n_inner_normal=100, n_inner_tangential=50)
+    n_outer=16, n_inner_normal=100, n_inner_tangential=50)
 ```
 
-        0 | E_phys=56.9693 | E_conf=0.032839 | angles=[50.5°, 71.3°] | degen=0
-        1 | E_phys=21.4879 | E_conf=0.044949 | angles=[46.1°, 76.8°] | degen=0
-        2 | E_phys=16.8893 | E_conf=0.039122 | angles=[50.2°, 74.7°] | degen=0
-        3 | E_phys=14.1063 | E_conf=0.080341 | angles=[50.3°, 74.2°] | degen=0
-        4 | E_phys=13.1481 | E_conf=0.087272 | angles=[50.5°, 74.7°] | degen=0
-        5 | E_phys=12.2152 | E_conf=0.105630 | angles=[50.2°, 74.7°] | degen=0
-        6 | E_phys=11.6935 | E_conf=0.109416 | angles=[50.5°, 74.9°] | degen=0
-        7 | E_phys=10.9567 | E_conf=0.124573 | angles=[50.4°, 74.5°] | degen=0
-        8 | E_phys=10.7852 | E_conf=0.126359 | angles=[50.2°, 74.7°] | degen=0
-        9 | E_phys=10.6208 | E_conf=0.138603 | angles=[50.1°, 74.4°] | degen=0
-       10 | E_phys=10.2291 | E_conf=0.138352 | angles=[50.1°, 74.3°] | degen=0
-       11 | E_phys=10.0966 | E_conf=0.143651 | angles=[49.7°, 74.2°] | degen=0
-       12 | E_phys=9.9495 | E_conf=0.146272 | angles=[50.0°, 74.1°] | degen=0
-       13 | E_phys=9.9191 | E_conf=0.146751 | angles=[49.9°, 74.1°] | degen=0
-       14 | E_phys=9.6652 | E_conf=0.175995 | angles=[49.5°, 74.6°] | degen=0
-       15 | E_phys=9.6207 | E_conf=0.174535 | angles=[49.5°, 74.1°] | degen=0
-       16 | E_phys=9.6035 | E_conf=0.173019 | angles=[49.5°, 74.2°] | degen=0
-       17 | E_phys=9.5859 | E_conf=0.172879 | angles=[49.6°, 74.1°] | degen=0
-       18 | E_phys=9.5722 | E_conf=0.171375 | angles=[49.6°, 74.1°] | degen=0
-       19 | E_phys=9.5637 | E_conf=0.171210 | angles=[49.6°, 74.1°] | degen=0
-       20 | E_phys=9.5214 | E_conf=0.152493 | angles=[49.5°, 73.7°] | degen=0
-       21 | E_phys=9.4623 | E_conf=0.152362 | angles=[49.5°, 74.0°] | degen=0
-       22 | E_phys=9.4451 | E_conf=0.153145 | angles=[49.4°, 74.0°] | degen=0
-       23 | E_phys=9.4385 | E_conf=0.153664 | angles=[49.4°, 74.1°] | degen=0
-       24 | E_phys=9.4321 | E_conf=0.154982 | angles=[49.4°, 74.1°] | degen=0
-       25 | E_phys=9.4298 | E_conf=0.155501 | angles=[49.4°, 74.1°] | degen=0
-       26 | E_phys=9.4168 | E_conf=0.162182 | angles=[49.4°, 74.3°] | degen=0
-       27 | E_phys=9.4158 | E_conf=0.163712 | angles=[49.4°, 74.3°] | degen=0
-       28 | E_phys=9.4157 | E_conf=0.164219 | angles=[49.4°, 74.3°] | degen=0
-       29 | E_phys=9.4156 | E_conf=0.164336 | angles=[49.4°, 74.3°] | degen=0
+        0 | E_phys=19.6097 | E_param=0.447931 | angles=[41.4°, 79.0°] | degen=0
+        1 | E_phys=17.9398 | E_param=0.823723 | angles=[38.5°, 82.9°] | degen=0
+        2 | E_phys=14.9286 | E_param=0.976312 | angles=[37.2°, 84.4°] | degen=0
+        3 | E_phys=14.0853 | E_param=1.080985 | angles=[35.9°, 85.4°] | degen=0
+        4 | E_phys=12.2305 | E_param=1.689302 | angles=[32.1°, 90.3°] | degen=0
+        5 | E_phys=11.4809 | E_param=1.772981 | angles=[31.6°, 91.2°] | degen=0
+        6 | E_phys=11.0485 | E_param=1.864032 | angles=[30.6°, 92.9°] | degen=0
+        7 | E_phys=10.6734 | E_param=1.955797 | angles=[30.0°, 93.9°] | degen=0
+        8 | E_phys=10.1673 | E_param=2.168007 | angles=[29.3°, 96.7°] | degen=0
+        9 | E_phys=9.8707 | E_param=2.204691 | angles=[29.1°, 96.7°] | degen=0
+       10 | E_phys=9.8247 | E_param=2.242903 | angles=[28.8°, 97.3°] | degen=0
+       11 | E_phys=9.6464 | E_param=2.317396 | angles=[28.4°, 98.0°] | degen=0
+       12 | E_phys=9.3863 | E_param=2.703190 | angles=[27.3°, 101.9°] | degen=0
+       13 | E_phys=9.3516 | E_param=2.694162 | angles=[27.0°, 101.7°] | degen=0
+       14 | E_phys=9.3487 | E_param=2.699914 | angles=[27.0°, 101.6°] | degen=0
+       15 | E_phys=9.3399 | E_param=2.790376 | angles=[26.6°, 101.9°] | degen=0
 
 ``` python
 # check constraints and mesh quality
@@ -914,16 +915,16 @@ print(f"Helfrich energy: {get_helfrich_energy(v_opt, (hemesh, H0, kappa)):.4f}")
 algo.get_mesh_quality_stats(v_opt, hemesh)
 ```
 
-    gradient norm: 0.0058
-    A/A0 = 0.9975,  V/V0 = 1.0206
-    Helfrich energy: 9.2638
+    gradient norm: 0.0566
+    A/A0 = 0.9970,  V/V0 = 1.0192
+    Helfrich energy: 9.1949
 
-    {'areas_min': 0.00252,
-     'areas_max': 0.07619,
-     'areas_cv': 1.39742,
-     'max_angle': 74.2838,
-     'min_angle': 49.37831,
-     'angles_std': 5.10258,
+    {'areas_min': 0.00538,
+     'areas_max': 0.01633,
+     'areas_cv': 0.34612,
+     'max_angle': 101.94608,
+     'min_angle': 26.64748,
+     'angles_std': 19.08289,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -933,8 +934,8 @@ fig, axes = plt.subplots(1, 3, figsize=(12, 3))
 iters = [h["iter"] for h in history]
 axes[0].plot(iters, [h["E_phys"] for h in history])
 axes[0].set(xlabel="outer iter", ylabel="E_phys", title="Physical energy")
-axes[1].plot(iters, [h["E_conf"] for h in history])
-axes[1].set(xlabel="outer iter", ylabel="E_conf", title="Conformal energy")
+axes[1].plot(iters, [h["E_param"] for h in history])
+axes[1].set(xlabel="outer iter", ylabel="E_param", title="Parametrization energy")
 axes[2].plot(iters, [h["max_angle"] for h in history], label="max")
 axes[2].plot(iters, [h["min_angle"] for h in history], label="min")
 axes[2].axhline(60, ls="--", color="k", alpha=0.3)
@@ -1100,7 +1101,11 @@ A0 = geom.get_area(trimesh.vertices, hemesh)
 V0 = 0.75 * geom.get_volume(trimesh.vertices, hemesh)
 kappa, H0 = 1.0, 0.0
 metric_ref = get_metric(trimesh.vertices, hemesh)
-args_conformal = (hemesh, metric_ref)
+#args_conformal = (hemesh, metric_ref)
+
+mod_bulk, mod_shear = 1.0, 1.0
+args_elastic = (hemesh, metric_ref, mod_bulk, mod_shear)
+
 
 # start from a slightly stretched sphere to break symmetry
 vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95])
@@ -1109,7 +1114,8 @@ vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95])
 def minimize_fn(energy_fn, vertices):
     v_opt, _ = alternating_minimize(
         lambda v, args: energy_fn(v), None,
-        get_conformal_energy, args_conformal,
+        #get_conformal_energy, args_conformal,
+        get_neo_hookean_energy, args_elastic,
         vertices, hemesh,
         n_outer=15, n_inner_normal=100, n_inner_tangential=50,
         verbose=False)
@@ -1122,12 +1128,12 @@ v_al, lam_al, history_al = augmented_lagrangian_method(
     mu0=10.0, mu_growth=2.0, max_outer=6, tol=1e-4)
 ```
 
-      AL  0 | obj=7.7317 | c=[-1.96e-01, 4.65e-01] | |∇L|=2.51e+00 | λ=[0.0000, 0.0000] | μ=10.0
-      AL  1 | obj=9.5037 | c=[-1.90e-03, 5.93e-02] | |∇L|=3.20e+00 | λ=[1.9632, -4.6526] | μ=20.0
-      AL  2 | obj=9.6974 | c=[1.23e-02, -2.44e-02] | |∇L|=1.22e+00 | λ=[2.0013, -5.8383] | μ=40.0
-      AL  3 | obj=9.5926 | c=[-7.67e-04, -7.99e-03] | |∇L|=7.19e-01 | λ=[1.5112, -4.8618] | μ=80.0
-      AL  4 | obj=9.5661 | c=[4.79e-04, -1.47e-03] | |∇L|=9.89e-02 | λ=[1.5726, -4.2225] | μ=160.0
-      AL  5 | obj=9.5601 | c=[3.45e-05, -1.31e-04] | |∇L|=9.30e-02 | λ=[1.4960, -3.9878] | μ=320.0
+      AL  0 | obj=7.6403 | c=[-2.03e-01, 4.90e-01] | |∇L|=2.39e+00 | λ=[0.0000, 0.0000] | μ=10.0
+      AL  1 | obj=9.3853 | c=[8.24e-03, 2.57e-02] | |∇L|=3.16e+00 | λ=[2.0316, -4.8952] | μ=20.0
+      AL  2 | obj=9.6090 | c=[9.55e-03, -3.48e-02] | |∇L|=2.58e-01 | λ=[1.8669, -5.4091] | μ=40.0
+      AL  3 | obj=9.4756 | c=[1.03e-03, -3.35e-03] | |∇L|=9.64e-02 | λ=[1.4848, -4.0174] | μ=80.0
+      AL  4 | obj=9.4602 | c=[-1.23e-04, 3.13e-04] | |∇L|=1.41e-02 | λ=[1.4024, -3.7496] | μ=160.0
+      AL  5 | obj=9.4615 | c=[-4.15e-06, 1.16e-05] | |∇L|=1.17e-02 | λ=[1.4220, -3.7997] | μ=320.0
 
 ``` python
 # --- Diagnostics ---

@@ -77,7 +77,7 @@ matrix *M* (diagonal, with Voronoi dual areas per vertex).
 
 ``` python
 # Load 3D torus mesh
-trimesh = TriMesh.read_obj("../test_meshes/torus.obj", dim=3)
+trimesh = TriMesh.read_obj("tutorial_meshes/torus.obj", dim=3)
 hemesh = HeMesh.from_triangles(trimesh.vertices.shape[0], trimesh.faces)
 
 print(f"Torus: {trimesh.vertices.shape[0]} vertices, {trimesh.faces.shape[0]} faces")
