@@ -6,7 +6,8 @@
 ## Overview
 
 This Python package provides data-structures for triangular meshes and
-geometry processing tools based on `JAX`, fully compatible with
+geometry processing tools based on
+[JAX](https://docs.jax.dev/en/latest/index.html), fully compatible with
 automatic differentiation and just-in-time compilation.
 
 ### Use cases
@@ -32,16 +33,21 @@ meshes](https://jerryyin.info/geometry-processing-algorithms/half-edge/),
 which allows implementing custom simulations and geometry operations in
 any dimension.
 
+### Automatic differentiation and just-in-time compilation with JAX
+
+The main feature of `triangulax` is (forward- and reverse-mode)
+automatic differentiation. This enables computation of gradients of any
+mesh-based function. To achieve this, `triangulax`uses
+[JAX](https://docs.jax.dev/en/latest/index.html), a “Python library for
+accelerator-oriented array computation and program transformation,
+designed for high-performance numerical computing and large-scale
+machine learning.” Most `triangulax` tools are compatible with JAX’s
+just-in-time (JIT) compilation. This delivers high performance in
+high-level Python (rather than C++) and allows running on your code on
+GPUs.
+
 **Prerequisites**: Using `triangulax` assumes familiarity with
 triangular meshes, and basic JAX usage. See tutorials 0 and 1.
-
-### Automatic differentiation and just-in-time compilation
-
-The main feature of `triangulax` is compatibility with (forward- and
-reverse-mode) automatic differentiation. This enables computation of
-gradients of any mesh-based function. Most tools are also compatible
-with JAX’s JIT-compilation. This delivers high performance in high-level
-Python (rather than C++) and allows running on GPUs.
 
 #### Simulating with automatic differentiation
 
@@ -106,7 +112,7 @@ need to do so that the tissue as a whole takes on a certain shape?
 The `triangulax` package is hosted on
 [PyPI](https://pypi.org/project/triangulax/). Install it as follows:
 
-1.  (Recommended) initialize a virtual environment, for instance with
+1.  (Recommended) Initialize a virtual environment, for instance with
     `conda`:
 
 ``` sh
@@ -129,9 +135,6 @@ $ pip install triangulax
 ``` sh
 $ pip install triangulax[tutorials]
 ```
-
-This installs `tqdm`, `diffrax`, `equinox`, `optimistix`, and
-`meshplot`.
 
 3.  Verify installation:
 
