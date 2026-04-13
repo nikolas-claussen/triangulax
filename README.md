@@ -20,9 +20,12 @@ example, with `triangulax`, you can simulate:
 1.  Cell-resolved models of two-dimensional tissue sheets like [the
     self-propelled Voronoi
     model](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011)
-    (tutorial 3).
-2.  Reaction-diffusion systems on 3D curved surfaces (tutorial 4)
-3.  Mechanics of membranes and thin elastic shells in 3D (tutorial 5)
+    ([tutorial
+    3](https://nikolas-claussen.github.io/triangulax/tutorials/03_vertex_models.html)).
+2.  Reaction-diffusion systems on 3D curved surfaces ([tutorial
+    4](https://nikolas-claussen.github.io/triangulax/tutorials/04_PDEs_on_curved_surfaces.html))
+3.  Mechanics of membranes and thin elastic shells in 3D ([tutorial
+    5](https://nikolas-claussen.github.io/triangulax/tutorials/05_membrane_mechanics.html))
 
 `triangulax` is designed for modularity and flexibility. The library
 includes a suite of geometry processing tools based on [discrete
@@ -47,7 +50,10 @@ high-level Python (rather than C++) and allows running on your code on
 GPUs.
 
 **Prerequisites**: Using `triangulax` assumes familiarity with
-triangular meshes, and basic JAX usage. See tutorials 0 and 1.
+triangular meshes ([tutorial
+0](https://nikolas-claussen.github.io/triangulax/tutorials/00_triangular_meshes.html)),
+and basic JAX usage ([tutorial
+1](https://nikolas-claussen.github.io/triangulax/tutorials/01_coding_with_JAX.html))
 
 #### Simulating with automatic differentiation
 
@@ -79,7 +85,8 @@ seamlessly with the JAX ecosystem like
 
 Since `triangulax` is fully JAX-compatible, you can differentiate a
 simulation w.r.t. its parameters. This means one can apply
-gradient-based optimization to *inverse problems* (tutorial 2).
+gradient-based optimization to *inverse problems* ([tutorial
+2](https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization.html)).
 Effectively, your simulation becomes a “neural network” which maps
 initial conditions to simulation results. `triangulax` can be used with
 [optimistix](https://docs.kidger.site/optimistix/) and
