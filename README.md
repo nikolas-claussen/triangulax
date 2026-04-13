@@ -57,11 +57,11 @@ and basic JAX usage ([tutorial
 
 #### Simulating with automatic differentiation
 
-For example, consider:
+Consider:
 
 1.  Flattening or deforming 3D models (computer graphics)
 2.  Mechanics of thin plates or membranes (mechanics)
-3.  Cell resolved tissue simulations
+3.  Cell-resolved tissue simulations (biophysics)
 
 These tasks revolve around a mesh-based “energy” (like the [Dirichlet
 variational
@@ -76,8 +76,8 @@ simulations (for example, reaction-diffusion dynamics on a deforming
 surface), it suffices to specify the combined energy of the system - all
 forces and cross-terms are calculated automatically.
 
-To simulate dynamics or minimize energies, `triangulax` integrates
-seamlessly with the JAX ecosystem like
+To simulate dynamics or minimize energies, `triangulax` integrates with
+JAX ecosystem libraries like
 [optimistix](https://docs.kidger.site/optimistix/) (optimization) and
 [diffrax](https://github.com/patrick-kidger/diffrax) (ODE integration).
 
@@ -101,9 +101,9 @@ can differentiate the minimum-energy configuration
 $\mathbf{v}^*[\theta] = \mathrm{argmin} E( \cdot ; \boldsymbol{\theta})$
 with respect to the parameters $\boldsymbol{\theta}$. This means you can
 use gradient-based optimization to find a $\boldsymbol{\theta}$ such
-that the minimum-energy configuration has a desired shape. For example,
-in the tissue mechanics context, you can ask: what do individual cells
-need to do so that the tissue as a whole takes on a certain shape?
+that the minimum-energy configuration has a desired shape. In the tissue
+mechanics context, you could ask: what do individual cells need to do so
+that the tissue as a whole takes on a certain shape?
 
 ### See also
 
