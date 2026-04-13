@@ -81,14 +81,13 @@ initial conditions to simulation results. `triangulax` can be used with
 straight-through and adjoint-based differentiation.
 
 For example, consider an elastic energy
-$E(\{\mathbf{v}_i\}_i ; \boldsymbol{\theta})$ that depends on both mesh
-vertex positions $\mathbf{v}_i$ and parameters $\boldsymbol{\theta}$
-(elastic moduli, spring rest lengths, etc). The minimum-energy
-configuration
-$\mathbf{v}_i^* = \arg \min E( \cdot ; \boldsymbol{\theta})$ depends on
-$\boldsymbol{\theta}$, and via automatic differentiation, you can
-compute $\partial_{\boldsymbol{\theta}} \mathbf{v}_i^*$. This means you
-can use gradient-based optimization to find a $\boldsymbol{\theta}$ such
+$E(\mathbf{v} ; \boldsymbol{\theta})$ that depends on both mesh vertex
+positions $\mathbf{v}$ and parameters $\boldsymbol{\theta}$ (elastic
+moduli, spring rest lengths, etc). Via automatic differentiation, you
+can differentiate the minimum-energy configuration
+$\mathbf{v}^*[\theta] = \mathrm{argmin} E( \cdot ; \boldsymbol{\theta})$
+with respect to the parameters $\boldsymbol{\theta}$. This means you can
+use gradient-based optimization to find a $\boldsymbol{\theta}$ such
 that the minimum-energy configuration has a desired shape. For example,
 in the tissue mechanics context, you can ask: what do individual cells
 need to do so that the tissue as a whole takes on a certain shape?
@@ -102,10 +101,10 @@ need to do so that the tissue as a whole takes on a certain shape?
 - [VertAX](https://github.com/VirtualEmbryo/VertAX/) JAX-based
   simulations of 2D tissues.
 
-\## Installation instructions
+## Installation instructions
 
-`triangulax` is hosted on [PyPI](https://pypi.org/project/triangulax/).
-Install it as follows:
+The `triangulax` package is hosted on
+[PyPI](https://pypi.org/project/triangulax/). Install it as follows:
 
 1.  (Recommended) initialize a virtual environment, for instance with
     `conda`:
