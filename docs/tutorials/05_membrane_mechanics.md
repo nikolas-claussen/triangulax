@@ -517,12 +517,12 @@ p.add_mesh(sol.value + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":T
 
 If you play around with the above code, you will notice that it is
 rather unstable (try using a different minimizer). The reason is the
-*reparametrization* invariance of the Helfrich energy we already alluded
-to - moving vertices in the local tangent plane does not change the
-energy. Therefore, the triangles of the mesh can easily degenerate
-during energy minimization, leading to numerical instability. To avoid
-this, we can add a smoothing step that repositions the vertices
-tangentially to improve mesh quality between energy minimization steps.
+*reparametrization* invariance of the Helfrich energy - moving vertices
+in the local tangent plane does not change the energy. This means the
+optimization landscape has flat directions that cause mesh degeneration,
+leading to numerical instability. To avoid this, we can add a smoothing
+step that repositions the vertices tangentially to improve mesh quality
+between energy minimization steps.
 
 ``` python
 solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
@@ -560,10 +560,9 @@ p.add_mesh(vertices_smoothed + np.array([3, 0, 0]), hemesh.faces, shading={"wire
 
 ### Split normal–tangential optimization
 
-The Helfrich energy is reparametrization-invariant: tangential vertex
-motion does not change the energy. This means the optimization landscape
-has flat directions that cause mesh degeneration. To fix this, we
-**split vertex updates** into two independent sub-problems:
+More generally, we can address the reparametrization invariance and the
+resulting mesh degeneracy issues by **splitting vertex updates** into
+two independent sub-problems:
 
 1.  **Normal phase**: minimize the physical energy *E*<sub>*N*</sub>
     (Helfrich + constraints) by moving vertices only along surface
@@ -571,10 +570,10 @@ has flat directions that cause mesh degeneration. To fix this, we
 2.  **Tangential phase**: minimize a conformal regularization energy
     *E*<sub>*T*</sub> by moving vertices only in the tangent plane.
 
-The key idea is to **reparametrize** each sub-problem: express vertex
-displacements in the local normal/tangent basis (recomputed each outer
-iteration), then run a standard unconstrained optimizer on the reduced
-coordinates. This is compatible with any optimizer (CG, L-BFGS, …).
+We **reparametrize** each sub-problem and express vertex displacements
+in the local normal/tangent basis (recomputed each outer iteration),
+then run a standard unconstrained optimizer on the reduced coordinates.
+This is compatible with any optimizer (CG, L-BFGS, …).
 
 **Conformal energy.** For *E*<sub>*T*</sub>, we use the LSCM (Least
 Squares Conformal Mapping) energy, which penalizes triangle shear
@@ -597,7 +596,8 @@ def get_metric(vertices: Float[jax.Array, "n_faces dim"],
 
 
 def get_lscm_energy_density(C: Float[jax.Array, "2 2"]) -> Float[jax.Array, ""]:
-    """LSCM conformal energy density from Cauchy-Green tensor C.
+    """LSCM conformal energy density from Cauchy-Green tensor C:
+        E = trace(C) / (2*sqrt(det(C))) - 1
     Zero iff the map is conformal (angle-preserving). Scale-invariant.
     """
     return jnp.trace(C) / (2 * jnp.sqrt(jnp.linalg.det(C))) - 1
@@ -612,13 +612,15 @@ def get_conformal_energy(vertices, args):
     return (areas * jax.vmap(get_lscm_energy_density)(C)).sum()
 
 
-def get_neo_hookean_energy_density(deformation, mod_bulk, mod_shear):
-    """Compute the neo-Hookean energy density from Cauchy-Green deformation tensor.
+def get_neo_hookean_energy_density(C: Float[jax.Array, "2 2"], mod_bulk: float, mod_shear: float
+                                   ) -> Float[jax.Array, ""]:
+    """Compute the neo-Hookean energy density from Cauchy-Green deformation tensor C:
+        E = mod_shear/2 * (trace(C) / J - 2) + mod_bulk/2 * (J - 1)^2
+    where J = sqrt(det(C)) is the local area change.
     See https://en.wikipedia.org/wiki/Neo-Hookean_solid
     """
-    I1 = jnp.trace(deformation)
-    J = jnp.sqrt(jnp.linalg.det(deformation))
-    return mod_shear/2*(I1 - 2 - 2*jnp.log(J)) + mod_bulk/2*(J-1)**2
+    J = jnp.sqrt(jnp.linalg.det(C))
+    return mod_shear/2*(jnp.trace(C)/J - 2) + mod_bulk/2*(J-1)**2
 
 
 @jax.jit
@@ -664,15 +666,20 @@ kappa, H0 = 1.0, 0.0
 mu_A, mu_V = 300.0, 600.0
 args_helfrich_penalty = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
 
-mod_conformal = 1.0 # strength of conformal regularization
-args_elastic = (hemesh, metric_orig)
+#mod_conformal = 1.0 # strength of regularization
+#args_elastic = (hemesh, metric_orig)
+
+mod_bulk, mod_shear = 1.0, 1.0 # strength of regularization
+args_elastic = (hemesh, metric_orig, mod_bulk, mod_shear)
 
 step_size = 0.5*1e-3
 
 @jax.jit
 def get_step(vertices):
     grad_helfrich = jax.grad(get_helfrich_energy_with_penalty)(vertices, args_helfrich_penalty)
-    grad_elastic = mod_conformal * jax.grad(get_conformal_energy)(vertices, args_elastic)
+    #grad_elastic = mod_conformal * jax.grad(get_conformal_energy)(vertices, args_elastic)
+    grad_elastic = jax.grad(get_neo_hookean_energy)(vertices, args_elastic)
+    
     normals = geom.get_vertex_normals(vertices, hemesh)
     step = (jax.vmap(trig.project_out_vector)(grad_elastic, normals) +
             jax.vmap(trig.project_on_vector)(grad_helfrich, normals))
@@ -698,16 +705,16 @@ print(f"Helfrich energy: {get_helfrich_energy(v_opt, (hemesh, H0, kappa)):.4f}")
 algo.get_mesh_quality_stats(v_opt, hemesh)
 ```
 
-    Physical energy gradient norm: 0.0085
-    A/A0 = 0.9973,  V/V0 = 1.0216
-    Helfrich energy: 9.2821
+    Physical energy gradient norm: 0.0101
+    A/A0 = 0.9969,  V/V0 = 1.0247
+    Helfrich energy: 9.3103
 
-    {'areas_min': 0.00393,
-     'areas_max': 0.02915,
-     'areas_cv': 0.72669,
-     'max_angle': 89.8132,
-     'min_angle': 31.07296,
-     'angles_std': 13.80112,
+    {'areas_min': 0.0051,
+     'areas_max': 0.01724,
+     'areas_cv': 0.409,
+     'max_angle': 98.35963,
+     'min_angle': 26.25636,
+     'angles_std': 17.57959,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -864,39 +871,39 @@ v_opt, history = alternating_minimize(
     get_conformal_energy, args_conformal,
     vertices_initial, hemesh,
     solver_normal=solver_normal, solver_tangential=solver_tangential,
-    n_outer=30, n_inner_normal=100, n_inner_tangential=100)
+    n_outer=30, n_inner_normal=100, n_inner_tangential=50)
 ```
 
-        0 | E_phys=64.9981 | E_conf=0.031128 | angles=[51.5°, 70.8°] | degen=0
-        1 | E_phys=18.7327 | E_conf=0.020500 | angles=[51.2°, 73.5°] | degen=0
-        2 | E_phys=16.7041 | E_conf=0.037603 | angles=[49.5°, 75.0°] | degen=0
-        3 | E_phys=14.9701 | E_conf=0.057384 | angles=[50.1°, 74.7°] | degen=0
-        4 | E_phys=12.7565 | E_conf=0.121674 | angles=[50.5°, 75.6°] | degen=0
-        5 | E_phys=12.0892 | E_conf=0.117630 | angles=[50.4°, 75.8°] | degen=0
-        6 | E_phys=10.3361 | E_conf=0.149066 | angles=[50.3°, 74.3°] | degen=0
-        7 | E_phys=10.1095 | E_conf=0.146378 | angles=[50.2°, 74.2°] | degen=0
-        8 | E_phys=9.9594 | E_conf=0.147099 | angles=[49.7°, 74.3°] | degen=0
-        9 | E_phys=9.8032 | E_conf=0.156616 | angles=[49.8°, 73.9°] | degen=0
-       10 | E_phys=9.7300 | E_conf=0.160452 | angles=[49.5°, 74.0°] | degen=0
-       11 | E_phys=9.7116 | E_conf=0.161121 | angles=[49.6°, 73.9°] | degen=0
-       12 | E_phys=9.7073 | E_conf=0.161378 | angles=[49.6°, 73.9°] | degen=0
-       13 | E_phys=9.7034 | E_conf=0.161616 | angles=[49.6°, 73.9°] | degen=0
-       14 | E_phys=9.6997 | E_conf=0.161842 | angles=[49.6°, 73.9°] | degen=0
-       15 | E_phys=9.6962 | E_conf=0.162059 | angles=[49.6°, 73.9°] | degen=0
-       16 | E_phys=9.6928 | E_conf=0.162267 | angles=[49.6°, 73.9°] | degen=0
-       17 | E_phys=9.6896 | E_conf=0.162469 | angles=[49.6°, 73.9°] | degen=0
-       18 | E_phys=9.6865 | E_conf=0.162662 | angles=[49.6°, 73.9°] | degen=0
-       19 | E_phys=9.6835 | E_conf=0.162850 | angles=[49.6°, 73.9°] | degen=0
-       20 | E_phys=9.6806 | E_conf=0.163031 | angles=[49.6°, 73.9°] | degen=0
-       21 | E_phys=9.5755 | E_conf=0.174608 | angles=[49.5°, 74.0°] | degen=0
-       22 | E_phys=9.5366 | E_conf=0.170170 | angles=[49.7°, 74.1°] | degen=0
-       23 | E_phys=9.5259 | E_conf=0.169422 | angles=[49.7°, 74.1°] | degen=0
-       24 | E_phys=9.5232 | E_conf=0.169194 | angles=[49.7°, 74.1°] | degen=0
-       25 | E_phys=9.5081 | E_conf=0.167286 | angles=[49.8°, 74.0°] | degen=0
-       26 | E_phys=9.4623 | E_conf=0.164773 | angles=[49.8°, 73.9°] | degen=0
-       27 | E_phys=9.4379 | E_conf=0.164420 | angles=[49.7°, 74.2°] | degen=0
-       28 | E_phys=9.4358 | E_conf=0.164426 | angles=[49.7°, 74.2°] | degen=0
-       29 | E_phys=9.4325 | E_conf=0.164833 | angles=[49.6°, 74.2°] | degen=0
+        0 | E_phys=56.9693 | E_conf=0.032839 | angles=[50.5°, 71.3°] | degen=0
+        1 | E_phys=21.4879 | E_conf=0.044949 | angles=[46.1°, 76.8°] | degen=0
+        2 | E_phys=16.8893 | E_conf=0.039122 | angles=[50.2°, 74.7°] | degen=0
+        3 | E_phys=14.1063 | E_conf=0.080341 | angles=[50.3°, 74.2°] | degen=0
+        4 | E_phys=13.1481 | E_conf=0.087272 | angles=[50.5°, 74.7°] | degen=0
+        5 | E_phys=12.2152 | E_conf=0.105630 | angles=[50.2°, 74.7°] | degen=0
+        6 | E_phys=11.6935 | E_conf=0.109416 | angles=[50.5°, 74.9°] | degen=0
+        7 | E_phys=10.9567 | E_conf=0.124573 | angles=[50.4°, 74.5°] | degen=0
+        8 | E_phys=10.7852 | E_conf=0.126359 | angles=[50.2°, 74.7°] | degen=0
+        9 | E_phys=10.6208 | E_conf=0.138603 | angles=[50.1°, 74.4°] | degen=0
+       10 | E_phys=10.2291 | E_conf=0.138352 | angles=[50.1°, 74.3°] | degen=0
+       11 | E_phys=10.0966 | E_conf=0.143651 | angles=[49.7°, 74.2°] | degen=0
+       12 | E_phys=9.9495 | E_conf=0.146272 | angles=[50.0°, 74.1°] | degen=0
+       13 | E_phys=9.9191 | E_conf=0.146751 | angles=[49.9°, 74.1°] | degen=0
+       14 | E_phys=9.6652 | E_conf=0.175995 | angles=[49.5°, 74.6°] | degen=0
+       15 | E_phys=9.6207 | E_conf=0.174535 | angles=[49.5°, 74.1°] | degen=0
+       16 | E_phys=9.6035 | E_conf=0.173019 | angles=[49.5°, 74.2°] | degen=0
+       17 | E_phys=9.5859 | E_conf=0.172879 | angles=[49.6°, 74.1°] | degen=0
+       18 | E_phys=9.5722 | E_conf=0.171375 | angles=[49.6°, 74.1°] | degen=0
+       19 | E_phys=9.5637 | E_conf=0.171210 | angles=[49.6°, 74.1°] | degen=0
+       20 | E_phys=9.5214 | E_conf=0.152493 | angles=[49.5°, 73.7°] | degen=0
+       21 | E_phys=9.4623 | E_conf=0.152362 | angles=[49.5°, 74.0°] | degen=0
+       22 | E_phys=9.4451 | E_conf=0.153145 | angles=[49.4°, 74.0°] | degen=0
+       23 | E_phys=9.4385 | E_conf=0.153664 | angles=[49.4°, 74.1°] | degen=0
+       24 | E_phys=9.4321 | E_conf=0.154982 | angles=[49.4°, 74.1°] | degen=0
+       25 | E_phys=9.4298 | E_conf=0.155501 | angles=[49.4°, 74.1°] | degen=0
+       26 | E_phys=9.4168 | E_conf=0.162182 | angles=[49.4°, 74.3°] | degen=0
+       27 | E_phys=9.4158 | E_conf=0.163712 | angles=[49.4°, 74.3°] | degen=0
+       28 | E_phys=9.4157 | E_conf=0.164219 | angles=[49.4°, 74.3°] | degen=0
+       29 | E_phys=9.4156 | E_conf=0.164336 | angles=[49.4°, 74.3°] | degen=0
 
 ``` python
 # check constraints and mesh quality
@@ -907,16 +914,16 @@ print(f"Helfrich energy: {get_helfrich_energy(v_opt, (hemesh, H0, kappa)):.4f}")
 algo.get_mesh_quality_stats(v_opt, hemesh)
 ```
 
-    gradient norm: 0.0224
-    A/A0 = 0.9973,  V/V0 = 1.0227
-    Helfrich energy: 9.2517
+    gradient norm: 0.0058
+    A/A0 = 0.9975,  V/V0 = 1.0206
+    Helfrich energy: 9.2638
 
-    {'areas_min': 0.00264,
-     'areas_max': 0.07754,
-     'areas_cv': 1.37887,
-     'max_angle': 74.18301,
-     'min_angle': 49.63322,
-     'angles_std': 5.00887,
+    {'areas_min': 0.00252,
+     'areas_max': 0.07619,
+     'areas_cv': 1.39742,
+     'max_angle': 74.2838,
+     'min_angle': 49.37831,
+     'angles_std': 5.10258,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -947,36 +954,6 @@ p.add_mesh(v_opt + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe": True
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
     1
-
-``` python
-# same thing with mass-matrix preconditioning
-v_opt_pc, history_pc = alternating_minimize(
-    get_helfrich_energy_with_penalty, args_helfrich,
-    get_conformal_energy, args_conformal,
-    vertices_initial, hemesh,
-    n_outer=30, n_inner_normal=200, n_inner_tangential=50,
-    precondition=True, verbose=False)
-
-print(f"A/A0 = {geom.get_area(v_opt_pc, hemesh)/A0:.4f},  V/V0 = {geom.get_volume(v_opt_pc, hemesh)/V0:.4f}")
-print(f"Helfrich energy: {get_helfrich_energy(v_opt_pc, (hemesh, H0, kappa)):.4f}")
-print(f"Mesh quality: {algo.get_mesh_quality_stats(v_opt_pc, hemesh)}")
-```
-
-    A/A0 = 1.0750,  V/V0 = 0.8323
-    Helfrich energy: 55.9940
-    Mesh quality: {'areas_min': 0.0003, 'areas_max': 0.23678, 'areas_cv': 1.91076, 'max_angle': 167.46362, 'min_angle': 3.13522, 'angles_std': 12.99505, 'n_degenerate': 2, 'n_total_faces': 1280}
-
-``` python
-# to do: addd "energies" module with varrious mesh based energies
-```
-
-``` python
-# something is going wrong with the gradient of the Helfrich energy - it loooks like it depends strongly
-# on the local coordination number, with more displacement near the 5-fold coordinated vertices.
-# this is clearly visible when computing a smaller number of gradient descent steps (say 1000)
-```
-
-## Below - work in progress, ignore
 
 ### Augmented Lagrangian method
 
@@ -1012,187 +989,208 @@ naive approach of using only a penalty for constraint violation is that
 *μ* does not need to be increased to large values, which generally leads
 to numerical difficulties.
 
-In pseudo-code, the AL method works like this:
-
-    Initialize μ > 0, tolerance τ > 0, starting points x and λ:
-    for k = 0, 1, 2, . . .
-        Update x: x = minimizer of LA(·, λ; μ) with tolerance τ, starting from x   
-        if convergence test for Lagrangian stationarity is satisfied:
-            return x
-        Update Lagrange multipliers: λ =  λ - μ * c(x)
-        Increase penalty parameter μ
-        Select new tolerance
-
 ``` python
-@jax.jit
-def augmented_lagrangian(vertices, args):
-    """Augmented Lagrangian: E_H - λᵀc + (μ/2)|c|², where c = [A-A0, V-V0]."""
-    hemesh, H0, kappa, lam, mu, A0, V0 = args
-    E = get_helfrich_energy(vertices, (hemesh, H0, kappa))
-    c = jnp.array([get_area(vertices, hemesh) - A0,
-                    get_volume(vertices, hemesh) - V0])
-    area_penalty = ((geom.get_triangle_areas(vertices, hemesh)-0.146)**2).sum()
-    return E - lam @ c + (mu / 2) * (c @ c) + area_penalty
-```
+def augmented_lagrangian_method(objective_fn, constraints_fn, minimize_fn, x0,
+                                lam0=None, mu0=10.0, mu_growth=2.0,
+                                max_outer=15, tol=1e-4, verbose=True):
+    """Generic augmented Lagrangian method for constrained minimization.
 
-``` python
-def al_minimize(vertices, hemesh, H0, kappa, A0, V0,
-                mu0=1.0, mu_growth=1.5, max_outer=10, tol=1e-4, max_inner=500):
-    """Augmented Lagrangian method for constrained Helfrich energy minimization."""
-    lam = jnp.zeros(2)
+    Solves:  min objective_fn(x)  s.t. constraints_fn(x) = 0
+
+    Parameters
+    ----------
+    objective_fn : callable
+        Unconstrained objective: x → scalar.
+    constraints_fn : callable
+        Equality constraints: x → array of shape (m,). Satisfied when = 0.
+    minimize_fn : callable
+        Inner minimizer: (augmented_energy_fn, x0) → x_optimized.
+        augmented_energy_fn has signature (x) → scalar.
+    x0
+        Initial guess for the variables.
+    lam0 : array, optional
+        Initial Lagrange multipliers. Default: zeros.
+    mu0 : float
+        Initial penalty parameter.
+    mu_growth : float
+        Factor by which μ is increased each iteration.
+    max_outer : int
+        Maximum number of outer AL iterations.
+    tol : float
+        Convergence tolerance on KKT residual √(|∇ₓL|² + |c|²).
+    verbose : bool
+        Print diagnostics each iteration.
+
+    Returns
+    -------
+    x : optimized variables
+    lam : final Lagrange multipliers
+    history : list[dict] with keys 'objective', 'constraints', 'lam', 'mu',
+              'c_norm', 'grad_norm', 'kkt_norm'
+    """
+    c0 = constraints_fn(x0)
+    n_constraints = c0.shape[0]
+    lam = jnp.zeros(n_constraints) if lam0 is None else lam0
     mu = mu0
-    solver = optimistix.NonlinearCG(rtol=1e-5, atol=1e-5)
+    x = x0
+    history = []
 
     for k in range(max_outer):
-        args = (hemesh, H0, kappa, lam, mu, A0, V0)
-        sol = optimistix.minimise(augmented_lagrangian, solver, vertices, args,
-                                  max_steps=max_inner, throw=False)
-        vertices = sol.value
+        # Capture current λ, μ in the augmented energy
+        lam_k, mu_k = lam, mu
+        def augmented_energy(x):
+            c = constraints_fn(x)
+            return objective_fn(x) - lam_k @ c + (mu_k / 2) * (c @ c)
 
-        A = get_area(vertices, hemesh)
-        V = get_volume(vertices, hemesh)
-        c = jnp.array([A - A0, V - V0])
-        E = get_helfrich_energy(vertices, (hemesh, H0, kappa))
+        # Inner minimization
+        x = minimize_fn(augmented_energy, x)
 
-        # stationarity of the Lagrangian (μ=0): ∇_v L = 0 and ∇_λ L = -c = 0
-        lagrangian_args = (hemesh, H0, kappa, lam, 0.0, A0, V0)
-        grad_v = jax.grad(augmented_lagrangian)(vertices, lagrangian_args)
-        grad_norm = jnp.sqrt(jnp.sum(grad_v**2) + jnp.sum(c**2))
+        # Evaluate KKT residual: ∇ₓL = ∇f - λᵀ∇c = 0 and c = 0
+        c = constraints_fn(x)
+        obj = float(objective_fn(x))
+        c_norm = float(jnp.linalg.norm(c))
 
-        print(f"  iter {k:2d} | E_H={E:.4f} | A={A:.4f} (target {A0:.4f}) | "
-              f"V={V:.4f} (target {V0:.4f}) | |∇L|={grad_norm:.2e} | μ={mu:.1f}")
+        lam_k_kkt = lam  # current multiplier estimate
+        def lagrangian(x):
+            return objective_fn(x) - lam_k_kkt @ constraints_fn(x)
+        grad_L = jax.grad(lagrangian)(x)
+        grad_norm = float(jnp.linalg.norm(grad_L))
+        kkt_norm = float(jnp.sqrt(grad_norm**2 + c_norm**2))
 
-        if grad_norm < tol:
-            print("Converged!")
+        record = {"iter": k, "objective": obj, "constraints": np.array(c),
+                  "lam": np.array(lam), "mu": mu, "c_norm": c_norm,
+                  "grad_norm": grad_norm, "kkt_norm": kkt_norm}
+        history.append(record)
+
+        if verbose:
+            c_str = ", ".join(f"{ci:.2e}" for ci in np.array(c))
+            lam_str = ", ".join(f"{li:.4f}" for li in np.array(lam))
+            print(f"  AL {k:2d} | obj={obj:.4f} | c=[{c_str}] | "
+                  f"|∇L|={grad_norm:.2e} | λ=[{lam_str}] | μ={mu:.1f}")
+
+        if kkt_norm < tol:
+            if verbose:
+                print(f"  Converged: KKT = {kkt_norm:.2e} < {tol:.0e}")
             break
 
+        # Update multipliers and penalty
         lam = lam - mu * c
         mu = mu * mu_growth
 
-    return vertices, lam
+    return x, lam, history
 ```
 
 ``` python
-# minimize Helfrich energy of a sphere with constrained area and reduced volume (deflated)
+# --- Helfrich-specific wrappers for the AL method ---
 
-A0 = get_area(trimesh.vertices, hemesh)
-V0 = 0.6 * get_volume(trimesh.vertices, hemesh)
+def helfrich_objective(vertices):
+    """Helfrich bending energy (no constraints)."""
+    return get_helfrich_energy(vertices, (hemesh, H0, kappa))
+
+def helfrich_constraints(vertices):
+    """Equality constraints: [A - A0, V - V0]."""
+    return jnp.array([geom.get_area(vertices, hemesh) - A0,
+                      geom.get_volume(vertices, hemesh) - V0])
+```
+
+``` python
+# --- Run: deflated sphere with AL + normal/tangential optimization ---
+
+A0 = geom.get_area(trimesh.vertices, hemesh)
+V0 = 0.75 * geom.get_volume(trimesh.vertices, hemesh)
 kappa, H0 = 1.0, 0.0
+metric_ref = get_metric(trimesh.vertices, hemesh)
+args_conformal = (hemesh, metric_ref)
 
-# small perturbation to break spherical symmetry
-key = jax.random.PRNGKey(0)
-v0 = trimesh.vertices + 0.02 * jax.random.normal(key, trimesh.vertices.shape)
+# start from a slightly stretched sphere to break symmetry
+vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95])
 
-print(f"Target: A0={A0:.4f}, V0={V0:.4f}")
-print(f"Initial: A={get_area(v0, hemesh):.4f}, V={get_volume(v0, hemesh):.4f}")
+# inner minimizer: alternating normal/tangential with conformal regularization
+def minimize_fn(energy_fn, vertices):
+    v_opt, _ = alternating_minimize(
+        lambda v, args: energy_fn(v), None,
+        get_conformal_energy, args_conformal,
+        vertices, hemesh,
+        n_outer=15, n_inner_normal=100, n_inner_tangential=50,
+        verbose=False)
+    return v_opt
 
-v_opt, lam_opt = al_minimize(v0, hemesh, H0, kappa, A0, V0)
+# run the augmented Lagrangian method
+v_al, lam_al, history_al = augmented_lagrangian_method(
+    helfrich_objective, helfrich_constraints, minimize_fn,
+    vertices_initial,
+    mu0=10.0, mu_growth=2.0, max_outer=6, tol=1e-4)
 ```
 
-    Target: A0=11.6659, V0=2.1952
-    Initial: A=11.6992, V=3.6646
-      iter  0 | E_H=6.5829 | A=11.1221 (target 11.6659) | V=3.4060 (target 2.1952) | |∇L|=1.33e+00 | μ=1.0
-      iter  1 | E_H=6.5841 | A=11.1126 (target 11.6659) | V=3.4011 (target 2.1952) | |∇L|=1.34e+00 | μ=1.5
-      iter  2 | E_H=6.6155 | A=11.1184 (target 11.6659) | V=3.3931 (target 2.1952) | |∇L|=1.37e+00 | μ=2.2
-      iter  3 | E_H=6.6155 | A=11.1184 (target 11.6659) | V=3.3931 (target 2.1952) | |∇L|=4.39e+00 | μ=3.4
-      iter  4 | E_H=6.6155 | A=11.1184 (target 11.6659) | V=3.3931 (target 2.1952) | |∇L|=1.49e+00 | μ=5.1
-      iter  5 | E_H=12.7387 | A=11.7214 (target 11.6659) | V=2.5791 (target 2.1952) | |∇L|=1.71e+02 | μ=7.6
-      iter  6 | E_H=12.7386 | A=11.7214 (target 11.6659) | V=2.5791 (target 2.1952) | |∇L|=1.77e+02 | μ=11.4
-      iter  7 | E_H=12.7386 | A=11.7214 (target 11.6659) | V=2.5791 (target 2.1952) | |∇L|=1.75e+02 | μ=17.1
-      iter  8 | E_H=12.7386 | A=11.7214 (target 11.6659) | V=2.5791 (target 2.1952) | |∇L|=1.73e+02 | μ=25.6
-      iter  9 | E_H=12.7386 | A=11.7214 (target 11.6659) | V=2.5791 (target 2.1952) | |∇L|=1.88e+02 | μ=38.4
+      AL  0 | obj=7.7317 | c=[-1.96e-01, 4.65e-01] | |∇L|=2.51e+00 | λ=[0.0000, 0.0000] | μ=10.0
+      AL  1 | obj=9.5037 | c=[-1.90e-03, 5.93e-02] | |∇L|=3.20e+00 | λ=[1.9632, -4.6526] | μ=20.0
+      AL  2 | obj=9.6974 | c=[1.23e-02, -2.44e-02] | |∇L|=1.22e+00 | λ=[2.0013, -5.8383] | μ=40.0
+      AL  3 | obj=9.5926 | c=[-7.67e-04, -7.99e-03] | |∇L|=7.19e-01 | λ=[1.5112, -4.8618] | μ=80.0
+      AL  4 | obj=9.5661 | c=[4.79e-04, -1.47e-03] | |∇L|=9.89e-02 | λ=[1.5726, -4.2225] | μ=160.0
+      AL  5 | obj=9.5601 | c=[3.45e-05, -1.31e-04] | |∇L|=9.30e-02 | λ=[1.4960, -3.9878] | μ=320.0
 
 ``` python
-# visualize the deflated shape
+# --- Diagnostics ---
 
-E_final = get_helfrich_energy(v_opt, (hemesh, H0, kappa))
-E_sphere = get_helfrich_energy(trimesh.vertices, (hemesh, H0, kappa))
-print(f"Helfrich energy: sphere={E_sphere:.4f}, deflated={E_final:.4f}")
-print(f"Final area: {get_area(v_opt, hemesh):.4f} (target {A0:.4f})")
-print(f"Final volume: {get_volume(v_opt, hemesh):.4f} (target {V0:.4f})")
-print(f"Lagrange multipliers (tension, pressure): {lam_opt}")
-
-meshplot.plot(v_opt, hemesh.faces, shading={"wireframe": True})
+E_al = get_helfrich_energy(v_al, (hemesh, H0, kappa))
+print(f"Helfrich energy: {E_al:.4f}")
+print(f"A/A0 = {geom.get_area(v_al, hemesh)/A0:.6f},  V/V0 = {geom.get_volume(v_al, hemesh)/V0:.6f}")
+print(f"Lagrange multipliers (tension, pressure): λ = {lam_al}")
+print(f"Final μ: {history_al[-1]['mu']:.1f}")
+algo.get_mesh_quality_stats(v_al, hemesh)
 ```
 
-    Helfrich energy: sphere=6.5831, deflated=12.7386
-    Final area: 11.7214 (target 11.6659)
-    Final volume: 2.5791 (target 2.1952)
-    Lagrange multipliers (tension, pressure): [  1.66632623 -54.26580124]
+    Helfrich energy: 9.5601
+    A/A0 = 1.000003,  V/V0 = 0.999958
+    Lagrange multipliers (tension, pressure): λ = [ 1.48498545 -3.94603966]
+    Final μ: 320.0
 
-    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0167619…
-
-    <meshplot.Viewer.Viewer at 0x464ec5310>
-
-### Non-linear optimization
-
-We have found the desired solution, but using a pretty “custom”
-algorithm. Let’s try to use a more general-purpose strategy for
-constrained non-linear optimization. To do so, we use the method of
-Lagrange multipliers, and define the Lagrangian
-
-ℒ = ∫<sub>ℳ</sub>*d**A* − ∫<sub>∂ℳ</sub>*λ*(*s*)<sup>*T*</sup> ⋅ (**b**(*s*) − **v**(*s*))
-
-where the first term is the mesh area, and the second term forces vertex
-positions **v**(*s*) at the boundary to lie at the targets **b**(*s*).
-
-Minimization under the boundary constraint is equivalent to stationarity
-of the Lagrangian:
-
-∇<sub>*λ*</sub>ℒ = 0  and  ∇<sub>**v**</sub>ℒ = 0
-
-We can attempt to solve this non-linear system of equations using the
-Newton method, or using non-linear least squares.
+    {'areas_min': 0.00228,
+     'areas_max': 0.08961,
+     'areas_cv': 1.55381,
+     'max_angle': 75.28159,
+     'min_angle': 48.64726,
+     'angles_std': 5.6019,
+     'n_degenerate': 0,
+     'n_total_faces': 1280}
 
 ``` python
-def get_lagrangian(vertices, lagrange_mult, bdry_verts, bdry_pos, hemesh):
-    """Compute the Lagrangian for the area minimization problem with boundary conditions."""
-    area = geom.get_triangle_areas(vertices, hemesh).sum()
-    lagrange_term = jax.vmap(jnp.dot)(lagrange_mult, vertices[bdry_verts] - bdry_pos).sum()
-    return area - lagrange_term
+# --- Convergence plots ---
 
-@jax.jit
-def stationarity_condition(y, args):
-    vertices, lagrange_mult = y
-    v_term = jax.grad(get_lagrangian, argnums=0)(vertices, lagrange_mult, *args)
-    l_term = jax.grad(get_lagrangian, argnums=1)(vertices, lagrange_mult, *args)
+fig, axes = plt.subplots(1, 4, figsize=(16, 3.5))
+iters = [h["iter"] for h in history_al]
 
-    return (v_term, l_term)
+axes[0].plot(iters, [h["objective"] for h in history_al], "o-")
+axes[0].set(xlabel="AL iteration", ylabel="$E_H$", title="Helfrich energy")
+
+axes[1].semilogy(iters, [h["kkt_norm"] for h in history_al], "o-", label="KKT")
+axes[1].semilogy(iters, [h["c_norm"] for h in history_al], "s-", label="$|c|$")
+axes[1].semilogy(iters, [h["grad_norm"] for h in history_al], "^-", label="$|\\nabla_x L|$")
+axes[1].axhline(1e-4, ls="--", color="k", alpha=0.3, label="tol")
+axes[1].set(xlabel="AL iteration", ylabel="residual", title="KKT residual")
+axes[1].legend(fontsize=8)
+
+lam_A = [h["lam"][0] for h in history_al]
+lam_V = [h["lam"][1] for h in history_al]
+axes[2].plot(iters, lam_A, "o-", label="$\\lambda_A$ (tension)")
+axes[2].plot(iters, lam_V, "s-", label="$\\lambda_V$ (pressure)")
+axes[2].set(xlabel="AL iteration", ylabel="$\\lambda$", title="Lagrange multipliers")
+axes[2].legend()
+
+axes[3].plot(iters, [h["mu"] for h in history_al], "o-")
+axes[3].set(xlabel="AL iteration", ylabel="$\\mu$", title="Penalty parameter")
+
+fig.tight_layout()
 ```
+
+![](05_membrane_mechanics_files/figure-commonmark/cell-60-output-1.png)
 
 ``` python
-args = (jnp.array(bdry_verts), jnp.array(bdry_pos), hemesh)
-
-vertices_initial = jnp.array(vertices_bdry_imposed)
-lagrange_mult_initial = 1*jnp.ones_like(bdry_pos)
+# --- Visualize initial and AL-optimized shape ---
+p = meshplot.plot(vertices_initial, hemesh.faces, shading={"wireframe": True}, return_plot=True)
+p.add_mesh(v_al + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe": True})
 ```
 
-``` python
-_ = stationarity_condition((vertices_initial, lagrange_mult_initial), args)
-get_lagrangian(vertices_initial, lagrange_mult_initial, *args)
-```
+    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    Array(4.36495664, dtype=float64)
-
-``` python
-solver = optimistix.LevenbergMarquardt(rtol=1e-8, atol=1e-8, ) 
-
-y0 = (vertices_initial, lagrange_mult_initial)
-sol = optimistix.root_find(stationarity_condition, solver, y0, args, max_steps=50, throw=False)
-vertices_final, lagrange_mult_final = sol.value
-```
-
-``` python
-vertices_final.max(axis=0), vertices_final.min(axis=0) # that doesn't look good
-```
-
-    (Array([1.00112636, 0.98954106, 0.49702471], dtype=float64),
-     Array([-0.99658605, -0.99661577, -0.4918562 ], dtype=float64))
-
-``` python
-meshplot.plot(vertices_final, hemesh.faces, shading={"wireframe":True}, return_plot=True)
-```
-
-    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0022701…
-
-    <meshplot.Viewer.Viewer at 0x3709a5a70>
+    1
