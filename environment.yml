@@ -17,7 +17,6 @@ dependencies:
   - lineax
   - optimistix
   - diffrax
-  - optax
   - meshplot
   - pip
   - pip:
