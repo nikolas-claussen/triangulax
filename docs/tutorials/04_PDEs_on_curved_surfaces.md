@@ -113,15 +113,6 @@ p.save("tutorial_plots/04_torus_mesh.html")
 IFrame(src="tutorial_plots/04_torus_mesh.html", width="100%", height=400)
 ```
 
-        <iframe
-            width="100%"
-            height="400"
-            src="tutorial_plots/04_torus_mesh.html"
-            frameborder="0"
-            allowfullscreen
-            &#10;        ></iframe>
-        &#10;
-
 The torus `.obj` file includes UV (texture) coordinates — a 2D
 parametrization of the surface. We can use these for flat 2D plots of
 scalar fields, which is often more informative than 3D rendering.
@@ -399,5 +390,5 @@ p.save("tutorial_plots/04_nrch_3d.html")
     Plot saved to file tutorial_plots/04_nrch_3d.html.
 
 ``` python
-IFrame(src="tutorial_plots/04_nrch_3d.html", width="100%", height=400);
+IFrame(src="tutorial_plots/04_nrch_3d.html", width="100%", height=400)
 ```
