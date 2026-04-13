@@ -46,6 +46,10 @@ from tqdm.notebook import tqdm
 ```
 
 ``` python
+from IPython.display import IFrame
+```
+
+``` python
 import jax
 import jax.numpy as jnp
 ```
@@ -96,12 +100,27 @@ M_inv = mass_matrix_inv_sparse(trimesh.vertices, hemesh)  # inverse mass matrix
 ``` python
 # Visualize the torus mesh
 
-meshplot.plot(np.array(trimesh.vertices), np.array(hemesh.faces), shading={"wireframe": False})
+p = meshplot.plot(np.array(trimesh.vertices), np.array(hemesh.faces),
+                  shading={"wireframe": False}, return_plot=True)
+p.save("tutorial_plots/04_torus_mesh.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x35aa61e50>
+    Plot saved to file tutorial_plots/04_torus_mesh.html.
+
+``` python
+IFrame(src="tutorial_plots/04_torus_mesh.html", width="100%", height=400)
+```
+
+        <iframe
+            width="100%"
+            height="400"
+            src="tutorial_plots/04_torus_mesh.html"
+            frameborder="0"
+            allowfullscreen
+            &#10;        ></iframe>
+        &#10;
 
 The torus `.obj` file includes UV (texture) coordinates — a 2D
 parametrization of the surface. We can use these for flat 2D plots of
@@ -129,7 +148,7 @@ plot_uv(trimesh.vertices[:, 0], ax=ax, cmap='coolwarm')
 ax.set_aspect("equal"); ax.set_title("x-coordinate on UV map"); plt.colorbar(ax.collections[0], ax=ax)
 ```
 
-![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-9-output-1.png)
+![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-11-output-1.png)
 
 ### Heat equation on a torus
 
@@ -159,7 +178,7 @@ plot_uv(u0_heat, ax=ax, cmap='viridis')
 ax.set_aspect("equal"); ax.set_title("Initial condition"); plt.colorbar(ax.collections[0], ax=ax)
 ```
 
-![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-10-output-1.png)
+![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-12-output-1.png)
 
 ``` python
 # Set up the implicit-Euler linear operator:  A = M - dt*D*L
@@ -204,19 +223,25 @@ plt.suptitle("Heat equation on the torus")
 plt.tight_layout()
 ```
 
-![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-13-output-1.png)
+![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-15-output-1.png)
 
 ``` python
 # 3D view of the heat equation solution
 
 norm = mcolors.Normalize(vmin=0, vmax=float(u0_heat.max()))
-meshplot.plot(np.array(trimesh.vertices), np.array(hemesh.faces), c=plt.cm.viridis(norm(np.array(snapshots_heat[0])))[:, :3],
-              shading={"wireframe": False})
+p = meshplot.plot(np.array(trimesh.vertices), np.array(hemesh.faces),
+                  c=plt.cm.viridis(norm(np.array(snapshots_heat[0])))[:, :3],
+                  shading={"wireframe": False}, return_plot=True)
+p.save("tutorial_plots/04_heat_3d.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x35aa46cf0>
+    Plot saved to file tutorial_plots/04_heat_3d.html.
+
+``` python
+IFrame(src="tutorial_plots/04_heat_3d.html", width="100%", height=400); # for display in docs webpage
+```
 
 ### Non-reciprocal Cahn–Hilliard (NRCH) on a torus
 
@@ -323,7 +348,7 @@ for ax, (label, field) in zip(axes, [("φ (t=0)", u0_nrch[0]),
 plt.tight_layout()
 ```
 
-![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-17-output-1.png)
+![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-20-output-1.png)
 
 ``` python
 # Time-stepping loop for NRCH
@@ -348,7 +373,7 @@ plt.suptitle(f"NRCH at t = {N_steps_nrch * dt_nrch:.0f}  (D={D_nrch}, d={d_nrch}
 plt.tight_layout()
 ```
 
-![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-19-output-1.png)
+![](04_PDEs_on_curved_surfaces_files/figure-commonmark/cell-22-output-1.png)
 
 ``` python
 # Final state of NRCH — 3D view (meshplot)
@@ -366,8 +391,13 @@ p = meshplot.plot(v_scaled_np, f_np,
 p.add_mesh(v_scaled_np + np.array([0, 12, 0]), f_np,
            c=plt.cm.Reds(norm_psi(np.array(u_nrch[1])))[:, :3],
            shading={"wireframe": False})
+p.save("tutorial_plots/04_nrch_3d.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    1
+    Plot saved to file tutorial_plots/04_nrch_3d.html.
+
+``` python
+IFrame(src="tutorial_plots/04_nrch_3d.html", width="100%", height=400);
+```

@@ -18,6 +18,10 @@ import igl
 ```
 
 ``` python
+from IPython.display import IFrame
+```
+
+``` python
 import jax.numpy as jnp
 import jax
 ```
@@ -96,14 +100,17 @@ plt.xlabel("laplace mean curvature")
 plt.legend()
 ```
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-9-output-1.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-10-output-1.png)
 
 ``` python
 # top plot shows Voronoi, and bottom plot barycentric normalization
 
-meshplot.plot(torus.vertices, hemesh_torus.faces , np.array(H_torus_lap), shading={"wireframe": True})
-meshplot.plot(torus.vertices, hemesh_torus.faces , np.array(H_torus_barycentric),
+p1 = meshplot.plot(np.array(torus.vertices), np.array(hemesh_torus.faces), np.array(H_torus_lap),
+                   shading={"wireframe": True})
+p1.save("tutorial_plots/05_torus_curvature.html")
+p2 = meshplot.plot(np.array(torus.vertices), np.array(hemesh_torus.faces), np.array(H_torus_barycentric),
               shading={"wireframe": True})
+p2.save("tutorial_plots/05_torus_curvature_barycentric.html")
 
 # add a colorbar
 fig, ax = plt.subplots(figsize=(5, 0.5))
@@ -116,9 +123,21 @@ plt.show()
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
+    Plot saved to file tutorial_plots/05_torus_curvature.html.
+
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-10-output-3.png)
+    Plot saved to file tutorial_plots/05_torus_curvature_barycentric.html.
+
+![](05_membrane_mechanics_files/figure-commonmark/cell-11-output-5.png)
+
+``` python
+IFrame(src="tutorial_plots/05_torus_curvature.html", width="100%", height=400); # for display in docs webpage
+```
+
+``` python
+IFrame(src="tutorial_plots/05_torus_curvature_barycentric.html", width="100%", height=400);
+```
 
 ## Minimal surfaces
 
@@ -161,7 +180,7 @@ plt.axis("equal");
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-11-output-2.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-14-output-2.png)
 
 ``` python
 # let's impose some boundary conditions on the disk mesh - think of this as finding the shape of a "soap film"
@@ -182,12 +201,17 @@ vertices_bdry_imposed[bdry_verts] = bdry_pos
 ``` python
 # the non-optimized membrane is pretty creased
 
-meshplot.plot(vertices_bdry_imposed, hemesh.faces, shading={"wireframe":False}, return_plot=True)
+p = meshplot.plot(vertices_bdry_imposed, hemesh.faces, shading={"wireframe":False}, return_plot=True)
+p.save("tutorial_plots/05_minimal_surface_initial.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(-0.001874…
 
-    <meshplot.Viewer.Viewer at 0x370c529c0>
+    Plot saved to file tutorial_plots/05_minimal_surface_initial.html.
+
+``` python
+IFrame(src="tutorial_plots/05_minimal_surface_initial.html", width="100%", height=400);
+```
 
 ``` python
 # compute the area of the initial configuration - this is the energy we will minimize
@@ -233,12 +257,17 @@ for t in range(10):
 ``` python
 # as a result of the optimization, we get an area-minimizing "Pringles" surface
 
-meshplot.plot(vertices_iterated[-1], hemesh.faces, shading={"wireframe":True}, return_plot=True)
+p = meshplot.plot(vertices_iterated[-1], hemesh.faces, shading={"wireframe":True}, return_plot=True)
+p.save("tutorial_plots/05_minimal_surface_final.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(-0.001874…
 
-    <meshplot.Viewer.Viewer at 0x37487c050>
+    Plot saved to file tutorial_plots/05_minimal_surface_final.html.
+
+``` python
+IFrame(src="tutorial_plots/05_minimal_surface_final.html", width="100%", height=400);
+```
 
 ``` python
 final_area = geom.get_area(vertices_iterated[-1], hemesh)
@@ -298,12 +327,16 @@ hemesh = HeMesh.from_triangles(trimesh.vertices.shape[0], trimesh.faces)
       o Icosphere
 
 ``` python
-meshplot.plot(trimesh.vertices, hemesh.faces, shading={"wireframe":True})
+p = meshplot.plot(np.array(trimesh.vertices), np.array(hemesh.faces),
+                  shading={"wireframe":True}, return_plot=True)
+p.save("tutorial_plots/05_sphere_mesh.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x16f566510>
+``` python
+IFrame(src="tutorial_plots/05_sphere_mesh.html", width="100%", height=400);
+```
 
 ``` python
 # let's define the discrete Helfrich energy.
@@ -343,12 +376,18 @@ print("Minimum vs deformed energy:", get_helfrich_energy(trimesh.vertices, args)
     Minimum vs deformed energy: 6.293261081171555 7.118657237550066
 
 ``` python
-meshplot.plot(deformed_vertices, hemesh.faces, shading={"wireframe":True})
+p = meshplot.plot(np.array(deformed_vertices), np.array(hemesh.faces),
+                  shading={"wireframe":True}, return_plot=True)
+p.save("tutorial_plots/05_sphere_mesh_deformed.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    <meshplot.Viewer.Viewer at 0x3573b74d0>
+    Plot saved to file tutorial_plots/05_sphere_mesh_deformed.html.
+
+``` python
+IFrame(src="tutorial_plots/05_sphere_mesh_deformed.html", width="100%", height=400);
+```
 
 ``` python
 # we can compute the energy gradient using JAX
@@ -424,13 +463,19 @@ Rs.std() / Rs.mean()
     Array(0.01461819, dtype=float64)
 
 ``` python
-p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),shading={"wireframe":True}, return_plot=True)
-p.add_mesh(sol.value + np.array([0, 0, 3]), hemesh.faces, shading={"wireframe":True})
+p = meshplot.plot(np.array(y0), np.array(hemesh.faces), np.array(grad_norm),shading={"wireframe":True},
+                  return_plot=True)
+p.add_mesh(np.array(sol.value) + np.array([0, 0, 3]), np.array(hemesh.faces), shading={"wireframe":True})
+p.save("tutorial_plots/05_helfrich_optimization.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    1
+    Plot saved to file tutorial_plots/05_helfrich_optimization.html.
+
+``` python
+IFrame(src="tutorial_plots/05_helfrich_optimization.html", width="100%", height=400);
+```
 
 ## Constrained minimization using Penalty and Augmented Lagrangian methods
 
@@ -476,7 +521,7 @@ def get_helfrich_energy_with_penalty(vertices, args):
 
 ``` python
 A0 = geom.get_area(trimesh.vertices, hemesh)
-V0 = 0.75 * geom.get_volume(trimesh.vertices, hemesh)
+V0 = 0.8 * geom.get_volume(trimesh.vertices, hemesh)
 kappa, H0 = 1.0, 0.0
 mu_A = 300.0
 mu_V = 600.0
@@ -500,18 +545,23 @@ vertices_final = sol.value
 geom.get_area(vertices_final, hemesh)/A0, geom.get_volume(vertices_final, hemesh)/V0
 ```
 
-    (Array(0.99693748, dtype=float64), Array(1.0253752, dtype=float64))
+    (Array(0.99227256, dtype=float64), Array(1.03085984, dtype=float64))
 
 ``` python
-p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),
+p = meshplot.plot(np.array(y0), np.array(hemesh.faces), np.array(grad_norm),
                   shading={"wireframe":True}, return_plot=True)
 
-p.add_mesh(sol.value + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":True})
+p.add_mesh(np.array(sol.value) + np.array([3, 0, 0]), np.array(hemesh.faces), shading={"wireframe":True})
+p.save("tutorial_plots/05_constrained_optimization.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    1
+    Plot saved to file tutorial_plots/05_constrained_optimization.html.
+
+``` python
+IFrame(src="tutorial_plots/05_constrained_optimization.html", width="100%", height=400);
+```
 
 ### Regularization tangential mesh motion
 
@@ -545,18 +595,24 @@ for i in range(n_iterations):
 geom.get_area(vertices_smoothed, hemesh)/A0, geom.get_volume(vertices_smoothed, hemesh)/V0
 ```
 
-    (Array(0.99769315, dtype=float64), Array(1.01880222, dtype=float64))
+    (Array(0.9956919, dtype=float64), Array(1.01755651, dtype=float64))
 
 ``` python
-p = meshplot.plot(y0, hemesh.faces, np.array(grad_norm),
+p = meshplot.plot(np.array(y0), np.array(hemesh.faces), np.array(grad_norm),
                   shading={"wireframe":True}, return_plot=True)
+p.add_mesh(np.array(vertices_smoothed) + np.array([3, 0, 0]), np.array(hemesh.faces),
+           shading={"wireframe":True})
 
-p.add_mesh(vertices_smoothed + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":True})
+p.save("tutorial_plots/05_constrained_optimization_smoothed.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    1
+    Plot saved to file tutorial_plots/05_constrained_optimization_smoothed.html.
+
+``` python
+IFrame(src="tutorial_plots/05_constrained_optimization_smoothed.html", width="100%", height=400);
+```
 
 ### Split normal–tangential optimization
 
@@ -716,29 +772,34 @@ print(f"Helfrich energy: {get_helfrich_energy(v_opt, (hemesh, H0, kappa)):.4f}")
 algo.get_mesh_quality_stats(v_opt, hemesh)
 ```
 
-    Physical energy gradient norm: 0.0101
-    A/A0 = 0.9969,  V/V0 = 1.0247
-    Helfrich energy: 9.3103
+    Physical energy gradient norm: 0.0034
+    A/A0 = 0.9952,  V/V0 = 1.0198
+    Helfrich energy: 9.1686
 
-    {'areas_min': 0.0051,
-     'areas_max': 0.01724,
-     'areas_cv': 0.409,
-     'max_angle': 98.35963,
-     'min_angle': 26.25636,
-     'angles_std': 17.57959,
+    {'areas_min': 0.00514,
+     'areas_max': 0.01719,
+     'areas_cv': 0.39562,
+     'max_angle': 101.60694,
+     'min_angle': 29.72937,
+     'angles_std': 18.56349,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
 ``` python
-p = meshplot.plot(vertices_initial, hemesh.faces,
+p = meshplot.plot(np.array(vertices_initial), np.array(hemesh.faces),
                   shading={"wireframe":True}, return_plot=True)
 
-p.add_mesh(v_opt + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe":True})
+p.add_mesh(np.array(v_opt) + np.array([3, 0, 0]), np.array(hemesh.faces), shading={"wireframe":True})
+p.save("tutorial_plots/05_constrained_optimization_gradient_descent.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    1
+    Plot saved to file tutorial_plots/05_constrained_optimization_gradient_descent.html.
+
+``` python
+IFrame(src="tutorial_plots/05_constrained_optimization_gradient_descent.html", width="100%", height=400);
+```
 
 Now we turn to the more sophisticated method described above: using an
 arbitrary optimizer for the normal and tangential subproblems.
@@ -889,22 +950,22 @@ v_opt, history = alternating_minimize(
     n_outer=16, n_inner_normal=100, n_inner_tangential=50)
 ```
 
-        0 | E_phys=19.6097 | E_param=0.447931 | angles=[41.4°, 79.0°] | degen=0
-        1 | E_phys=17.9398 | E_param=0.823723 | angles=[38.5°, 82.9°] | degen=0
-        2 | E_phys=14.9286 | E_param=0.976312 | angles=[37.2°, 84.4°] | degen=0
-        3 | E_phys=14.0853 | E_param=1.080985 | angles=[35.9°, 85.4°] | degen=0
-        4 | E_phys=12.2305 | E_param=1.689302 | angles=[32.1°, 90.3°] | degen=0
-        5 | E_phys=11.4809 | E_param=1.772981 | angles=[31.6°, 91.2°] | degen=0
-        6 | E_phys=11.0485 | E_param=1.864032 | angles=[30.6°, 92.9°] | degen=0
-        7 | E_phys=10.6734 | E_param=1.955797 | angles=[30.0°, 93.9°] | degen=0
-        8 | E_phys=10.1673 | E_param=2.168007 | angles=[29.3°, 96.7°] | degen=0
-        9 | E_phys=9.8707 | E_param=2.204691 | angles=[29.1°, 96.7°] | degen=0
-       10 | E_phys=9.8247 | E_param=2.242903 | angles=[28.8°, 97.3°] | degen=0
-       11 | E_phys=9.6464 | E_param=2.317396 | angles=[28.4°, 98.0°] | degen=0
-       12 | E_phys=9.3863 | E_param=2.703190 | angles=[27.3°, 101.9°] | degen=0
-       13 | E_phys=9.3516 | E_param=2.694162 | angles=[27.0°, 101.7°] | degen=0
-       14 | E_phys=9.3487 | E_param=2.699914 | angles=[27.0°, 101.6°] | degen=0
-       15 | E_phys=9.3399 | E_param=2.790376 | angles=[26.6°, 101.9°] | degen=0
+        0 | E_phys=26.0211 | E_param=0.196062 | angles=[46.7°, 71.4°] | degen=0
+        1 | E_phys=19.3567 | E_param=0.366492 | angles=[43.5°, 75.3°] | degen=0
+        2 | E_phys=17.9201 | E_param=0.545279 | angles=[41.3°, 78.6°] | degen=0
+        3 | E_phys=16.7203 | E_param=0.591944 | angles=[40.5°, 79.1°] | degen=0
+        4 | E_phys=14.7309 | E_param=1.340135 | angles=[34.4°, 85.3°] | degen=0
+        5 | E_phys=13.1544 | E_param=1.377557 | angles=[34.1°, 88.6°] | degen=0
+        6 | E_phys=12.5392 | E_param=1.409830 | angles=[33.6°, 88.0°] | degen=0
+        7 | E_phys=11.5859 | E_param=1.574422 | angles=[32.9°, 91.0°] | degen=0
+        8 | E_phys=11.0638 | E_param=1.691598 | angles=[31.9°, 92.5°] | degen=0
+        9 | E_phys=10.7870 | E_param=1.695385 | angles=[31.7°, 92.4°] | degen=0
+       10 | E_phys=9.8910 | E_param=2.236055 | angles=[29.8°, 98.9°] | degen=0
+       11 | E_phys=9.5247 | E_param=2.270048 | angles=[29.4°, 98.8°] | degen=0
+       12 | E_phys=9.4930 | E_param=2.303603 | angles=[29.0°, 98.6°] | degen=0
+       13 | E_phys=9.4140 | E_param=2.497996 | angles=[28.4°, 100.3°] | degen=0
+       14 | E_phys=9.3651 | E_param=2.497321 | angles=[28.0°, 100.2°] | degen=0
+       15 | E_phys=9.3571 | E_param=2.512669 | angles=[28.0°, 100.3°] | degen=0
 
 ``` python
 # check constraints and mesh quality
@@ -915,16 +976,16 @@ print(f"Helfrich energy: {get_helfrich_energy(v_opt, (hemesh, H0, kappa)):.4f}")
 algo.get_mesh_quality_stats(v_opt, hemesh)
 ```
 
-    gradient norm: 0.0566
-    A/A0 = 0.9970,  V/V0 = 1.0192
-    Helfrich energy: 9.1949
+    gradient norm: 0.0138
+    A/A0 = 0.9926,  V/V0 = 1.0276
+    Helfrich energy: 9.0268
 
-    {'areas_min': 0.00538,
-     'areas_max': 0.01633,
-     'areas_cv': 0.34612,
-     'max_angle': 101.94608,
-     'min_angle': 26.64748,
-     'angles_std': 19.08289,
+    {'areas_min': 0.00544,
+     'areas_max': 0.01603,
+     'areas_cv': 0.33184,
+     'max_angle': 100.31434,
+     'min_angle': 27.9573,
+     'angles_std': 18.28267,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -944,17 +1005,23 @@ axes[2].legend()
 fig.tight_layout()
 ```
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-54-output-1.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-65-output-1.png)
 
 ``` python
 # visualize initial and optimized shape
-p = meshplot.plot(vertices_initial, hemesh.faces, shading={"wireframe": True}, return_plot=True)
-p.add_mesh(v_opt + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe": True})
+p = meshplot.plot(np.array(vertices_initial), np.array(hemesh.faces), shading={"wireframe": True},
+                  return_plot=True)
+p.add_mesh(np.array(v_opt) + np.array([3, 0, 0]), np.array(hemesh.faces), shading={"wireframe": True})
+p.save("tutorial_plots/05_alternating_optimization.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    1
+    Plot saved to file tutorial_plots/05_alternating_optimization.html.
+
+``` python
+IFrame(src="tutorial_plots/05_alternating_optimization.html", width="100%", height=400);
+```
 
 ### Augmented Lagrangian method
 
@@ -964,7 +1031,7 @@ two Lagrange multipliers *λ*, *p*, surface tension and pressure:
 ℒ = *E*<sub>*H*</sub> − *λ*(*A* − *A*<sub>0</sub>) − *p*(*V* − *V*<sub>0</sub>)
 
 Minimization under the boundary constraint is equivalent to stationarity
-of the Lagrangian:
+of the Lagrangian (so-called KKLT-condition):
 
 ∇<sub>*λ*</sub>ℒ = 0  and  ∇<sub>**v**</sub>ℒ = 0
 
@@ -1146,17 +1213,17 @@ print(f"Final μ: {history_al[-1]['mu']:.1f}")
 algo.get_mesh_quality_stats(v_al, hemesh)
 ```
 
-    Helfrich energy: 9.5601
-    A/A0 = 1.000003,  V/V0 = 0.999958
-    Lagrange multipliers (tension, pressure): λ = [ 1.48498545 -3.94603966]
+    Helfrich energy: 9.4615
+    A/A0 = 1.000000,  V/V0 = 1.000004
+    Lagrange multipliers (tension, pressure): λ = [ 1.42332769 -3.80344206]
     Final μ: 320.0
 
-    {'areas_min': 0.00228,
-     'areas_max': 0.08961,
-     'areas_cv': 1.55381,
-     'max_angle': 75.28159,
-     'min_angle': 48.64726,
-     'angles_std': 5.6019,
+    {'areas_min': 0.00533,
+     'areas_max': 0.0166,
+     'areas_cv': 0.3592,
+     'max_angle': 104.6414,
+     'min_angle': 24.6517,
+     'angles_std': 20.42506,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -1189,14 +1256,19 @@ axes[3].set(xlabel="AL iteration", ylabel="$\\mu$", title="Penalty parameter")
 fig.tight_layout()
 ```
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-60-output-1.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-72-output-1.png)
 
 ``` python
 # --- Visualize initial and AL-optimized shape ---
-p = meshplot.plot(vertices_initial, hemesh.faces, shading={"wireframe": True}, return_plot=True)
-p.add_mesh(v_al + np.array([3, 0, 0]), hemesh.faces, shading={"wireframe": True})
+p = meshplot.plot(np.array(vertices_initial), np.array(hemesh.faces), shading={"wireframe": True}, return_plot=True)
+p.add_mesh(np.array(v_al) + np.array([3, 0, 0]), np.array(hemesh.faces), shading={"wireframe": True})
+p.save("tutorial_plots/05_augmented_lagrangian_optimization.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    1
+    Plot saved to file tutorial_plots/05_augmented_lagrangian_optimization.html.
+
+``` python
+IFrame(src="tutorial_plots/05_augmented_lagrangian_optimization.html", width="100%", height=400);
+```
