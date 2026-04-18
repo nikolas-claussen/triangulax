@@ -105,7 +105,8 @@ def get_half_edge_arrays_vectorized(
 
 ```
 
-*Get half-edge data structure arrays from faces (vectorized).*
+*Get half-edge data structure arrays from faces (vectorized). Returned
+arrays are dtype int32.*
 
 Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident
 
@@ -550,7 +551,7 @@ load : str -\> GeomMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L570"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L581"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -594,7 +595,7 @@ geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibi
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L576"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L587"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -720,7 +721,7 @@ The resulting meshes have an extra “batch” axis in all their array.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L611"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L622"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -738,7 +739,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L607"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L618"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack
@@ -873,3 +874,37 @@ np.allclose(reloaded.faces, hemesh.faces)
 ```
 
     True
+
+``` python
+# test GeomMesh save/load round-trip with IntEnum keys
+
+class _TestVA(IntEnum):
+    A = 1
+    B = 2
+class _TestHA(IntEnum):
+    C = 1
+
+mesh = TriMesh.read_obj("test_meshes/disk.obj")
+hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
+gm = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions,
+              vertex_attribs={_TestVA.A: jnp.ones(hemesh.n_vertices),
+                              _TestVA.B: jnp.zeros(hemesh.n_vertices)},
+              he_attribs={_TestHA.C: jnp.ones(hemesh.n_hes)})
+
+outfile = TemporaryFile()
+gm.save(outfile)
+_ = outfile.seek(0)
+
+# with enum classes: keys round-trip as IntEnum members
+gm_loaded = GeomMesh.load(outfile, vertex_attribs_enum=_TestVA, he_attribs_enum=_TestHA)
+assert all(isinstance(k, _TestVA) for k in gm_loaded.vertex_attribs), "vertex keys not IntEnum"
+assert all(isinstance(k, _TestHA) for k in gm_loaded.he_attribs), "he keys not IntEnum"
+assert gm == gm_loaded, "loaded GeomMesh not equal to original"
+
+# without enum classes: keys are strings (backward compat)
+_ = outfile.seek(0)
+gm_str = GeomMesh.load(outfile)
+assert all(isinstance(k, str) for k in gm_str.vertex_attribs), "expected string keys"
+
+print("GeomMesh save/load round-trip OK")
+```

@@ -10,6 +10,7 @@ dependencies:
   - jupyter
   - tqdm
   - jax
+  - orbax-checkpoint
   - jaxlib
   - jaxtyping
   - beartype

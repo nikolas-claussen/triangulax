@@ -233,6 +233,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Geometry-processing algorithms</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../src/08_simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation utilities</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -296,7 +302,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#control-flow" id="toc-control-flow" class="nav-link" data-scroll-target="#control-flow">Control flow</a></li>
   <li><a href="#static-array-shapes" id="toc-static-array-shapes" class="nav-link" data-scroll-target="#static-array-shapes">Static array shapes</a></li>
   <li><a href="#batching" id="toc-batching" class="nav-link" data-scroll-target="#batching">Batching</a></li>
-  <li><a href="#simulation-loops-with-jax.lax.scan" id="toc-simulation-loops-with-jax.lax.scan" class="nav-link" data-scroll-target="#simulation-loops-with-jax.lax.scan">Simulation loops with <code>jax.lax.scan</code></a></li>
+  <li><a href="#simulation-loops-with-jax.lax.scan-and-the-simulation-module" id="toc-simulation-loops-with-jax.lax.scan-and-the-simulation-module" class="nav-link" data-scroll-target="#simulation-loops-with-jax.lax.scan-and-the-simulation-module">Simulation loops with <code>jax.lax.scan</code> and the <code>simulation</code> module</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="01_coding_with_JAX.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
@@ -350,9 +356,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In simulations, we may want to “batch” over several initial conditions/random seeds/etc. (analogous to batching over training data in normal ML). In JAX, one can efficiently and concisely vectorize operations over such “batch axes” with <code>jax.vmap</code>.</p>
 <p>To batch over our custom data structures, we need to pull a small trick - convert a list of instances into a single mesh with a batch axis for the various arrays. Luckily, this can be <a href="https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees">done using JAX’s pytree tools</a>.</p>
 </section>
-<section id="simulation-loops-with-jax.lax.scan" class="level2">
-<h2 class="anchored" data-anchor-id="simulation-loops-with-jax.lax.scan">Simulation loops with <code>jax.lax.scan</code></h2>
-<p>In simulations, we generally start with an initial state (call it <code>init</code>), do a series of time steps (via a function <code>make_step(state)</code>), and record some “measurement” at each time step (via a <code>measure(state)</code> function). As a result, we get a time series of measurements, and the final simulation state. In normal python, you would do that with a <code>for</code> loop. When working with JAX, we need to <a href="https://docs.jax.dev/en/latest/control-flow.html">replace control-flow operations like <code>for</code> with their JAX pendant</a>. For <code>for</code> loops, this is <code>jax.lax.scan(f, init, xs)</code>, which is equivalent to the python code</p>
+<section id="simulation-loops-with-jax.lax.scan-and-the-simulation-module" class="level2">
+<h2 class="anchored" data-anchor-id="simulation-loops-with-jax.lax.scan-and-the-simulation-module">Simulation loops with <code>jax.lax.scan</code> and the <code>simulation</code> module</h2>
+<p>In simulations, we generally start with an initial state (call it <code>init</code>), do a series of time steps (via a function <code>make_step(state)</code>), and record some “measurement” at each time step (via a <code>measure(state)</code> function). As a result, we get a time series of measurements, and the final simulation state. In normal python, you would do that with a <code>for</code> loop.</p>
+<p>When working with JAX, we need to <a href="https://docs.jax.dev/en/latest/control-flow.html">replace control-flow operations like <code>for</code> with their JAX pendant</a>. In the <code>simulation</code> module, we provide some simple utility functions for time-stepping simulations. You provide a <code>step_fn</code> that executes the time step, a <code>measure_fn</code> that logs measurements at each timestep (like the energy or vertex positions). Optionally, you can break up the simulations into chunks and save to disk in between chuncks (for example, in case you are worried about a long simulation crashing).</p>
+<p>### Under the hood</p>
+<p>The <code>simulation.simulate</code> is a wrapper around <code>jax.lax.scan(f, init, xs)</code>, the <code>JAX</code> version of <code>for</code> loops. <code>scan</code> is equivalent to the python code</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan(f, init, xs):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  carry <span class="op">=</span> init</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  ys <span class="op">=</span> []</span>

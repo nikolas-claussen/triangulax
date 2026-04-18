@@ -263,6 +263,12 @@ window.Quarto = {
  <span class="menu-text">Geometry-processing algorithms</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/08_simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation utilities</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -395,13 +401,13 @@ window.Quarto = {
 <li>Mechanics of thin plates or membranes (mechanics)</li>
 <li>Cell-resolved tissue simulations (biophysics)</li>
 </ol>
-<p>These tasks revolve around a mesh-based “energy” (like the <a href="https://multires.caltech.edu/pubs/ConfEquiv.pdf">Dirichlet variational functional</a>, the <a href="https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes">Helfrich elastic energy</a>, or the <a href="https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011">area-perimeter energy</a>, respectively). JAX automatically computes their gradients, making it easy to optimize energies or to simulate forces. For “multiphysics” simulations (for example, reaction-diffusion dynamics on a deforming surface), it suffices to specify the combined energy of the system - all forces and cross-terms are calculated automatically.</p>
+<p>These tasks revolve around a mesh-based “energy” (like the <a href="https://multires.caltech.edu/pubs/ConfEquiv.pdf">Dirichlet energy</a>, the <a href="https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes">Helfrich energy</a>, or the <a href="https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011">area-perimeter energy</a>, respectively). JAX automatically computes their gradients, making it easy to optimize energies or to simulate forces. For “multiphysics” simulations (for example, reaction-diffusion dynamics on a deforming surface), it suffices to specify the combined energy of the system - all forces and cross-terms are calculated automatically.</p>
 <p>To simulate dynamics or minimize energies, <code>triangulax</code> integrates with JAX ecosystem libraries like <a href="https://docs.kidger.site/optimistix/">optimistix</a> (optimization) and <a href="https://github.com/patrick-kidger/diffrax">diffrax</a> (ODE integration).</p>
 </section>
 </section>
 <section id="inverse-problems" class="level3">
 <h3 class="anchored" data-anchor-id="inverse-problems">Inverse problems</h3>
-<p>Since <code>triangulax</code> is fully JAX-compatible, you can differentiate a simulation w.r.t. its parameters. This means one can apply gradient-based optimization to <em>inverse problems</em> (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization.html">tutorial 2</a>). Effectively, your simulation becomes a “neural network” which maps initial conditions to simulation results. <code>triangulax</code> can be used with <a href="https://docs.kidger.site/optimistix/">optimistix</a> and <a href="https://github.com/patrick-kidger/diffrax">diffrax</a> which allows straight-through and adjoint-based differentiation.</p>
+<p>Since <code>triangulax</code> is fully JAX-compatible, you can differentiate a simulation with respect to its parameters. This means one can apply gradient-based optimization to <em>inverse problems</em> (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization.html">tutorial 2</a>). Effectively, your simulation becomes a “neural network” which maps initial conditions to simulation results. <code>triangulax</code> can be used with <a href="https://docs.kidger.site/optimistix/">optimistix</a> and <a href="https://github.com/patrick-kidger/diffrax">diffrax</a> which allows straight-through and adjoint-based differentiation.</p>
 <p>For example, consider an elastic energy <span class="math inline">\(E(\mathbf{v} ; \boldsymbol{\theta})\)</span> that depends on both mesh vertex positions <span class="math inline">\(\mathbf{v}\)</span> and parameters <span class="math inline">\(\boldsymbol{\theta}\)</span> (elastic moduli, spring rest lengths, etc). Via automatic differentiation, you can differentiate the minimum-energy configuration <span class="math inline">\(\mathbf{v}^*[\theta] = \mathrm{argmin} E( \cdot ; \boldsymbol{\theta})\)</span> with respect to the parameters <span class="math inline">\(\boldsymbol{\theta}\)</span>. This means you can use gradient-based optimization to find a <span class="math inline">\(\boldsymbol{\theta}\)</span> such that the minimum-energy configuration has a desired shape. In the tissue mechanics context, you could ask: what do individual cells need to do so that the tissue as a whole takes on a certain shape?</p>
 </section>
 <section id="see-also" class="level3">
@@ -485,10 +491,11 @@ window.Quarto = {
 <li><code>periodic</code>: geometry computations under periodic boundary conditions</li>
 <li><code>linops</code>: discrete differential operators (Laplacian, mass matrix, gradient)</li>
 <li><code>algorithms</code>: Delaunay flipping, mesh quality improvement</li>
+<li><code>simulation</code>: Utilities for time-dependent simulations and checkpointing</li>
 </ul>
 <section id="minimal-example" class="level3">
 <h3 class="anchored" data-anchor-id="minimal-example">Minimal example</h3>
-<div id="5808e3d1" class="cell" data-execution_count="1">
+<div id="d5a8aba4" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>

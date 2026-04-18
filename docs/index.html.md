@@ -64,9 +64,7 @@ Consider:
 3.  Cell-resolved tissue simulations (biophysics)
 
 These tasks revolve around a mesh-based “energy” (like the [Dirichlet
-variational
-functional](https://multires.caltech.edu/pubs/ConfEquiv.pdf), the
-[Helfrich elastic
+energy](https://multires.caltech.edu/pubs/ConfEquiv.pdf), the [Helfrich
 energy](https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes), or
 the [area-perimeter
 energy](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011),
@@ -84,7 +82,7 @@ JAX ecosystem libraries like
 ### Inverse problems
 
 Since `triangulax` is fully JAX-compatible, you can differentiate a
-simulation w.r.t. its parameters. This means one can apply
+simulation with respect to its parameters. This means one can apply
 gradient-based optimization to *inverse problems* ([tutorial
 2](https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization.html)).
 Effectively, your simulation becomes a “neural network” which maps
@@ -222,6 +220,8 @@ details):
 - `linops`: discrete differential operators (Laplacian, mass matrix,
   gradient)
 - `algorithms`: Delaunay flipping, mesh quality improvement
+- `simulation`: Utilities for time-dependent simulations and
+  checkpointing
 
 ### Minimal example
 

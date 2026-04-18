@@ -132,11 +132,11 @@ plt.show()
 ![](05_membrane_mechanics_files/figure-commonmark/cell-11-output-5.png)
 
 ``` python
-IFrame(src="tutorial_plots/05_torus_curvature.html", width="100%", height=400); # for display in docs webpage
+IFrame(src="tutorial_plots/05_torus_curvature.html", width="100%", height=400) # for display in docs webpage
 ```
 
 ``` python
-IFrame(src="tutorial_plots/05_torus_curvature_barycentric.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_torus_curvature_barycentric.html", width="100%", height=400)
 ```
 
 ## Minimal surfaces
@@ -210,7 +210,7 @@ p.save("tutorial_plots/05_minimal_surface_initial.html")
     Plot saved to file tutorial_plots/05_minimal_surface_initial.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_minimal_surface_initial.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_minimal_surface_initial.html", width="100%", height=400)
 ```
 
 ``` python
@@ -266,7 +266,7 @@ p.save("tutorial_plots/05_minimal_surface_final.html")
     Plot saved to file tutorial_plots/05_minimal_surface_final.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_minimal_surface_final.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_minimal_surface_final.html", width="100%", height=400)
 ```
 
 ``` python
@@ -335,7 +335,7 @@ p.save("tutorial_plots/05_sphere_mesh.html")
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
 ``` python
-IFrame(src="tutorial_plots/05_sphere_mesh.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_sphere_mesh.html", width="100%", height=400)
 ```
 
 ``` python
@@ -386,7 +386,7 @@ p.save("tutorial_plots/05_sphere_mesh_deformed.html")
     Plot saved to file tutorial_plots/05_sphere_mesh_deformed.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_sphere_mesh_deformed.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_sphere_mesh_deformed.html", width="100%", height=400)
 ```
 
 ``` python
@@ -474,7 +474,7 @@ p.save("tutorial_plots/05_helfrich_optimization.html")
     Plot saved to file tutorial_plots/05_helfrich_optimization.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_helfrich_optimization.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_helfrich_optimization.html", width="100%", height=400)
 ```
 
 ## Constrained minimization using Penalty and Augmented Lagrangian methods
@@ -560,7 +560,7 @@ p.save("tutorial_plots/05_constrained_optimization.html")
     Plot saved to file tutorial_plots/05_constrained_optimization.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_constrained_optimization.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_constrained_optimization.html", width="100%", height=400)
 ```
 
 ### Regularization tangential mesh motion
@@ -611,7 +611,7 @@ p.save("tutorial_plots/05_constrained_optimization_smoothed.html")
     Plot saved to file tutorial_plots/05_constrained_optimization_smoothed.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_constrained_optimization_smoothed.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_constrained_optimization_smoothed.html", width="100%", height=400)
 ```
 
 ### Split normal–tangential optimization
@@ -798,7 +798,7 @@ p.save("tutorial_plots/05_constrained_optimization_gradient_descent.html")
     Plot saved to file tutorial_plots/05_constrained_optimization_gradient_descent.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_constrained_optimization_gradient_descent.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_constrained_optimization_gradient_descent.html", width="100%", height=400)
 ```
 
 Now we turn to the more sophisticated method described above: using an
@@ -1020,7 +1020,7 @@ p.save("tutorial_plots/05_alternating_optimization.html")
     Plot saved to file tutorial_plots/05_alternating_optimization.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_alternating_optimization.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_alternating_optimization.html", width="100%", height=400)
 ```
 
 ### Augmented Lagrangian method
@@ -1270,5 +1270,5 @@ p.save("tutorial_plots/05_augmented_lagrangian_optimization.html")
     Plot saved to file tutorial_plots/05_augmented_lagrangian_optimization.html.
 
 ``` python
-IFrame(src="tutorial_plots/05_augmented_lagrangian_optimization.html", width="100%", height=400);
+IFrame(src="tutorial_plots/05_augmented_lagrangian_optimization.html", width="100%", height=400)
 ```

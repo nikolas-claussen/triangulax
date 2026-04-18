@@ -78,18 +78,30 @@ trick - convert a list of instances into a single mesh with a batch axis
 for the various arrays. Luckily, this can be [done using JAX’s pytree
 tools](https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees).
 
-## Simulation loops with `jax.lax.scan`
+## Simulation loops with `jax.lax.scan` and the `simulation` module
 
 In simulations, we generally start with an initial state (call it
 `init`), do a series of time steps (via a function `make_step(state)`),
 and record some “measurement” at each time step (via a `measure(state)`
 function). As a result, we get a time series of measurements, and the
 final simulation state. In normal python, you would do that with a `for`
-loop. When working with JAX, we need to [replace control-flow operations
-like `for` with their JAX
-pendant](https://docs.jax.dev/en/latest/control-flow.html). For `for`
-loops, this is `jax.lax.scan(f, init, xs)`, which is equivalent to the
-python code
+loop.
+
+When working with JAX, we need to [replace control-flow operations like
+`for` with their JAX
+pendant](https://docs.jax.dev/en/latest/control-flow.html). In the
+`simulation` module, we provide some simple utility functions for
+time-stepping simulations. You provide a `step_fn` that executes the
+time step, a `measure_fn` that logs measurements at each timestep (like
+the energy or vertex positions). Optionally, you can break up the
+simulations into chunks and save to disk in between chuncks (for
+example, in case you are worried about a long simulation crashing).
+
+\### Under the hood
+
+The `simulation.simulate` is a wrapper around
+`jax.lax.scan(f, init, xs)`, the `JAX` version of `for` loops. `scan` is
+equivalent to the python code
 
 ``` python
 def scan(f, init, xs):

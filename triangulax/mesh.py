@@ -56,12 +56,12 @@ def label_plot(vertices: Float[jax.Array, "n_vertices 2"],
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #0e885259
 def get_half_edge_arrays_vectorized(n_vertices: int, faces: Int[jax.Array, "n_faces 3"]) -> list[Int[jax.Array, " n"]]:
     """
-    Get half-edge data structure arrays from faces (vectorized).
+    Get half-edge data structure arrays from faces (vectorized). Returned arrays are dtype int32.
 
     Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident
     """
     # form all unique edges, ordered lexicographically
-    faces_np = np.asarray(faces)
+    faces_np = np.asarray(faces).astype(np.int64)
     edges = np.array(sorted([sorted(x) for x in igl.edges(faces_np)]))
     half_edges = np.vstack([edges, edges[:, ::-1]])
 
@@ -131,7 +131,7 @@ def get_half_edge_arrays_vectorized(n_vertices: int, faces: Int[jax.Array, "n_fa
     # first half-edge per face (minimum index among the three)
     face_incident = np.minimum(np.minimum(h0, h1), h2)
 
-    return [jnp.array(arr) for arr in [incident, orig, dest, twin, nxt, prv, heface, face_incident]]
+    return [jnp.array(arr, dtype=jnp.int32) for arr in [incident, orig, dest, twin, nxt, prv, heface, face_incident]]
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #965577eb-7900-4c5d-8f0a-8cc2fd40caba
 @jax.tree_util.register_dataclass
@@ -521,7 +521,7 @@ class GeomMesh:
                    face_attribs={key: jnp.copy(val) for key, val in self.face_attribs.items()})
 
     def save(self, file: str | Path) -> None:
-        """Save HeMesh and all geometric attributes to two .npz archives of jnp.arrays"""
+        """Save GeomMesh to .npz archive of np.arrays."""
         np.savez(file,
              n_vertices=self.n_vertices, n_hes=self.n_hes, n_faces=self.n_faces,
              vertices=self.vertices, face_positions = self.face_positions,
@@ -532,29 +532,40 @@ class GeomMesh:
         return None
 
     @staticmethod
-    def load(file: str | Path) -> "GeomMesh":
+    def load(file: str | Path,
+             vertex_attribs_enum: type[IntEnum] | None = None,
+             he_attribs_enum: type[IntEnum] | None = None,
+             face_attribs_enum: type[IntEnum] | None = None) -> "GeomMesh":
         """
-        Note: vertex/he/face attribute dict's will have _strings_ as keys.
-        
-        To convert them back to Enums, do something like this:
-        dataclasses.replace(geommesh, vertex_attribs={MyEnum[key]: val
-                            for key, val in geom_mesh.vertex_attribs.items()})
+        Load GeomMesh from .npz archive.
+
+        Parameters
+        ----------
+        file : str | Path
+            Path to the .npz file.
+        vertex_attribs_enum : type[IntEnum] | None
+            If provided, convert vertex attribute string keys back to this IntEnum.
+        he_attribs_enum : type[IntEnum] | None
+            If provided, convert half-edge attribute string keys back to this IntEnum.
+        face_attribs_enum : type[IntEnum] | None
+            If provided, convert face attribute string keys back to this IntEnum.
         """
         npzfile = jnp.load(file)
-        vertex_attribs = {key.split(".")[1]: val
-                          for key, val  in npzfile.items() if key.split(".")[0] == "VertexAttribs"}
-        he_attribs = {key.split(".")[1]: val
-                      for key, val  in npzfile.items() if key.split(".")[0] == "HeAttribs"}
-        face_attribs = {key.split(".")[1]: val
-                        for key, val  in npzfile.items() if key.split(".")[0] == "FaceAttribs"}
+        def _parse_attribs(prefix: str, enum_cls: type[IntEnum] | None) -> dict:
+            attribs = {key.split(".")[1]: val
+                       for key, val in npzfile.items() if key.split(".")[0] == prefix}
+            if enum_cls is not None:
+                attribs = {enum_cls[k]: v for k, v in attribs.items()}
+            return attribs
+
         return GeomMesh(n_vertices=npzfile['n_vertices'].item(),
                         n_hes=npzfile['n_hes'].item(),
                         n_faces=npzfile['n_faces'].item(),
                         vertices=npzfile['vertices'],
                         face_positions=npzfile['face_positions'],
-                        vertex_attribs=vertex_attribs,
-                        he_attribs=he_attribs,
-                        face_attribs=face_attribs)
+                        vertex_attribs=_parse_attribs("VertexAttribs", vertex_attribs_enum),
+                        he_attribs=_parse_attribs("HeAttribs", he_attribs_enum),
+                        face_attribs=_parse_attribs("FaceAttribs", face_attribs_enum))
 
     # equality comparisons. Two meshes are equal if all of the arrays they contain are equal.
     

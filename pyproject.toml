@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-tutorials = ["tqdm", "diffrax", "equinox", "optimistix", "meshplot"]
+tutorials = ["tqdm", "diffrax", "equinox", "optimistix", "orbax-checkpoint", "meshplot"]
 
 [project.urls]
 Repository = "https://github.com/nikolas-claussen/triangulax"
