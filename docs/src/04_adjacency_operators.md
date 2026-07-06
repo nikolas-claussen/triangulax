@@ -12,12 +12,14 @@ import igl
 Using the
 [`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh)
 data structure, we can efficiently “traverse” our mesh. Using such
-traversals, one can express many adjacency-based *linear operators*, for
+traversals, one can express many *adjacency-based operators*, for
 example:
 
 - Sum over all half-edges “incoming” to a vertex (special case: *count*
   the incoming edges, i.e., compute the coordination number)
 - Compute the finite-element gradient of a function defined on vertices
+- Find the minimum of a per-vertex function across the neighbors of a
+  vertex
 
 These operations can be done efficiently using a “gather/scatter”
 approach, see

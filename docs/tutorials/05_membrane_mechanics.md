@@ -659,7 +659,7 @@ def get_metric(vertices: Float[jax.Array, "n_faces dim"],
     """Metric tensor (first fundamental form) per triangle."""
     a, b, c = vertices[hemesh.faces.T]
     J = jnp.stack([b - a, c - a], axis=1)
-    return jnp.einsum("vix,vjx->vij", J, J)
+    return jnp.einsum("vik,vjk->vij", J, J)
 
 
 def get_lscm_energy_density(C: Float[jax.Array, "2 2"]) -> Float[jax.Array, ""]:
@@ -1005,7 +1005,7 @@ axes[2].legend()
 fig.tight_layout()
 ```
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-65-output-1.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-66-output-1.png)
 
 ``` python
 # visualize initial and optimized shape
@@ -1060,10 +1060,12 @@ to numerical difficulties.
 ``` python
 def augmented_lagrangian_method(objective_fn, constraints_fn, minimize_fn, x0,
                                 lam0=None, mu0=10.0, mu_growth=2.0,
-                                max_outer=15, tol=1e-4, verbose=True):
+                                max_outer=15, atol=1e-4, verbose=True):
     """Generic augmented Lagrangian method for constrained minimization.
 
-    Solves:  min objective_fn(x)  s.t. constraints_fn(x) = 0
+    Solves:  min objective_fn(x)  s.t. constraints_fn(x) = 0. This implements the AL method described in Nocedal & Wright, "Numerical Optimization", Algorithm 17.3.
+
+    The AL method is suitable for equality constrained problems where the number of constraints is significantly smaller than the number of variables.
 
     Parameters
     ----------
@@ -1073,7 +1075,9 @@ def augmented_lagrangian_method(objective_fn, constraints_fn, minimize_fn, x0,
         Equality constraints: x → array of shape (m,). Satisfied when = 0.
     minimize_fn : callable
         Inner minimizer: (augmented_energy_fn, x0) → x_optimized.
-        augmented_energy_fn has signature (x) → scalar.
+        augmented_energy_fn has signature (x) → scalar. This can 
+        be any unconstrained optimizer, e.g. from optimistix:
+        lambda augmented_energy_fn, x0: optimistix.minimise(E_normal, optimistix.NonlinearCG(), x0) 
     x0
         Initial guess for the variables.
     lam0 : array, optional
@@ -1084,7 +1088,7 @@ def augmented_lagrangian_method(objective_fn, constraints_fn, minimize_fn, x0,
         Factor by which μ is increased each iteration.
     max_outer : int
         Maximum number of outer AL iterations.
-    tol : float
+    atol : float
         Convergence tolerance on KKT residual √(|∇ₓL|² + |c|²).
     verbose : bool
         Print diagnostics each iteration.
@@ -1136,9 +1140,9 @@ def augmented_lagrangian_method(objective_fn, constraints_fn, minimize_fn, x0,
             print(f"  AL {k:2d} | obj={obj:.4f} | c=[{c_str}] | "
                   f"|∇L|={grad_norm:.2e} | λ=[{lam_str}] | μ={mu:.1f}")
 
-        if kkt_norm < tol:
+        if kkt_norm < atol:
             if verbose:
-                print(f"  Converged: KKT = {kkt_norm:.2e} < {tol:.0e}")
+                print(f"  Converged: KKT = {kkt_norm:.2e} < {atol:.0e}")
             break
 
         # Update multipliers and penalty
@@ -1256,7 +1260,7 @@ axes[3].set(xlabel="AL iteration", ylabel="$\\mu$", title="Penalty parameter")
 fig.tight_layout()
 ```
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-72-output-1.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-73-output-1.png)
 
 ``` python
 # --- Visualize initial and AL-optimized shape ---

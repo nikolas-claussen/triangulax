@@ -22,16 +22,8 @@ hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 vertices = mesh.vertices
 ```
 
-    NameError: name 'TriMesh' is not defined
-    [31m---------------------------------------------------------------------------[39m
-    [31mNameError[39m                                 Traceback (most recent call last)
-    [36mCell[39m[36m [39m[32mIn[1][39m[32m, line 2[39m
-    [32m      1[39m [38;5;66;03m# Load test mesh[39;00m
-    [32m----> [39m[32m2[39m mesh = [43mTriMesh[49m.read_obj([33m"[39m[33m../test_meshes/disk.obj[39m[33m"[39m)
-    [32m      3[39m hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[[32m0[39m], mesh.faces)
-    [32m      4[39m vertices = mesh.vertices
-
-    [31mNameError[39m: name 'TriMesh' is not defined
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
 
 ### Mesh quality assessment
 

@@ -164,7 +164,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/08_simulation.html">Simulation utilities</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/08_simulation.html"><code>simulation</code>: Simulation utilities</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -185,29 +185,12 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">previous_projects</span></a>
+ <span class="menu-text">Modules &amp; API reference</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../previous_projects/01 Simulation of non-reciprocal Cahn Hillard 1D.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Goals</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">src</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
@@ -265,20 +248,20 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/08_simulation.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Simulation utilities</span></a>
+ <span class="menu-text"><code>simulation</code>: Simulation utilities</span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">tutorials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
@@ -327,7 +310,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#simulation-utilities" id="toc-simulation-utilities" class="nav-link active" data-scroll-target="#simulation-utilities">Simulation utilities</a>
+  <li><a href="#simulation-simulation-utilities" id="toc-simulation-simulation-utilities" class="nav-link active" data-scroll-target="#simulation-simulation-utilities"><code>simulation</code>: Simulation utilities</a>
   <ul class="collapse">
   <li><a href="#when-to-use-this-module" id="toc-when-to-use-this-module" class="nav-link" data-scroll-target="#when-to-use-this-module">When to use this module</a></li>
   <li><a href="#simulation-state-and-measurements" id="toc-simulation-state-and-measurements" class="nav-link" data-scroll-target="#simulation-state-and-measurements">Simulation state and measurements</a></li>
@@ -341,14 +324,14 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="08_simulation.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">src</a></li><li class="breadcrumb-item"><a href="../src/08_simulation.html">Simulation utilities</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/08_simulation.html"><code>simulation</code>: Simulation utilities</a></li></ol></nav></header>
 
 
 
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="simulation-utilities" class="level2">
-<h2 class="anchored" data-anchor-id="simulation-utilities">Simulation utilities</h2>
+<section id="simulation-simulation-utilities" class="level2">
+<h2 class="anchored" data-anchor-id="simulation-simulation-utilities"><code>simulation</code>: Simulation utilities</h2>
 <p>This module provides lightweight utilities for running simulations with <code>jax.lax.scan</code>. It wraps the common pattern of stepping through time and logging measurements, and adds support for <strong>chunked execution</strong> with checkpointing callbacks.</p>
 <section id="when-to-use-this-module" class="level3">
 <h3 class="anchored" data-anchor-id="when-to-use-this-module">When to use this module</h3>

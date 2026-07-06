@@ -15,9 +15,7 @@
 >
 > **Safe division.** To avoid division by zero in degenerate
 > configurations (e.g. zero-area triangles), all divisors are clamped
-> via `jnp.clip(x, 1e-12)`. The threshold `1e-12` is chosen to be well
-> below any physically meaningful scale while staying above float64
-> precision limits (~`1e-16`).
+> via `jnp.clip(x, 1e-12)`.
 
 </div>
 
@@ -60,6 +58,20 @@ def get_triangle_area(
 ```
 
 *Unsigned area of triangle with vertices a, b, c.*
+
+------------------------------------------------------------------------
+
+### get_triangle_area_from_sides
+
+``` python
+
+def get_triangle_area_from_sides(
+    u:Float[Array, 'dim'], v:Float[Array, 'dim']
+)->Float[Array, '']: # Triangle area.
+
+```
+
+*Unsigned area of triangle edge vectors u, v*
 
 ------------------------------------------------------------------------
 
@@ -228,6 +240,17 @@ def project_on_vector(
 ```
 
 *Project vector a onto vector b.*
+
+``` python
+key1 = jax.random.key(0)
+key2 = jax.random.key(1)
+
+a, b = jax.random.normal(key1, shape=2), jax.random.normal(key2, shape=2)
+assert get_triangle_area_from_sides(a, b) == jnp.linalg.norm(jnp.cross(a, b))/2
+
+a, b = jax.random.normal(key1, shape=3), jax.random.normal(key2, shape=3)
+assert get_triangle_area_from_sides(a, b) == jnp.linalg.norm(jnp.cross(a, b))/2
+```
 
 ------------------------------------------------------------------------
 

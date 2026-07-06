@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="JAX-compatible triangular meshes and triangular-mesh-based biophysics simulations">
 
-<title>triangulax</title>
+<title>Tutorial: Elastic inverse problems – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,24 +58,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-f245066ca199b7326ac6b360085ddf3a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-f245066ca199b7326ac6b360085ddf3a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -135,13 +134,19 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="triangulax">
-<meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based biophysics simulations">
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Tutorial: Elastic inverse problems – triangulax">
+<meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
+<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/tutorials/suzanne.png">
 <meta property="og:site_name" content="triangulax">
-<meta name="twitter:title" content="triangulax">
-<meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based biophysics simulations">
-<meta name="twitter:card" content="summary">
+<meta property="og:image:height" content="972">
+<meta property="og:image:width" content="1074">
+<meta name="twitter:title" content="Tutorial: Elastic inverse problems – triangulax">
+<meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
+<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/tutorials/suzanne.png">
+<meta name="twitter:image-height" content="972">
+<meta name="twitter:image-width" content="1074">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-sidebar floating nav-fixed quarto-light">
@@ -151,7 +156,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">triangulax</span>
     </a>
   </div>
@@ -165,7 +170,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">triangulax</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Tutorial: Elastic inverse problems</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -179,7 +184,7 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">triangulax</span></a>
   </div>
 </li>
@@ -194,61 +199,61 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/trigonometry.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/01_triangular_meshes.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/01_triangular_meshes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Loading, processing, and saving triangular meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/02_halfedge_datastructure.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/02_halfedge_datastructure.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/03_topological_modifications.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/03_topological_modifications.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Topological modifications in half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/05_geometric_quantities.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/05_geometric_quantities.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Mesh geometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/07_algorithms.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry-processing algorithms</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./src/08_simulation.html" class="sidebar-item-text sidebar-link">
+  <a href="../src/08_simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><code>simulation</code>: Simulation utilities</span></a>
   </div>
 </li>
@@ -265,37 +270,37 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Tutorial: triangular meshes in <code>triangulax</code></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/01_coding_with_JAX.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/01_coding_with_JAX.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Tutorial: coding in JAX</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/03_vertex_models.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/03_vertex_models.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Tutorial: Self-propelled Voronoi model</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/04_PDEs_on_curved_surfaces.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/04_PDEs_on_curved_surfaces.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Tutorial: PDEs on curved surfaces</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/05_membrane_mechanics.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/05_membrane_mechanics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Tutorial: Membrane mechanics</span></a>
   </div>
 </li>
@@ -311,39 +316,22 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a>
-  <ul class="collapse">
-  <li><a href="#use-cases" id="toc-use-cases" class="nav-link" data-scroll-target="#use-cases">Use cases</a></li>
-  <li><a href="#automatic-differentiation-and-just-in-time-compilation-with-jax" id="toc-automatic-differentiation-and-just-in-time-compilation-with-jax" class="nav-link" data-scroll-target="#automatic-differentiation-and-just-in-time-compilation-with-jax">Automatic differentiation and just-in-time compilation with JAX</a></li>
-  <li><a href="#inverse-problems" id="toc-inverse-problems" class="nav-link" data-scroll-target="#inverse-problems">Inverse problems</a></li>
-  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See also</a></li>
-  </ul></li>
-  <li><a href="#installation-instructions" id="toc-installation-instructions" class="nav-link" data-scroll-target="#installation-instructions">Installation instructions</a></li>
-  <li><a href="#developer-guide" id="toc-developer-guide" class="nav-link" data-scroll-target="#developer-guide">Developer guide</a>
-  <ul class="collapse">
-  <li><a href="#install-triangulax-in-development-mode" id="toc-install-triangulax-in-development-mode" class="nav-link" data-scroll-target="#install-triangulax-in-development-mode">Install triangulax in Development mode</a></li>
-  </ul></li>
-  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation">Documentation</a></li>
-  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a>
-  <ul class="collapse">
-  <li><a href="#minimal-example" id="toc-minimal-example" class="nav-link" data-scroll-target="#minimal-example">Minimal example</a></li>
-  </ul></li>
+  <li><a href="#growing-suzanne" id="toc-growing-suzanne" class="nav-link active" data-scroll-target="#growing-suzanne">Growing Suzanne</a></li>
+  <li><a href="#loss-function" id="toc-loss-function" class="nav-link" data-scroll-target="#loss-function">Loss function</a></li>
+  <li><a href="#load-mesh" id="toc-load-mesh" class="nav-link" data-scroll-target="#load-mesh">Load mesh</a></li>
+  <li><a href="#define-mesh-based-energies" id="toc-define-mesh-based-energies" class="nav-link" data-scroll-target="#define-mesh-based-energies">Define mesh-based energies</a></li>
+  <li><a href="#load-target-mesh-and-compute-distance-transform" id="toc-load-target-mesh-and-compute-distance-transform" class="nav-link" data-scroll-target="#load-target-mesh-and-compute-distance-transform">Load target mesh and compute distance transform</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="06_inverse_problems.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">triangulax</h1>
+<h1 class="title">Tutorial: Elastic inverse problems</h1>
 </div>
 
-<div>
-  <div class="description">
-    JAX-compatible triangular meshes and triangular-mesh-based biophysics simulations
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
@@ -358,165 +346,125 @@ window.Quarto = {
 </header>
 
 
+<p>This tutorial uses <code>triangulax</code> to study a geometric inverse problem: find a dynamical process that generates a target shape <span class="math inline">\(\mathcal{S}_1\)</span> from an initial shape <span class="math inline">\(\mathcal{S}_1\)</span>. In this setting, a simulation is effectively treated like a “neural network” which maps initial conditions to simulation results, and simulation parameters as trainable “weights”. We saw a very simple inverse problem in tutorial 3: now we will consider a more complex problem in 3d.</p>
+<p>For example, consider an elastic energy <span class="math inline">\(E (\mathbf{v};  \boldsymbol{\theta})\)</span> that depends on both mesh vertex positions <span class="math inline">\(\mathbf{v};\)</span> and parameters <span class="math inline">\({\theta})\)</span> (like elastic moduli or reference shapes). If vertices move to relax the elastic energy, the final state is the minimum-energy configuration <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta}) = \arg \min E ( \cdot ;\theta)\)</span>. The goal is to find parameters <span class="math inline">\(\boldsymbol{\theta}^*\)</span> so that the equilibrated vertex positions <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta}^*)\)</span> match the target shape. Via automatic differentiation, one can differentiate <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta})\)</span> with respect to the parameters <span class="math inline">\(\boldsymbol{\theta}\)</span>, and use gradient-based optimization.</p>
+<p>The optimization library <code>optimistix</code> and the ODE library <code>diffrax</code> allow automatically differentiating through complex simulations. More generally, differentiating through a simulation facilitates sensitivity analyses and fitting simulations to (experimental) data.</p>
+<section id="growing-suzanne" class="level3">
+<h3 class="anchored" data-anchor-id="growing-suzanne">Growing Suzanne</h3>
+<p>As a toy problem, let’s build a simple biophysical model that produces “Suzanne”, a mesh model of a monkey’s head that is a common test case in the 3d software Blender:</p>
+<div>
+<p><img src="suzanne.png" width="500"></p>
+</div>
+<p>Inspired by models for the growing leafs and tissue sheets, we will treat the mesh as an elastic material. The elastic energy is combines resistance to in-plane shear and dilation, and bending resistance. For the former, we use the neo-hookean energy from tutorial 5:</p>
+<p><span class="math display">\[E_{\mathrm{NH}} = \delta \sum_f A_f \left[ \frac{K}{2}\left(\frac{\mathrm{tr}(C_f)}{\sqrt{\det C_f}} - 2\right)
++\frac{G}{2}\left(\sqrt{\det C_f} - 1\right)^2
+\right], \qquad C_f = G_0^{-1} G\]</span></p>
+<p>Here, <span class="math inline">\(C_f\)</span> is the Cauchy-Green tensor (a nonlinear measure of strain), computed from <span class="math inline">\(G\)</span>, <span class="math inline">\(G_0\)</span> the current and reference metric tensors for each triangle <span class="math inline">\(f\)</span>. The total energy sums over all faces, weighted by area <span class="math inline">\(A_f\)</span>. <span class="math inline">\(K\)</span> and <span class="math inline">\(G\)</span> are the bulk and shear moduli. The overall scale is set by the shell thickness <span class="math inline">\(\delta\)</span>.</p>
+<p>Bending resistance can be modeled using the dihedral angles <span class="math inline">\(\theta_{e}\)</span> for each edge: <span class="math display">\[E_{\mathrm{B}} = \delta^3 \sum_e \frac{\ell_e^2}{A_e} (\theta_e -\theta_e^0)^2  \]</span> where the area <span class="math inline">\(A_e\)</span> is defined as <span class="math inline">\(1/3\)</span> of the areas of the adjacent triangles. For thin shells, bending rigidity is thus much weaker than resistance to in-plane deformation (as one may verify using a sheet of paper).</p>
+<p>To model growth, we allow the reference metric <span class="math inline">\(G_f^0(t)\)</span> to depend on time. By convention, <span class="math inline">\(t=0\)</span> is the initial and <span class="math inline">\(t=1\)</span> the final timepoint. For simplicity, we focus on isotropic growth with rate <span class="math inline">\(\lambda_f\)</span>: <span class="math display">\[ G_f^0(t) = e^{\lambda_f t} G_f^0(0) \]</span> At each timestep, we compute the new elastic energy minimum shape from the preceding one. The goal is find <span class="math inline">\(\lambda_f\)</span> so that the elastic energy equilibrium at the final time matches the target shape.</p>
+</section>
+<section id="loss-function" class="level3">
+<h3 class="anchored" data-anchor-id="loss-function">Loss function</h3>
+<p>Now, we need a loss function that measures the agreement between the simulation output and the target. This can be a non-trivial problem, because we need to measure the similarity of meshes with different number of vertices and connectivity.</p>
+<p>Let us start with a toy example where this problem does not occur: a surface defined by an implicit equation <span class="math inline">\(f(\mathbf{v})=0\)</span>, for example an ellipsoid.</p>
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>This Python package provides data-structures for triangular meshes and geometry processing tools based on <a href="https://docs.jax.dev/en/latest/index.html">JAX</a>, fully compatible with automatic differentiation and just-in-time compilation.</p>
-<section id="use-cases" class="level3">
-<h3 class="anchored" data-anchor-id="use-cases">Use cases</h3>
-<p>Triangular meshes are ubiquitous in computer graphics and in scientific computing, for example in the finite-element method. A major motivation for <code>triangulax</code> are simulations in soft-matter and biophysics. For example, with <code>triangulax</code>, you can simulate:</p>
-<ol type="1">
-<li>Cell-resolved models of two-dimensional tissue sheets like <a href="https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011">the self-propelled Voronoi model</a> (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/03_vertex_models.html">tutorial 3</a>).</li>
-<li>Reaction-diffusion systems on 3D curved surfaces (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/04_PDEs_on_curved_surfaces.html">tutorial 4</a>)</li>
-<li>Mechanics of membranes and thin elastic shells in 3D (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/05_membrane_mechanics.html">tutorial 5</a>)</li>
-</ol>
-<p><code>triangulax</code> is designed for modularity and flexibility. The library includes a suite of geometry processing tools based on <a href="https://www.cs.cmu.edu/~kmcrane/Projects/DDG/">discrete differential geometry</a> (Voronoi duals, curvatures, Laplace operator, …) and represents surfaces as <a href="https://jerryyin.info/geometry-processing-algorithms/half-edge/">half-edge meshes</a>, which allows implementing custom simulations and geometry operations in any dimension.</p>
+<div id="e896a60a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On second thought, the isotropic growth problem can be "analytically" solved by finding a conformal map from</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># S_0 and S_1 to the unit sphere, and using the relative (area) strain as the growth factor. </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Otoh, the bending energy constraint may make this non-trivial.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Other ideas: use nematic (anisotropic growth)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># solve reverse dynamical problem (starting from target shape)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cdfbe426" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> sparse, optimize, ndimage</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> meshplot</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="26abf6cc" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="68a3fe07" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_enable_x64"</span>, <span class="va">True</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>jax.config.update(<span class="st">"jax_debug_nans"</span>, <span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="363cef5c" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jaxtyping <span class="im">import</span> Float</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="169589f9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> equinox</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="b9b40106" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> lineax</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> optimistix</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> optax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="9af8aecb" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> trigonometry <span class="im">as</span> trig</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> geometry <span class="im">as</span> geom</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> adjacency <span class="im">as</span> adj</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops <span class="im">as</span> lin</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.triangular <span class="im">import</span> TriMesh</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.mesh <span class="im">import</span> HeMesh, GeomMesh</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> algorithms <span class="im">as</span> algo</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
-<section id="automatic-differentiation-and-just-in-time-compilation-with-jax" class="level3">
-<h3 class="anchored" data-anchor-id="automatic-differentiation-and-just-in-time-compilation-with-jax">Automatic differentiation and just-in-time compilation with JAX</h3>
-<p>The main feature of <code>triangulax</code> is (forward- and reverse-mode) automatic differentiation. This enables computation of gradients of any mesh-based function. To achieve this, <code>triangulax</code>uses <a href="https://docs.jax.dev/en/latest/index.html">JAX</a>, a “Python library for accelerator-oriented array computation and program transformation, designed for high-performance numerical computing and large-scale machine learning.” Most <code>triangulax</code> tools are compatible with JAX’s just-in-time (JIT) compilation. This delivers high performance in high-level Python (rather than C++) and allows running on your code on GPUs.</p>
-<p><strong>Prerequisites</strong>: Using <code>triangulax</code> assumes familiarity with triangular meshes (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/00_triangular_meshes.html">tutorial 0</a>), and basic JAX usage (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/01_coding_with_JAX.html">tutorial 1</a>)</p>
-<section id="simulating-with-automatic-differentiation" class="level4">
-<h4 class="anchored" data-anchor-id="simulating-with-automatic-differentiation">Simulating with automatic differentiation</h4>
-<p>Consider:</p>
-<ol type="1">
-<li>Flattening or deforming 3D models (computer graphics)</li>
-<li>Mechanics of thin plates or membranes (mechanics)</li>
-<li>Cell-resolved tissue simulations (biophysics)</li>
-</ol>
-<p>These tasks revolve around a mesh-based “energy” (like the <a href="https://multires.caltech.edu/pubs/ConfEquiv.pdf">Dirichlet energy</a>, the <a href="https://en.wikipedia.org/wiki/Elasticity_of_cell_membranes">Helfrich energy</a>, or the <a href="https://journals.aps.org/prx/abstract/10.1103/PhysRevX.6.021011">area-perimeter energy</a>, respectively). JAX automatically computes their gradients, making it easy to optimize energies or to simulate forces. For “multiphysics” simulations (for example, reaction-diffusion dynamics on a deforming surface), it suffices to specify the combined energy of the system - all forces and cross-terms are calculated automatically.</p>
-<p>To simulate dynamics or minimize energies, <code>triangulax</code> integrates with JAX ecosystem libraries like <a href="https://docs.kidger.site/optimistix/">optimistix</a> (optimization) and <a href="https://github.com/patrick-kidger/diffrax">diffrax</a> (ODE integration).</p>
+<section id="load-mesh" class="level3">
+<h3 class="anchored" data-anchor-id="load-mesh">Load mesh</h3>
+<div id="8860c85d" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's use a fine mesh of a sphere as out initial condition and reference configuration</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># tutorial_meshes/sphere_finer.obj</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
-</section>
-<section id="inverse-problems" class="level3">
-<h3 class="anchored" data-anchor-id="inverse-problems">Inverse problems</h3>
-<p>Since <code>triangulax</code> is fully JAX-compatible, you can differentiate a simulation with respect to its parameters. This means one can apply gradient-based optimization to <em>inverse problems</em> (<a href="https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization.html">tutorial 2</a>). Effectively, your simulation becomes a “neural network” which maps initial conditions to simulation results. <code>triangulax</code> can be used with <a href="https://docs.kidger.site/optimistix/">optimistix</a> and <a href="https://github.com/patrick-kidger/diffrax">diffrax</a> which allows straight-through and adjoint-based differentiation.</p>
-<p>For example, consider an elastic energy <span class="math inline">\(E(\mathbf{v} ; \boldsymbol{\theta})\)</span> that depends on both mesh vertex positions <span class="math inline">\(\mathbf{v}\)</span> and parameters <span class="math inline">\(\boldsymbol{\theta}\)</span> (elastic moduli, spring rest lengths, etc). Via automatic differentiation, you can differentiate the minimum-energy configuration <span class="math inline">\(\mathbf{v}^*[\theta] = \mathrm{argmin} E( \cdot ; \boldsymbol{\theta})\)</span> with respect to the parameters <span class="math inline">\(\boldsymbol{\theta}\)</span>. This means you can use gradient-based optimization to find a <span class="math inline">\(\boldsymbol{\theta}\)</span> such that the minimum-energy configuration has a desired shape. In the tissue mechanics context, you could ask: what do individual cells need to do so that the tissue as a whole takes on a certain shape?</p>
-</section>
-<section id="see-also" class="level3">
-<h3 class="anchored" data-anchor-id="see-also">See also</h3>
-<ul>
-<li><p><a href="https://libigl.github.io/libigl-python-bindings/">libigl</a> Geometry processing library with Python bindings. You can use <code>libigl</code> functions on <code>triangulax</code> meshes via the <code>.faces</code> attribute</p></li>
-<li><p><a href="https://github.com/VirtualEmbryo/VertAX/">VertAX</a> JAX-based simulations of 2D tissues.</p></li>
-</ul>
-</section>
-</section>
-<section id="installation-instructions" class="level2">
-<h2 class="anchored" data-anchor-id="installation-instructions">Installation instructions</h2>
-<p>The <code>triangulax</code> package is hosted on <a href="https://pypi.org/project/triangulax/">PyPI</a>. Install it as follows:</p>
-<ol type="1">
-<li>(Recommended) Initialize a virtual environment, for instance with <code>conda</code>:</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda env create <span class="at">-n</span> triangulax </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda activate triangulax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Please see the <a href="https://docs.jax.dev/en/latest/installation.html">JAX documentation</a> for how to install with GPU support.</p>
-<ol start="2" type="1">
-<li>Install with <code>pip</code>:</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install triangulax </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>(Optional) Install optional dependencies for running the tutorials:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install triangulax<span class="pp">[</span><span class="ss">tutorials</span><span class="pp">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="3" type="1">
-<li>Verify installation:</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> triangulax python <span class="at">-c</span> <span class="st">"from triangulax import mesh, geometry"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="4" type="1">
-<li>(Optional) Download jupyter notebooks to run tutorials interactively from <a href="https://github.com/nikolas-claussen/triangulax/tree/main/nbs/tutorials">GitHub</a></li>
-</ol>
-</section>
-<section id="developer-guide" class="level2">
-<h2 class="anchored" data-anchor-id="developer-guide">Developer guide</h2>
-<p>This package is developed based on Jupyter notebooks, which are converted into python modules using <code>nbdev</code>. Take a look at <code>.github/copilot-instructions.md</code> for details.</p>
-<section id="install-triangulax-in-development-mode" class="level3">
-<h3 class="anchored" data-anchor-id="install-triangulax-in-development-mode">Install triangulax in Development mode</h3>
-<ol type="1">
-<li>Clone the GitHub repository</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone https://github.com/nikolas-claussen/triangulax.git</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="2" type="1">
-<li>Create a conda environment with all Python dependencies</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda env create <span class="at">-n</span> triangulax <span class="at">-f</span> environment.yml</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda activate triangulax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="3" type="1">
-<li>Optional: install <code>nbdev</code> if you want to edit the package notebooks</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install nbdev</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="4" type="1">
-<li>Install the <code>triangulax</code> package</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure triangulax package is installed in development mode</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install <span class="at">-e</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="5" type="1">
-<li>Optional: edit the package notebooks and export</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make changes under nbs/ directory</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># export to have changes apply to triangulax</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nbdev_export</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="documentation" class="level2">
-<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
-<p>Documentation can be found hosted on this GitHub <a href="https://github.com/nikolas-claussen/triangulax">repository</a>’s <a href="https://nikolas-claussen.github.io/triangulax/">pages</a>. Jupyter notebooks tutorials can be found in the <code>nbs/tutorials/</code> folder.</p>
-</section>
-<section id="usage" class="level2">
-<h2 class="anchored" data-anchor-id="usage">Usage</h2>
-<p><code>triangulax</code> comprises the following modules (see <a href="https://nikolas-claussen.github.io/triangulax/">full documentation</a> for details):</p>
-<ul>
-<li><code>trigonometry</code>: trigonometry and linear algebra utilities</li>
-<li><code>triangular</code>: input/output for triangular meshes</li>
-<li><code>mesh</code>: half-edge data structure for triangular meshes, compatible with JAX</li>
-<li><code>topology</code>: topological modifications (edge flip, collapse, and split)</li>
-<li><code>adjacency</code>: vertex-vertex, vertex-face, and face-face adjacency operators</li>
-<li><code>geometry</code>: angles, edge lengths, triangle areas, Voronoi areas, curvatures</li>
-<li><code>periodic</code>: geometry computations under periodic boundary conditions</li>
-<li><code>linops</code>: discrete differential operators (Laplacian, mass matrix, gradient)</li>
-<li><code>algorithms</code>: Delaunay flipping, mesh quality improvement</li>
-<li><code>simulation</code>: Utilities for time-dependent simulations and checkpointing</li>
-</ul>
-<section id="minimal-example" class="level3">
-<h3 class="anchored" data-anchor-id="minimal-example">Minimal example</h3>
-<div id="3add2b84" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> igl</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> mesh, geometry</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># load example mesh and convert to half-edge mesh</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>vertices, _, _, faces, _, _ <span class="op">=</span> igl.readOBJ(<span class="st">"test_meshes/disk.obj"</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> mesh.HeMesh.from_triangles(vertices.shape[<span class="dv">0</span>], faces)</span>
+<section id="define-mesh-based-energies" class="level3">
+<h3 class="anchored" data-anchor-id="define-mesh-based-energies">Define mesh-based energies</h3>
+<div id="eeef715a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- In-plane elastic energy ---</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_metric(vertices: Float[jax.Array, <span class="st">"n_faces dim"</span>],</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>               hemesh: HeMesh) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">"n_faces 2 2"</span>]:</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Metric tensor (first fundamental form) per triangle."""</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    a, b, c <span class="op">=</span> vertices[hemesh.faces.T]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> jnp.stack([b <span class="op">-</span> a, c <span class="op">-</span> a], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.einsum(<span class="st">"vik,vjk-&gt;vij"</span>, J, J)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># with the half-edge mesh, you can carry out various operations, for example</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the coordination number by summing incoming half-edges per vertex</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> jnp.zeros(hemesh.n_vertices)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>coord_number <span class="op">=</span> coord_number.at[hemesh.dest].add(jnp.ones(hemesh.n_hes))</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mean coordination number:"</span>, coord_number.mean())</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's define a simple geometric function and compute its gradient with JAX</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mean_voronoi_area(vertices: jax.Array, hemesh: mesh.HeMesh) <span class="op">-&gt;</span> jax.Array:</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the mean Voronoi area per vertex."""</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    voronoi_areas <span class="op">=</span> geometry.get_voronoi_areas(vertices, hemesh)</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean(voronoi_areas)</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>value, gradient <span class="op">=</span> jax.value_and_grad(mean_voronoi_area)(vertices, hemesh)</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mean gradient norm:"</span>, jnp.linalg.norm(gradient, axis<span class="op">=</span><span class="dv">1</span>).mean())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: readOBJ() ignored non-comment line 3:
-  o flat_tri_ecmc</code></pre>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_neo_hookean_energy_density(C: Float[jax.Array, <span class="st">"2 2"</span>], mod_bulk: <span class="bu">float</span>, mod_shear: <span class="bu">float</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                                   ) <span class="op">-&gt;</span> Float[jax.Array, <span class="st">""</span>]:</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the neo-Hookean energy density from Cauchy-Green deformation tensor C:</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">        E = mod_shear/2 * (trace(C) / J - 2) + mod_bulk/2 * (J - 1)^2</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">    where J = sqrt(det(C)) is the local area change.</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">    See https://en.wikipedia.org/wiki/Neo-Hookean_solid</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> jnp.sqrt(jnp.linalg.det(C))</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mod_shear<span class="op">/</span><span class="dv">2</span><span class="op">*</span>(jnp.trace(C)<span class="op">/</span>J <span class="op">-</span> <span class="dv">2</span>) <span class="op">+</span> mod_bulk<span class="op">/</span><span class="dv">2</span><span class="op">*</span>(J<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_neo_hookean_energy(vertices, args):</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Total neo-Hookean energy. args = (hemesh, metric_ref, mod_bulk, mod_shear)"""</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    hemesh, metric_ref, mod_bulk, mod_shear <span class="op">=</span> args</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    areas <span class="op">=</span> geom.get_triangle_areas(vertices, hemesh)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    C <span class="op">=</span> jnp.einsum(<span class="st">"fij,fjk-&gt;fik"</span>, jnp.linalg.inv(metric_ref), get_metric(vertices, hemesh))</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (areas <span class="op">*</span> jax.vmap(<span class="kw">lambda</span> c: get_neo_hookean_energy_density(c, mod_bulk, mod_shear))(C)).<span class="bu">sum</span>()</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Bending energy ---</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co"># to do: bending energy using dihedral angles: \sum_ij (\theta_{ij}-\theta_{ij}^0)^2 * l_ij^2 / a_ij</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co"># where a_ij is the average of the adjacent triangle areas / 3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Mean coordination number: 5.40458
-Mean gradient norm: 0.0003638338</code></pre>
-</div>
-</div>
-
-
 </section>
+<section id="load-target-mesh-and-compute-distance-transform" class="level3">
+<h3 class="anchored" data-anchor-id="load-target-mesh-and-compute-distance-transform">Load target mesh and compute distance transform</h3>
+
+
 </section>
 
 </main> <!-- /main -->
