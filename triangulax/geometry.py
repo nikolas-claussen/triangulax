@@ -85,7 +85,7 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: ms
     n1 = normals[hemesh.heface]
     n2 = normals[hemesh.heface[hemesh.twin]]
     edge = vertices[hemesh.dest] - vertices[hemesh.orig]
-    edge_hat = edge / jnp.maximum(jnp.linalg.norm(edge, axis=-1, keepdims=True), 1e-12)
+    edge_hat = edge / jnp.clip(jnp.linalg.norm(edge, axis=-1, keepdims=True), 1e-12)
     sin_theta = jnp.einsum('ei,ei->e', edge_hat, jnp.cross(n1, n2))
     cos_theta = jnp.einsum('ei,ei->e', n1, n2)
     return jnp.arctan2(sin_theta, cos_theta)
