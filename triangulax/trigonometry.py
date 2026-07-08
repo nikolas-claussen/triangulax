@@ -228,7 +228,7 @@ def get_cot_between_vectors(a: Float[jax.Array, " dim"], b: Float[jax.Array, " d
     Float[Array, ""]
         Cotangent value.
     """
-    denom = get_triangle_area_from_sides(a, b)
+    denom = 2*get_triangle_area_from_sides(a, b)  # = |a x b| = |a||b| sin(angle)
     return jnp.dot(a, b) / jnp.clip(denom, 1e-12)
 
 # %% ../nbs/src/00_trigonometry.ipynb #e04b3dfe
