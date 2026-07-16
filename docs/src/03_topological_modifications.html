@@ -141,7 +141,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/03_topological_modifications.html">Topological modifications in half-edge meshes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/03_topological_modifications.html"><code>topology</code>: Topological modifications in half-edge meshes</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -170,64 +170,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trigonometry</span></a>
+  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/01_triangular_meshes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Loading, processing, and saving triangular meshes</span></a>
+ <span class="menu-text"><code>triangular</code>: Loading, processing, and saving triangular meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/02_halfedge_datastructure.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Half-edge meshes</span></a>
+ <span class="menu-text"><code>mesh</code>: Half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/03_topological_modifications.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Topological modifications in half-edge meshes</span></a>
+ <span class="menu-text"><code>topology</code>: Topological modifications in half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
+ <span class="menu-text"><code>adjacency</code>: Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/05_geometric_quantities.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Mesh geometry</span></a>
+ <span class="menu-text"><code>geometry</code>: Mesh geometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
+ <span class="menu-text"><code>periodic</code>: Geometry in periodic boundary conditions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+ <span class="menu-text"><code>linops</code>: discrete gradient, divergence, and Laplacian</span></a>
   </div>
 </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry-processing algorithms</span></a>
-  </div>
-</li>
+ <span class="menu-text">src/07_algorithms.ipynb</span>
+  </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../src/08_simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>simulation</code>: Simulation utilities</span></a>
-  </div>
-</li>
+ <span class="menu-text">src/08_simulation.ipynb</span>
+  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -287,7 +281,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#topological-modifications-in-half-edge-meshes" id="toc-topological-modifications-in-half-edge-meshes" class="nav-link active" data-scroll-target="#topological-modifications-in-half-edge-meshes">Topological modifications in half-edge meshes</a>
+  <li><a href="#topology-topological-modifications-in-half-edge-meshes" id="toc-topology-topological-modifications-in-half-edge-meshes" class="nav-link active" data-scroll-target="#topology-topological-modifications-in-half-edge-meshes"><code>topology</code>: Topological modifications in half-edge meshes</a>
   <ul class="collapse">
   <li><a href="#edge-flips-t1s" id="toc-edge-flips-t1s" class="nav-link" data-scroll-target="#edge-flips-t1s">Edge flips / T1s</a></li>
   <li><a href="#flip_edge" id="toc-flip_edge" class="nav-link" data-scroll-target="#flip_edge">flip_edge</a></li>
@@ -309,14 +303,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="03_topological_modifications.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/03_topological_modifications.html">Topological modifications in half-edge meshes</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/03_topological_modifications.html"><code>topology</code>: Topological modifications in half-edge meshes</a></li></ol></nav></header>
 
 
 
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="topological-modifications-in-half-edge-meshes" class="level2">
-<h2 class="anchored" data-anchor-id="topological-modifications-in-half-edge-meshes">Topological modifications in half-edge meshes</h2>
+<section id="topology-topological-modifications-in-half-edge-meshes" class="level2">
+<h2 class="anchored" data-anchor-id="topology-topological-modifications-in-half-edge-meshes"><code>topology</code>: Topological modifications in half-edge meshes</h2>
 <p>We often need to not only move the vertices of a mesh, but modify the connectivity. In half-edge meshes, there are several “elementary” mesh modifications. For <code>triangulax</code>, by far the most important one is the edge flip (see below). It is the only modification that preserves the number of all mesh elements, and is thus relatively easy to make compatible with JAX and differentiable programming.</p>
 <p><strong>Design note</strong>: for JIT-compatibility, none of the topology modification functions (<a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#flip_edge"><code>flip_edge</code></a>, <a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#collapse_edge"><code>collapse_edge</code></a>, <a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#split_vertex"><code>split_vertex</code></a>) check in advance whether they will produce a valid mesh. Separate predicate functions (<a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_flip_edge"><code>can_flip_edge</code></a>, <a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_collapse_edge"><code>can_collapse_edge</code></a>, <a href="https://nikolas-claussen.github.io/triangulax/src/topological_modifications.html#can_split_vertex"><code>can_split_vertex</code></a>) are provided for this purpose: call them before the modification if you need to guard against invalid operations.</p>
 <section id="edge-flips-t1s" class="level3">

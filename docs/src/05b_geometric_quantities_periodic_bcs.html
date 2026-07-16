@@ -170,7 +170,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/05b_geometric_quantities_periodic_bcs.html">Geometric quantities in periodic boundary conditions</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/05b_geometric_quantities_periodic_bcs.html"><code>periodic</code>: Geometry in periodic boundary conditions</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -199,64 +199,58 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trigonometry</span></a>
+  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/01_triangular_meshes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Loading, processing, and saving triangular meshes</span></a>
+ <span class="menu-text"><code>triangular</code>: Loading, processing, and saving triangular meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/02_halfedge_datastructure.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Half-edge meshes</span></a>
+ <span class="menu-text"><code>mesh</code>: Half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/03_topological_modifications.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Topological modifications in half-edge meshes</span></a>
+ <span class="menu-text"><code>topology</code>: Topological modifications in half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
+ <span class="menu-text"><code>adjacency</code>: Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/05_geometric_quantities.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Mesh geometry</span></a>
+ <span class="menu-text"><code>geometry</code>: Mesh geometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
+ <span class="menu-text"><code>periodic</code>: Geometry in periodic boundary conditions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+ <span class="menu-text"><code>linops</code>: discrete gradient, divergence, and Laplacian</span></a>
   </div>
 </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry-processing algorithms</span></a>
-  </div>
-</li>
+ <span class="menu-text">src/07_algorithms.ipynb</span>
+  </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../src/08_simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>simulation</code>: Simulation utilities</span></a>
-  </div>
-</li>
+ <span class="menu-text">src/08_simulation.ipynb</span>
+  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -316,7 +310,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#geometric-quantities-in-periodic-boundary-conditions" id="toc-geometric-quantities-in-periodic-boundary-conditions" class="nav-link active" data-scroll-target="#geometric-quantities-in-periodic-boundary-conditions">Geometric quantities in periodic boundary conditions</a>
+  <li><a href="#periodic-geometry-in-periodic-boundary-conditions" id="toc-periodic-geometry-in-periodic-boundary-conditions" class="nav-link active" data-scroll-target="#periodic-geometry-in-periodic-boundary-conditions"><code>periodic</code>: Geometry in periodic boundary conditions</a>
   <ul class="collapse">
   <li><a href="#displacement_periodic_twisted" id="toc-displacement_periodic_twisted" class="nav-link" data-scroll-target="#displacement_periodic_twisted">displacement_periodic_twisted</a></li>
   <li><a href="#displacement_periodic" id="toc-displacement_periodic" class="nav-link" data-scroll-target="#displacement_periodic">displacement_periodic</a></li>
@@ -341,14 +335,14 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="05b_geometric_quantities_periodic_bcs.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/05b_geometric_quantities_periodic_bcs.html">Geometric quantities in periodic boundary conditions</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/05b_geometric_quantities_periodic_bcs.html"><code>periodic</code>: Geometry in periodic boundary conditions</a></li></ol></nav></header>
 
 
 
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="geometric-quantities-in-periodic-boundary-conditions" class="level2">
-<h2 class="anchored" data-anchor-id="geometric-quantities-in-periodic-boundary-conditions">Geometric quantities in periodic boundary conditions</h2>
+<section id="periodic-geometry-in-periodic-boundary-conditions" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-geometry-in-periodic-boundary-conditions"><code>periodic</code>: Geometry in periodic boundary conditions</h2>
 <p>In many 2D biophysical simulations (see tutorial 3 on “vertex models”), it is convenient to work with <em>periodic boundary conditions</em>, i.e.&nbsp;simulate cells in a box with lengths <span class="math inline">\(\mathbf{L} = [L_x, L_y]\)</span> where opposite sides are identified. This module contains tools for mesh geometry in periodic boundary conditions.</p>
 <p>In <code>triangulax</code>, mesh connectivity and geometry are decoupled, so periodic boundary conditions are easy to implement. One needs two ingredients:</p>
 <ol type="1">
@@ -384,7 +378,7 @@ window.Quarto = {
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'2'</span>]:</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Return the minimum-image displacement on a rectangular torus.</em></p>
-<div id="2adba721" class="cell" data-execution_count="64">
+<div id="2adba721" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-08T18:51:08.019126Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-08T18:51:08.019039Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-08T18:51:08.167891Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-08T18:51:08.167388Z&quot;}}" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> jnp.array([<span class="fl">2.0</span>, <span class="fl">3.0</span>])</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(</span>
@@ -429,7 +423,7 @@ window.Quarto = {
 <section id="edge-lengths-angles-and-areas" class="level3">
 <h3 class="anchored" data-anchor-id="edge-lengths-angles-and-areas">Edge lengths, angles, and areas</h3>
 <p>Geometric quantities like angles and triangle areas can be computed using the displacement functions defined above. To do this, we can use the “intrinsic” geometry functions from the trigonometry module to compute everything in terms of edge lengths.</p>
-<div id="84426170" class="cell" data-execution_count="56">
+<div id="84426170" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-08T18:51:08.169418Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-08T18:51:08.169343Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-08T18:51:08.580538Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-08T18:51:08.580136Z&quot;}}" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is an example of a 2d mesh with "periodic boundary conditions" - topologically, it is just a torus.</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Thus, the faces that wrap around the boundary.</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -440,7 +434,7 @@ window.Quarto = {
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.triplot(vertices[:,<span class="dv">0</span>], vertices[:,<span class="dv">1</span>], trimesh.faces, lw<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">"k"</span>)</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="56">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>(np.float64(-0.028125350000000004),
  np.float64(1.04895835),
  np.float64(0.03749965),
@@ -454,13 +448,13 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="64f39cba" class="cell" data-execution_count="57">
+<div id="64f39cba" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-08T18:51:08.582014Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-08T18:51:08.581920Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-08T18:51:08.666567Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-08T18:51:08.665957Z&quot;}}" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hemesh.bdry_loops  <span class="co"># the mesh has no boundary</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="57">
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>[]</code></pre>
 </div>
 </div>
-<div id="0fd10efb" class="cell" data-execution_count="58">
+<div id="0fd10efb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-08T18:51:08.667691Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-08T18:51:08.667614Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-08T18:51:08.811837Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-08T18:51:08.811318Z&quot;}}" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to compute angles, we use the intrinsic geometry of the mesh</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> jnp.array([<span class="fl">1.0</span>, <span class="fl">1.0</span>]) <span class="co"># box lengths</span></span>
@@ -470,11 +464,11 @@ window.Quarto = {
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>edge_lengths_nonperiodic <span class="op">=</span> jnp.linalg.norm(vertices[hemesh.orig] <span class="op">-</span> vertices[hemesh.dest], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>edge_lengths.<span class="bu">max</span>(), edge_lengths_nonperiodic.<span class="bu">max</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="58">
+<div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>(Array(0.083334, dtype=float64), Array(1.34128535, dtype=float64))</code></pre>
 </div>
 </div>
-<div id="736ba185" class="cell" data-execution_count="59">
+<div id="736ba185" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-08T18:51:08.812954Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-08T18:51:08.812871Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-08T18:51:09.011325Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-08T18:51:09.010786Z&quot;}}" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's group together the edge lengths for each face, then compute the area</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>la, lb, lc <span class="op">=</span> (edge_lengths[hemesh.prv[hemesh.face_incident]],</span>
@@ -601,7 +595,7 @@ window.Quarto = {
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_hes'</span>]:</span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Get lengths of half-edges using a periodic displacement function.</em></p>
-<div id="3b3f0d7f" class="cell" data-execution_count="61">
+<div id="3b3f0d7f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-08T18:51:09.026824Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-08T18:51:09.026743Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-08T18:51:09.578482Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-08T18:51:09.578016Z&quot;}}" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>periodic_displacement <span class="op">=</span> <span class="kw">lambda</span> r_1, r_2: displacement_periodic(r_1, r_2, L)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>periodic_areas <span class="op">=</span> get_periodic_triangle_areas(vertices, hemesh, periodic_displacement)</span>
@@ -717,7 +711,7 @@ window.Quarto = {
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices'</span>]:</span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute Voronoi cell areas from periodic edge lengths and cotangent weights.</em></p>
-<div id="81a812b9" class="cell" data-execution_count="63">
+<div id="81a812b9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-08T18:51:09.587290Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-08T18:51:09.587214Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-08T18:51:09.868889Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-08T18:51:09.868465Z&quot;}}" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>periodic_voronoi_areas <span class="op">=</span> get_periodic_voronoi_areas(vertices, hemesh, periodic_displacement)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>periodic_face_positions <span class="op">=</span> get_periodic_voronoi_face_positions(vertices, hemesh, periodic_displacement)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>periodic_he_lengths <span class="op">=</span> get_periodic_he_lengths(vertices, hemesh, periodic_displacement)</span>

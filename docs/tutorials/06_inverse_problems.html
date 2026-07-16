@@ -199,64 +199,58 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../src/trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trigonometry</span></a>
+  <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/01_triangular_meshes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Loading, processing, and saving triangular meshes</span></a>
+ <span class="menu-text"><code>triangular</code>: Loading, processing, and saving triangular meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/02_halfedge_datastructure.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Half-edge meshes</span></a>
+ <span class="menu-text"><code>mesh</code>: Half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/03_topological_modifications.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Topological modifications in half-edge meshes</span></a>
+ <span class="menu-text"><code>topology</code>: Topological modifications in half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Adjacency-based operators on half-edge meshes</span></a>
+ <span class="menu-text"><code>adjacency</code>: Adjacency-based operators on half-edge meshes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/05_geometric_quantities.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Mesh geometry</span></a>
+ <span class="menu-text"><code>geometry</code>: Mesh geometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometric quantities in periodic boundary conditions</span></a>
+ <span class="menu-text"><code>periodic</code>: Geometry in periodic boundary conditions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Finite-element gradient and cotan-Laplacian</span></a>
+ <span class="menu-text"><code>linops</code>: discrete gradient, divergence, and Laplacian</span></a>
   </div>
 </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../src/07_algorithms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry-processing algorithms</span></a>
-  </div>
-</li>
+ <span class="menu-text">src/07_algorithms.ipynb</span>
+  </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../src/08_simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>simulation</code>: Simulation utilities</span></a>
-  </div>
-</li>
+ <span class="menu-text">src/08_simulation.ipynb</span>
+  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -317,7 +311,6 @@ window.Quarto = {
    
   <ul>
   <li><a href="#growing-suzanne" id="toc-growing-suzanne" class="nav-link active" data-scroll-target="#growing-suzanne">Growing Suzanne</a></li>
-  <li><a href="#loss-function" id="toc-loss-function" class="nav-link" data-scroll-target="#loss-function">Loss function</a></li>
   <li><a href="#load-mesh" id="toc-load-mesh" class="nav-link" data-scroll-target="#load-mesh">Load mesh</a></li>
   <li><a href="#define-mesh-based-energies" id="toc-define-mesh-based-energies" class="nav-link" data-scroll-target="#define-mesh-based-energies">Define mesh-based energies</a></li>
   <li><a href="#load-target-mesh-and-compute-distance-transform" id="toc-load-target-mesh-and-compute-distance-transform" class="nav-link" data-scroll-target="#load-target-mesh-and-compute-distance-transform">Load target mesh and compute distance transform</a></li>
@@ -347,7 +340,7 @@ window.Quarto = {
 
 
 <p>This tutorial uses <code>triangulax</code> to study a geometric inverse problem: find a dynamical process that generates a target shape <span class="math inline">\(\mathcal{S}_1\)</span> from an initial shape <span class="math inline">\(\mathcal{S}_1\)</span>. In this setting, a simulation is effectively treated like a “neural network” which maps initial conditions to simulation results, and simulation parameters as trainable “weights”. We saw a very simple inverse problem in tutorial 3: now we will consider a more complex problem in 3d.</p>
-<p>For example, consider an elastic energy <span class="math inline">\(E (\mathbf{v};  \boldsymbol{\theta})\)</span> that depends on both mesh vertex positions <span class="math inline">\(\mathbf{v};\)</span> and parameters <span class="math inline">\({\theta})\)</span> (like elastic moduli or reference shapes). If vertices move to relax the elastic energy, the final state is the minimum-energy configuration <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta}) = \arg \min E ( \cdot ;\theta)\)</span>. The goal is to find parameters <span class="math inline">\(\boldsymbol{\theta}^*\)</span> so that the equilibrated vertex positions <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta}^*)\)</span> match the target shape. Via automatic differentiation, one can differentiate <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta})\)</span> with respect to the parameters <span class="math inline">\(\boldsymbol{\theta}\)</span>, and use gradient-based optimization.</p>
+<p>For example, consider an elastic energy <span class="math inline">\(E (\mathbf{v};  \boldsymbol{\theta})\)</span> that depends on both mesh vertex positions <span class="math inline">\(\mathbf{v};\)</span> and parameters <span class="math inline">\({\theta})\)</span> (like elastic moduli or reference shapes). If vertices move to relax the elastic energy, the final state is the minimum-energy configuration <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta}) = \arg \min E ( \cdot ;\theta)\)</span>. The goal is to find parameters <span class="math inline">\(\boldsymbol{\theta}^*\)</span> so that the equilibrated vertex positions <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta}^*)\)</span> match the target shape. Via automatic differentiation, one can differentiate <span class="math inline">\(\mathbf{v}^*(\boldsymbol{\theta})\)</span> with respect to the parameters <span class="math inline">\(\boldsymbol{\theta}\)</span>, and use gradient-based optimizers like ADAM to find the desired parameter value <span class="math inline">\(\boldsymbol{\theta}^*\)</span>.</p>
 <p>The optimization library <code>optimistix</code> and the ODE library <code>diffrax</code> allow automatically differentiating through complex simulations. More generally, differentiating through a simulation facilitates sensitivity analyses and fitting simulations to (experimental) data.</p>
 <section id="growing-suzanne" class="level3">
 <h3 class="anchored" data-anchor-id="growing-suzanne">Growing Suzanne</h3>
@@ -355,18 +348,22 @@ window.Quarto = {
 <div>
 <p><img src="suzanne.png" width="500"></p>
 </div>
-<p>Inspired by models for the growing leafs and tissue sheets, we will treat the mesh as an elastic material. The elastic energy is combines resistance to in-plane shear and dilation, and bending resistance. For the former, we use the neo-hookean energy from tutorial 5:</p>
+<p>Inspired by models for the growing leafs and tissue sheets, we will treat the mesh as a two-layered elastic material. The reference/target shape of the elastic sheet evolves in time due to growth, and the surface deforms to minimize its elastic energy. Differences in the growth rates of the two layers (inner and outer) induce curvature.</p>
+<section id="elastic-energy" class="level4">
+<h4 class="anchored" data-anchor-id="elastic-energy">Elastic energy</h4>
+<p>The elastic energy combines an in-plane and a bending contribution. For the former, we use the neo-hookean energy from tutorial 5:</p>
 <p><span class="math display">\[E_{\mathrm{NH}} = \delta \sum_f A_f \left[ \frac{K}{2}\left(\frac{\mathrm{tr}(C_f)}{\sqrt{\det C_f}} - 2\right)
 +\frac{G}{2}\left(\sqrt{\det C_f} - 1\right)^2
 \right], \qquad C_f = G_0^{-1} G\]</span></p>
-<p>Here, <span class="math inline">\(C_f\)</span> is the Cauchy-Green tensor (a nonlinear measure of strain), computed from <span class="math inline">\(G\)</span>, <span class="math inline">\(G_0\)</span> the current and reference metric tensors for each triangle <span class="math inline">\(f\)</span>. The total energy sums over all faces, weighted by area <span class="math inline">\(A_f\)</span>. <span class="math inline">\(K\)</span> and <span class="math inline">\(G\)</span> are the bulk and shear moduli. The overall scale is set by the shell thickness <span class="math inline">\(\delta\)</span>.</p>
-<p>Bending resistance can be modeled using the dihedral angles <span class="math inline">\(\theta_{e}\)</span> for each edge: <span class="math display">\[E_{\mathrm{B}} = \delta^3 \sum_e \frac{\ell_e^2}{A_e} (\theta_e -\theta_e^0)^2  \]</span> where the area <span class="math inline">\(A_e\)</span> is defined as <span class="math inline">\(1/3\)</span> of the areas of the adjacent triangles. For thin shells, bending rigidity is thus much weaker than resistance to in-plane deformation (as one may verify using a sheet of paper).</p>
-<p>To model growth, we allow the reference metric <span class="math inline">\(G_f^0(t)\)</span> to depend on time. By convention, <span class="math inline">\(t=0\)</span> is the initial and <span class="math inline">\(t=1\)</span> the final timepoint. For simplicity, we focus on isotropic growth with rate <span class="math inline">\(\lambda_f\)</span>: <span class="math display">\[ G_f^0(t) = e^{\lambda_f t} G_f^0(0) \]</span> At each timestep, we compute the new elastic energy minimum shape from the preceding one. The goal is find <span class="math inline">\(\lambda_f\)</span> so that the elastic energy equilibrium at the final time matches the target shape.</p>
+<p>Here, <span class="math inline">\(C_f\)</span> is the Cauchy-Green tensor (a nonlinear measure of strain), computed from <span class="math inline">\(G\)</span>, <span class="math inline">\(G_0\)</span> the current and reference metric tensors for each triangle <span class="math inline">\(f\)</span>. <span class="math inline">\(G_0\)</span> defines the target shape of each triangle. The total energy sums over all faces, weighted by area <span class="math inline">\(A_f\)</span>. <span class="math inline">\(K\)</span> and <span class="math inline">\(G\)</span> are the bulk and shear moduli. The overall scale is set by the shell thickness <span class="math inline">\(\delta\)</span>.</p>
+<p>Bending resistance is modeled using the dihedral angles <span class="math inline">\(\theta_{e}\)</span> for each edge: <span class="math display">\[E_{\mathrm{B}} = \delta^3 \sum_e \frac{\ell_e^2}{A_e} (\theta_e -\theta_e^0)^2  \]</span> Where the area <span class="math inline">\(A_e\)</span> is defined as <span class="math inline">\(1/3\)</span> of the areas of the adjacent triangles. For thin shells, bending rigidity is thus much weaker than resistance to in-plane deformation (as one may verify using a sheet of paper).</p>
+<p>To model growth, we allow the reference metric <span class="math inline">\(G_f^0(t)\)</span> to depend on time. By convention, <span class="math inline">\(t=0\)</span> is the initial and <span class="math inline">\(t=1\)</span> the final timepoint. For simplicity, we focus on isotropic growth with rate <span class="math inline">\(\lambda_f\)</span>: <span class="math display">\[ G_f^0(t) = e^{\lambda_f t} G_f^0(0) \]</span> At each timestep, we compute the new elastic energy minimum shape from the preceding one. Differences in growth rate between the two layers lead to bending, which</p>
+<p>The goal is find <span class="math inline">\(\lambda_f\)</span> so that the elastic energy equilibrium at the final time matches the target shape.</p>
 </section>
-<section id="loss-function" class="level3">
-<h3 class="anchored" data-anchor-id="loss-function">Loss function</h3>
+<section id="loss-function" class="level4">
+<h4 class="anchored" data-anchor-id="loss-function">Loss function</h4>
 <p>Now, we need a loss function that measures the agreement between the simulation output and the target. This can be a non-trivial problem, because we need to measure the similarity of meshes with different number of vertices and connectivity.</p>
-<p>Let us start with a toy example where this problem does not occur: a surface defined by an implicit equation <span class="math inline">\(f(\mathbf{v})=0\)</span>, for example an ellipsoid.</p>
+<p>We first align the output and target meshes</p>
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 <div id="e896a60a" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On second thought, the isotropic growth problem can be "analytically" solved by finding a conformal map from</span></span>
@@ -413,6 +410,7 @@ window.Quarto = {
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> algorithms <span class="im">as</span> algo</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
 </section>
 <section id="load-mesh" class="level3">
 <h3 class="anchored" data-anchor-id="load-mesh">Load mesh</h3>

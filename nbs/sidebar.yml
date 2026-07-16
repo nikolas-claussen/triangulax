@@ -16,8 +16,9 @@ website:
           - src/05b_geometric_quantities_periodic_bcs.ipynb
           - src/06_linear_operators.ipynb
           - src/07_interpolation.ipynb
-          - src/08_algorithms.ipynb
-          - src/09_simulation.ipynb
+          - src/08_elasticity.ipynb
+          - src/09_algorithms.ipynb
+          - src/10_simulation.ipynb
       - section: tutorials
         contents:
           - tutorials/00_triangular_meshes.ipynb
