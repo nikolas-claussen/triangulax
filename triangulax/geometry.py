@@ -8,7 +8,7 @@ __all__ = ['get_he_length', 'get_face_centroids', 'get_triangle_areas', 'get_ori
            'get_cotan_weights_per_he', 'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths',
            'get_voronoi_corner_areas', 'get_voronoi_areas', 'get_voronoi_perimeters', 'get_voronoi_areas_robust',
            'get_gaussian_curvature', 'get_mean_curvature_dihedral', 'get_mean_curvature_laplace',
-           'get_corner_scaled_angles', 'get_face_tangent_basis', 'get_vertex_tangent_basis',
+           'get_corner_scaled_angles', 'get_face_edge_basis', 'get_face_tangent_basis', 'get_vertex_tangent_basis',
            'get_transport_across_halfedge', 'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #ffed5003
@@ -168,7 +168,7 @@ def get_oriented_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
     return signed_dual_length
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #96c8a576
-# to do: ensure the corner weights and angles return 0 for boundary half-edges, where they are note meaningful.
+# to do: ensure the corner weights and angles return 0 for boundary half-edges, where they are not meaningful.
 
 def get_corner_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                       ) -> Float[jax.Array, " n_hes"]:
@@ -391,12 +391,35 @@ def get_corner_scaled_angles(vertices: Float[jax.Array, "n_vertices dim"],
     return angles * scale[vertex_of_corner]
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #38cd5b95
+def get_face_edge_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                           ) -> Float[jax.Array, "2 n_faces dim"]:
+    """Edge basis in 3D world coordinates per face.
+
+    For a triangle with vertices (v0, v1, v2), the edge basis is defined by:
+    u = v1 - v0, v = v2-v0
+    Note: This basis is not orthonormal.
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices dim"]
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh.
+
+    Returns
+    -------
+    Float[Array, "2 n_faces dim"]
+        Per-face tangent basis: result[0, f] = u, result[1, f] = v.
+    """
+    a, b, c = vertices[hemesh.faces.T]
+    return jnp.stack([b - a, c-a], axis=0)
+
 def get_face_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                           ) -> Float[jax.Array, "n_faces 2 dim"]:
+                           ) -> Float[jax.Array, "2 n_faces 3"]:
     """Orthonormal tangent basis (basisX, basisY) in 3D world coordinates per face.
 
-    Convention: basisX is aligned with the face's incident halfedge projected onto
-    the face tangent plane. basisY = cross(basisX, face_normal).
+    Convention: For a face with vertices (v0, v1, v2)
+    basisX equals (v1-v0) / |v1-v0|, and basisY = cross(basisX, face_normal).
 
     Note: 3D meshes only (uses cross product).
 
@@ -409,21 +432,19 @@ def get_face_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
 
     Returns
     -------
-    Float[Array, "n_faces 2 3"]
-        Per-face tangent basis: result[f, 0] = basisX, result[f, 1] = basisY.
+    Float[Array, "2 n_faces 3"]
+        Per-face tangent basis: result[0, f] = basisX, result[1, f] = basisY.
     """
-    normals = get_triangle_normals(vertices, hemesh)
-    # edge vector of face incident halfedge
-    edge_vecs = vertices[hemesh.dest[hemesh.face_incident]] - vertices[hemesh.orig[hemesh.face_incident]]
-    # project onto tangent plane and normalize
-    basis_X = jax.vmap(trig.project_out_vector)(edge_vecs, normals)
-    basis_X = basis_X / jnp.maximum(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
-    basis_Y = jnp.cross(basis_X, normals)
-    return jnp.stack([basis_X, basis_Y], axis=1)
+    a, b, c = vertices[hemesh.faces.T]
+    u, v = b - a, c - a
+    e1 = u / jnp.linalg.norm(u, axis=-1, keepdims=True)
+    v_perp = v - jnp.sum(v * e1, axis=-1, keepdims=True) * e1
+    e2 = v_perp / jnp.linalg.norm(v_perp, axis=-1, keepdims=True)
+    return jnp.stack([e1, e2], axis=0)
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #0934d60c
 def get_vertex_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                             ) -> Float[jax.Array, "n_vertices 2 dim"]:
+                             ) -> Float[jax.Array, "2 n_vertices dim"]:
     """Orthonormal tangent basis (basisX, basisY) in 3D world coordinates per vertex.
 
     Convention: basisX is aligned with the vertex' incident halfedge projected onto
@@ -440,15 +461,15 @@ def get_vertex_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemes
 
     Returns
     -------
-    Float[Array, "n_vertices 2 3"]
-        Per-vertex tangent basis: result[v, 0] = basisX, result[v, 1] = basisY.
+    Float[Array, "2 n_vertices 3"]
+        Per-vertex tangent basis: result[0, v] = basisX, result[1, v] = basisY.
     """
     normals = get_vertex_normals(vertices, hemesh)
     edge_vecs = vertices[hemesh.dest[hemesh.incident]] - vertices[hemesh.orig[hemesh.incident]]
     basis_X = jax.vmap(trig.project_out_vector)(edge_vecs, normals)
     basis_X = basis_X / jnp.maximum(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
     basis_Y = jnp.cross(basis_X, normals)
-    return jnp.stack([basis_X, basis_Y], axis=1)
+    return jnp.stack([basis_X, basis_Y], axis=0)
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #3d2e6fa4
 def get_transport_across_halfedge(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
@@ -476,8 +497,8 @@ def get_transport_across_halfedge(vertices: Float[jax.Array, "n_vertices dim"], 
     # get tangent basis
     face_basis = get_face_tangent_basis(vertices, hemesh)
     # project edge vector onto face and twin bases
-    edge_vec_face = jnp.einsum('vix, vx -> vi', face_basis[hemesh.heface], edge_vec)
-    edge_vec_face_twin = jnp.einsum('vix, vx -> vi', face_basis[hemesh.heface[hemesh.twin]], edge_vec)
+    edge_vec_face = jnp.einsum('ivx, vx -> vi', face_basis[:, hemesh.heface], edge_vec)
+    edge_vec_face_twin = jnp.einsum('ivx, vx -> vi', face_basis[:, hemesh.heface[hemesh.twin]], edge_vec)
     # get angle between the two
     transport_angle = jax.vmap(trig.get_angle_between_vectors)(edge_vec_face, -edge_vec_face_twin)
     # mask boundary halfedges
@@ -509,8 +530,8 @@ def get_transport_along_halfedge(vertices: Float[jax.Array, "n_vertices dim"], h
     # get tangent basis
     vertex_basis = get_vertex_tangent_basis(vertices, hemesh)
     # project edge vector onto vertex bases
-    edge_vec_vertex = jnp.einsum('vix, vx -> vi', vertex_basis[hemesh.orig], edge_vec)
-    edge_vec_vertex_next = jnp.einsum('vix, vx -> vi', vertex_basis[hemesh.dest], edge_vec)
+    edge_vec_vertex = jnp.einsum('ivx, vx -> vi', vertex_basis[:, hemesh.orig], edge_vec)
+    edge_vec_vertex_next = jnp.einsum('ivx, vx -> vi', vertex_basis[:,hemesh.dest], edge_vec)
     # get angle between the two
     transport_angle = jax.vmap(trig.get_angle_between_vectors)(edge_vec_vertex, -edge_vec_vertex_next)
     # mask boundary halfedges
