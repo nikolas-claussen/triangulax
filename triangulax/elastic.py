@@ -324,6 +324,11 @@ def make_tangential_energy(energy_fn, v0: Float[jax.Array, "n 3"],
     """Wrap energy_fn(vertices, args) to optimize over tangent coords t ∈ ℝⁿˣ².
 
     vertices(t) = v0 + einsum('vi,vid->vd', t, basis).
+
+    Any basis (orthonormal or not) which spans the tangent plane is valid,
+    but the same basis must be used in make_tangential_energy and
+    in vertices_from_tangential to recover the 3D vertex positions.
+
     """
     def energy(t, args):
         return energy_fn(v0 + jnp.einsum("vi,vid->vd", t, basis), args)
