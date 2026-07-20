@@ -26,3 +26,5 @@ website:
           - tutorials/03_vertex_models.ipynb
           - tutorials/04_PDEs_on_curved_surfaces.ipynb
           - tutorials/05_membrane_mechanics.ipynb
+          - tutorials/06_inverse_problems.ipynb
+

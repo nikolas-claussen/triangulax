@@ -1,4 +1,4 @@
-# Tutorial: coding in JAX
+# Tutorial: Coding in JAX
 
 
 `triangulax` aims to create a triangulation data structure compatible

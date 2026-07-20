@@ -26,15 +26,13 @@ meshes with vertices at infinity (see
 [documentation](https://nikolas-claussen.github.io/triangulax/src/02_halfedge_datastructure.html#boundary-and-the-vertex-at-infinity))
 are not.
 
-For references, please see the following: - [“Computing discrete shape
-operators on general meshes”, E. Grinspun et al.,
-2006](cims.nyu.edu/gcl/papers/grinspun2006cds.pdf) - “A discrete
-geometric view on shear-deformable shell models”, C. Weischedel, 2012
-(PhD thesis) - [“Growth patterns for shape-shifting elastic bilayers”,
-W. van Rees et al.,
-2017](http://www.pnas.org/cgi/doi/10.1073/pnas.1709025114) - [“Physical
-Simulation of Environmentally Induced Thin Shell Deformation”, H.Y. Chen
-et al, 2018](https://doi.org/10.1145/3197517.3201395)
+For references, please see the following: - [“Discrete shells”, E.
+Grinspun et al., 2006](https://dl.acm.org/doi/10.5555/846276.846284) -
+[“Growth patterns for shape-shifting elastic bilayers”, W. van Rees et
+al., 2017](http://www.pnas.org/cgi/doi/10.1073/pnas.1709025114) -
+[“Physical Simulation of Environmentally Induced Thin Shell
+Deformation”, H.Y. Chen et al,
+2018](https://doi.org/10.1145/3197517.3201395)
 
 ### In-plane elastic energies
 
@@ -57,7 +55,7 @@ $$E\_{\mathrm{NH}} = \sum_f A^0_f \left\[ \frac{\mu}{2}\left(\frac{\mathrm{tr}(C
 an integral over the undeformed configuration. Another example is the
 *St.-Venant-Kirchhoff model*:
 *E*<sub>SK</sub> = ∑<sub>*f*</sub>*A*<sub>*f*</sub><sup>0</sup>\[*α* tr(*C*<sub>*f*</sub> − 𝕀)<sup>2</sup> + 2*β* tr ((*C*<sub>*f*</sub> − 𝕀)<sup>2</sup>)\]
-where *α*, *β* are Lamé-type coefficients and *C*<sub>*f*</sub> − 𝕀 is a
+where *α*, *β* are Lamé coefficients and *C*<sub>*f*</sub> − 𝕀 is a
 measure of strain (2x the Green-Lagrange strain tensor).
 
 #### Evaluating the metric for a triangle
@@ -530,7 +528,7 @@ motion to preserver mesh quality.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L338"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L343"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### vertices_from_tangential
@@ -550,7 +548,7 @@ geom.get_vertex_tangent_basis(vertices, hemesh).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L333"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L338"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### vertices_from_normal
@@ -585,6 +583,10 @@ def make_tangential_energy(
 ℝⁿˣ².*
 
 vertices(t) = v0 + einsum(‘vi,vid-\>vd’, t, basis).
+
+Any basis (orthonormal or not) which spans the tangent plane is valid,
+but the same basis must be used in make_tangential_energy and in
+vertices_from_tangential to recover the 3D vertex positions.
 
 ------------------------------------------------------------------------
 

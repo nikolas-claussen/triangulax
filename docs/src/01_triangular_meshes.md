@@ -24,6 +24,63 @@ the cell tesselations by a 2D triangulation. For example, Voronoi
 tesselations can also be represented by their dual Delaunay
 triangulation.
 
+### Simple mesh reading and saving
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L52"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### write_obj
+
+``` python
+
+def write_obj(
+    vertices:Array, faces:Array, filename:Union, # filename to save to
+)->None:
+
+```
+
+*Write mesh to .obj format.*
+
+Only writes vertices and faces.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L27"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### read_obj
+
+``` python
+
+def read_obj(
+    filename:Union, # filename
+    dim:int=2, # Dimension - can be 2 or 3. If 2, the z-coordinate is ignored.
+)->tuple:
+
+```
+
+*Read vertices, texture vertices, normals, and faces from an obj file.*
+
+Indices of returned faces start at 0. See
+https://en.wikipedia.org/wiki/Wavefront\_.obj_file. Intended for .obj
+files containing a single object only. If the file contains a
+`# triangulax: has_inf_vertex` comment (written by
+:meth:[`write_obj`](https://nikolas-claussen.github.io/triangulax/src/triangular_meshes.html#write_obj)),
+sentinel values are converted back to `inf`.
+
+``` python
+vertices, faces = read_obj("../test_meshes/disk.obj")
+filename = "../test_meshes/disk_write_test.obj"
+write_obj(vertices, faces, filename)
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+
 ### The [`TriMesh`](https://nikolas-claussen.github.io/triangulax/src/triangular_meshes.html#trimesh) class
 
 A
@@ -72,7 +129,7 @@ Laplacian eigenvectors) to the UV domain for 2D visualization.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L30"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L87"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TriMesh
@@ -218,7 +275,7 @@ plt.colorbar(sc, ax=ax2)
 plt.tight_layout()
 ```
 
-![](01_triangular_meshes_files/figure-commonmark/cell-7-output-1.png)
+![](01_triangular_meshes_files/figure-commonmark/cell-10-output-1.png)
 
 ``` python
 # test write/read roundtrip with UV data
@@ -250,7 +307,7 @@ print("2D mesh (no UV) backward compatibility: OK")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L264"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L321"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_per_face_jacobian
@@ -295,7 +352,7 @@ Some functions for plotting meshes:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L328"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L385"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_triangular_lattice
@@ -314,7 +371,7 @@ points.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L320"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L377"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_poisson_points
@@ -333,7 +390,7 @@ def generate_poisson_points(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L311"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L368"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_ginibre_points
@@ -366,14 +423,14 @@ plt.axis("equal")
      np.float64(-1.5647768086089484),
      np.float64(1.5000093386295263))
 
-![](01_triangular_meshes_files/figure-commonmark/cell-14-output-2.png)
+![](01_triangular_meshes_files/figure-commonmark/cell-17-output-2.png)
 
 ### Creating 2d meshes with periodic boundary conditions (PBCs)
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L340"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L397"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_delaunay_faces
@@ -398,7 +455,7 @@ mapped back to the original vertex ids.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L401"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L458"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_faces_crossing_periodic_boundaries
@@ -442,7 +499,7 @@ plt.title("Periodic Delaunay triangulation")
 
     Text(0.5, 1.0, 'Periodic Delaunay triangulation')
 
-![](01_triangular_meshes_files/figure-commonmark/cell-17-output-2.png)
+![](01_triangular_meshes_files/figure-commonmark/cell-20-output-2.png)
 
 ``` python
 for n_vertices in [32, 64, 96]:
@@ -470,7 +527,7 @@ print("Periodic Delaunay triangulations are manifold and boundary-free.")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L443"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L500"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_adjacent_vertex_indices

@@ -596,17 +596,12 @@ Differential-Geometry Operators for Triangulated 2-Manifolds”
 perimeters = get_voronoi_perimeters(mesh.vertices, hemesh)
 print("Voronoi perimeters (mean):", perimeters[~hemesh.is_bdry].mean())
 
-# Gaussian curvature should be 0 for a flat disk (interior vertices)
-K = get_gaussian_curvature(mesh.vertices, hemesh)
-print("Gaussian curvature (max interior):", jnp.abs(K[~hemesh.is_bdry]).max())
-
 # face centroids
 centroids = get_face_centroids(mesh.vertices, hemesh)
 print("Face centroids shape:", centroids.shape)
 ```
 
     Voronoi perimeters (mean): 0.6346395879903053
-    Gaussian curvature (max interior): 5.6071421949754903e-14
     Face centroids shape: (224, 2)
 
 ``` python
@@ -668,13 +663,20 @@ def get_gaussian_curvature(
 
 *Discrete Gaussian curvature via the angle defect: `(2π - Σθ_i) / A_i`.*
 
+``` python
+# Gaussian curvature should be 0 for a flat disk (interior vertices)
+K = get_gaussian_curvature(mesh.vertices, hemesh)
+print("Gaussian curvature (max interior):", jnp.abs(K[~hemesh.is_bdry]).max())
+```
+
+    Gaussian curvature (max interior): 5.6669428844931474e-14
+
 ### Mean curvature
 
-Two methods are provided for computing pointwise, per-vertex mean
-curvature.
+Two methods are provided for computing per-vertex mean curvature.
 
 **Steiner (dihedral angle) formula:**
-$$H_i = \frac{1}{4A_i} \sum\_{j\sim i} \ell\_{ij} \theta\_{ij} $$
+$$H_i = \frac{1}{4ai} \sum\_{j\sim i} \ell\_{ij} \theta\_{ij} $$
 where *θ*<sub>*i**j*</sub> are the dihedral angles between adjacent
 triangles.
 
@@ -804,9 +806,15 @@ print(f"\n  Correlation with igl:  dihedral={corr_dihedral:.4f},  laplace={corr_
 This section defines tools to work with the tangent space of a surface,
 namely:
 
-1.  Local orthonormal bases in 3d coordinate-space for the tangent space
-    at each vertex and face.
-
+1.  Bases for the tangent space at each vertex and face. We implement
+    two bases:
+    - Non-orthogonal local edge basis for faces. For a face with
+      vertices *a*, *b*, *c*, the basis is
+      *u* = *b* − *a*, *v* = *c* − *a*
+    - Local orthonormal bases in 3d coordinate-space for the tangent
+      space at each vertex and face. For a face *a*, *b*, *c*, this
+      basis has vectors
+      *e*<sub>1</sub> = (*b* − *a*)/|*b* − *a*|, *e*<sub>2</sub> ⟂ *e*<sub>1</sub>.
 2.  Parallel transport, which in the discrete setting means the rotation
     matrices that relate the local bases at adjacent triangles or
     vertices.
@@ -865,7 +873,7 @@ assert jnp.allclose(scaled_sums_disk[hemesh.is_bdry], jnp.pi, atol=1e-10)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L394"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L417"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_tangent_basis
@@ -875,23 +883,44 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def get_face_tangent_basis(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions in 3D.
     hemesh:HeMesh, # Half-edge mesh.
-)->Float[Array, 'n_faces 2 dim']: # Per-face tangent basis: result[f, 0] = basisX, result[f, 1] = basisY.
+)->Float[Array, '2 n_faces 3']: # Per-face tangent basis: result[0, f] = basisX, result[1, f] = basisY.
 
 ```
 
 *Orthonormal tangent basis (basisX, basisY) in 3D world coordinates per
 face.*
 
-Convention: basisX is aligned with the face’s incident halfedge
-projected onto the face tangent plane. basisY = cross(basisX,
-face_normal).
+Convention: For a face with vertices (v0, v1, v2) basisX equals (v1-v0)
+/ |v1-v0|, and basisY = cross(basisX, face_normal).
 
 Note: 3D meshes only (uses cross product).
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L394"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_face_edge_basis
+
+``` python
+
+def get_face_edge_basis(
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    hemesh:HeMesh, # Half-edge mesh.
+)->Float[Array, '2 n_faces dim']: # Per-face tangent basis: result[0, f] = u, result[1, f] = v.
+
+```
+
+*Edge basis in 3D world coordinates per face.*
+
+For a triangle with vertices (v0, v1, v2), the edge basis is defined by:
+u = v1 - v0, v = v2-v0 Note: This basis is not orthonormal.
 
 ``` python
 # test: face tangent basis orthonormality
 face_basis = get_face_tangent_basis(geommesh_s.vertices, hemesh_s)
-bx, by = face_basis[:, 0], face_basis[:, 1]
+bx, by = face_basis
 face_normals = get_triangle_normals(geommesh_s.vertices, hemesh_s)
 
 # bx · by ≈ 0, |bx| ≈ 1, |by| ≈ 1
@@ -906,13 +935,13 @@ assert jnp.allclose(jax.vmap(jnp.dot)(bx, face_normals), 0., atol=1e-10)
 assert jnp.allclose(jax.vmap(jnp.dot)(by, face_normals), 0., atol=1e-10)
 ```
 
-    Max bx·by: 9.71445146547012e-17
-    Max bx·n: 5.93629416659658e-17
+    Max bx·by: 2.72848794068397e-16
+    Max bx·n: 1.1102230246251565e-16
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L425"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L446"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_vertex_tangent_basis
@@ -922,7 +951,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def get_vertex_tangent_basis(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions in 3D.
     hemesh:HeMesh, # Half-edge mesh.
-)->Float[Array, 'n_vertices 2 dim']: # Per-vertex tangent basis: result[v, 0] = basisX, result[v, 1] = basisY.
+)->Float[Array, '2 n_vertices dim']: # Per-vertex tangent basis: result[0, v] = basisX, result[1, v] = basisY.
 
 ```
 
@@ -938,7 +967,7 @@ Note: 3D meshes only (uses cross product).
 ``` python
 # test: vertex tangent basis orthonormality
 vtx_basis = get_vertex_tangent_basis(geommesh_s.vertices, hemesh_s)
-bx_v, by_v = vtx_basis[:, 0], vtx_basis[:, 1]
+bx_v, by_v = vtx_basis
 vtx_normals = get_vertex_normals(geommesh_s.vertices, hemesh_s)
 
 print("Max bx·by:", jnp.abs(jax.vmap(jnp.dot)(bx_v, by_v)).max())
@@ -975,7 +1004,7 @@ across (“f”) the half edge.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L454"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L475"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_transport_across_halfedge
@@ -1006,7 +1035,7 @@ jnp.allclose(transports - transports[hemesh_s.twin], 0)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L488"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L509"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_transport_along_halfedge

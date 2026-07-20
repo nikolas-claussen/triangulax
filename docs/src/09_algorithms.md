@@ -7,6 +7,35 @@
 This notebook defines geometry processing algorithms building on the
 geometric primitives defined in the preceding modules.
 
+### Mesh and point-to-point alignment
+
+[Kabsch alignment](https://en.wikipedia.org/wiki/Kabsch_algorithm) finds
+the optimal (proper) rotation and translation between two matched sets
+of points. Here, we provide a JAX-compatible version.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L29"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### kabsch_align
+
+``` python
+
+def kabsch_align(
+    v:Float[Array, 'n_vertices dim'], # vertices to be aligned
+    v_ref:Float[Array, 'n_vertices dim'], # reference vertices
+)->Float[Array, 'n _vertices dim']: # v optimally aligned to v_ref
+
+```
+
+*Optimally rotate/translate v onto v_ref (differentiable Kabsch
+algorithm).*
+
+The resulting rotation R is proper (det(R) = 1), so no reflections are
+allowed. The alignment is compatible with jax.jit and jax.grad.
+
 ### Smoothing and remeshing
 
 Two operations to improve mesh quality without altering surface
@@ -33,7 +62,7 @@ angle, summary statistics, and a human-readable quality report.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L28"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L64"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_angles
@@ -66,7 +95,7 @@ assert jnp.all(max_angles >= jnp.pi / 3 - 1e-6)  # max angle >= 60° always
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L53"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L89"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_mesh_quality_stats
@@ -113,7 +142,7 @@ mesh, but generally improves quality in practice.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L93"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L129"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### is_locally_delaunay
@@ -145,7 +174,7 @@ assert jnp.all(delaunay[hemesh.is_bdry_edge])  # boundary edges are always Delau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L119"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L155"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### fix_delaunay
@@ -207,7 +236,7 @@ plt.axis('equal')
      np.float64(-1.1177076607221643),
      np.float64(1.1221007508660394))
 
-![](09_algorithms_files/figure-commonmark/cell-11-output-2.png)
+![](09_algorithms_files/figure-commonmark/cell-12-output-2.png)
 
 ### Tangential vertex smoothing
 
@@ -225,7 +254,7 @@ Smoothing](https://geometry-central.net/surface/algorithms/remeshing/#tangential
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L161"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L197"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### smooth_vertices_laplacian
@@ -292,7 +321,7 @@ plt.axis('equal')
      np.float64(-1.0993484814751877),
      np.float64(1.090674110978944))
 
-![](09_algorithms_files/figure-commonmark/cell-14-output-2.png)
+![](09_algorithms_files/figure-commonmark/cell-15-output-2.png)
 
 ``` python
 # Test 3D tangential smoothing on a sphere

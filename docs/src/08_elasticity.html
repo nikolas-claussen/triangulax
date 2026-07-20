@@ -164,7 +164,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/08_elasticity.html"><code>elastic</code> - Discrete elastic energies</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -184,13 +184,13 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Modules &amp; API reference</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
@@ -240,11 +240,29 @@ window.Quarto = {
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">src/07_algorithms.ipynb</span>
-  </li>
+  <div class="sidebar-item-container"> 
+  <a href="../src/07_interpolation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>interp</code>: Linear interpolation on triangular meshes</span></a>
+  </div>
+</li>
           <li class="sidebar-item">
- <span class="menu-text">src/08_simulation.ipynb</span>
-  </li>
+  <div class="sidebar-item-container"> 
+  <a href="../src/08_elasticity.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><code>elastic</code> - Discrete elastic energies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../src/09_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>algorithms</code>: Geometry-processing algorithms</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../src/10_simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>simulation</code>: Simulation utilities</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -259,13 +277,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: triangular meshes in <code>triangulax</code></span></a>
+ <span class="menu-text">Tutorial: Triangular meshes in <code>triangulax</code></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/01_coding_with_JAX.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: coding in JAX</span></a>
+ <span class="menu-text">Tutorial: Coding in JAX</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -329,7 +347,7 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="08_elasticity.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../src/00_trigonometry.html">Modules &amp; API reference</a></li><li class="breadcrumb-item"><a href="../src/08_elasticity.html"><code>elastic</code> - Discrete elastic energies</a></li></ol></nav></header>
 
 
 
@@ -341,12 +359,12 @@ window.Quarto = {
 <p>All energies share the signature <code>energy(vertices, args) -&gt; scalar</code>, where <code>args</code> is a tuple holding the mesh connectivity and the material parameters. This matches the calling conventions of <code>jax.grad</code>, <code>optimistix</code>, and <code>diffrax</code>, so the energies can be plugged directly into optimizers and ODE solvers. Material parameters can be scalars or per-face/per-edge/per-vertex arrays (inhomogeneous materials).</p>
 <p>A note on units: for a shell of thickness <span class="math inline">\(h\)</span> made from a material with Young’s modulus <span class="math inline">\(Y\)</span>, the in-plane moduli scale as <span class="math inline">\(\sim Y h\)</span> (units energy/area), while the bending moduli scale as <span class="math inline">\(\sim Y h^3/12\)</span> (units energy) — thin shells are much easier to bend than to stretch.</p>
 <p>Meshes with a boundary are supported (free/natural boundary conditions); meshes with vertices at infinity (see <a href="https://nikolas-claussen.github.io/triangulax/src/02_halfedge_datastructure.html#boundary-and-the-vertex-at-infinity">documentation</a>) are not.</p>
-<p>For references, please see the following: - <a href="cims.nyu.edu/gcl/papers/grinspun2006cds.pdf">“Computing discrete shape operators on general meshes”, E. Grinspun et al., 2006</a> - “A discrete geometric view on shear-deformable shell models”, C. Weischedel, 2012 (PhD thesis) - <a href="http://www.pnas.org/cgi/doi/10.1073/pnas.1709025114">“Growth patterns for shape-shifting elastic bilayers”, W. van Rees et al., 2017</a> - <a href="https://doi.org/10.1145/3197517.3201395">“Physical Simulation of Environmentally Induced Thin Shell Deformation”, H.Y. Chen et al, 2018</a></p>
+<p>For references, please see the following: - <a href="https://dl.acm.org/doi/10.5555/846276.846284">“Discrete shells”, E. Grinspun et al., 2006</a> - <a href="http://www.pnas.org/cgi/doi/10.1073/pnas.1709025114">“Growth patterns for shape-shifting elastic bilayers”, W. van Rees et al., 2017</a> - <a href="https://doi.org/10.1145/3197517.3201395">“Physical Simulation of Environmentally Induced Thin Shell Deformation”, H.Y. Chen et al, 2018</a></p>
 <section id="in-plane-elastic-energies" class="level3">
 <h3 class="anchored" data-anchor-id="in-plane-elastic-energies">In-plane elastic energies</h3>
 <p>Thin elastic sheets can undergo very large deformations. Geometrically, the reference or rest shape of the sheet can be described by a metric tensor <span class="math inline">\(g_0\)</span>. The in-plane strain of a surface is measured by the (right) Cauchy-Green tensor <span class="math inline">\(C_f = g_0^{-1} \cdot g_f\)</span>, computed from <span class="math inline">\(g_0\)</span> and the metric <span class="math inline">\(g_f\)</span> describing the actual configuration of the mesh. A classic choice is the <em>neo-Hookean</em> energy: <span class="math display">\[E_{\mathrm{NH}} = \sum_f A^0_f \left[ \frac{\mu}{2}\left(\frac{\mathrm{tr}(C_f)}{\sqrt{\det C_f}} - 2\right)
 +\frac{K}{2}\left(\sqrt{\det C_f} - 1\right)^2
-\right], \qquad C_f = g_0^{-1} g_f\]</span> <span class="math inline">\(K\)</span> and <span class="math inline">\(\mu\)</span> are the (2D) bulk and shear moduli (units: energy/area). For <span class="math inline">\(K=0\)</span>, only shear is penalized (the “Least Squares Conformal Mapping” (LSCM) energy). The metric can be easily evaluated for each triangle <span class="math inline">\(f\)</span> (see below). The total energy sums over all faces, weighted by the <em>reference</em> areas <span class="math inline">\(A^0_f = \tfrac{1}{2}\sqrt{\det g_0}\)</span>: the energy is an integral over the undeformed configuration. Another example is the <em>St.-Venant-Kirchhoff model</em>: <span class="math display">\[E_{\mathrm{SK}} = \sum_f A^0_f \left[\alpha \, \mathrm{tr}(C_f - \mathbb{I})^2 + 2\beta \, \mathrm{tr}\!\left((C_f-\mathbb{I})^2\right) \right]\]</span> where <span class="math inline">\(\alpha,\beta\)</span> are Lamé-type coefficients and <span class="math inline">\(C_f - \mathbb{I}\)</span> is a measure of strain (2x the Green-Lagrange strain tensor).</p>
+\right], \qquad C_f = g_0^{-1} g_f\]</span> <span class="math inline">\(K\)</span> and <span class="math inline">\(\mu\)</span> are the (2D) bulk and shear moduli (units: energy/area). For <span class="math inline">\(K=0\)</span>, only shear is penalized (the “Least Squares Conformal Mapping” (LSCM) energy). The metric can be easily evaluated for each triangle <span class="math inline">\(f\)</span> (see below). The total energy sums over all faces, weighted by the <em>reference</em> areas <span class="math inline">\(A^0_f = \tfrac{1}{2}\sqrt{\det g_0}\)</span>: the energy is an integral over the undeformed configuration. Another example is the <em>St.-Venant-Kirchhoff model</em>: <span class="math display">\[E_{\mathrm{SK}} = \sum_f A^0_f \left[\alpha \, \mathrm{tr}(C_f - \mathbb{I})^2 + 2\beta \, \mathrm{tr}\!\left((C_f-\mathbb{I})^2\right) \right]\]</span> where <span class="math inline">\(\alpha,\beta\)</span> are Lamé coefficients and <span class="math inline">\(C_f - \mathbb{I}\)</span> is a measure of strain (2x the Green-Lagrange strain tensor).</p>
 <section id="evaluating-the-metric-for-a-triangle" class="level4">
 <h4 class="anchored" data-anchor-id="evaluating-the-metric-for-a-triangle">Evaluating the metric for a triangle</h4>
 <p>The metric for a triangle <span class="math inline">\(a, b, c\)</span> can be computed from two side vectors <span class="math inline">\(u=b-a, v=c-a\)</span> as <span class="math display">\[g_f = \begin{pmatrix}u^2 &amp; u\cdot v \\ u\cdot v &amp; v^2 \end{pmatrix} \]</span></p>
@@ -652,7 +670,7 @@ window.Quarto = {
 <p>The helper functions below “project” any energy into a function of only tangential or only normal displacements, relative to the current mesh. This lets any optimizer minimize over normal-only or tangent-only displacements.</p>
 <p>The use case is membrane mechanics (tutorial 5): here, tangential displacement driven by a fictitious elastic energy regularizes vertex motion to preserver mesh quality.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L338" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L343" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 </section>
 <section id="vertices_from_tangential" class="level3">
@@ -664,7 +682,7 @@ window.Quarto = {
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Reconstruct vertices from base + tangential displacement.</em> The tangential basis can be computed using the geometry module, geom.get_vertex_tangent_basis(vertices, hemesh).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L333" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L338" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="vertices_from_normal" class="level3">
 <h3 class="anchored" data-anchor-id="vertices_from_normal">vertices_from_normal</h3>
@@ -686,6 +704,7 @@ window.Quarto = {
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Wrap energy_fn(vertices, args) to optimize over tangent coords t ∈ ℝⁿˣ².</em></p>
 <p>vertices(t) = v0 + einsum(‘vi,vid-&gt;vd’, t, basis).</p>
+<p>Any basis (orthonormal or not) which spans the tangent plane is valid, but the same basis must be used in make_tangential_energy and in vertices_from_tangential to recover the 3D vertex positions.</p>
 <hr>
 <p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L311" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>

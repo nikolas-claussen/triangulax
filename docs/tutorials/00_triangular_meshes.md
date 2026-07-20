@@ -1,4 +1,4 @@
-# Tutorial: triangular meshes in `triangulax`
+# Tutorial: Triangular meshes in `triangulax`
 
 
 This short tutorial gives a practical overview of the main mesh data

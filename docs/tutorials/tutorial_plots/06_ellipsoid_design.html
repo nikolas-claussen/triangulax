@@ -1,0 +1,499 @@
+<html>
+<body>
+
+
+<!-- Load require.js. Delete this if your page already loads require.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+<script type="application/vnd.jupyter.widget-state+json">
+{
+  "version_major": 2,
+  "version_minor": 0,
+  "state": {
+    "12178bbb77cc4f9db73c6d988967f295": {
+      "model_name": "RendererModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "_antialias": true,
+        "_dom_classes": [],
+        "_height": 600,
+        "_width": 600,
+        "camera": "IPY_MODEL_8b6219d74d4b41a8a50c13b3a5b45828",
+        "clippingPlanes": [],
+        "controls": [
+          "IPY_MODEL_60536a2c64b0493dbb7fae3a106ce823"
+        ],
+        "layout": "IPY_MODEL_63aa92f4231b4264896ba73bfad7967f",
+        "scene": "IPY_MODEL_3a1163656bfe4f51b72695b26471b72f",
+        "shadowMap": "IPY_MODEL_4769d0f27f184c4f8ec66d51247f688b"
+      }
+    },
+    "8b6219d74d4b41a8a50c13b3a5b45828": {
+      "model_name": "PerspectiveCameraModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [
+          "IPY_MODEL_6010e87cbf154a5f966832512f245497"
+        ],
+        "fov": 30.0,
+        "position": [
+          0.0,
+          0.0,
+          7.902525093216353
+        ]
+      }
+    },
+    "6010e87cbf154a5f966832512f245497": {
+      "model_name": "DirectionalLightModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [],
+        "color": "white",
+        "intensity": 0.6,
+        "position": [
+          0.0,
+          0.0,
+          7.902525093216353
+        ],
+        "shadow": "uninitialized",
+        "target": "uninitialized"
+      }
+    },
+    "60536a2c64b0493dbb7fae3a106ce823": {
+      "model_name": "OrbitControlsModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "controlling": "IPY_MODEL_8b6219d74d4b41a8a50c13b3a5b45828",
+        "maxAzimuthAngle": "inf",
+        "maxDistance": "inf",
+        "maxZoom": "inf",
+        "minAzimuthAngle": "-inf"
+      }
+    },
+    "63aa92f4231b4264896ba73bfad7967f": {
+      "model_name": "LayoutModel",
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "state": {}
+    },
+    "3a1163656bfe4f51b72695b26471b72f": {
+      "model_name": "SceneModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [
+          "IPY_MODEL_8b6219d74d4b41a8a50c13b3a5b45828",
+          "IPY_MODEL_d9db76e225144949ba30df6e928e7a4c",
+          "IPY_MODEL_2b3dc4adb53048c19180fd06ef23aeb2",
+          "IPY_MODEL_c8d6ee70aec64bbabf016e51e4c1f338",
+          "IPY_MODEL_a7277f06bfb54a818c43874cbcc56e24"
+        ],
+        "fog": null,
+        "overrideMaterial": null
+      }
+    },
+    "d9db76e225144949ba30df6e928e7a4c": {
+      "model_name": "AmbientLightModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [],
+        "intensity": 0.5
+      }
+    },
+    "2b3dc4adb53048c19180fd06ef23aeb2": {
+      "model_name": "MeshModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [
+          "IPY_MODEL_d1f3d919e14d4e50840e46bded6ea106"
+        ],
+        "geometry": "IPY_MODEL_260b96f10fe8478f9873279bb7426f23",
+        "material": "IPY_MODEL_76eae938f0c9445284efec47b1213523",
+        "morphTargetInfluences": []
+      }
+    },
+    "d1f3d919e14d4e50840e46bded6ea106": {
+      "model_name": "LineSegmentsModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [],
+        "geometry": "IPY_MODEL_2654d0a6a7bf41d7bb4e467e3e92a4f5",
+        "material": "IPY_MODEL_ad7e15ea52bf464aaf71919904095aeb"
+      }
+    },
+    "2654d0a6a7bf41d7bb4e467e3e92a4f5": {
+      "model_name": "WireframeGeometryModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "geometry": "IPY_MODEL_260b96f10fe8478f9873279bb7426f23"
+      }
+    },
+    "260b96f10fe8478f9873279bb7426f23": {
+      "model_name": "BufferGeometryModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "_ref_geometry": null,
+        "attributes": {
+          "color": "IPY_MODEL_60df29d81b4c43ec9286ba406a38d9e7",
+          "index": "IPY_MODEL_90b37fc3ff2340c4bf47df84d9897a58",
+          "position": "IPY_MODEL_a2303f412b0d4ffea404aa7cb3c4532d"
+        },
+        "index": null,
+        "morphAttributes": {},
+        "userData": {}
+      }
+    },
+    "60df29d81b4c43ec9286ba406a38d9e7": {
+      "model_name": "BufferAttributeModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "array": {
+          "shape": [
+            42,
+            3
+          ],
+          "dtype": "float32"
+        },
+        "normalized": true
+      },
+      "buffers": [
+        {
+          "encoding": "base64",
+          "path": [
+            "array",
+            "buffer"
+          ],
+          "data": "NpMPPrx1Kj/0bwM/jExgP8UgZD9vEsM9/gwvPibDMT+/0/w+mlsBPjLkJD/IegY/ZJAbPuQsAD8Gvg4/395NP8TNYT/Fcus9wk88PpZC2D7ikw4/2zNLPx10YT8uxfU9eHtAP8r8Xz9cqhI+s+wJPl6cKD+lhAQ/DhH3PUQ2ID+rkgg/mlsBPjLkJD/IegY/i2s4P0LPXj9ngSY+jNrFPsptSz/q6r4+QN0wPu/H5T6N0Q4/6UlJPks6Nj90XPU+VWnTPhiUTT/267Y+fxJPPhEcNz9IwfM+QdRVP8zSYj8RONI9OnVlPwXEZD9JS8U9gEV+P+j5Zz/1YxM+4nQyPs/c4z51yw4/4CpDP1NdYD+BWgw+i2s4P0LPXj9ngSY+wLSIPhO2nzsVqag+q+gPPru2Bz+rPw4/6IgYP4RFWT89K3k+rrctPiyb6T4O2w4/q+gPPru2Bz+rPw4/UwTYPjRHTj+MLbQ+XoUkPjID9T6g4A4/JXqJPkpeHTwWvas+395NP8TNYT/Fcus9DmduPop0Oz9bJus+NpMPPrx1Kj/0bwM/5j0+Pr1zND+0dfg+m8s9P1uaXz+FJhk+4Ls1P3dmXj+1US0+Gv04PhWPMz/p8/k+paTvPs+kUT8R46U+ONnOPtPeTD9qoLk+orIlPxrAWz/N5VY+"
+        }
+      ]
+    },
+    "90b37fc3ff2340c4bf47df84d9897a58": {
+      "model_name": "BufferAttributeModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "array": {
+          "shape": [
+            240
+          ],
+          "dtype": "uint32"
+        }
+      },
+      "buffers": [
+        {
+          "encoding": "base64",
+          "path": [
+            "array",
+            "buffer"
+          ],
+          "data": "AAAAAA0AAAAMAAAAAQAAAA0AAAAPAAAAAAAAAAwAAAARAAAAAAAAABEAAAATAAAAAAAAABMAAAAQAAAAAQAAAA8AAAAWAAAAAgAAAA4AAAAYAAAAAwAAABIAAAAaAAAABAAAABQAAAAcAAAABQAAABUAAAAeAAAAAQAAABYAAAAZAAAAAgAAABgAAAAbAAAAAwAAABoAAAAdAAAABAAAABwAAAAfAAAABQAAAB4AAAAXAAAABgAAACAAAAAlAAAABwAAACEAAAAnAAAACAAAACIAAAAoAAAACQAAACMAAAApAAAACgAAACQAAAAmAAAACwAAACYAAAApAAAAJAAAACkAAAAmAAAACQAAACkAAAAkAAAACwAAACkAAAAoAAAAIwAAACgAAAApAAAACAAAACgAAAAjAAAACwAAACgAAAAnAAAAIgAAACcAAAAoAAAABwAAACcAAAAiAAAACwAAACcAAAAlAAAAIQAAACUAAAAnAAAABgAAACUAAAAhAAAACwAAACUAAAAmAAAAIAAAACYAAAAlAAAACgAAACYAAAAgAAAACgAAABcAAAAkAAAAFwAAAB4AAAAkAAAACQAAACQAAAAeAAAACQAAAB8AAAAjAAAAHAAAACMAAAAfAAAACAAAACMAAAAcAAAACAAAAB0AAAAiAAAAGgAAACIAAAAdAAAABwAAACIAAAAaAAAABwAAABsAAAAhAAAAGAAAACEAAAAbAAAABgAAACEAAAAYAAAABgAAABkAAAAgAAAAFgAAACAAAAAZAAAACgAAACAAAAAWAAAACQAAAB4AAAAfAAAAFQAAAB8AAAAeAAAABAAAAB8AAAAVAAAACAAAABwAAAAdAAAAFAAAAB0AAAAcAAAAAwAAAB0AAAAUAAAABwAAABoAAAAbAAAAEgAAABsAAAAaAAAAAgAAABsAAAASAAAABgAAABgAAAAZAAAADgAAABkAAAAYAAAAAQAAABkAAAAOAAAACgAAABYAAAAXAAAADwAAABcAAAAWAAAABQAAABcAAAAPAAAABQAAABAAAAAVAAAAEAAAABMAAAAVAAAABAAAABUAAAATAAAABAAAABMAAAAUAAAAEQAAABQAAAATAAAAAwAAABQAAAARAAAAAwAAABEAAAASAAAADAAAABIAAAARAAAAAgAAABIAAAAMAAAABQAAAA8AAAAQAAAADQAAABAAAAAPAAAAAAAAABAAAAANAAAAAgAAAAwAAAAOAAAADAAAAA0AAAAOAAAAAQAAAA4AAAANAAAA"
+        }
+      ]
+    },
+    "a2303f412b0d4ffea404aa7cb3c4532d": {
+      "model_name": "BufferAttributeModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "array": {
+          "shape": [
+            42,
+            3
+          ],
+          "dtype": "float32"
+        }
+      },
+      "buffers": [
+        {
+          "encoding": "base64",
+          "path": [
+            "array",
+            "buffer"
+          ],
+          "data": "B8uhv+i4ab9jwcU5XH0Zv05Z0r7N9BU/hHPEvzNM4L5OPXw/v18FwE620L4fs1W6yP7Dv09i3768bH6/EEUZv0OE0r6uOBa/EGd+v/0q3D4iOX8/mtz3v+S/0j53zxU/ctv3v0vJ0j6MCBa/RJF+v/ad3j4QkXy/r/3kvnkS0T6KR+o4E/yhv5f2aT/69iS4rg61v5c0Sb+zdA4/Q41fvxw4R78Zuq4+/C2Bv4CdAL+q1HE/b1T7vuwN9b5izqW59khgv59jR7+Byq6+kk7fv8BSRr/Sp1s61Hzzv8My977OEw4/PVK1v3JRSL+qGA6/Yd/yv7Mj975i2A2/hZSCv6vRAb+6/HG/WdbMvh0XQLqRJq0+X/TLvsN0NjkYyay+Xx2iv+4afLqaA5s/3E40v+LkCzugqHA/Q5oIwMuNNzpTl60+1UXqvwIXlLmtnXE/Tr7pv+ub17tW03C/AdAIwHX6mTogLa6+mDszv5/6A7uhfnG/2A+iv/6yQTuaA5u/VO8hv/0O9z6gng4/iijCv0NJAj8EgW4/L8ICwBMs9T5mP9e5GIfCv3gRAT98uW6/iGIhv3X89j7nrA6/hlSOv3DySD9whg4/pA1Jvzw+Rj9wgse6YBTUv0OORz93SK0+xCzUv0qtRz/8z62+UqqOvz/FST87cw6/"
+        }
+      ]
+    },
+    "ad7e15ea52bf464aaf71919904095aeb": {
+      "model_name": "LineBasicMaterialModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "clippingPlanes": [],
+        "color": "black",
+        "defines": null,
+        "linewidth": 0.03
+      }
+    },
+    "76eae938f0c9445284efec47b1213523": {
+      "model_name": "MeshStandardMaterialModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "alphaMap": null,
+        "aoMap": null,
+        "bumpMap": null,
+        "clippingPlanes": [],
+        "defines": {
+          "STANDARD": ""
+        },
+        "displacementMap": null,
+        "emissiveMap": null,
+        "envMap": null,
+        "flatShading": true,
+        "lightMap": null,
+        "map": null,
+        "metalness": 0.25,
+        "metalnessMap": null,
+        "normalMap": null,
+        "polygonOffset": true,
+        "polygonOffsetFactor": 1.0,
+        "polygonOffsetUnits": 5.0,
+        "roughnessMap": null,
+        "side": "DoubleSide",
+        "vertexColors": "VertexColors"
+      }
+    },
+    "c8d6ee70aec64bbabf016e51e4c1f338": {
+      "model_name": "LineSegmentsModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [],
+        "geometry": "IPY_MODEL_fd9cc731a7b2475289d35de9c520e63c",
+        "material": "IPY_MODEL_5b8f21b7e93141d3931e91411751e78c"
+      }
+    },
+    "fd9cc731a7b2475289d35de9c520e63c": {
+      "model_name": "BufferGeometryModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "_ref_geometry": null,
+        "attributes": {
+          "position": "IPY_MODEL_37e7198d93af4cc7b4de935eb1727cc1"
+        },
+        "index": null,
+        "morphAttributes": {},
+        "userData": {}
+      }
+    },
+    "37e7198d93af4cc7b4de935eb1727cc1": {
+      "model_name": "BufferAttributeModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "array": {
+          "shape": [
+            160,
+            3
+          ],
+          "dtype": "float32"
+        }
+      },
+      "buffers": [
+        {
+          "encoding": "base64",
+          "path": [
+            "array",
+            "buffer"
+          ],
+          "data": "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"
+        }
+      ]
+    },
+    "5b8f21b7e93141d3931e91411751e78c": {
+      "model_name": "LineBasicMaterialModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "clippingPlanes": [],
+        "color": "red",
+        "defines": null
+      }
+    },
+    "a7277f06bfb54a818c43874cbcc56e24": {
+      "model_name": "MeshModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [
+          "IPY_MODEL_b984e810b2b24ce087509641c3ed7099"
+        ],
+        "geometry": "IPY_MODEL_cb4f973de9a24a968cf40873e165daa5",
+        "material": "IPY_MODEL_60ee51382bc64f65adc0a326184932f7",
+        "morphTargetInfluences": []
+      }
+    },
+    "b984e810b2b24ce087509641c3ed7099": {
+      "model_name": "LineSegmentsModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "children": [],
+        "geometry": "IPY_MODEL_746dd57aae7041c1b154e787b206fb6f",
+        "material": "IPY_MODEL_6c3e40a9b9bd4c37b8509d1c940a31dc"
+      }
+    },
+    "746dd57aae7041c1b154e787b206fb6f": {
+      "model_name": "WireframeGeometryModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "geometry": "IPY_MODEL_cb4f973de9a24a968cf40873e165daa5"
+      }
+    },
+    "cb4f973de9a24a968cf40873e165daa5": {
+      "model_name": "BufferGeometryModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "_ref_geometry": null,
+        "attributes": {
+          "color": "IPY_MODEL_f180ecb295d149bfb585a9cfe77198ed",
+          "index": "IPY_MODEL_32819a1c341a47369ac1c75e99a83de7",
+          "position": "IPY_MODEL_72f0446c031f485a9401c4fd830d70e9"
+        },
+        "index": null,
+        "morphAttributes": {},
+        "userData": {}
+      }
+    },
+    "f180ecb295d149bfb585a9cfe77198ed": {
+      "model_name": "BufferAttributeModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "array": {
+          "shape": [
+            42,
+            3
+          ],
+          "dtype": "float32"
+        },
+        "normalized": true
+      },
+      "buffers": [
+        {
+          "encoding": "base64",
+          "path": [
+            "array",
+            "buffer"
+          ],
+          "data": "AACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAAAACAP3e+Xz8AAAAA"
+        }
+      ]
+    },
+    "32819a1c341a47369ac1c75e99a83de7": {
+      "model_name": "BufferAttributeModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "array": {
+          "shape": [
+            240
+          ],
+          "dtype": "uint32"
+        }
+      },
+      "buffers": [
+        {
+          "encoding": "base64",
+          "path": [
+            "array",
+            "buffer"
+          ],
+          "data": "AAAAAA0AAAAMAAAAAQAAAA0AAAAPAAAAAAAAAAwAAAARAAAAAAAAABEAAAATAAAAAAAAABMAAAAQAAAAAQAAAA8AAAAWAAAAAgAAAA4AAAAYAAAAAwAAABIAAAAaAAAABAAAABQAAAAcAAAABQAAABUAAAAeAAAAAQAAABYAAAAZAAAAAgAAABgAAAAbAAAAAwAAABoAAAAdAAAABAAAABwAAAAfAAAABQAAAB4AAAAXAAAABgAAACAAAAAlAAAABwAAACEAAAAnAAAACAAAACIAAAAoAAAACQAAACMAAAApAAAACgAAACQAAAAmAAAACwAAACYAAAApAAAAJAAAACkAAAAmAAAACQAAACkAAAAkAAAACwAAACkAAAAoAAAAIwAAACgAAAApAAAACAAAACgAAAAjAAAACwAAACgAAAAnAAAAIgAAACcAAAAoAAAABwAAACcAAAAiAAAACwAAACcAAAAlAAAAIQAAACUAAAAnAAAABgAAACUAAAAhAAAACwAAACUAAAAmAAAAIAAAACYAAAAlAAAACgAAACYAAAAgAAAACgAAABcAAAAkAAAAFwAAAB4AAAAkAAAACQAAACQAAAAeAAAACQAAAB8AAAAjAAAAHAAAACMAAAAfAAAACAAAACMAAAAcAAAACAAAAB0AAAAiAAAAGgAAACIAAAAdAAAABwAAACIAAAAaAAAABwAAABsAAAAhAAAAGAAAACEAAAAbAAAABgAAACEAAAAYAAAABgAAABkAAAAgAAAAFgAAACAAAAAZAAAACgAAACAAAAAWAAAACQAAAB4AAAAfAAAAFQAAAB8AAAAeAAAABAAAAB8AAAAVAAAACAAAABwAAAAdAAAAFAAAAB0AAAAcAAAAAwAAAB0AAAAUAAAABwAAABoAAAAbAAAAEgAAABsAAAAaAAAAAgAAABsAAAASAAAABgAAABgAAAAZAAAADgAAABkAAAAYAAAAAQAAABkAAAAOAAAACgAAABYAAAAXAAAADwAAABcAAAAWAAAABQAAABcAAAAPAAAABQAAABAAAAAVAAAAEAAAABMAAAAVAAAABAAAABUAAAATAAAABAAAABMAAAAUAAAAEQAAABQAAAATAAAAAwAAABQAAAARAAAAAwAAABEAAAASAAAADAAAABIAAAARAAAAAgAAABIAAAAMAAAABQAAAA8AAAAQAAAADQAAABAAAAAPAAAAAAAAABAAAAANAAAAAgAAAAwAAAAOAAAADAAAAA0AAAAOAAAAAQAAAA4AAAANAAAA"
+        }
+      ]
+    },
+    "72f0446c031f485a9401c4fd830d70e9": {
+      "model_name": "BufferAttributeModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "array": {
+          "shape": [
+            42,
+            3
+          ],
+          "dtype": "float32"
+        }
+      },
+      "buffers": [
+        {
+          "encoding": "base64",
+          "path": [
+            "array",
+            "buffer"
+          ],
+          "data": "9vmdPzMzc78AoIa4kPf1PyGH2b5/fCE/OLx4PyCH2b7IpoI/V9vEPp+G2b4AoIa4OLx4PyCH2b78qoK/kPf1PyGH2b7phCG/0JW/PyCH2T7IpoI/uPgLPyGH2T5/fCE/uPgLPyGH2T7phCG/0JW/PyCH2T78qoK/i14FQJ+G2T4AoIa49vmdPzMzcz8AoIa4xDiKPw/hTr8ElRk/GrLRPwzhTr/S0r0+9vC9Pwa4/74Og3g/JbUCQMu3/74AoIa4GrLRPwzhTr+m472+aBg8P+TgTr8AoIa40JUUP9O3/74rlRk/xDiKPw/hTr9unRm/0JUUP9O3/76VnRm/9vC9Pwa4/754i3i/AdAIQJNLOaQf070+AdAIQJNLOaTz472+9vmdP5VLOaSAl5k/fnPlP49LOaRzg3g/o0+pPpNLOaQf070+2gAtP49LOaRzg3g/2gAtP49LOaTdi3i/o0+pPpNLOaTz472+fnPlP49LOaTdi3i/9vmdP5VLOaS0m5m/BKnxP9O3/z4rlRk/7AV8Pwa4/z4Og3g/hybaPsu3/z4AoIa47AV8Pwa4/z54i3i/BKnxP9O3/z6VnRm/KLuxPw/hTj8ElRk/uOfdP+TgTj8AoIa4pINUPwzhTj/S0r0+pINUPwzhTj+m472+KLuxPw/hTj9unRm/"
+        }
+      ]
+    },
+    "6c3e40a9b9bd4c37b8509d1c940a31dc": {
+      "model_name": "LineBasicMaterialModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "clippingPlanes": [],
+        "color": "black",
+        "defines": null,
+        "linewidth": 0.03
+      }
+    },
+    "60ee51382bc64f65adc0a326184932f7": {
+      "model_name": "MeshStandardMaterialModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {
+        "alphaMap": null,
+        "aoMap": null,
+        "bumpMap": null,
+        "clippingPlanes": [],
+        "defines": {
+          "STANDARD": ""
+        },
+        "displacementMap": null,
+        "emissiveMap": null,
+        "envMap": null,
+        "flatShading": true,
+        "lightMap": null,
+        "map": null,
+        "metalness": 0.25,
+        "metalnessMap": null,
+        "normalMap": null,
+        "polygonOffset": true,
+        "polygonOffsetFactor": 1.0,
+        "polygonOffsetUnits": 5.0,
+        "roughnessMap": null,
+        "side": "DoubleSide",
+        "vertexColors": "VertexColors"
+      }
+    },
+    "4769d0f27f184c4f8ec66d51247f688b": {
+      "model_name": "WebGLShadowMapModel",
+      "model_module": "jupyter-threejs",
+      "model_module_version": "^2.4.1",
+      "state": {}
+    }
+  }
+}
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "12178bbb77cc4f9db73c6d988967f295"}
+</script>
+
+</body>
+</html>
