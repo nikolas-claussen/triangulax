@@ -1089,12 +1089,17 @@ p.add_lines(*director_segments(theta_top_suz, v0_suz@view, hemesh_suz, scale=0.0
             shading={"line_color": "red"})
 p.add_mesh(np.array(v_sphered)@view + np.array([3.0, 0, 0]), np.array(hemesh_suz.faces),
            np.array(r / r.mean() - 1), shading={"wireframe": False})
-#p.save("tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html")
+p.save("tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html")
 ```
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0076903…
 
-    2
+    Plot saved to file tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html.
+
+``` python
+IFrame(src="tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html",
+       width="100%", height=400)
+```
 
 The design is close to flattening Suzanne into a smooth sphere: the
 relative radius spread drops from 0.19 to about 0.06, and — thanks to

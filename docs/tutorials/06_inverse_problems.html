@@ -946,7 +946,7 @@ window.Quarto = {
 <section id="the-mesh" class="level4">
 <h4 class="anchored" data-anchor-id="the-mesh">The mesh</h4>
 <p>Inverse design requires a well-conditioned underlying mesh: near-degenerate triangles make the discrete elastic energy ill-conditioned, and the outer optimization stalls or destroys the mesh. We therefore replace the Blender <code>suzanne.obj</code> mesh with a smoothed, cleaned-up version, <code>suzanne_smooth.obj</code>. The cell below verifies that it meets our requirements: closed, connected, manifold, outward-oriented, and with well-shaped triangles.</p>
-<div id="e3586b84" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:50:51.110665Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:50:51.110572Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:50:52.266488Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:50:52.265983Z&quot;}}" data-execution_count="89">
+<div id="e3586b84" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:50:51.110665Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:50:51.110572Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:50:52.266488Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:50:52.265983Z&quot;}}" data-execution_count="138">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>suzanne <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/suzanne_smooth.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>) <span class="co"># suzanne_smooth</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>v0_suz <span class="op">=</span> suzanne.vertices <span class="op">-</span> suzanne.vertices.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>v0_suz <span class="op">=</span> jnp.asarray(v0_suz <span class="op">/</span> np.sqrt((v0_suz<span class="op">**</span><span class="dv">2</span>).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>).mean()))  <span class="co"># rms radius 1</span></span>
@@ -964,7 +964,7 @@ window.Quarto = {
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o suzanne_alpha_wrap_iso_remesh</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="89">
+<div class="cell-output cell-output-display" data-execution_count="138">
 <pre><code>HeMesh(N_V=1362, N_HE=8160, N_F=2720)</code></pre>
 </div>
 </div>
@@ -977,7 +977,7 @@ window.Quarto = {
 <p><strong>Avoiding fold-overs.</strong> During a first attempt with this loss, we found that the optimizer <em>folds</em> the protruding features (ears, snout) flat onto the sphere — not an acceptable elastomer design. To fix this, we penalize creases in the <em>final configuration</em> using the bending energy <code>elastic.get_dihedral_bending_energy</code> with flat target angles (<span class="math inline">\(\theta_e^0 = 0\)</span>).</p>
 <p><strong>Choice of the in-plane energy.</strong> Due to the large deformations the <code>suzanne</code> mesh needs to undergo, we replace the St.-Venant-Kirchhoff energy (which is quadratic in the strain) with the more robust <strong>neo-Hookean</strong> in-plane energy instead. Its density diverges as a mesh triangle get squashed, improving numerical robustness.</p>
 <p>The optimization is also more challenging: the ADAM optimizer can overshoot in this rugged loss landscape, so we keep the best parameters seen.</p>
-<div id="61fbcb70" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:50:52.267816Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:50:52.267718Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:50:52.470837Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:50:52.470311Z&quot;}}" data-execution_count="117">
+<div id="61fbcb70" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:50:52.267816Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:50:52.267718Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:50:52.470837Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:50:52.470311Z&quot;}}" data-execution_count="139">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># overall material parameters</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>thickness_suz <span class="op">=</span> <span class="fl">0.1</span></span>
@@ -1038,7 +1038,7 @@ window.Quarto = {
 <pre><code>initial sphericity of Suzanne: 0.0322</code></pre>
 </div>
 </div>
-<div id="faf19397" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:50:52.471943Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:50:52.471867Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:39.013347Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:39.012761Z&quot;}}" data-execution_count="118">
+<div id="faf19397" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:50:52.471943Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:50:52.471867Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:39.013347Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:39.012761Z&quot;}}" data-execution_count="140">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>value_and_grad <span class="op">=</span> jax.jit(jax.value_and_grad(loss_suzanne, has_aux<span class="op">=</span><span class="va">True</span>))</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> (jnp.zeros(hemesh_suz.n_faces), jnp.zeros(hemesh_suz.n_faces))</span>
@@ -1064,7 +1064,7 @@ window.Quarto = {
 <span id="cb52-23"><a href="#cb52-23" aria-hidden="true" tabindex="-1"></a>        best_L, best_params <span class="op">=</span> L, params</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"255e30869b6f4f049d98a596a1515ff5","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"12bba4e16a274df4ba84a7aa3d4c5c90","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -1170,7 +1170,7 @@ iter 098: sphericity 0.0027, penalty 2.99e-02, loss 0.0326
 iter 099: sphericity 0.0026, penalty 2.98e-02, loss 0.0324</code></pre>
 </div>
 </div>
-<div id="fb1ede9e" class="cell" data-execution_count="120">
+<div id="fb1ede9e" class="cell" data-execution_count="141">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>theta_top_suz, theta_bot_suz <span class="op">=</span> best_params</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>v_sphered <span class="op">=</span> relax_suzanne(theta_top_suz, theta_bot_suz, v0_suz)</span>
@@ -1200,7 +1200,7 @@ largest dihedral angle: 45 deg, edges folded beyond 90 deg: 0
 </div>
 </div>
 </div>
-<div id="cc80145c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T18:02:39.015741Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T18:02:39.015613Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:56.389809Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:56.389159Z&quot;}}" data-execution_count="121">
+<div id="cc80145c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T18:02:39.015741Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T18:02:39.015613Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:56.389809Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:56.389159Z&quot;}}" data-execution_count="142">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the design is protocol-independent: quasi-statically ramping the actuation</span></span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (slow heating, lambda(t) = 1 + t*(lambda - 1)) reaches the same final state</span></span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1213,7 +1213,7 @@ largest dihedral angle: 45 deg, edges folded beyond 90 deg: 0
 <pre><code>sphericity: direct relaxation 0.0026, quasi-static ramp 0.0026</code></pre>
 </div>
 </div>
-<div id="9ac4f1b2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T18:02:56.391227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T18:02:56.391097Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:56.604506Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:56.603960Z&quot;}}" data-execution_count="123">
+<div id="9ac4f1b2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T18:02:56.391227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T18:02:56.391097Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:56.604506Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:56.603960Z&quot;}}" data-execution_count="144">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># left: Suzanne colored by the optimized expansion factor lambda (per vertex,</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># averaged from faces), with the top director field; right: the "spherized" result</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1226,15 +1226,19 @@ largest dihedral angle: 45 deg, edges folded beyond 90 deg: 0
 <span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>            shading<span class="op">=</span>{<span class="st">"line_color"</span>: <span class="st">"red"</span>})</span>
 <span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>p.add_mesh(np.array(v_sphered)<span class="op">@</span>view <span class="op">+</span> np.array([<span class="fl">3.0</span>, <span class="dv">0</span>, <span class="dv">0</span>]), np.array(hemesh_suz.faces),</span>
 <span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>           np.array(r <span class="op">/</span> r.mean() <span class="op">-</span> <span class="dv">1</span>), shading<span class="op">=</span>{<span class="st">"wireframe"</span>: <span class="va">False</span>})</span>
-<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a><span class="co">#p.save("tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>p.save(<span class="st">"tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"a0c6cd264ef9434d91c495917c0840a2","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"c8b6821748a14134bee7c9adb6b8b1b8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="123">
-<pre><code>2</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>Plot saved to file tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html.</code></pre>
 </div>
+</div>
+<div id="1e5572c7" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>IFrame(src<span class="op">=</span><span class="st">"tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html"</span>,</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>       width<span class="op">=</span><span class="st">"100%"</span>, height<span class="op">=</span><span class="dv">400</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The design is close to flattening Suzanne into a smooth sphere: the relative radius spread drops from 0.19 to about 0.06, and — thanks to the fold penalty — the mesh has no creases. The final mesh quality is good (no degenerate triangles).</p>
 <p>Unfortunately, we cannot quite flatten the snouts and ears!</p>
