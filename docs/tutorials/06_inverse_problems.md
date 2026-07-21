@@ -1101,6 +1101,15 @@ IFrame(src="tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.
        width="100%", height=400)
 ```
 
+        <iframe
+            width="100%"
+            height="400"
+            src="tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html"
+            frameborder="0"
+            allowfullscreen
+            &#10;        ></iframe>
+        &#10;
+
 The design is close to flattening Suzanne into a smooth sphere: the
 relative radius spread drops from 0.19 to about 0.06, and — thanks to
 the fold penalty — the mesh has no creases. The final mesh quality is

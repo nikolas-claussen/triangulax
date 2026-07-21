@@ -1213,7 +1213,7 @@ largest dihedral angle: 45 deg, edges folded beyond 90 deg: 0
 <pre><code>sphericity: direct relaxation 0.0026, quasi-static ramp 0.0026</code></pre>
 </div>
 </div>
-<div id="9ac4f1b2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T18:02:56.391227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T18:02:56.391097Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:56.604506Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:56.603960Z&quot;}}" data-execution_count="144">
+<div id="9ac4f1b2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T18:02:56.391227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T18:02:56.391097Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T18:02:56.604506Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T18:02:56.603960Z&quot;}}" data-execution_count="146">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># left: Suzanne colored by the optimized expansion factor lambda (per vertex,</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># averaged from faces), with the top director field; right: the "spherized" result</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1229,7 +1229,7 @@ largest dihedral angle: 45 deg, edges folded beyond 90 deg: 0
 <span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>p.save(<span class="st">"tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"c8b6821748a14134bee7c9adb6b8b1b8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"eca7ba1b05cb4694aaadb17f8e519585","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -1239,6 +1239,11 @@ largest dihedral angle: 45 deg, edges folded beyond 90 deg: 0
 <div id="1e5572c7" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>IFrame(src<span class="op">=</span><span class="st">"tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html"</span>,</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>       width<span class="op">=</span><span class="st">"100%"</span>, height<span class="op">=</span><span class="dv">400</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="148">
+
+        <iframe width="100%" height="400" src="tutorial_plots/06_suzanne_spherized_random_initial_cond_uniform_lam.html" frameborder="0" allowfullscreen=""></iframe>
+        
+</div>
 </div>
 <p>The design is close to flattening Suzanne into a smooth sphere: the relative radius spread drops from 0.19 to about 0.06, and — thanks to the fold penalty — the mesh has no creases. The final mesh quality is good (no degenerate triangles).</p>
 <p>Unfortunately, we cannot quite flatten the snouts and ears!</p>
