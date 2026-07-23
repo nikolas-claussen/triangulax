@@ -29,7 +29,7 @@ operations designed to be vectorized across meshes using `jax.vmap`.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L100"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L96"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_polygon_area
@@ -49,7 +49,7 @@ Positive for counter-clockwise vertex ordering.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L81"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L77"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_area
@@ -133,7 +133,7 @@ assert get_triangle_area_from_sides(a, b) == jnp.linalg.norm(jnp.cross(a, b))/2
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L119"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L115"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_area
@@ -154,7 +154,7 @@ degenerate triangle.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L222"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L218"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cot_between_vectors
@@ -172,7 +172,7 @@ def get_cot_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L205"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L201"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_between_vectors
@@ -190,7 +190,7 @@ def get_angle_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L188"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L184"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_signed_angle_between_vectors
@@ -208,7 +208,7 @@ def get_signed_angle_between_vectors(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L171"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L167"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_projector
@@ -226,7 +226,7 @@ def get_projector(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L152"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L148"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### project_out_vector
@@ -245,7 +245,7 @@ def project_out_vector(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L133"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L129"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### project_on_vector
@@ -264,7 +264,7 @@ def project_on_vector(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L240"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L236"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_tetrahedron_volume
@@ -289,7 +289,7 @@ reference to the mesh vertex coordinates in 3d.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L333"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L329"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_circumcenter_from_lengths
@@ -312,7 +312,7 @@ To recover Cartesian coordinates:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L306"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L302"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cotangents_from_lengths
@@ -335,7 +335,7 @@ cot (*α*) = (*b*<sup>2</sup> + *c*<sup>2</sup> − *a*<sup>2</sup
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L280"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L276"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angles_from_lengths
@@ -355,7 +355,7 @@ def get_angles_from_lengths(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L257"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L253"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_area_from_lengths
@@ -411,7 +411,7 @@ for tri in triangles:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L412"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L408"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### quaternion_to_rot_mat
@@ -432,7 +432,7 @@ See
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L393"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L389"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_normal
@@ -450,7 +450,7 @@ def get_triangle_normal(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L377"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L373"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_perp_2d
@@ -468,7 +468,7 @@ def get_perp_2d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L360"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L356"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_rot_mat
@@ -488,7 +488,7 @@ def get_rot_mat(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L433"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L429"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_barycentric_coordinates
@@ -539,7 +539,7 @@ get_barycentric_coordinates(point3, *vertices2)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L464"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/trigonometry.py#L460"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### rotate_around_axis

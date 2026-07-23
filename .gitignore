@@ -152,8 +152,10 @@ checklink/cookies.txt
 .quarto
 
 # large test data
-*high_resolution.obj
+nbs/test_meshes/torus_high_resolution.obj
+nbs/tutorials/tutorial_meshes/refinement_tests/
 
 # code from previous projects to be integrated
 
-previous_projects/
+nbs/previous_projects/
+docs/previous_projects/

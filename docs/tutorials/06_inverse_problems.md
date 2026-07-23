@@ -197,6 +197,7 @@ Before we turn to Suzanne, we will try this on less complex targets:
 ``` python
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import meshplot
 from tqdm.notebook import tqdm
 import igl
@@ -250,7 +251,7 @@ def load_sphere(name):
     vertices = jnp.asarray((vertices.T / np.linalg.norm(vertices, axis=1)).T)
     return vertices, HeMesh.from_triangles(vertices.shape[0], mesh.faces)
 
-v0, hemesh = load_sphere("sphere")
+v0, hemesh = load_sphere("sphere") # use sphere_fine for a higher resolution mesh
 metric_rest = elastic.get_metric(v0, hemesh)
 b_rest = elastic.get_second_fundamental_form(v0, hemesh)
 
@@ -421,14 +422,14 @@ p = meshplot.plot(np.array(v0), np.array(hemesh.faces), shading={"wireframe": Tr
                   return_plot=True)
 p.add_mesh(np.array(v_teacher) + np.array([2.5, 0, 0]), np.array(hemesh.faces),
            shading={"wireframe": True})
-p.save("tutorial_plots/06_teacher_forward.html")
+#p.save("tutorial_plots/06_teacher_forward.html")
 ```
 
     max displacement: 0.393 (sphere radius 1)
 
     Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    Plot saved to file tutorial_plots/06_teacher_forward.html.
+    1
 
 ``` python
 IFrame(src="tutorial_plots/06_teacher_forward.html", width="100%", height=400)
@@ -557,18 +558,26 @@ print(f"max vertex error {err.max():.4f} vs target displacement scale {displacem
 
 ``` python
 # plot the initial and final recovered shapes next to the teacher shape
-p = meshplot.plot(np.array(v_recovered_initial), np.array(hemesh.faces), shading={"wireframe": True},
+p = meshplot.plot(np.array(v0), np.array(hemesh.faces), shading={"wireframe": False},
                   return_plot=True)
 
-p.add_mesh(np.array(v_recovered) + np.array([2.5, 0, 0]), np.array(hemesh.faces), shading={"wireframe": True},)
+p.add_mesh(np.array(v_teacher) + np.array([2.5, 0, 0]), np.array(hemesh.faces),
+           shading={"wireframe": False})
+p.add_lines(*director_segments(theta_teacher_top, v_teacher + np.array([2.5, 0, 0]), hemesh, scale=0.05),
+            shading={"line_color": "red"})
 
-p.add_mesh(np.array(v_teacher) + np.array([5, 0, 0]), np.array(hemesh.faces), shading={"wireframe": True})
-p.save("tutorial_plots/06_teacher_vs_student.html")
+
+p.add_mesh(np.array(v_recovered) + np.array([5, 0, 0]), np.array(hemesh.faces),
+           shading={"wireframe": False},)
+p.add_lines(*director_segments(params[0], v_recovered + np.array([5, 0, 0]), hemesh, scale=0.05),
+            shading={"line_color": "red"})
+
+p.save("tutorial_plots/06_teacher_vs_student_2.html")
 ```
 
-    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0145714…
+    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(0.0, 0.0,…
 
-    Plot saved to file tutorial_plots/06_teacher_vs_student.html.
+    Plot saved to file tutorial_plots/06_teacher_vs_student_2.html.
 
 ``` python
 IFrame(src="tutorial_plots/06_teacher_vs_student.html", width="100%", height=400)
@@ -598,14 +607,14 @@ plt.xlabel(r"teacher angle $\theta^t$ (mod $\pi$)"); plt.ylabel("recovered angle
 
     <>:8: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
     <>:8: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
-    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_7507/1643597439.py:8: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
+    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_63954/1643597439.py:8: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
       plt.xlabel(r"teacher angle $\theta^t$ (mod $\pi$)"); plt.ylabel("recovered angle (mod $\pi$)");
 
 ![](06_inverse_problems_files/figure-commonmark/cell-25-output-3.png)
 
 #### Non-uniqueness in inverse problems
 
-The shape is reproduced almost exactly — but the *pattern* is only
+The shape is reproduced almost exactly, but the *pattern* is only
 partially identified: the difference between teacher and student
 parameters is substantial. The reason is that many patterns produce
 similar relaxed shapes. This non-uniqueness is a generic feature of
@@ -613,6 +622,11 @@ inverse problems. Adding the smoothness regularizer selects *one*
 well-behaved solution (with smooth director fields) among the
 near-degenerate ones. But this is not necessarily the teacher pattern
 (you can check by `reg`).
+
+The non-uniqueness is related to the fact that the teacher shape is
+**buckled** because top and bottom director are orthogonal. If you
+select parallel top and bottom directors above, the inverse problem has
+a unique solution.
 
 ### Inverse design 2: a hand-designed target
 

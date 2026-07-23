@@ -8,12 +8,11 @@
 This Python package provides data-structures for triangular meshes and a
 geometry processing toolkit based on
 [JAX](https://docs.jax.dev/en/latest/index.html), fully compatible with
-automatic differentiation and just-in-time compilation.
+automatic differentiation and just-in-time compilation. Additionally,
+`triangulax` provides tools for simulating membranes, thin shells, and
+tissue sheets.
 
-Additionally, `triangulax` provides tools for simulating membranes, thin
-shells, and tissue sheets.
-
-### Design principles
+### Design
 
 `triangulax` is designed for modularity and flexibility. The library
 includes a suite of geometry processing tools based on [discrete
@@ -21,10 +20,8 @@ differential geometry](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/)
 (Voronoi duals, curvatures, Laplace operator, …) and represents surfaces
 as [half-edge
 meshes](https://jerryyin.info/geometry-processing-algorithms/half-edge/).
-This allows implementing custom simulations and geometry operations in
-any dimension.
 
-#### Automatic differentiation and just-in-time compilation with JAX
+### Automatic differentiation and just-in-time compilation with JAX
 
 The main feature of `triangulax` is (forward- and reverse-mode)
 automatic differentiation to compute of derivatives of any mesh-based
@@ -32,9 +29,9 @@ function. `triangulax`uses
 [JAX](https://docs.jax.dev/en/latest/index.html), a “Python library for
 accelerator-oriented array computation and program transformation,
 designed for high-performance numerical computing and large-scale
-machine learning.” Most `triangulax` tools are compatible with JAX’s
-just-in-time (JIT) compilation for high performance in Python (rather
-than C++) and allows running on GPUs.
+machine learning.” Most `triangulax` functions are compatible with JAX’s
+just-in-time (JIT) compilation. JIT provides high performance in Python
+(rather than C++) and allows running on GPUs.
 
 To simulate dynamics or minimize energies, `triangulax` integrates with
 JAX ecosystem libraries like
@@ -42,8 +39,8 @@ JAX ecosystem libraries like
 [diffrax](https://github.com/patrick-kidger/diffrax) (ODE integration),
 creating end-to-end differentiable simulations.
 
-**Prerequisites**: Using `triangulax` assumes familiarity with
-triangular meshes ([tutorial
+**Prerequisites**: `triangulax` assumes familiarity with triangular
+meshes ([tutorial
 0](https://nikolas-claussen.github.io/triangulax/tutorials/00_triangular_meshes.html)),
 and basic JAX usage ([tutorial
 1](https://nikolas-claussen.github.io/triangulax/tutorials/01_coding_with_JAX.html))
@@ -51,8 +48,7 @@ and basic JAX usage ([tutorial
 ### Use cases
 
 Triangular meshes are ubiquitous in computer graphics and in scientific
-computing. A major motivation for `triangulax` is soft-matter and
-biophysics, for example:
+computing. Examples in soft-matter and biophysics include:
 
 1.  Cell-resolved models of two-dimensional tissue sheets like [the
     self-propelled Voronoi
@@ -82,14 +78,11 @@ conditions to simulation results. The parameters of the simulation can
 be fitted to data, or optimized to find a mechanism that generates a
 desired shape.
 
-### See also
+## Documentation
 
-- [libigl](https://libigl.github.io/libigl-python-bindings/) Geometry
-  processing library with Python bindings. You can use `libigl`
-  functions on `triangulax` meshes via the `.faces` attribute
-
-- [VertAX](https://github.com/VirtualEmbryo/VertAX/) JAX-based
-  simulations of 2D tissues.
+Documentation can be found hosted on [GitHub
+pages](https://nikolas-claussen.github.io/triangulax/). Jupyter
+notebooks tutorials can be found in the `nbs/tutorials/` folder.
 
 ## Installation instructions
 
@@ -104,9 +97,9 @@ $ conda env create -n triangulax
 $ conda activate triangulax
 ```
 
-Please see the [JAX
+See the [JAX
 documentation](https://docs.jax.dev/en/latest/installation.html) for how
-to install with GPU support.
+to install JAX with GPU support.
 
 2.  Install with `pip`:
 
@@ -129,57 +122,6 @@ conda run -n triangulax python -c "from triangulax import mesh, geometry"
 4.  (Optional) Download jupyter notebooks to run tutorials interactively
     from
     [GitHub](https://github.com/nikolas-claussen/triangulax/tree/main/nbs/tutorials)
-
-## Developer guide
-
-This package is developed based on Jupyter notebooks, which are
-converted into python modules using `nbdev`. Take a look at
-`.github/copilot-instructions.md` for details.
-
-### Install triangulax in Development mode
-
-1.  Clone the GitHub repository
-
-``` sh
-$ git clone https://github.com/nikolas-claussen/triangulax.git
-```
-
-2.  Create a conda environment with all Python dependencies
-
-``` sh
-$ conda env create -n triangulax -f environment.yml
-$ conda activate triangulax
-```
-
-3.  Optional: install `nbdev` if you want to edit the package notebooks
-
-``` sh
-pip install nbdev
-```
-
-4.  Install the `triangulax` package
-
-``` sh
-# make sure triangulax package is installed in development mode
-$ pip install -e .
-```
-
-5.  Optional: edit the package notebooks and export
-
-``` sh
-# make changes under nbs/ directory
-# ...
-
-# export to have changes apply to triangulax
-$ nbdev_export
-```
-
-## Documentation
-
-Documentation can be found hosted on this GitHub
-[repository](https://github.com/nikolas-claussen/triangulax)’s
-[pages](https://nikolas-claussen.github.io/triangulax/). Jupyter
-notebooks tutorials can be found in the `nbs/tutorials/` folder.
 
 ## Usage
 
@@ -208,7 +150,6 @@ details):
 ### Minimal example
 
 ``` python
-import igl
 import jax
 import jax.numpy as jnp
 from triangulax import triangular, mesh, geometry
@@ -241,3 +182,57 @@ print("Mean gradient norm:", jnp.linalg.norm(gradient, axis=1).mean())
 
     Mean coordination number: 5.40458
     Mean gradient norm: 0.0003638338
+
+### See also
+
+- [libigl](https://libigl.github.io/libigl-python-bindings/) Geometry
+  processing library with Python bindings. You can use `libigl`
+  functions on `triangulax` meshes via the `.faces` attribute
+
+- [VertAX](https://github.com/VirtualEmbryo/VertAX/) JAX-based
+  simulations of 2D tissues.
+
+## Developer guide
+
+This package is developed based on Jupyter notebooks, which are
+converted into python modules using `nbdev`. Details are in
+`.github/copilot-instructions.md`.
+
+### Install triangulax in Development mode
+
+1.  Clone the GitHub repository
+
+``` sh
+$ git clone https://github.com/nikolas-claussen/triangulax.git
+```
+
+2.  Create a conda environment with all Python dependencies
+
+``` sh
+$ conda env create -n triangulax -f environment.yml
+$ conda activate triangulax
+```
+
+3.  Install the `triangulax` package
+
+``` sh
+# make sure triangulax package is installed in development mode
+$ pip install -e .
+```
+
+4.  Install `nbdev` package
+
+``` sh
+pip install nbdev
+```
+
+5.  Optional: edit the package notebooks and export the code into Python
+    modules
+
+``` sh
+# make changes under nbs/ directory
+# ...
+
+# export to have changes apply to triangulax
+$ nbdev_export
+```

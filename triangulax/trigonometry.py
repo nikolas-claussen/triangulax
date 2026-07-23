@@ -74,10 +74,6 @@ def get_triangle_area_from_sides(u: Float[jax.Array, " dim"],
     safe_x = jnp.where(x > 0.0, x, 1.0)
     return jnp.where(x > 0.0, jnp.sqrt(safe_x)/2, 0.0)
 
-    #return 0.5 * jnp.linalg.norm(jnp.cross(u, v))
-    #return jnp.sqrt(jnp.clip((u**2).sum()*(v**2).sum() - ((u*v).sum())**2, 0.0)) / 2
-
-
 def get_triangle_area(a: Float[jax.Array, " dim"],
                       b: Float[jax.Array, " dim"],
                       c: Float[jax.Array, " dim"]) -> Float[jax.Array, ""]:
