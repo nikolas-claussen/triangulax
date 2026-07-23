@@ -151,7 +151,6 @@ def is_locally_delaunay(vertices: Float[jax.Array, "n_vertices dim"],
     return hemesh.is_bdry_edge | (angle_sum <= jnp.pi + 1e-10)
 
 # %% ../nbs/src/09_algorithms.ipynb #7f69059d
-@functools.partial(jax.jit, static_argnames=['max_iters'])
 def fix_delaunay(vertices: Float[jax.Array, "n_vertices dim"],
                  hemesh: msh.HeMesh,
                  max_iters: int = 2) -> tuple[msh.HeMesh, Int[jax.Array, ""]]:
@@ -160,6 +159,8 @@ def fix_delaunay(vertices: Float[jax.Array, "n_vertices dim"],
     Each iteration identifies non-Delaunay interior edges and flips them
     using ``topology.flip_all``.  Stops when no more flips are needed
     or ``max_iters`` is reached.
+
+    Important: when JIT-compiling, use jax.jit with static_argnames=['max_iters'].
 
     Parameters
     ----------
