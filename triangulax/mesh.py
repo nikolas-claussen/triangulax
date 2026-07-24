@@ -565,11 +565,11 @@ class GeomMesh:
     To be combined with a HeMesh to specify the connectivity.
 
     One array (for vertex positions) must always be present. A second,
-    but optional, standard entry is a set of positions for each face. 
+    but optional, standard entry is a set of positions for each face.
     The mesh coordinates can live in 2d or 3d.
-    
+
     Optionally, vertices, half-edges, and faces can have attributes (stored as dictionaries).
-    The keys of the dictionary should be taken from a suitable 'enum'. The values are 
+    The keys of the dictionary should be taken from a suitable 'enum'. The values are
     ndarrays, whose 0th axis is (vertices/edges/faces). These attribute dicts are
     initialized empty and can be set afterwards.
 
@@ -577,77 +577,117 @@ class GeomMesh:
     per-mesh attributes may be updated directly (e.g. during a simulation step),
     whereas mesh connectivity (`HeMesh`) should never be edited by hand.
 
+    This class deliberately stores no element counts of its own: the number of vertices,
+    half-edges, and faces belongs to the `HeMesh`, and duplicating it here can only drift.
+    Use `check_compatibility(hemesh)` to confirm a geometry and a connectivity match.
+
     See documentation on HeMesh
-    
+
     **Attributes**
 
-    vertices : Float[jax.Array, "n_vertices 2"]
+    vertices : Float[jax.Array, "n_vertices dim"]
 
-    face_positions : Float[jax.Array, "n_faces 2"]
+    face_positions : Float[jax.Array, "n_faces dim"]
 
-    vertex_attribs : dict[IntEnum, Float[jax.Array, "n_vertices *"]]
+    vertex_attribs : dict[IntEnum, Float[jax.Array, "n_vertices ..."]]
 
-    he_attribs : dict[IntEnum, Float[jax.Array, "n_hes *"]]
+    he_attribs : dict[IntEnum, Float[jax.Array, "n_hes ..."]]
 
-    face_attribs : dict[IntEnum, Float[jax.Array, "n_faces *"]]
-    
+    face_attribs : dict[IntEnum, Float[jax.Array, "n_faces ..."]]
+
     **Property methods (use like attributes)**
-
-    n_items : tuple[int, int, int]
 
     dim : int
 
     **Class methods**
 
-    validate_dimensions : bool
+    validate_dimensions : None
+
+    check_compatibility : HeMesh -> bool
 
     **Static methods**
-    
+
     load : str -> GeomMesh
 
     """
 
-    n_vertices : int = dataclasses.field(metadata=dict(static=True))
-    n_hes : int = dataclasses.field(metadata=dict(static=True))
-    n_faces : int = dataclasses.field(metadata=dict(static=True))
     vertices : Float[jax.Array, "*batch n_vertices dim"]
-    face_positions : Float[jax.Array, "*batch n_faces 2"] = dataclasses.field(default_factory=lambda : jnp.array([]))
-    vertex_attribs : dict[IntEnum, Float[jax.Array, "... n_vertices"]] = dataclasses.field(default_factory=dict)
-    he_attribs : dict[IntEnum, Float[jax.Array, "... n_hes"]] = dataclasses.field(default_factory=dict)
-    face_attribs : dict[IntEnum, Float[jax.Array, "... n_faces"]] = dataclasses.field(default_factory=dict)
-    
-    @property
-    def n_items(self) -> tuple[int, int, int]:
-        return (self.n_vertices, self.n_hes, self.n_faces)
+    face_positions : Float[jax.Array, "*batch n_faces dim"] = dataclasses.field(default_factory=lambda : jnp.array([]))
+    vertex_attribs : dict[IntEnum, Float[jax.Array, "n_vertices ..."]] = dataclasses.field(default_factory=dict)
+    he_attribs : dict[IntEnum, Float[jax.Array, "n_hes ..."]] = dataclasses.field(default_factory=dict)
+    face_attribs : dict[IntEnum, Float[jax.Array, "n_faces ..."]] = dataclasses.field(default_factory=dict)
+
+    def __post_init__(self):
+        # TriMesh.read_obj returns face_positions=None for 3d meshes, and callers pass it
+        # straight through. Coerce to an empty array so every method below can assume an
+        # array (and so the pytree structure does not depend on whether it was supplied).
+        if self.face_positions is None:
+            self.face_positions = jnp.array([])
 
     @property
     def dim(self) -> int:
         return self.vertices.shape[-1]
-    
+
+    def _derived_counts(self) -> tuple[int, int | None, int | None]:
+        """(n_vertices, n_hes, n_faces), with None where nothing determines the count."""
+        n_vertices = self.vertices.shape[0]
+        n_hes = next((val.shape[0] for val in self.he_attribs.values()), None)
+        n_faces = self.face_positions.shape[0] if self.face_positions.shape[0] > 0 else None
+        if n_faces is None:
+            n_faces = next((val.shape[0] for val in self.face_attribs.values()), None)
+        return n_vertices, n_hes, n_faces
+
     def __repr__(self) -> str:
-        return "GeomMesh(D={},N_V={}, N_HE={}, N_F={})".format(*((self.dim,)+self.n_items))
+        n_vertices, n_hes, n_faces = self._derived_counts()
+        return "GeomMesh(D={}, N_V={}, N_HE={}, N_F={})".format(
+            self.dim, n_vertices,
+            "N/A" if n_hes is None else n_hes,
+            "N/A" if n_faces is None else n_faces)
 
     def validate_dimensions(self) -> None:
-        """Validate input dimensions"""
-        if (self.n_vertices != self.vertices.shape[0]):
-            raise ValueError("Number of vertices inconsistent")
-        if (self.face_positions.shape[0] not in [0, self.n_faces]):
-            raise ValueError("Number of faces inconsistent")
-        if any([val.shape[0] != self.n_vertices for _, val in self.vertex_attribs.items()]):
-            raise ValueError("Vertex property dimension inconsistent")
-        if any([val.shape[0] != self.n_hes for _, val in self.he_attribs.items()]):
-            raise ValueError("Half-edge property dimension inconsistent")
-        if any([val.shape[0] != self.n_faces for _, val in self.face_attribs.items()]):
-            raise ValueError("Face property dimension inconsistent")
+        """Check that this object is internally consistent.
+
+        All vertex attributes must have as many entries as there are vertices, all
+        half-edge attributes must agree with each other, and all face attributes must
+        agree with each other and with `face_positions`. Nothing here can check against
+        the connectivity -- use `check_compatibility` for that.
+
+        Raises
+        ------
+        ValueError
+            If any attribute has an inconsistent number of entries.
+        """
+        n_vertices, n_hes, n_faces = self._derived_counts()
+        if any(val.shape[0] != n_vertices for val in self.vertex_attribs.values()):
+            raise ValueError("Vertex attribute dimension inconsistent with vertices")
+        if n_hes is not None and any(val.shape[0] != n_hes for val in self.he_attribs.values()):
+            raise ValueError("Half-edge attribute dimensions inconsistent with each other")
+        if n_faces is not None and any(val.shape[0] != n_faces for val in self.face_attribs.values()):
+            raise ValueError("Face attribute dimensions inconsistent with each other/face_positions")
         return None
 
     def check_compatibility(self, hemesh: HeMesh) -> bool:
-        return self.n_items==hemesh.n_items
-    
+        """True if this geometry matches the given connectivity.
+
+        Checks the vertex count, and the number of entries of `face_positions` and of every
+        attribute dict against the corresponding count in `hemesh`. Absent optional data
+        (empty `face_positions`, empty attribute dicts) is not an incompatibility.
+        """
+        if self.vertices.shape[0] != hemesh.n_vertices:
+            return False
+        if self.face_positions.shape[0] not in (0, hemesh.n_faces):
+            return False
+        for attribs, n in [(self.vertex_attribs, hemesh.n_vertices),
+                           (self.he_attribs, hemesh.n_hes),
+                           (self.face_attribs, hemesh.n_faces)]:
+            if any(val.shape[0] != n for val in attribs.values()):
+                return False
+        return True
+
     ## copying, loading, and saving
-    
+
     def __copy__(self):
-        return GeomMesh(*self.n_items, vertices=self.vertices, face_positions=self.face_positions,
+        return GeomMesh(vertices=self.vertices, face_positions=self.face_positions,
                    vertex_attribs={key: jnp.copy(val) for key, val in self.vertex_attribs.items()},
                    he_attribs={key: jnp.copy(val) for key, val in self.he_attribs.items()},
                    face_attribs={key: jnp.copy(val) for key, val in self.face_attribs.items()})
@@ -655,8 +695,7 @@ class GeomMesh:
     def save(self, file: str | Path) -> None:
         """Save GeomMesh to .npz archive of np.arrays."""
         np.savez(file,
-             n_vertices=self.n_vertices, n_hes=self.n_hes, n_faces=self.n_faces,
-             vertices=self.vertices, face_positions = self.face_positions,
+             vertices=self.vertices, face_positions=self.face_positions,
              **{f"VertexAttribs.{key.name}": val for key, val in self.vertex_attribs.items()},
              **{f"HeAttribs.{key.name}": val for key, val in self.he_attribs.items()},
              **{f"FaceAttribs.{key.name}": val for key, val in self.face_attribs.items()},
@@ -682,32 +721,35 @@ class GeomMesh:
         face_attribs_enum : type[IntEnum] | None
             If provided, convert face attribute string keys back to this IntEnum.
         """
-        npzfile = jnp.load(file)
+        npzfile = np.load(file)
         def _parse_attribs(prefix: str, enum_cls: type[IntEnum] | None) -> dict:
-            attribs = {key.split(".")[1]: val
+            attribs = {key.split(".")[1]: jnp.asarray(val)
                        for key, val in npzfile.items() if key.split(".")[0] == prefix}
             if enum_cls is not None:
                 attribs = {enum_cls[k]: v for k, v in attribs.items()}
             return attribs
 
-        return GeomMesh(n_vertices=npzfile['n_vertices'].item(),
-                        n_hes=npzfile['n_hes'].item(),
-                        n_faces=npzfile['n_faces'].item(),
-                        vertices=npzfile['vertices'],
-                        face_positions=npzfile['face_positions'],
+        return GeomMesh(vertices=jnp.asarray(npzfile['vertices']),
+                        face_positions=jnp.asarray(npzfile['face_positions']),
                         vertex_attribs=_parse_attribs("VertexAttribs", vertex_attribs_enum),
                         he_attribs=_parse_attribs("HeAttribs", he_attribs_enum),
                         face_attribs=_parse_attribs("FaceAttribs", face_attribs_enum))
 
     # equality comparisons. Two meshes are equal if all of the arrays they contain are equal.
-    
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, GeomMesh):
-            return False          
-        if not self.n_items==other.n_items:
             return False
-        return jax.tree_util.tree_all(jax.tree.map(jnp.allclose, jax.tree_util.tree_flatten(self)[0],
-                                                                 jax.tree_util.tree_flatten(other)[0]))
+        leaves_self, tree_self = jax.tree_util.tree_flatten(self)
+        leaves_other, tree_other = jax.tree_util.tree_flatten(other)
+        if tree_self != tree_other:   # different attribute keys / optional data present
+            return False
+        # shapes must match before comparing values: allclose would raise on a mismatch,
+        # and __eq__ must return False rather than propagate an exception
+        if any(a.shape != b.shape for a, b in zip(leaves_self, leaves_other)):
+            return False
+        return jax.tree_util.tree_all(jax.tree.map(jnp.array_equal, leaves_self, leaves_other))
+
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #504fefa9-e469-4056-a6b9-a5496b3f6ff3
 class Mesh(NamedTuple):

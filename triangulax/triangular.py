@@ -2,8 +2,7 @@
 
 # %% auto #0
 __all__ = ['read_obj', 'write_obj', 'TriMesh', 'compute_per_face_jacobian', 'generate_ginibre_points', 'generate_poisson_points',
-           'generate_triangular_lattice', 'get_periodic_delaunay_faces', 'get_faces_crossing_periodic_boundaries',
-           'get_adjacent_vertex_indices']
+           'generate_triangular_lattice', 'get_periodic_delaunay_faces', 'get_faces_crossing_periodic_boundaries']
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -24,7 +23,7 @@ import dataclasses
 from . import trigonometry as trig
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #75efb5c2
-def read_obj(filename: str | Path, dim: int = 2) -> tuple[jax.Array, jax.Array]:
+def read_obj(filename: str | Path, dim: int = 3) -> tuple[jax.Array, jax.Array]:
     """
     Read vertices, texture vertices, normals, and faces from an obj file.
 
@@ -86,6 +85,13 @@ _INF_SENTINEL = 1e30  # Sentinel for infinity vertices in .obj files (representa
 @dataclasses.dataclass(init=True, repr=False, eq=False, frozen=False, slots=False)
 class TriMesh:
     """
+    NOTE: unlike `mesh.HeMesh` and `mesh.GeomMesh`, TriMesh is deliberately NOT
+    registered as a JAX pytree, and is mutable. It is an input/output container for
+    reading and writing .obj files, not a data structure to compute with: it cannot be
+    passed through `jax.jit`/`jax.vmap` or differentiated. Convert to arrays plus a
+    `HeMesh` (and optionally a `GeomMesh`) before doing any numerical work.
+
+
     Simple class for reading, holding, transforming, and saving triangular meshes.
     
     A TriMesh comprises vertices and faces, describing a surface in 2d or 3d. 
@@ -156,7 +162,7 @@ class TriMesh:
         self.face_positions = jax.vmap(trig.get_circumcenter)(*[self.vertices[fcs] for fcs in self.faces.T])
         
     @staticmethod  
-    def read_obj(filename: str | Path, read_face_positions: bool = False, dim: int = 2) -> "TriMesh":
+    def read_obj(filename: str | Path, read_face_positions: bool = False, dim: int = 3) -> "TriMesh":
         """
         Read vertices, texture vertices, normals, and faces from an obj file.
 
@@ -522,16 +528,3 @@ def get_faces_crossing_periodic_boundaries(vertices: Float[jax.Array, "n_vertice
     periodic_edge_vectors = edge_vectors - L[None, None, :] * np.round(edge_vectors / L[None, None, :])
     crosses_boundary = np.any(~np.isclose(edge_vectors, periodic_edge_vectors), axis=(1, 2))
     return jnp.array(crosses_boundary, dtype=bool)
-
-# %% ../nbs/src/01_triangular_meshes.ipynb #2c4a0e23-ac42-4264-9a38-f8745e02a131
-# find the vertices and faces which are adjacent to a given vertex, in the correct counter-clockwise order.
-
-def get_adjacent_vertex_indices(faces: Int[jax.Array, "n_faces 3"],
-                                n_vertices: int) -> list[Int[jax.Array, " n_neighbors"]]:
-    """For each vertex, get the indices of the adjacent vertices in correct order.
-    For boundary vertices, this list contains the vertex itself."""
-    faces = np.array(faces)
-    vf, ni = igl.vertex_triangle_adjacency(faces, n=n_vertices)
-    adjacent_faces = [vf[a:b] for a, b in zip(ni[:-1], jnp.roll(ni, -1)[:-1])]
-    adjacent_vertices = [jnp.array(igl.boundary_loop(faces[fcs])) for fcs in adjacent_faces]
-    return adjacent_vertices
