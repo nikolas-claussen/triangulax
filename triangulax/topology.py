@@ -6,8 +6,8 @@ __all__ = ['flip_edge', 'can_flip_edge', 'flip_by_id', 'flip_all', 'flip_n_short
            'split_vertex']
 
 # %% ../nbs/src/03_topological_modifications.ipynb #03827561
-import numpy as np
-import igl
+#| export
+
 
 # %% ../nbs/src/03_topological_modifications.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -19,66 +19,70 @@ from typing import Any
 
 import dataclasses
 
-import functools
 
 # %% ../nbs/src/03_topological_modifications.ipynb #cef3ff0a
-from . import trigonometry as trig
-from .triangular import TriMesh
-from .mesh import HeMesh, GeomMesh
-import triangulax.mesh as msh
-from . import geometry as geom
+from .mesh import HeMesh
+
 
 # %% ../nbs/src/03_topological_modifications.ipynb #2a1c1f7c-4c6e-4312-9820-cf497590c452
-@functools.partial(jax.jit, static_argnames=['check_boundary'])
-def flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""], check_boundary: bool = False) -> HeMesh:
+def flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""] | int) -> HeMesh:
     """
     Flip half-edge e in a half-edge mesh.
-    
+
     See https://jerryyin.info/geometry-processing-algorithms/half-edge/. The algorithm
     is slightly modified since we keep track of the origin and destination of a half-edge,
     and use arrays instead of pointers. Returns a new HeMesh, does not modify in-place.
 
-    Does not check whether the flip produces a valid mesh. Use `can_flip_edge` to check first.
+    Warning: does NOT check whether the flip produces a valid mesh. Flipping a boundary
+    edge silently corrupts the connectivity, because heface == -1 wraps around and
+    overwrites the last face. Always screen with `can_flip_edge` first; the batch
+    helpers `flip_all` / `flip_by_id` / `flip_n_shortest` do this for you.
+
+    Not jitted: wrap in `jax.jit` yourself if desired (`e` may be a traced value).
     """
-    if check_boundary:
-        assert (hemesh.heface[e] !=-1 and hemesh.heface[hemesh.twin[e]] != -1), "Cannot flip boundary edge"
+    # all index arrays are built at the mesh's own integer dtype: `e` may be int64
+    # (e.g. from jnp.arange under jax_enable_x64) while the mesh arrays are int32,
+    # and scattering int64 values into an int32 array is a JAX error-in-waiting.
+    idx = lambda *xs: jnp.array(xs, dtype=hemesh.orig.dtype)
 
     # identify relevant elements
     e5 = hemesh.prv[e]
     e4 = hemesh.nxt[e]
     twin = hemesh.twin[e]
-    e1 = hemesh.prv[twin] 
-    e0 = hemesh.nxt[twin] 
+    e1 = hemesh.prv[twin]
+    e0 = hemesh.nxt[twin]
 
     # make sure there's no vertex or face references to e or twin
-    incident = hemesh.incident.at[jnp.array([hemesh.orig[e], hemesh.orig[twin]])].set(
-        jnp.array([hemesh.twin[e5], hemesh.twin[e1]]))
-    face_incident = hemesh.face_incident.at[jnp.array([hemesh.heface[e], hemesh.heface[twin]])].set(
-        jnp.array([e5, e1])) # e1, e5 don't change face
+    incident = hemesh.incident.at[idx(hemesh.orig[e], hemesh.orig[twin])].set(
+        idx(hemesh.twin[e5], hemesh.twin[e1]))
+    face_incident = hemesh.face_incident.at[idx(hemesh.heface[e], hemesh.heface[twin])].set(
+        idx(e5, e1)) # e1, e5 don't change face
 
     # update the data structure to do the T1
-    nxt = hemesh.nxt.at[jnp.array([e, twin])].set(jnp.array([e5, e1]))
-    prv = hemesh.prv.at[jnp.array([e, twin])].set(jnp.array([e0, e4]))
-    orig = hemesh.orig.at[jnp.array([e, twin])].set(jnp.array([hemesh.orig[e1], hemesh.orig[e5]]) )
-    dest = hemesh.dest.at[jnp.array([e, twin])].set(jnp.array([hemesh.dest[e4], hemesh.dest[e0]]))
+    nxt = hemesh.nxt.at[idx(e, twin)].set(idx(e5, e1))
+    prv = hemesh.prv.at[idx(e, twin)].set(idx(e0, e4))
+    orig = hemesh.orig.at[idx(e, twin)].set(idx(hemesh.orig[e1], hemesh.orig[e5]))
+    dest = hemesh.dest.at[idx(e, twin)].set(idx(hemesh.dest[e4], hemesh.dest[e0]))
 
-    nxt = nxt.at[jnp.array([e0, e1, e4, e5])].set(jnp.array([e, e4, twin, e0]) )
-    prv = prv.at[jnp.array([e0, e1, e4, e5])].set(jnp.array([e5, twin, e1, e]) )
-    heface = hemesh.heface.at[jnp.array([e0, e4])].set(jnp.array([hemesh.heface[e5], hemesh.heface[e1]]))
+    nxt = nxt.at[idx(e0, e1, e4, e5)].set(idx(e, e4, twin, e0))
+    prv = prv.at[idx(e0, e1, e4, e5)].set(idx(e5, twin, e1, e))
+    heface = hemesh.heface.at[idx(e0, e4)].set(idx(hemesh.heface[e5], hemesh.heface[e1]))
 
     return HeMesh(incident, orig, dest, hemesh.twin, nxt, prv, heface, face_incident, hemesh.inf_vertices)
 
 # %% ../nbs/src/03_topological_modifications.ipynb #c519ff06
-@jax.jit
-def can_flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""]) -> Bool[jax.Array, ""]:
+def can_flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""] | int) -> Bool[jax.Array, ""]:
     """
     Check whether flipping half-edge e would produce a valid mesh.
-    
+
     An edge can be flipped if it is interior (not boundary) and the two opposite vertices
     are not already connected (which would create a duplicate edge).
+
+    Uses `hemesh.is_bdry_edge`, so boundaries are detected under both conventions
+    (heface == -1 and vertices at infinity).
     """
     twin = hemesh.twin[e]
-    is_interior = (hemesh.heface[e] != -1) & (hemesh.heface[twin] != -1)
+    is_interior = ~hemesh.is_bdry_edge[e]
     # opposite vertices after flip
     v_opp_1 = hemesh.dest[hemesh.nxt[e]]     # = orig of prv[e]
     v_opp_2 = hemesh.dest[hemesh.nxt[twin]]   # = orig of prv[twin]
@@ -86,32 +90,70 @@ def can_flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""]) -> Bool[jax.Array, ""]:
     already_connected = jnp.any((hemesh.orig == v_opp_1) & (hemesh.dest == v_opp_2))
     return is_interior & ~already_connected
 
+
 # %% ../nbs/src/03_topological_modifications.ipynb #242d6ee1-d553-45fc-852f-a80fbb4a589a
-@jax.jit
 def flip_by_id(hemesh: HeMesh, ids: Int[jax.Array, " flips"], to_flip: Bool[jax.Array, " flips"]) -> HeMesh:
-    """Flip half-edges from ids array where to_flip is True. Wraps flip_edge."""
+    """Flip half-edges from ids array where to_flip is True. Wraps flip_edge.
+
+    Flips are applied *sequentially*, and each one is re-checked against the current
+    (partially flipped) mesh with `can_flip_edge`, since an earlier flip can invalidate
+    a later one. Edges that fail the check are skipped.
+    """
     def scan_fun(h, x):
-        return jax.lax.cond(x[1], lambda hh: flip_edge(hh, x[0]), lambda hh: hh, h), None
-    xs = jnp.stack([ids, to_flip], axis=1)  
+        e = x[0]
+        do = (x[1] != 0) & can_flip_edge(h, e)
+        return jax.lax.cond(do, lambda hh: flip_edge(hh, e), lambda hh: hh, h), None
+    xs = jnp.stack([ids, to_flip], axis=1)
     flipped_hemesh, _ = jax.lax.scan(scan_fun, init=hemesh, xs=xs)
     return flipped_hemesh
 
-@jax.jit
-def flip_all(hemesh: HeMesh, to_flip: Bool[jax.Array, " n_hes"]) -> HeMesh:
+
+def flip_all(hemesh: HeMesh, to_flip: Bool[jax.Array, " n_hes"],
+             max_flips: int | None = None) -> HeMesh:
     """
     Flip all (unique) half-edges where to_flip is True in a half-edge mesh. Wraps flip_edge.
-    
-    Note: scans over *all* half-edges, which can be slow for large meshes. See `flip_n_shortest`
-    for a more efficient alternative that only scans over a fixed number of candidate edges.
+
+    Flips are applied *sequentially*, and each one is re-checked against the current
+    (partially flipped) mesh with `can_flip_edge`: `to_flip` is evaluated against the
+    original mesh, but an earlier flip can make a later one invalid (the two opposite
+    vertices may have become adjacent). Without the re-check this silently produces
+    non-manifold meshes.
+
+    Parameters
+    ----------
+    hemesh : HeMesh
+        The half-edge mesh.
+    to_flip : Bool[Array, " n_hes"]
+        Mask of half-edges to flip. Only unique half-edges (`hemesh.is_unique`) are
+        considered, so marking the twin instead has no effect.
+    max_flips : int | None
+        If None (default), scan over *all* half-edges. Cost is then O(n_hes^2) and this
+        dominates for large meshes. If given, scan only the `max_flips` lowest-indexed
+        candidates, which is much faster. `max_flips` determines the scan length and
+        hence array shapes, so under `jax.jit` it must be a static argument
+        (`jax.jit(flip_all, static_argnames=['max_flips'])`).
+
+    Returns
+    -------
+    HeMesh
+        The mesh after flipping.
     """
+    candidates = to_flip & hemesh.is_unique
+    if max_flips is None:
+        ids = jnp.arange(hemesh.n_hes)
+    else:
+        # candidate indices first, padded with the out-of-range sentinel n_hes
+        ids = jnp.sort(jnp.where(candidates, jnp.arange(hemesh.n_hes), hemesh.n_hes))[:max_flips]
+
     def scan_fun(h, e):
-        return jax.lax.cond(to_flip[e] & hemesh.is_unique[e],
-                            lambda hh: flip_edge(hh, e), lambda hh: hh, h), None
-    flipped_hemesh, _ = jax.lax.scan(scan_fun, init=hemesh, xs=jnp.arange(hemesh.n_hes) )
+        e_safe = jnp.minimum(e, hemesh.n_hes - 1)
+        do = (e < hemesh.n_hes) & candidates[e_safe] & can_flip_edge(h, e_safe)
+        return jax.lax.cond(do, lambda hh: flip_edge(hh, e_safe), lambda hh: hh, h), None
+    flipped_hemesh, _ = jax.lax.scan(scan_fun, init=hemesh, xs=ids)
     return flipped_hemesh
 
+
 # %% ../nbs/src/03_topological_modifications.ipynb #6f857122
-@functools.partial(jax.jit, static_argnames=['max_flips'])
 def flip_n_shortest(hemesh: HeMesh, edge_lengths: Int[jax.Array, " n_hes"],
                     threshold: float, max_flips: int = 10) -> tuple[HeMesh, Bool[jax.Array, " n_hes"]]:
     """
@@ -129,19 +171,24 @@ def flip_n_shortest(hemesh: HeMesh, edge_lengths: Int[jax.Array, " n_hes"],
     threshold : float
         Edges shorter than this are flipped.
     max_flips : int
-        Maximum number of edges to consider. Static argument (changing it triggers recompilation).
+        Maximum number of edges to consider. Determines the scan length and hence array
+        shapes, so under `jax.jit` it must be a static argument
+        (`jax.jit(flip_n_shortest, static_argnames=['max_flips'])`).
 
     Returns
     -------
     hemesh : HeMesh
         The mesh after flipping.
     did_flip : Bool[Array, " n_hes"]
-        Boolean mask of half-edges that were flipped.
+        Boolean mask of half-edges that were actually flipped (both the half-edge and
+        its twin are marked).
     """
     lengths = jnp.where(hemesh.is_unique & ~hemesh.is_bdry_edge, edge_lengths, jnp.inf)
     ids = jnp.argsort(lengths)[:max_flips]
     hemesh_new = flip_by_id(hemesh, ids, lengths[ids] < threshold)
-    did_flip = (lengths < threshold) & (lengths <= lengths[ids[max_flips - 1]])
+    # flip_edge rewrites orig/dest only for the flipped half-edge and its twin, so this
+    # is the exact set of applied flips (candidates rejected by can_flip_edge are excluded).
+    did_flip = (hemesh_new.orig != hemesh.orig) | (hemesh_new.dest != hemesh.dest)
     return hemesh_new, did_flip
 
 # %% ../nbs/src/03_topological_modifications.ipynb #d2df40a4
@@ -172,29 +219,29 @@ class MeshReindexMap:
 
 
 # %% ../nbs/src/03_topological_modifications.ipynb #43101a21
-@jax.jit
-def can_collapse_edge(hemesh: HeMesh, e: Int[jax.Array, ""]) -> Bool[jax.Array, ""]:
+def can_collapse_edge(hemesh: HeMesh, e: Int[jax.Array, ""] | int) -> Bool[jax.Array, ""]:
     """
     Check whether collapsing half-edge e would produce a valid mesh (link condition).
-    
+
     An edge can be collapsed if it is interior and the two endpoint vertices share exactly
     two common neighbors (the opposite vertices of the two adjacent faces). This is the
     discrete "link condition" that ensures the collapse preserves manifoldness.
+
+    Uses `hemesh.is_bdry_edge`, so boundaries are detected under both conventions
+    (heface == -1 and vertices at infinity).
     """
-    t = hemesh.twin[e]
-    is_interior = (hemesh.heface[e] != -1) & (hemesh.heface[t] != -1)
-    # compute neighbor sets via orig/dest
+    is_interior = ~hemesh.is_bdry_edge[e]
+    # neighbour sets as per-vertex boolean masks: O(n_hes) rather than O(n_hes^2)
     v0, v1 = hemesh.orig[e], hemesh.dest[e]
-    nbrs_v0 = jnp.where(hemesh.orig == v0, hemesh.dest, -1)
-    nbrs_v1 = jnp.where(hemesh.orig == v1, hemesh.dest, -1)
-    # count common neighbors (a neighbor n is common if it appears in both nbr sets)
-    is_common = jnp.any(nbrs_v0[:, None] == nbrs_v1[None, :], axis=1) & (nbrs_v0 != -1)
-    n_common = jnp.sum(is_common)
+    empty = jnp.zeros(hemesh.n_vertices, dtype=bool)
+    nbrs_v0 = empty.at[hemesh.dest].max(hemesh.orig == v0)
+    nbrs_v1 = empty.at[hemesh.dest].max(hemesh.orig == v1)
+    n_common = jnp.sum(nbrs_v0 & nbrs_v1)
     return is_interior & (n_common == 2)
 
+
 # %% ../nbs/src/03_topological_modifications.ipynb #67afc0b1
-@functools.partial(jax.jit, static_argnames=['check_boundary']) 
-def collapse_edge(hemesh: HeMesh, e: int, check_boundary=False
+def collapse_edge(hemesh: HeMesh, e: Int[jax.Array, ""] | int
                   ) -> tuple[HeMesh, MeshReindexMap]:
     """
     Collapse half-edge e in a half-edge mesh. Keeps the origin vertex of e.
@@ -202,14 +249,14 @@ def collapse_edge(hemesh: HeMesh, e: int, check_boundary=False
     Returns a new HeMesh (does not modify in-place), and a MeshReindexMap for remapping
     vertex, half-edge, and face indices from the original mesh to the new mesh.
 
-    Does not check whether the collapse produces a valid mesh. Use `can_collapse_edge` to check first.
+    Warning: does NOT check whether the collapse produces a valid mesh. Use
+    `can_collapse_edge` to check first.
 
-    JIT-compatible, but calling with different numbers of vertices/edges/faces will cause recompilation.
+    Not jitted, and inherently awkward to jit: the output arrays are smaller than the
+    input, so every call with a different mesh size triggers a recompilation. On a mesh
+    with vertices at infinity it cannot be jitted at all, since `inf_vertices` is a
+    static field whose remapping requires concrete indices.
     """
-
-    if check_boundary:
-        assert not hemesh.is_bdry_edge[e] and not hemesh.is_inf_he[e], "Interior edges only"
-
     # identify relevant elements
     t = hemesh.twin[e]
 
@@ -258,7 +305,7 @@ def collapse_edge(hemesh: HeMesh, e: int, check_boundary=False
                                f_reverse=remap_inds_removal_reverse(hemesh.n_faces, fs_delete),
                                he_forward=remap_he,
                                he_reverse=remap_inds_removal_reverse(hemesh.n_hes, hes_delete),
-                               info={"operation": "collapse_edge", "collapsed_edge": e})
+                               info={"operation": "collapse_edge"})
     
     inf_vertices = tuple(int(remap_v[v]) for v in hemesh.inf_vertices)
 
