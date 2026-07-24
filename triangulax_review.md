@@ -2,30 +2,21 @@
 
 ## Still open
 
-Everything not listed here has been fixed on branch `pre-release-fixes` (10 commits); fixed items are annotated inline with their commit.
+Everything not listed here has been fixed on branch `pre-release-fixes` (14 commits);
+fixed items are annotated inline with their commit.
 
-- **B11.** `get_closest_point_on_triangle` silently wrong for small-scale meshes
-- **B12.** FE gradient produces NaN gradients on degenerate faces
-- **B16.** Hard-coded absolute `1e-12` guards break small-scale meshes
-- **B24.** `.obj` infinity-vertex round trip is broken two ways
-- **B25.** Medium-severity items — 11 of 26 fixed, 15 still open (see the table)
-- **E.** Omissions & design — deliberately deferred, no new features in this pass
+- **B16.** Hard-coded absolute `1e-12` zero-division guards break small-scale meshes
+  *(deferred by request: to be handled by a separate zero-division-guarding overhaul.
+  Note this is also the sole remaining cause of B11's residual small-scale error.)*
+- **B25.** Medium-severity items — 22 of 26 fixed, 4 still open (see the table)
+- **E.** Omissions — the "easy" items are now implemented (E2, E3, E4, E5, E6, E8).
+  Still open by request: **E9** (padded one-ring traversal — declined: gather/scatter
+  is the better pattern), **E10** (spatial acceleration for closest-point queries),
+  and a periodic FE gradient.
 
-Status: all 12 source notebooks pass `nbdev_test`; `ruff` is clean; the package builds with all 14 modules.
-
----
-
-
-Scope: all 13 modules in `triangulax/` + their source notebooks. Six parallel module
-reviews plus a repo/packaging pass. Every finding marked **[V]** was reproduced by
-running code against the installed library; **[R]** was reported by a module review but
-not independently re-run by me.
-
-Baseline facts established:
-- `triangulax/*.py` are **exactly in sync** with `nbs/src/*.ipynb` (`nbdev_export` → zero diff).
-- A fresh `python -m build` ships all 14 modules; the README minimal example runs.
-- Your cached `refinement_tests/delaunay/*.obj` (25 meshes) are **all clean** — the
-  convergence study is not compromised by the `fix_delaunay` bug below.
+Status: all 12 source notebooks pass `nbdev_test`; `ruff` is clean; the package builds
+with all 14 modules. `__version__` is still `0.0.2` and the stale `dist/` artifacts are
+still present — release tasks you said you would handle.
 
 ---
 
@@ -304,6 +295,8 @@ positive-definiteness — which invalidates the notebook's own implicit-diffusio
 that tags the operator `lineax.positive_semidefinite_tag`.
 
 ### B11. `get_closest_point_on_triangle` silently wrong for small-scale meshes [R] — HIGH
+
+> **[FIX IMPLEMENTED IN COMMIT abae5d2]** normalized the face normal in `get_closest_point_on_triangle` and `find_closest_faces` with a scale-free double-where, and made the degeneracy tests scale-free. **Partial:** the residual error below scale ~1e-3 is entirely due to `trigonometry.get_barycentric_coordinates` clipping its length^4 denominator at 1e-12 — verified by substituting a relative guard there, which makes the queries exact (7e-17) down to scale 1e-5. That guard is B16 and is deferred.
 `interp.py:63-65`
 
 `normal = cross(b-a, c-a)` is unnormalized and `project_out_vector` clips `|n|²` at 1e-12,
@@ -312,6 +305,8 @@ so once triangle area ≲ 5e-7 the projection collapses. End-to-end vs
 the mesh radius**. Relevant for tissue meshes in microns/metres. Fix: normalize the normal.
 
 ### B12. FE gradient produces NaN gradients on degenerate faces [R] — HIGH
+
+> **[FIX IMPLEMENTED IN COMMIT abae5d2]** made the denominators safe before dividing in `_fe_grad_phi_2d/3d` (jnp.where masks the primal but reverse mode still differentiates the untaken x/0 branch). 6-9 NaNs -> 0 on a mesh with a collapsed triangle.
 `linops.py:250-252, 270-272`
 
 Classic single-`where`: the primal is masked but the VJP of the untaken branch
@@ -439,12 +434,16 @@ the B3 correctness fix for free. Signature change; if unacceptable, the one-line
 `can_flip_edge` re-check alone restores correctness at current cost.
 
 ### B24. `.obj` infinity-vertex round trip is broken two ways [R] — HIGH
+
+> **[FIX IMPLEMENTED IN COMMIT abae5d2]** sentinel changed 1e300 -> 1e30 (representable in float32; the old one overflowed to literal "inf" with x64 off, which igl could not read back), the write path forces float64, and the reader now compares against half the sentinel instead of `>` it. Round trip verified under both precisions.
 `triangular.py:203-204, 243-244` — (a) `> _INF_SENTINEL` is strict, and the writer emits
 exactly `1e+300`, so `1e300 > 1e300` is False; (b) with x64 off (the default!) the
 float32 cast overflows and writes literal `inf`, producing a file igl cannot read back at
 all. Fix: `>=` comparison, force float64 in the write path, or use a `1e30` sentinel.
 
 ### B25. Medium-severity items (abbreviated)
+
+> **[MOSTLY FIXED]** 22 of the 26 rows are now fixed. Beyond the 11 noted previously, commit `abae5d2` fixed: `linops.py:450` (output-shape guard), `elastic.py:334,347` (tangential basis layout), `elastic.py:203` (0/0 NaN), `elastic.py:110,65` (sqrt of a negative det), `geometry.py:440` (zero guard), `geometry.py:443 vs 471` (handedness), `geometry.py:154` (boundary mask), `geometry.py:123` (closed-mesh check), `mesh.py:319` (infinite loop), `mesh.py:57-134` (silent corruption), `mesh.py:297` (dtype), `mesh.py:347,553` (numpy on load), `mesh.py:356` (unhashable), `periodic.py:36` and `periodic.py:201` (docs). `mesh.py:572` (`GeomMesh.__eq__` raising) was fixed by the rewrite in `d6a4131`. **Still open:** the four rows whose fix is a zero-division guard, i.e. B16 territory.
 
 > **[PARTIALLY FIXED]** 11 of the 26 rows below are fixed: `linops.py:84` and `linops.py:206` (24a33ac); `mesh.py:378` (1a2802a); `topology.py:65,314`, `topology.py:144` and the leaked tracer in `collapse_edge`'s `MeshReindexMap.info` (8e55e46); `algorithms.py:241` and `algorithms.py:235` (2c5fc92); `simulation.py:120` and the two `simulation.py` docstring errors (df51fc4); `triangular.py:198` and `triangular.py:455` (7c9312a). The remaining rows are still open.
 
@@ -576,6 +575,8 @@ Structural blind spots:
 ---
 
 ## E. Omissions & design
+
+> **[IMPLEMENTED IN COMMITS b4a9d12 (features) AND d6a4131 (design)]** Features: E2 area/volume constraint energies, E3 normal derivative (+sparse), E4 periodic sparse Laplacian/mass matrix (+ periodic robust Voronoi areas), E5 periodic oriented triangle areas, E6 topological summary helpers (module-level functions), E8 geodesic curvature (Gauss-Bonnet verified to <1e-13). Design: `GeomMesh` no longer duplicates element counts; `read_obj` defaults to `dim=3`; `get_adjacent_vertex_indices` removed; `TriMesh` documented as a non-pytree I/O container; `MeshReindexMap` and `Mesh` kept. **Not implemented by request:** E9 (padded traversal — declined in favour of gather/scatter), E10 (spatial acceleration), and a periodic FE gradient.
 
 **Genuine gaps for the stated scope** (ranked by value):
 
