@@ -8,17 +8,12 @@ __all__ = ['scipy_to_bcoo', 'bcoo_to_scipy', 'diag_jsparse', 'compute_cotan_lapl
 
 # %% ../nbs/src/06_linear_operators.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
-import igl
 from scipy import sparse
 
 # %% ../nbs/src/06_linear_operators.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
 import jax.numpy as jnp
 import jax.experimental.sparse as jsparse
-
-import lineax
-
-import functools
 
 # %% ../nbs/src/06_linear_operators.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float 
@@ -81,7 +76,7 @@ def bcoo_to_scipy(A: jsparse.BCOO) -> sparse.csr_matrix:
 
 def diag_jsparse(v : Float[jax.Array, " N"], k: int =0) -> jsparse.BCOO:
     """Construct a diagonal jax.sparse array. Plugin replacement for np.diag"""
-    N  = v.shape[0] + jnp.abs(k)
+    N  = v.shape[0] + abs(k)  # plain abs: jnp.abs would make N a tracer and break jit
     if k >=0:
         row_inds = jnp.arange(k, N, dtype=jnp.int32)
     else:
@@ -143,7 +138,7 @@ def cotan_laplace_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: m
 # %% ../nbs/src/06_linear_operators.ipynb #9cbc5491
 def compute_periodic_cotan_laplace(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,
                                    vertex_field: Float[jax.Array, "n_vertices ..."],
-                                   distance_function: Callable,
+                                   displacement_fn: Callable,
                                    normalize: bool = False,
                                    ) -> Float[jax.Array, "n_vertices ..."]:
     """Compute cotangent Laplacian on a periodic domain (2D).
@@ -159,9 +154,10 @@ def compute_periodic_cotan_laplace(vertices: Float[jax.Array, "n_vertices 2"], h
         Half-edge mesh connectivity.
     vertex_field
         Per-vertex scalar, vector, or tensor field.
-    distance_function
+    displacement_fn
         Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``,
-        e.g. :func:`triangulax.periodic.displacement_periodic`.
+        e.g. :func:`triangulax.periodic.displacement_periodic`. Note this returns a
+        displacement *vector*, not a scalar distance.
     normalize
         If True, divide by periodic Voronoi cell area at each vertex.
 
@@ -170,11 +166,11 @@ def compute_periodic_cotan_laplace(vertices: Float[jax.Array, "n_vertices 2"], h
     result
         Cotangent Laplacian applied to the field, same shape as ``vertex_field``.
     """
-    w_edge = per._get_periodic_cotan_weights_per_edge(vertices, hemesh, distance_function)
+    w_edge = per.get_periodic_cotan_weights_per_edge(vertices, hemesh, displacement_fn)
     diff = vertex_field[hemesh.dest] - vertex_field[hemesh.orig]
     result = -adj.sum_he_to_vertex_incoming(hemesh, (w_edge*diff.T).T)
     if normalize:
-        areas = per.get_periodic_voronoi_areas(vertices, hemesh, distance_function)
+        areas = per.get_periodic_voronoi_areas(vertices, hemesh, displacement_fn)
         shape = (hemesh.n_vertices,) + (1,) * (result.ndim - 1)
         result = result / areas.reshape(shape)
     return result
@@ -193,10 +189,14 @@ def mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh
         Vertex positions.
     hemesh : HeMesh
         Half-edge mesh connectivity.
-    area_type : {"voronoi", "barycentric"}, default="voronoi"
+    area_type : {"voronoi", "voronoi_exact", "barycentric"}, default="voronoi"
         Choice of dual-cell area definition used on the diagonal.
-        Use ``"voronoi"`` for the cotangent Laplacian; ``"barycentric"``
-        for a simpler (always positive) approximation.
+        ``"voronoi"`` is the *mixed* Voronoi area of Meyer et al., which is what
+        ``igl.massmatrix(..., MASSMATRIX_TYPE_VORONOI)`` computes and is always
+        positive; this is the right choice for the cotangent Laplacian.
+        ``"voronoi_exact"`` is the exact (signed) circumcentric area, which can be
+        NEGATIVE on obtuse triangles and then destroys positive-definiteness of
+        ``M - dt*L``. ``"barycentric"`` is a simpler always-positive approximation.
 
     Returns
     -------
@@ -204,9 +204,14 @@ def mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh
         Diagonal sparse mass matrix.
     """
     if area_type == "voronoi":
+        cell_areas = geom.get_voronoi_areas_robust(vertices, hemesh)
+    elif area_type == "voronoi_exact":
         cell_areas = geom.get_voronoi_areas(vertices, hemesh)
     elif area_type == "barycentric":
         cell_areas = geom.get_barycentric_cell_areas(vertices, hemesh)
+    else:
+        raise ValueError(f"unknown area_type {area_type!r}; "
+                         "expected 'voronoi', 'voronoi_exact' or 'barycentric'")
     return diag_jsparse(cell_areas)
 
 
@@ -220,8 +225,10 @@ def mass_matrix_inv_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
         Vertex positions.
     hemesh : HeMesh
         Half-edge mesh connectivity.
-    area_type : {"voronoi", "barycentric"}, default="voronoi"
-        Choice of dual-cell area definition used on the diagonal.
+    area_type : {"voronoi", "voronoi_exact", "barycentric"}, default="voronoi"
+        Choice of dual-cell area definition used on the diagonal. See
+        `mass_matrix_sparse`. ``"voronoi"`` (mixed) is always positive; the other
+        choices can produce zero or negative areas, and hence a divergent inverse.
 
     Returns
     -------
@@ -229,9 +236,14 @@ def mass_matrix_inv_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
         Diagonal sparse inverse mass matrix.
     """
     if area_type == "voronoi":
+        cell_areas = geom.get_voronoi_areas_robust(vertices, hemesh)
+    elif area_type == "voronoi_exact":
         cell_areas = geom.get_voronoi_areas(vertices, hemesh)
     elif area_type == "barycentric":
         cell_areas = geom.get_barycentric_cell_areas(vertices, hemesh)
+    else:
+        raise ValueError(f"unknown area_type {area_type!r}; "
+                         "expected 'voronoi', 'voronoi_exact' or 'barycentric'")
     return diag_jsparse(1.0 / cell_areas)
 
 # %% ../nbs/src/06_linear_operators.ipynb #e2587568
@@ -406,13 +418,15 @@ def compute_divergence_2d(vertices: Float[jax.Array, "n_vertices 2"], hemesh: ms
     areas = geom.get_triangle_areas(vertices, hemesh)          # (n_faces,)
 
     # contract over spatial dim, weight by area → per-corner contributions
-    contrib = -jnp.einsum("fvd,fd...->fv...", grads, face_field) * areas[:, None]
+    # areas must broadcast against the trailing axes of a vector/tensor face field
+    contrib = -jnp.einsum("fvd,fd...->fv...", grads, face_field)
+    contrib = contrib * areas.reshape((-1,) + (1,) * (contrib.ndim - 1))
 
     # scatter-add per-corner contributions to vertices
     trailing = face_field.shape[2:]
     result = jnp.zeros((hemesh.n_vertices,) + trailing)
-    for l in range(3):
-        result = result.at[faces[:, l]].add(contrib[:, l])
+    for corner in range(3):
+        result = result.at[faces[:, corner]].add(contrib[:, corner])
     return result
 
 
@@ -427,16 +441,17 @@ def compute_divergence_3d(vertices: Float[jax.Array, "n_vertices 3"], hemesh: ms
     grads = _fe_grad_phi_3d(vertices, hemesh)                  # (n_faces, 3, 3)
     areas = geom.get_triangle_areas(vertices, hemesh)          # (n_faces,)
 
-    contrib = -jnp.einsum("fvd,fd...->fv...", grads, face_field) * areas[:, None]
+    contrib = -jnp.einsum("fvd,fd...->fv...", grads, face_field)
+    contrib = contrib * areas.reshape((-1,) + (1,) * (contrib.ndim - 1))
 
     trailing = face_field.shape[2:]
     result = jnp.zeros((hemesh.n_vertices,) + trailing)
-    for l in range(3):
-        result = result.at[faces[:, l]].add(contrib[:, l])
+    for corner in range(3):
+        result = result.at[faces[:, corner]].add(contrib[:, corner])
     return result
 
 # %% ../nbs/src/06_linear_operators.ipynb #3d9366df
-def linear_op_to_sparse(op: callable,
+def linear_op_to_sparse(op: Callable,
                         in_shape: tuple[int, ...],
                         out_shape: tuple[int, ...],
                         dtype: jnp.dtype | None = None,
