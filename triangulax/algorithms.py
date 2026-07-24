@@ -222,7 +222,8 @@ def smooth_vertices_laplacian(vertices: Float[jax.Array, "n_vertices dim"], heme
     """
     triangle_areas = geom.get_triangle_areas(vertices, hemesh)
     # heface == -1 on boundary half-edges, which would silently pick up the last face's area
-    area_of = lambda he: jnp.where(hemesh.heface[he] == -1, 0.0, triangle_areas[hemesh.heface[he]])
+    def area_of(he):
+        return jnp.where(hemesh.heface[he] == -1, 0.0, triangle_areas[hemesh.heface[he]])
     weights = area_of(jnp.arange(hemesh.n_hes)) + area_of(hemesh.twin)
     normalization = adj.sum_he_to_vertex_incoming(hemesh, weights)
     average_neighbor = adj.sum_he_to_vertex_incoming(hemesh, weights[:, None] * vertices[hemesh.orig])

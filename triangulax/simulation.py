@@ -39,7 +39,8 @@ def simulate(step_fn: Callable[[State, Float[jax.Array, ""]], State],
     init : State
         Initial simulation state (any JAX pytree).
     timepoints : jax.Array, shape (n_steps,)
-        Time points to step through. `step_fn` receives consecutive pairs.
+        Time points to step through. `step_fn` receives a single scalar time per
+        step (the time being stepped *to*), not a pair.
 
     Returns
     -------
@@ -47,7 +48,8 @@ def simulate(step_fn: Callable[[State, Float[jax.Array, ""]], State],
         The simulation state after the last time step.
     logs : Log
         Pytree of measurements, with each leaf having an extra leading axis of
-        size ``n_steps``.
+        size ``n_steps``. Note the *initial* state is not logged: entry ``i`` is
+        the measurement after stepping to ``timepoints[i]``.
     """
     def _scan_fn(state: State, t_next: jax.Array) -> tuple[State, Log]:
         new_state = step_fn(state, t_next)
@@ -67,8 +69,13 @@ def chunked_simulate(step_fn: Callable[[State, Float[jax.Array, ""]], State],
     """Run a simulation in chunks, with an optional callback between chunks.
 
     Each chunk is executed as a single `jax.lax.scan`. Between chunks, the
-    ``on_chunk`` callback is called in Python, enabling checkpointing, progress
-    reporting, or early stopping.
+    ``on_chunk`` callback is called in Python, enabling checkpointing or progress
+    reporting. Its return value is ignored, so it cannot stop the simulation early.
+
+    Produces exactly the same trajectory as :func:`simulate`, including when
+    ``n_steps`` is not a multiple of ``chunk_size``. Note all chunk logs are
+    accumulated and concatenated at the end, so this saves no log memory
+    relative to :func:`simulate`.
 
     Parameters
     ----------
@@ -84,7 +91,7 @@ def chunked_simulate(step_fn: Callable[[State, Float[jax.Array, ""]], State],
         Number of time steps per chunk.
     on_chunk : (State, Log, int) -> None, optional
         Callback invoked after each chunk with ``(state, chunk_logs, chunk_index)``.
-        Runs in Python (not JIT'd), so it can do I/O.
+        Runs in Python (not JIT'd), so it can do I/O. Its return value is ignored.
 
     Returns
     -------
@@ -94,7 +101,11 @@ def chunked_simulate(step_fn: Callable[[State, Float[jax.Array, ""]], State],
         Concatenated measurements from all chunks. Each leaf has a leading axis
         of size ``n_steps``.
     """
+    if chunk_size <= 0:
+        raise ValueError(f"chunk_size must be positive, got {chunk_size}")
     n_steps = timepoints.shape[0]
+    if n_steps == 0:  # nothing to do; match simulate's empty-log shapes
+        return init, jax.tree.map(lambda x: x[:0], simulate(step_fn, measure_fn, init, timepoints)[1])
     all_logs = []
     state = init
 

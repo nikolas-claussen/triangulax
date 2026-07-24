@@ -12,8 +12,8 @@ __all__ = ['get_he_length', 'get_face_centroids', 'get_triangle_areas', 'get_ori
            'get_transport_across_halfedge', 'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #ffed5003
-import numpy as np
-import igl
+#| export
+
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -49,7 +49,7 @@ def get_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh
     return jax.vmap(trig.get_triangle_area)(*vertices[hemesh.faces.T])
 
 def get_oriented_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
-                                ) -> Float[jax.Array, "n_faces *dim"]:
+                                ) -> Float[jax.Array, "..."]:
     """Compute oriented (signed) triangle areas in a mesh.
 
     The shape of the result depends on the embedding dimension. In 3d it is the

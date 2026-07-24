@@ -10,7 +10,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 import igl
-import copy
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
@@ -25,7 +24,9 @@ from enum import IntEnum
 import dataclasses
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #cef3ff0a
-from .triangular import TriMesh
+#| export
+
+
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #45616576-ecbd-46f3-998b-ff82c6aa7bef
 def label_plot(vertices: Float[jax.Array, "n_vertices 2"],

@@ -43,7 +43,7 @@ def flip_edge(hemesh: HeMesh, e: Int[jax.Array, ""] | int) -> HeMesh:
     # all index arrays are built at the mesh's own integer dtype: `e` may be int64
     # (e.g. from jnp.arange under jax_enable_x64) while the mesh arrays are int32,
     # and scattering int64 values into an int32 array is a JAX error-in-waiting.
-    idx = lambda *xs: jnp.array(xs, dtype=hemesh.orig.dtype)
+    def idx(*xs): return jnp.array(xs, dtype=hemesh.orig.dtype)
 
     # identify relevant elements
     e5 = hemesh.prv[e]

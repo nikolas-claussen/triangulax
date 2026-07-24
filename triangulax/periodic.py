@@ -17,7 +17,6 @@ from collections.abc import Callable
 
 # %% ../nbs/src/05b_geometric_quantities_periodic_bcs.ipynb #c2783a57
 from . import trigonometry as trig
-from .triangular import TriMesh
 from .mesh import HeMesh
 from . import adjacency as adj
 
