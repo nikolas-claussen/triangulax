@@ -259,9 +259,12 @@ def _fe_grad_phi_2d(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMe
 
     area2 = jnp.cross(v1 - v0, v2 - v0)[:, None]
     mask = jnp.abs(area2) > 1e-12
-    grad_phi0 = jnp.where(mask, trig.get_perp_2d(v1 - v2)/area2, 0)
-    grad_phi1 = jnp.where(mask, trig.get_perp_2d(v2 - v0)/area2, 0)
-    grad_phi2 = jnp.where(mask, trig.get_perp_2d(v0 - v1)/area2, 0)
+    # the denominator must be made safe *before* dividing: jnp.where masks the value
+    # but the reverse-mode rule still differentiates the untaken x/0 branch -> NaN.
+    safe_area2 = jnp.where(mask, area2, 1.0)
+    grad_phi0 = jnp.where(mask, trig.get_perp_2d(v1 - v2)/safe_area2, 0)
+    grad_phi1 = jnp.where(mask, trig.get_perp_2d(v2 - v0)/safe_area2, 0)
+    grad_phi2 = jnp.where(mask, trig.get_perp_2d(v0 - v1)/safe_area2, 0)
 
     return jnp.stack([grad_phi0, grad_phi1, grad_phi2], axis=1)
 
@@ -277,11 +280,13 @@ def _fe_grad_phi_3d(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMe
     v0, v1, v2 = (vertices[faces[:, 0]], vertices[faces[:, 1]], vertices[faces[:, 2]])
 
     n = jnp.cross(v1 - v0, v2 - v0)
-    norm_n_sq = jnp.linalg.norm(n, axis=-1, keepdims=True)**2
+    norm_n_sq = jnp.sum(n**2, axis=-1, keepdims=True)  # avoids norm's NaN gradient at 0
     mask = norm_n_sq > 1e-12
-    grad_phi0 = jnp.where(mask, jnp.cross(v1 - v2, n)/norm_n_sq, 0)
-    grad_phi1 = jnp.where(mask, jnp.cross(v2 - v0, n)/norm_n_sq, 0)
-    grad_phi2 = jnp.where(mask, jnp.cross(v0 - v1, n)/norm_n_sq, 0)
+    # see _fe_grad_phi_2d: the denominator must be safe before the division
+    safe_norm_n_sq = jnp.where(mask, norm_n_sq, 1.0)
+    grad_phi0 = jnp.where(mask, jnp.cross(v1 - v2, n)/safe_norm_n_sq, 0)
+    grad_phi1 = jnp.where(mask, jnp.cross(v2 - v0, n)/safe_norm_n_sq, 0)
+    grad_phi2 = jnp.where(mask, jnp.cross(v0 - v1, n)/safe_norm_n_sq, 0)
 
     return jnp.stack([grad_phi0, grad_phi1, grad_phi2], axis=1)
 
@@ -460,7 +465,29 @@ def linear_op_to_sparse(op: Callable,
                         ) -> jsparse.BCOO:
     """Build a sparse matrix for a linear map using batched one-hot probes.
 
-    Note: this function is general, but not necessarily very efficient for large matrix sizes.
+    Parameters
+    ----------
+    op : Callable
+        Linear map taking and returning 1d arrays.
+    in_shape, out_shape : tuple[int, ...]
+        Input and output shapes of ``op``. Must be 1d. ``out_shape`` is checked
+        against what ``op`` actually returns.
+    dtype : jnp.dtype | None
+        Output dtype. Inferred from ``op`` if None.
+    chunk_size : int
+        Number of one-hot probes evaluated per batch.
+    tol : float
+        Entries with ``|value| <= tol`` are dropped.
+
+    Returns
+    -------
+    jsparse.BCOO
+        Sparse matrix of shape ``(n_out, n_in)``.
+
+    Note: this needs one probe per input dimension, so it costs O(n_in) applications of
+    ``op`` with an O(chunk_size * n_out) dense intermediate. On a 36k-vertex mesh this is
+    ~20x slower than assembling the cotan Laplacian directly; prefer a dedicated
+    assembler when one exists.
     """
     if len(in_shape) != 1 or len(out_shape) != 1:
         raise ValueError("Only 1D input/output supported for now.")
@@ -475,10 +502,14 @@ def linear_op_to_sparse(op: Callable,
 
     for start in range(0, n_in, chunk_size):
         end = min(start + chunk_size, n_in)
-        idx = jnp.arange(start, end, dtype=jnp.int64)
+        idx = jnp.arange(start, end, dtype=jnp.int32)
         basis = jax.nn.one_hot(jnp.array(idx), n_in, dtype=dtype)
         cols = jax.vmap(op)(basis)  # (chunk, n_out)
-        #cols = apply_op(basis)
+        # a wrong out_shape would put probe rows out of bounds, and BCOO silently
+        # DROPS out-of-bounds entries -- returning a quietly incorrect matrix.
+        if cols.shape[1:] != (n_out,):
+            raise ValueError(f"op returned output shape {cols.shape[1:]} per probe, "
+                             f"but out_shape says {(n_out,)}")
         mask = jnp.abs(cols) > tol
         col_in_batch, row_out = jnp.nonzero(mask)
         if col_in_batch.size == 0:
@@ -489,7 +520,7 @@ def linear_op_to_sparse(op: Callable,
         col_list.append(idx[col_in_batch])
 
     if len(data_list) == 0:
-        return jsparse.empty((n_out, n_in)) 
+        return jsparse.empty((n_out, n_in), dtype=dtype)
     data = jnp.concatenate(data_list)
     rows = jnp.concatenate(row_list)
     cols = jnp.concatenate(col_list)

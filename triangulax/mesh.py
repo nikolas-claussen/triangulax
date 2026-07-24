@@ -86,6 +86,14 @@ def get_half_edge_arrays_vectorized(n_vertices: int, faces: Int[jax.Array, "n_fa
     def lookup(pairs: np.ndarray) -> np.ndarray:
         pairs_view = pairs.view(dtype).ravel()
         pos = np.searchsorted(he_view, pairs_view)
+        # searchsorted silently returns a neighbouring slot for an absent pair, which
+        # would build a corrupt mesh with no error at all. Validate instead.
+        clipped = np.minimum(pos, he_view.size - 1)
+        if np.any(pos >= he_view.size) or np.any(he_view[clipped] != pairs_view):
+            raise ValueError(
+                "faces reference an edge that is not in the half-edge table. The input "
+                "must be a consistently oriented, edge-manifold triangle mesh without "
+                "degenerate (repeated-vertex) faces.")
         return order[pos]
 
     # per-face half-edges (v0->v1, v1->v2, v2->v0)
@@ -293,18 +301,32 @@ class HeMesh:
         return len(self.inf_vertices)>0
 
     @property
+    def _inf_vertex_array(self) -> Int[jax.Array, " n_inf"]:
+        """inf_vertices as an array of the same integer dtype as the connectivity.
+
+        jnp.array(()) would be a float array, which breaks jnp.isin against int32
+        indices under strict dtype promotion.
+        """
+        return jnp.array(self.inf_vertices, dtype=self.orig.dtype)
+
+    @property
     def is_inf_face(self) -> Bool[jax.Array, "n_faces"]:
         """True if face is fictitious/connected to an infinity vertex."""
-        return jnp.isin(self.faces, jnp.array(self.inf_vertices)).any(axis=1)
+        return jnp.isin(self.faces, self._inf_vertex_array).any(axis=1)
 
     @property
     def is_inf_he(self) -> Bool[jax.Array, "n_hes"]:
         """True if half-edge is fictitious/connected to an infinity vertex."""
-        return jnp.isin(self.orig, jnp.array(self.inf_vertices)) | jnp.isin(self.dest, jnp.array(self.inf_vertices))
-    
+        return jnp.isin(self.orig, self._inf_vertex_array) | jnp.isin(self.dest, self._inf_vertex_array)
+
     @property
     def is_bdry_he(self) -> Bool[jax.Array, "n_hes"]:
-        return jax.lax.select(self.has_inf_vertex, jnp.isin(self.dest[self.nxt], jnp.array(self.inf_vertices)), self.heface == -1)
+        """True if the half-edge lies on the mesh boundary (either convention)."""
+        # has_inf_vertex is a static Python bool, so this is a plain `if`:
+        # jax.lax.select would trace and materialise both branches on every call.
+        if self.has_inf_vertex:
+            return jnp.isin(self.dest[self.nxt], self._inf_vertex_array)
+        return self.heface == -1
 
     @property
     def is_bdry_edge(self) -> Bool[jax.Array, "n_hes"]:
@@ -312,19 +334,31 @@ class HeMesh:
     
     @property
     def is_bdry(self) -> Bool[jax.Array, "n_vertices"]:
-        v_field = jnp.zeros(self.n_vertices)
-        return v_field.at[self.dest].add(1*self.is_bdry_he) > 0
+        """True if the vertex lies on the mesh boundary (either convention)."""
+        # scatter in bool rather than mixing int into a float accumulator, which fails
+        # under jax_numpy_dtype_promotion='strict'
+        return jnp.zeros(self.n_vertices, dtype=bool).at[self.dest].max(self.is_bdry_he)
 
     # mesh traversal
     
     def iterate_around_vertex(self, v: int) -> Int[jax.Array, " n_neighbors"]:
-        """Get list of half-edges going out of a vertex."""
+        """Get list of half-edges going out of a vertex.
+
+        Not jittable (the output length is data-dependent). Raises if the vertex has
+        no outgoing half-edge, or if the one-ring fails to close.
+        """
+        if int(self.incident[v]) < 0:
+            raise ValueError(f"vertex {v} has no outgoing half-edge "
+                             "(it is not referenced by any face)")
         polygon_edges = [self.incident[v]]
         while True: # this while loop is challenging to rewrite using jax.lax since the output shape is not known!
             next_edge = self.twin[self.prv[polygon_edges[-1]]]
             if next_edge == polygon_edges[0]:
                 break
             polygon_edges.append(next_edge)
+            if len(polygon_edges) > self.n_hes:  # corrupt connectivity: never closes
+                raise RuntimeError(f"one-ring around vertex {v} does not close; "
+                                   "the mesh connectivity is invalid")
         return jnp.array(polygon_edges)
 
     @property
@@ -354,13 +388,20 @@ class HeMesh:
 
     @staticmethod
     def load(file: str | Path) -> "HeMesh":
+        """Load a HeMesh from an .npz archive written by `save`."""
         dict_to_load = dict(np.load(file))
-        dict_to_load["inf_vertices"] = tuple([int(x) for x in dict_to_load["inf_vertices"]])
-        return HeMesh(**dict_to_load)
+        inf_vertices = tuple(int(x) for x in dict_to_load.pop("inf_vertices"))
+        # jnp.asarray: np.load returns numpy arrays, which do not support .at[] updates
+        arrays = {k: jnp.asarray(v, dtype=jnp.int32) for k, v in dict_to_load.items()}
+        return HeMesh(**arrays, inf_vertices=inf_vertices)
 
     # equality comparisons. Two meshes are equal if all the arrays they contain are.
     # isomorphic meshes _can_ compare to false if, e.g., the orderings are different.
     
+    # connectivity is static across a simulation, so allow use as a static jit argument.
+    # Identity hash: consistent with the pytree registration, and __eq__ is value-based.
+    __hash__ = object.__hash__
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, HeMesh):
             return False          

@@ -181,7 +181,13 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.
 # %% ../nbs/src/05_geometric_quantities.ipynb #cbaf37c7
 def get_volume(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
               ) -> Float[jax.Array, ""]:
-    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to the origin)."""
+    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to the origin).
+
+    Requires a closed, consistently oriented mesh. On an open mesh the result is not a
+    volume at all and depends on where the origin is, so this is checked.
+    """
+    assert not bool(hemesh.is_bdry_he.any()), (
+        "get_volume requires a closed mesh; this one has boundary half-edges")
     v0, v1, v2 = vertices[hemesh.faces.T]
     return trig.get_tetrahedron_volume(v0, v1, v2).sum()
 
@@ -209,9 +215,14 @@ def set_voronoi_face_positions(geommesh: msh.GeomMesh, hemesh: msh.HeMesh
 
 def get_dual_he_length(face_positions: Float[jax.Array, "n_faces dim"], hemesh: msh.HeMesh
                        ) -> Float[jax.Array, " n_hes"]:
-    """Get lengths of dual/cell half-edges."""
+    """Get lengths of dual/cell half-edges. Boundary edges get length 0.
+
+    Note the sibling `get_oriented_dual_he_length` uses 1 (not 0) for boundary edges,
+    because a signed length of 0 is not distinguishable from a degenerate dual edge there.
+    """
     dual_edges = face_positions[hemesh.heface]-face_positions[hemesh.heface[hemesh.twin]]
-    return jnp.linalg.norm(dual_edges, axis=-1)
+    # heface == -1 on boundary half-edges, which would silently index the last face
+    return jnp.where(hemesh.is_bdry_edge, 0.0, jnp.linalg.norm(dual_edges, axis=-1))
 
 def get_oriented_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
                                 face_positions: Float[jax.Array, "n_faces 2"],
@@ -487,10 +498,13 @@ def get_face_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
                            ) -> Float[jax.Array, "2 n_faces 3"]:
     """Orthonormal tangent basis (basisX, basisY) in 3D world coordinates per face.
 
-    Convention: For a face with vertices (v0, v1, v2)
-    basisX equals (v1-v0) / |v1-v0|, and basisY = cross(basisX, face_normal).
+    Convention: for a face with vertices (v0, v1, v2), basisX is (v1-v0)/|v1-v0| and
+    basisY is the normalized in-plane component of (v2-v0), i.e. Gram-Schmidt. This makes
+    (basisX, basisY, face_normal) right-handed, equivalently basisY = cross(normal, basisX).
+    `get_vertex_tangent_basis` uses the same (right-handed) convention, so vectors can be
+    moved between face and vertex frames consistently.
 
-    Note: 3D meshes only (uses cross product).
+    Note: works in 2d and 3d (no cross product is used).
 
     Parameters
     ----------
@@ -504,11 +518,16 @@ def get_face_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
     Float[Array, "2 n_faces 3"]
         Per-face tangent basis: result[0, f] = basisX, result[1, f] = basisY.
     """
+    def _normalize(x):
+        # scale-free guard: also avoids norm's NaN gradient at zero
+        sq = jnp.sum(x**2, axis=-1, keepdims=True)
+        return jnp.where(sq > 0, x / jnp.sqrt(jnp.where(sq > 0, sq, 1.0)), 0.0)
+
     a, b, c = vertices[hemesh.faces.T]
     u, v = b - a, c - a
-    e1 = u / jnp.linalg.norm(u, axis=-1, keepdims=True)
+    e1 = _normalize(u)
     v_perp = v - jnp.sum(v * e1, axis=-1, keepdims=True) * e1
-    e2 = v_perp / jnp.linalg.norm(v_perp, axis=-1, keepdims=True)
+    e2 = _normalize(v_perp)
     return jnp.stack([e1, e2], axis=0)
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #0934d60c
@@ -517,7 +536,9 @@ def get_vertex_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemes
     """Orthonormal tangent basis (basisX, basisY) in 3D world coordinates per vertex.
 
     Convention: basisX is aligned with the vertex' incident halfedge projected onto
-    the vertex tangent plane. basisY = cross(basisX, vertex_normal).
+    the vertex tangent plane, and basisY = cross(vertex_normal, basisX), so that
+    (basisX, basisY, vertex_normal) is right-handed -- the same handedness as
+    `get_face_tangent_basis`.
 
     Note: 3D meshes only (uses cross product).
 
@@ -537,7 +558,7 @@ def get_vertex_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemes
     edge_vecs = vertices[hemesh.dest[hemesh.incident]] - vertices[hemesh.orig[hemesh.incident]]
     basis_X = jax.vmap(trig.project_out_vector)(edge_vecs, normals)
     basis_X = basis_X / jnp.maximum(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
-    basis_Y = jnp.cross(basis_X, normals)
+    basis_Y = jnp.cross(normals, basis_X)  # right-handed, matching get_face_tangent_basis
     return jnp.stack([basis_X, basis_Y], axis=0)
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #3d2e6fa4

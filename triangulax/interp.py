@@ -61,6 +61,12 @@ def get_closest_point_on_triangle(point: Float[jax.Array, " dim"],
         Closest point on the triangle.
     """
     normal = jnp.cross(b - a, c - a)
+    # normalize: `normal` scales as (length)^2, so an unnormalized normal makes the
+    # zero-guard inside project_out_vector a *scale* threshold rather than a
+    # degeneracy threshold, and silently kills the projection for small meshes.
+    norm_sq = jnp.sum(normal**2)
+    safe_norm_sq = jnp.where(norm_sq > 0, norm_sq, 1.0)
+    normal = jnp.where(norm_sq > 0, normal / jnp.sqrt(safe_norm_sq), 0.0)
     if point.shape[-1] > 2:
         projected_point = a + trig.project_out_vector(point - a, normal)
     else:
@@ -71,7 +77,7 @@ def get_closest_point_on_triangle(point: Float[jax.Array, " dim"],
                              get_closest_point_on_segment(projected_point, c, a)])
     edge_distances = jnp.sum((edge_points - projected_point) ** 2, axis=-1)
     closest_edge_point = edge_points[jnp.argmin(edge_distances)]
-    is_degenerate = trig.get_triangle_area(a, b, c) <= 1e-12
+    is_degenerate = norm_sq <= 0  # scale-free: reuse the (squared) normal length
     is_inside = jnp.all(barycentric >= -1e-12)
     return jnp.where(jnp.logical_and(is_inside, jnp.logical_not(is_degenerate)),
                      projected_point,
@@ -156,9 +162,12 @@ def find_closest_faces(points: Float[jax.Array, "n_points dim"],
     triangles = jnp.pad(vertices, pad_width)[faces]
     edges = jnp.roll(triangles, shift=-1, axis=1) - triangles
     normals = jnp.cross(edges[:, 0], -edges[:, 2])
-    double_areas = jnp.linalg.norm(normals, axis=-1, keepdims=True)
-    normals = normals / jnp.clip(double_areas, 1e-12)
-    nondegenerate = double_areas[:, 0] > 1e-12
+    # |normal| scales as (length)^2, so an absolute threshold here would make the
+    # normalization fail on small meshes rather than only on degenerate triangles.
+    double_areas_sq = jnp.sum(normals**2, axis=-1, keepdims=True)
+    nondegenerate = double_areas_sq[:, 0] > 0
+    safe = jnp.where(nondegenerate[:, None], double_areas_sq, 1.0)
+    normals = jnp.where(nondegenerate[:, None], normals / jnp.sqrt(safe), 0.0)
 
     squared_distances = jax.vmap(_point_triangle_squared_distance,
                                  in_axes=(None, 0, 0, 0, 0))

@@ -25,12 +25,24 @@ def displacement_periodic(r_1: Float[jax.Array, "2"], r_2: Float[jax.Array, "2"]
                          ) -> Float[jax.Array, "2"]:
     """Return the minimum-image displacement on a rectangular torus.
 
+    IMPORTANT: the minimum-image convention always returns the *shortest* periodic
+    image, so it only reproduces the intended mesh edge when every edge is shorter
+    than ``min(L)/2``. For a longer edge it silently returns the displacement to a
+    different periodic image, giving wrong lengths, areas and angles with no error
+    raised. Check with ``get_periodic_he_lengths(...).max() < L.min()/2``. This
+    matters for coarse periodic meshes and for a shrinking or strongly sheared box.
+
     Parameters
     ----------
     r_1, r_2
         Positions in a periodic box.
     L
         Box lengths [L_x, L_y].
+
+    Returns
+    -------
+    Float[Array, "2"]
+        Displacement ``r_2 - r_1`` under the minimum-image convention.
     """
     d = r_2 - r_1
     return d - L * jnp.round(d / L)
@@ -48,7 +60,15 @@ def displacement_periodic_twisted(r_1: Float[jax.Array, "2"], r_2: Float[jax.Arr
     L
         Box lengths [L_x, L_y].
     s
-        Shear factor: wrapping in y shifts x by ``s * L_x``.
+        Shear factor: wrapping in y shifts x by ``s * L_x``. This corresponds to vertex
+        positions carrying the shear as ``x -> x - s * y``; the opposite sign stretches
+        the edges instead of shearing them.
+
+    Notes
+    -----
+    Inherits the ``max edge < min(L)/2`` precondition of `displacement_periodic`, applied
+    *after* the twist. Note ``s`` near 0.5 (or 1.5, ...) violates it for a mesh that has
+    not been sheared correspondingly -- a value every Lees-Edwards sweep passes through.
     """
     d = r_2 - r_1
     twist = s * L[0] * jnp.round(d[1] / L[1])
@@ -202,7 +222,13 @@ def get_periodic_voronoi_face_positions(
     hemesh: HeMesh,
     displacement_fn: Callable[[Float[jax.Array, "2"], Float[jax.Array, "2"]], Float[jax.Array, "2"]],
 ) -> Float[jax.Array, "n_faces 2"]:
-    """Compute periodic Voronoi dual positions (circumcenters) from intrinsic barycentric coordinates."""
+    """Compute periodic Voronoi dual positions (circumcenters) from intrinsic barycentric coordinates.
+
+    Like `get_periodic_face_centroids`, the returned positions are NOT wrapped back into
+    the periodic box: each is expressed in the image of its own face. Do not feed them to
+    `geometry.get_dual_he_length` or `mesh.cellplot`, which assume unwrapped Euclidean
+    coordinates -- use `get_periodic_dual_he_length` instead.
+    """
     face_hes = hemesh.face_incident
     edge_lengths = get_periodic_he_lengths(vertices, hemesh, displacement_fn)
     la = edge_lengths[hemesh.nxt[face_hes]]
@@ -228,7 +254,10 @@ def get_periodic_dual_he_length(
 ) -> Float[jax.Array, " n_hes"]:
     """Voronoi dual edge lengths computed from cotangent weights.
 
-    Equivalent to ``cotan_weights_per_edge * he_length``.
+    Equivalent to ``cotan_weights_per_edge * he_length``. Note this is the periodic
+    counterpart of `geometry.get_voronoi_edge_lengths`, not of the similarly named
+    `geometry.get_dual_he_length` (which takes explicit face positions and measures a
+    Euclidean distance).
     """
     return (get_periodic_cotan_weights_per_edge(vertices, hemesh, displacement_fn)
             * get_periodic_he_lengths(vertices, hemesh, displacement_fn))

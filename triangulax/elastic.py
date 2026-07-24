@@ -13,6 +13,8 @@ import jax.numpy as jnp
 
 # %% ../nbs/src/08_elasticity.ipynb #afdd02cb
 from jaxtyping import Float
+from collections.abc import Callable
+
 
 # %% ../nbs/src/08_elasticity.ipynb #4ab4e7a7
 from . import geometry as geom
@@ -62,7 +64,8 @@ def get_area_from_metric(metric: Float[jax.Array, "n_faces 2 2"]) -> Float[jax.A
     Float[Array, "n_faces"]
         Per-face area.
     """
-    return 0.5 * jnp.sqrt(jnp.linalg.det(metric))
+    # det is >= 0 mathematically but rounds negative near degeneracy, where sqrt -> NaN
+    return 0.5 * jnp.sqrt(jnp.clip(jnp.linalg.det(metric), 0.0))
 
 def get_two_x_two_inverse(metric: Float[jax.Array, "*batch 2 2"]) -> Float[jax.Array, "*batch 2 2"]:
     """Closed-form inverse of 2x2 metric tensor(s), inv(g) = adj(g)/det(g).
@@ -107,7 +110,9 @@ def get_neo_hookean_energy_density(C: Float[jax.Array, "*batch 2 2"],
     Float[Array, "*batch"]
         Energy density (units: energy/area).
     """
-    J = jnp.sqrt(jnp.linalg.det(C))
+    # clip at 0: det rounds negative at/past degeneracy, and sqrt of a negative gives
+    # NaN, which destroys the +inf barrier that makes neo-Hookean inversion-safe.
+    J = jnp.sqrt(jnp.clip(jnp.linalg.det(C), 0.0))
     return mod_shear/2 * (jnp.trace(C, axis1=-2, axis2=-1)/J - 2) + mod_bulk/2 * (J-1)**2
 
 
@@ -201,8 +206,12 @@ def get_dihedral_bending_energy(vertices: Float[jax.Array, "n_vertices 3"],
     lengths = geom.get_he_length(vertices, hemesh)
     face_areas = geom.get_triangle_areas(vertices, hemesh)
     edge_areas = (face_areas[hemesh.heface] + face_areas[hemesh.heface[hemesh.twin]]) / 3
-    energies = mod_bending * lengths**2 / edge_areas * (theta - theta0)**2
-    return jnp.where(hemesh.is_unique & ~hemesh.is_bdry_edge, energies, 0.0).sum()
+    # both adjacent triangles can be degenerate, giving 0/0 = NaN which the mask below
+    # cannot repair; make the denominator safe first.
+    safe_edge_areas = jnp.where(edge_areas > 0, edge_areas, 1.0)
+    energies = mod_bending * lengths**2 / safe_edge_areas * (theta - theta0)**2
+    keep = hemesh.is_unique & ~hemesh.is_bdry_edge & (edge_areas > 0)
+    return jnp.where(keep, energies, 0.0).sum()
 
 # %% ../nbs/src/08_elasticity.ipynb #b03a547d
 def get_second_fundamental_form(vertices: Float[jax.Array, "n_vertices 3"], hemesh: HeMesh
@@ -308,40 +317,72 @@ def get_helfrich_energy(vertices: Float[jax.Array, "n_vertices 3"],
     return ((kappa_H/2 * (H - H0)**2 + kappa_K * K) * cell_areas).sum()
 
 # %% ../nbs/src/08_elasticity.ipynb #13576da4
-def make_normal_energy(energy_fn, v0: Float[jax.Array, "n 3"],
-                       normals: Float[jax.Array, "n 3"]):
+def make_normal_energy(energy_fn: Callable, v0: Float[jax.Array, "n 3"],
+                       normals: Float[jax.Array, "n 3"]) -> Callable:
     """Wrap energy_fn(vertices, args) to optimize over normal heights h ∈ ℝⁿ.
 
-    vertices(h) = v0 + h[:, None] * normals.
+    vertices(h) = v0 + h[:, None] * normals, see `vertices_from_normal`.
+
+    Parameters
+    ----------
+    energy_fn : Callable
+        Energy with signature ``energy_fn(vertices, args) -> scalar``.
+    v0 : Float[Array, "n 3"]
+        Base vertex positions.
+    normals : Float[Array, "n 3"]
+        Per-vertex displacement directions, e.g. `geom.get_vertex_normals`.
+
+    Returns
+    -------
+    Callable
+        Energy with signature ``energy(h, args) -> scalar``.
     """
     def energy(h, args):
         return energy_fn(v0 + h[:, None] * normals, args)
     return energy
 
 
-def make_tangential_energy(energy_fn, v0: Float[jax.Array, "n 3"],
-                           basis: Float[jax.Array, "n 2 3"]):
+def make_tangential_energy(energy_fn: Callable, v0: Float[jax.Array, "n 3"],
+                           basis: Float[jax.Array, "2 n 3"]) -> Callable:
     """Wrap energy_fn(vertices, args) to optimize over tangent coords t ∈ ℝⁿˣ².
 
-    vertices(t) = v0 + einsum('vi,vid->vd', t, basis).
+    vertices(t) = v0 + einsum('vi,ivd->vd', t, basis), see `vertices_from_tangential`.
 
     Any basis (orthonormal or not) which spans the tangent plane is valid,
     but the same basis must be used in make_tangential_energy and
     in vertices_from_tangential to recover the 3D vertex positions.
 
+    Parameters
+    ----------
+    energy_fn : Callable
+        Energy with signature ``energy_fn(vertices, args) -> scalar``.
+    v0 : Float[Array, "n 3"]
+        Base vertex positions.
+    basis : Float[Array, "2 n 3"]
+        Tangent basis, in the ``(2, n_vertices, 3)`` layout returned by
+        `geom.get_vertex_tangent_basis`.
+
+    Returns
+    -------
+    Callable
+        Energy with signature ``energy(t, args) -> scalar``.
     """
     def energy(t, args):
-        return energy_fn(v0 + jnp.einsum("vi,vid->vd", t, basis), args)
+        return energy_fn(vertices_from_tangential(v0, t, basis), args)
     return energy
 
 
-def vertices_from_normal(v0, h, normals):
-    """Reconstruct vertices from base + normal displacement."""
+def vertices_from_normal(v0: Float[jax.Array, "n 3"], h: Float[jax.Array, " n"],
+                         normals: Float[jax.Array, "n 3"]) -> Float[jax.Array, "n 3"]:
+    """Reconstruct vertices from base positions + normal displacement."""
     return v0 + h[:, None] * normals
 
 
-def vertices_from_tangential(v0, t, basis):
-    """Reconstruct vertices from base + tangential displacement.
-    The tangential basis can be computed using the geometry module, geom.get_vertex_tangent_basis(vertices, hemesh).
+def vertices_from_tangential(v0: Float[jax.Array, "n 3"], t: Float[jax.Array, "n 2"],
+                             basis: Float[jax.Array, "2 n 3"]) -> Float[jax.Array, "n 3"]:
+    """Reconstruct vertices from base positions + tangential displacement.
+
+    `basis` is expected in the ``(2, n_vertices, 3)`` layout returned by
+    `geom.get_vertex_tangent_basis(vertices, hemesh)`.
     """
-    return v0 + jnp.einsum("vi,vid->vd", t, basis)
+    return v0 + jnp.einsum("vi,ivd->vd", t, basis)

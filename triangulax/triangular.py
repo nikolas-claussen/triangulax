@@ -81,7 +81,7 @@ def write_obj(vertices: jax.Array, faces: jax.Array, filename: str | Path) -> No
     return None
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #37cb0cee
-_INF_SENTINEL = 1e300  # Sentinel for infinity vertices in .obj files
+_INF_SENTINEL = 1e30  # Sentinel for infinity vertices in .obj files (representable in float32)
 
 @dataclasses.dataclass(init=True, repr=False, eq=False, frozen=False, slots=False)
 class TriMesh:
@@ -200,7 +200,9 @@ class TriMesh:
 
         verts = jnp.array(vertices[:, :dim], dtype=float)
         if has_inf_comment:
-            verts = jnp.where(jnp.abs(verts) > _INF_SENTINEL,
+            # compare against half the sentinel: a value written as exactly the
+            # sentinel is not > it, and older files used a larger sentinel (1e300).
+            verts = jnp.where(jnp.abs(verts) >= 0.5 * _INF_SENTINEL,
                               jnp.inf * jnp.ones_like(verts), verts)
 
         if read_face_positions:
@@ -238,10 +240,11 @@ class TriMesh:
             """Format coordinates as 3D string, padding 2D with 0."""
             return "{} {} {}".format(*v) if len(v) == 3 else "{} {} 0".format(*v)
 
-        vertices = np.array(self.vertices)
+        # float64: the sentinel overflows to inf in float32, which igl cannot read back
+        vertices = np.array(self.vertices, dtype=np.float64)
         if self.has_inf_vertex:
             vertices = np.where(np.isinf(vertices),
-                                _INF_SENTINEL * np.ones_like(vertices), vertices)
+                                _INF_SENTINEL, vertices)
 
         with open(filename, 'w') as f:
             # Metadata comments
@@ -306,8 +309,8 @@ class TriMesh:
         return np.isinf(self.vertices).any()
     
     @property
-    def inf_vertices(self) -> bool:
-        return np.where(np.isinf(self.vertices))
+    def inf_vertices(self) -> Int[np.ndarray, " n_inf"]:
+        return np.where(np.isinf(self.vertices).any(axis=-1))[0]
 
     @property
     def n_vertices(self) -> int:
