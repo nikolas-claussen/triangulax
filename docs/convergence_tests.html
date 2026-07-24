@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Convergence of the discrete differential-geometry operators – triangulax</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f245066ca199b7326ac6b360085ddf3a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Convergence of the discrete differential-geometry operators – triangulax">
+<meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
+<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/convergence_tests_files/figure-html/cell-4-output-2.png">
+<meta property="og:site_name" content="triangulax">
+<meta property="og:image:height" content="325">
+<meta property="og:image:width" content="551">
+<meta name="twitter:title" content="Convergence of the discrete differential-geometry operators – triangulax">
+<meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
+<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/convergence_tests_files/figure-html/cell-4-output-2.png">
+<meta name="twitter:image-height" content="325">
+<meta name="twitter:image-width" content="551">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">triangulax</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./convergence_tests.html">Convergence of the discrete differential-geometry operators</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">triangulax</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./convergence_tests.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Convergence of the discrete differential-geometry operators</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Modules &amp; API reference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/01_triangular_meshes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>triangular</code>: Loading, processing, and saving triangular meshes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/02_halfedge_datastructure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>mesh</code>: Half-edge meshes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/03_topological_modifications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>topology</code>: Topological modifications in half-edge meshes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/04_adjacency_operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>adjacency</code>: Adjacency-based operators on half-edge meshes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/05_geometric_quantities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>geometry</code>: Mesh geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/05b_geometric_quantities_periodic_bcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>periodic</code>: Geometry in periodic boundary conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/06_linear_operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>linops</code>: discrete gradient, divergence, and Laplacian</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/07_interpolation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>interp</code>: Linear interpolation on triangular meshes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/08_elasticity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>elastic</code> - Discrete elastic energies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/09_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>algorithms</code>: Geometry-processing algorithms</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./src/10_simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>simulation</code>: Simulation utilities</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: Triangular meshes in <code>triangulax</code></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/01_coding_with_JAX.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: Coding in JAX</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/03_vertex_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: Self-propelled Voronoi model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/04_PDEs_on_curved_surfaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: PDEs on curved surfaces</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/05_membrane_mechanics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: Membrane mechanics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/06_inverse_problems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial: Elastic inverse problems</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#test-meshes" id="toc-test-meshes" class="nav-link active" data-scroll-target="#test-meshes">1. Test meshes</a></li>
+  <li><a href="#analytical-reference-values" id="toc-analytical-reference-values" class="nav-link" data-scroll-target="#analytical-reference-values">2. Analytical reference values</a>
+  <ul class="collapse">
+  <li><a href="#error-metric-and-reference-integrals" id="toc-error-metric-and-reference-integrals" class="nav-link" data-scroll-target="#error-metric-and-reference-integrals">Error metric and reference integrals</a></li>
+  </ul></li>
+  <li><a href="#differential-operators-converge-pointwise" id="toc-differential-operators-converge-pointwise" class="nav-link" data-scroll-target="#differential-operators-converge-pointwise">3. Differential operators converge pointwise</a></li>
+  <li><a href="#pointwise-curvature-stable-but-not-convergent" id="toc-pointwise-curvature-stable-but-not-convergent" class="nav-link" data-scroll-target="#pointwise-curvature-stable-but-not-convergent">4. Pointwise curvature: stable, but not convergent</a></li>
+  <li><a href="#what-convergence-to-expect" id="toc-what-convergence-to-expect" class="nav-link" data-scroll-target="#what-convergence-to-expect">5. What convergence to expect</a></li>
+  <li><a href="#region-averaged-curvature-converges" id="toc-region-averaged-curvature-converges" class="nav-link" data-scroll-target="#region-averaged-curvature-converges">6. Region-averaged curvature converges</a></li>
+  <li><a href="#region-averaged-metric-and-second-fundamental-form" id="toc-region-averaged-metric-and-second-fundamental-form" class="nav-link" data-scroll-target="#region-averaged-metric-and-second-fundamental-form">7. Region-averaged metric and second fundamental form</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="convergence_tests.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Convergence of the discrete differential-geometry operators</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="test-meshes" class="level2">
+<h2 class="anchored" data-anchor-id="test-meshes">1. Test meshes</h2>
+<p>Each mesh is built from an isotropic remesh (<code>plane_*</code>, <code>sphere_*</code>, <code>torus_*</code> in <code>refinement_tests/</code>, at resolutions = edge length as % of the bounding-box diagonal, so <code>4</code> is coarsest and <code>0.25</code> finest) by:</p>
+<ol type="1">
+<li>Moving its vertices exactly onto the target surface (project to the sphere / torus apply a height deformation for the saddle and an anisotropic scaling for the ellipsoid), then</li>
+<li>Flipping non-Delaunay edges with <code>alg.fix_delaunay</code>. This ensures mesh quality.</li>
+</ol>
+<p>The five surfaces are the <strong>plane</strong> (<span class="math inline">\(K=H=0\)</span>), a <strong>saddle</strong> <span class="math inline">\(z=\tfrac12(x^2-y^2)\)</span> (a hyperbolic paraboloid, open), the unit <strong>sphere</strong>, an <strong>ellipsoid</strong> (sphere scaled by <span class="math inline">\((1,0.8,0.6)\)</span>), and a <strong>torus</strong> (radii <span class="math inline">\(1,\,0.25\)</span>). Delaunay-fixing is slow on the finest meshes, so the meshes are generated once and saved to <code>refinement_tests/delaunay/</code>; re-running skips meshes that already exist.</p>
+</section>
+<section id="analytical-reference-values" class="level2">
+<h2 class="anchored" data-anchor-id="analytical-reference-values">2. Analytical reference values</h2>
+<p>For a surface defined implicitly by as a level set <span class="math inline">\(F(x,y,z)=0\)</span>, the Gaussian and mean curvatures admit simple formulas <a href="https://doi.org/10.1016/j.cagd.2005.06.005">Goldman 2005</a>, which we evaluate by automatic differentiation</p>
+<p><span class="math display">\[K=\frac{\nabla F^{\top}\operatorname{adj}(\mathbf H_F)\nabla F}{|\nabla F|^4},\qquad
+H=\frac{|\nabla F|^2\operatorname{tr}(\mathbf H_F)-\nabla F^{\top}\mathbf H_F\nabla F}{2|\nabla F|^3},\]</span></p>
+<p>The sign is fixed so an outward-oriented sphere has <span class="math inline">\(H=+1/R\)</span>. The next cell checks this against the closed forms for the sphere (<span class="math inline">\(K=1/R^2\)</span>, <span class="math inline">\(H=1/R\)</span>) and the ellipsoid.</p>
+<div id="56bd2da9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-23T15:07:23.906467Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-23T15:07:23.906388Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-23T15:07:23.909652Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-23T15:07:23.909308Z&quot;}}" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> implicit_curvatures(F, x: Float[jax.Array, <span class="st">"3"</span>]):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Gaussian K, mean H, and unit normal at a point x on the implicit surface F(x) = 0 (Goldman 2005)."""</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    g <span class="op">=</span> jax.grad(F)(x)<span class="op">;</span> Hess <span class="op">=</span> jax.hessian(F)(x)<span class="op">;</span> gn2 <span class="op">=</span> g <span class="op">@</span> g</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    adj_H <span class="op">=</span> jnp.array([</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        [Hess[<span class="dv">1</span>,<span class="dv">1</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">2</span>]<span class="op">-</span>Hess[<span class="dv">1</span>,<span class="dv">2</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">1</span>], Hess[<span class="dv">0</span>,<span class="dv">2</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">1</span>]<span class="op">-</span>Hess[<span class="dv">0</span>,<span class="dv">1</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">2</span>], Hess[<span class="dv">0</span>,<span class="dv">1</span>]<span class="op">*</span>Hess[<span class="dv">1</span>,<span class="dv">2</span>]<span class="op">-</span>Hess[<span class="dv">0</span>,<span class="dv">2</span>]<span class="op">*</span>Hess[<span class="dv">1</span>,<span class="dv">1</span>]],</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        [Hess[<span class="dv">1</span>,<span class="dv">2</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">0</span>]<span class="op">-</span>Hess[<span class="dv">1</span>,<span class="dv">0</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">2</span>], Hess[<span class="dv">0</span>,<span class="dv">0</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">2</span>]<span class="op">-</span>Hess[<span class="dv">0</span>,<span class="dv">2</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">0</span>], Hess[<span class="dv">0</span>,<span class="dv">2</span>]<span class="op">*</span>Hess[<span class="dv">1</span>,<span class="dv">0</span>]<span class="op">-</span>Hess[<span class="dv">0</span>,<span class="dv">0</span>]<span class="op">*</span>Hess[<span class="dv">1</span>,<span class="dv">2</span>]],</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        [Hess[<span class="dv">1</span>,<span class="dv">0</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">1</span>]<span class="op">-</span>Hess[<span class="dv">1</span>,<span class="dv">1</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">0</span>], Hess[<span class="dv">0</span>,<span class="dv">1</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">0</span>]<span class="op">-</span>Hess[<span class="dv">0</span>,<span class="dv">0</span>]<span class="op">*</span>Hess[<span class="dv">2</span>,<span class="dv">1</span>], Hess[<span class="dv">0</span>,<span class="dv">0</span>]<span class="op">*</span>Hess[<span class="dv">1</span>,<span class="dv">1</span>]<span class="op">-</span>Hess[<span class="dv">0</span>,<span class="dv">1</span>]<span class="op">*</span>Hess[<span class="dv">1</span>,<span class="dv">0</span>]]])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    K <span class="op">=</span> (g <span class="op">@</span> adj_H <span class="op">@</span> g) <span class="op">/</span> gn2<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    H <span class="op">=</span> (gn2<span class="op">*</span>jnp.trace(Hess) <span class="op">-</span> g <span class="op">@</span> Hess <span class="op">@</span> g) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> gn2<span class="op">**</span><span class="fl">1.5</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> K, H, g <span class="op">/</span> jnp.sqrt(gn2)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>A_ELL, B_ELL, C_ELL <span class="op">=</span> ELLIPSOID_AXES</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>IMPLICIT <span class="op">=</span> {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sphere"</span>:    <span class="kw">lambda</span> x: x <span class="op">@</span> x <span class="op">-</span> <span class="fl">1.0</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ellipsoid"</span>: <span class="kw">lambda</span> x: (x[<span class="dv">0</span>]<span class="op">/</span>A_ELL)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (x[<span class="dv">1</span>]<span class="op">/</span>B_ELL)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (x[<span class="dv">2</span>]<span class="op">/</span>C_ELL)<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> <span class="fl">1.0</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"torus"</span>:     <span class="kw">lambda</span> x: (jnp.sqrt(x[<span class="dv">0</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> x[<span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span>) <span class="op">-</span> TORUS_A)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> x[<span class="dv">2</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> TORUS_C<span class="op">**</span><span class="dv">2</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"saddle"</span>:    <span class="kw">lambda</span> x: x[<span class="dv">2</span>] <span class="op">-</span> SADDLE_AMPLITUDE <span class="op">*</span> (x[<span class="dv">0</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> x[<span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span>),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"plane"</span>:     <span class="kw">lambda</span> x: x[<span class="dv">2</span>],</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analytic_curvature(name, points):</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Exact (K, H, unit normal) at each point, from the implicit representation."""</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.vmap(<span class="kw">lambda</span> x: implicit_curvatures(IMPLICIT[name], x))(points)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="5d26efe2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-23T15:07:23.910710Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-23T15:07:23.910623Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-23T15:07:25.193938Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-23T15:07:25.193383Z&quot;}}" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># closed forms (Wikipedia) used only to validate the autodiff implementation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sphere_KH(R<span class="op">=</span><span class="fl">1.0</span>): <span class="cf">return</span> <span class="dv">1</span><span class="op">/</span>R<span class="op">**</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">/</span>R</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ellipsoid_KH(x, a<span class="op">=</span>A_ELL, b<span class="op">=</span>B_ELL, c<span class="op">=</span>C_ELL):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    q <span class="op">=</span> (x[...,<span class="dv">0</span>]<span class="op">/</span>a<span class="op">**</span><span class="dv">2</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (x[...,<span class="dv">1</span>]<span class="op">/</span>b<span class="op">**</span><span class="dv">2</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (x[...,<span class="dv">2</span>]<span class="op">/</span>c<span class="op">**</span><span class="dv">2</span>)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span><span class="op">/</span>((a<span class="op">*</span>b<span class="op">*</span>c)<span class="op">**</span><span class="dv">2</span><span class="op">*</span>q<span class="op">**</span><span class="dv">2</span>), jnp.<span class="bu">abs</span>(x[...,<span class="dv">0</span>]<span class="op">**</span><span class="dv">2</span><span class="op">+</span>x[...,<span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span><span class="op">+</span>x[...,<span class="dv">2</span>]<span class="op">**</span><span class="dv">2</span><span class="op">-</span>a<span class="op">**</span><span class="dv">2</span><span class="op">-</span>b<span class="op">**</span><span class="dv">2</span><span class="op">-</span>c<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>(a<span class="op">*</span>b<span class="op">*</span>c)<span class="op">**</span><span class="dv">2</span><span class="op">*</span>q<span class="op">**</span><span class="fl">1.5</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)<span class="op">;</span> p <span class="op">=</span> jax.random.normal(key, (<span class="dv">500</span>, <span class="dv">3</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>p_sphere <span class="op">=</span> p<span class="op">/</span>jnp.linalg.norm(p, axis<span class="op">=</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)<span class="op">;</span> p_ellip <span class="op">=</span> p_sphere<span class="op">*</span>jnp.array(ELLIPSOID_AXES)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, pts, (Kc, Hc) <span class="kw">in</span> [(<span class="st">"sphere"</span>, p_sphere, sphere_KH()), (<span class="st">"ellipsoid"</span>, p_ellip, ellipsoid_KH(p_ellip))]:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    K, H, _ <span class="op">=</span> analytic_curvature(name, pts)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:10s}</span><span class="ss"> max|K-K_closed|=</span><span class="sc">{</span><span class="bu">float</span>(jnp.<span class="bu">max</span>(jnp.<span class="bu">abs</span>(K<span class="op">-</span>Kc)))<span class="sc">:.1e}</span><span class="ss">  max|H-H_closed|=</span><span class="sc">{</span><span class="bu">float</span>(jnp.<span class="bu">max</span>(jnp.<span class="bu">abs</span>(H<span class="op">-</span>Hc)))<span class="sc">:.1e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>sphere     max|K-K_closed|=4.4e-16  max|H-H_closed|=4.4e-16
+ellipsoid  max|K-K_closed|=2.7e-15  max|H-H_closed|=1.8e-15</code></pre>
+</div>
+</div>
+<section id="error-metric-and-reference-integrals" class="level3">
+<h3 class="anchored" data-anchor-id="error-metric-and-reference-integrals">Error metric and reference integrals</h3>
+<p>For a quantity <span class="math inline">\(A\)</span> we report the <strong>relative error, normalized by the surface-average magnitude</strong>, <span class="math inline">\(|A_{\rm exact}-A_{\rm disc}|/\overline{|A|}\)</span> with <span class="math inline">\(\overline{|A|}=\int_S|A|\,dA/\int_S dA\)</span>. Both <span class="math inline">\(\overline{|A|}\)</span> and the exact region integrals come from a fine parametric quadrature of each surface, which also fixes the <strong>sectors</strong> used later: 8 octants (ellipsoid, by coordinate sign), 8 poloidal bands (torus), and 8 angular sectors inside a disk of radius <span class="math inline">\(0.8\)</span> (saddle).</p>
+</section>
+</section>
+<section id="differential-operators-converge-pointwise" class="level2">
+<h2 class="anchored" data-anchor-id="differential-operators-converge-pointwise">3. Differential operators converge pointwise</h2>
+<p>We first check the two operators that <em>do</em> converge pointwise. The finite-element <strong>gradient</strong> is tested on the ambient-linear field <span class="math inline">\(u=a\cdot x\)</span>, whose exact surface gradient is the tangential projection <span class="math inline">\(a-(a\cdot n)\,n\)</span> (with the smooth normal <span class="math inline">\(n\)</span>). The area-normalised cotangent <strong>Laplace–Beltrami</strong> operator is tested on eigen/harmonic fields: on the sphere <span class="math inline">\(\Delta_S z=-2z\)</span>, on the plane <span class="math inline">\(\Delta(x^2+y^2)=4\)</span>. Errors are RMS over faces/vertices, normalised as above. Because the flat-mesh error is at machine precision while the curved-surface error is <span class="math inline">\(O(h)\)</span>, the <span class="math inline">\(y\)</span>-axis is <strong>broken</strong> into two ranges.</p>
+<div id="8efd2804" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-23T15:07:27.696198Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-23T15:07:27.696116Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-23T15:07:43.934720Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-23T15:07:43.934271Z&quot;}}">
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_76998/2921015705.py:57: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout(pad=0.1, w_pad=0.4, h_pad=0.1)
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="convergence_tests_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Both operators converge pointwise <span class="math inline">\(O(h)\)</span> on the sphere and machine-exact on the plane (the P1 gradient of a linear field is exact on each triangle, and the cotan Laplacian is exact for the quadratic on a flat mesh).</p>
+</section>
+<section id="pointwise-curvature-stable-but-not-convergent" class="level2">
+<h2 class="anchored" data-anchor-id="pointwise-curvature-stable-but-not-convergent">4. Pointwise curvature: stable, but not convergent</h2>
+<p>The curvature estimators only converge in the weak sense. Below, the <strong>median</strong> pointwise error (bulk behavior) and the <strong>maximum</strong> pointwise error (worst vertex) are shown for <span class="math inline">\(K\)</span> and <span class="math inline">\(H\)</span> on the sphere and the ellipsoid. On the near-regular sphere the median converges like <span class="math inline">\(O(h^2)\)</span>, but on the ellipsoid, where the mesh is less regular, the median does not decrease. The maximum error stays bounded under refinement on both surfaces: the estimators are pointwise <strong>stable</strong>.</p>
+<p>We also compare two discretizations of the mean curvature, using Laplace operator + Voronoi areas (<a href="https://nikolas-claussen.github.io/triangulax/src/geometric_quantities.html#get_mean_curvature_laplace"><code>get_mean_curvature_laplace</code></a>, recommended), and dihedral angles + barycentric area.</p>
+<p>Note that our implementation matches the <code>libigl</code> to machine precision – lack of pointwise convergence is a property of the discretisation, not a bug.</p>
+<div id="494d6264" class="cell" data-execution_count="98">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_mean_curvature_dihedral_barycentric(vertices, hemesh):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    H_dihedral <span class="op">=</span> geom.get_mean_curvature_dihedral(vertices, hemesh, normalize<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> H_dihedral <span class="op">/</span> geom.get_barycentric_cell_areas(vertices, hemesh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="28aca8dc" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-23T15:07:43.936060Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-23T15:07:43.935967Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-23T15:07:50.822741Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-23T15:07:50.822272Z&quot;}}">
+<div class="cell-output cell-output-stderr">
+<pre><code>findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="convergence_tests_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-convergence-to-expect" class="level2">
+<h2 class="anchored" data-anchor-id="what-convergence-to-expect">5. What convergence to expect</h2>
+<p>The behaviour above is exactly what the literature predicts. The angle-defect and cotangent curvature estimators are <strong>not</strong> guaranteed to converge pointwise on general meshes; they converge in an <strong>integrated / weak (“measure”)</strong> sense.</p>
+<ul>
+<li><strong>Gaussian curvature (angle defect).</strong> The defect <span class="math inline">\(2\pi-\sum_i\theta_i\)</span> is the <em>integral</em> of <span class="math inline">\(K\)</span> over the cell around a vertex (up to higher order); over a closed surface it is exactly <span class="math inline">\(2\pi\chi\)</span> (Gauss–Bonnet). Divided by the cell area it converges pointwise only for meshes with special regularity properties. However, Cohen-Steiner &amp; Morvan prove that discrete curvature <strong>measures</strong> converge over any fixed region, linearly <span class="math inline">\(O(h)\)</span> in the sampling density.</li>
+<li><strong>Mean curvature (cotangent).</strong> The cotan Laplacian converges to its smooth counterpart, but the mean curvature vector <span class="math inline">\(\tfrac12 M^{-1}Lx=Hn\)</span> converges only in the sense of <strong>distributions</strong> (Wardetzky 2008).</li>
+</ul>
+<p>The remedy is to integrate the estimators over regions of <strong>fixed</strong> size (that do not shrink as <span class="math inline">\(h\to0\)</span>), instead of looking per-vertex values (integrated over cells whose area goes to 0).</p>
+</section>
+<section id="region-averaged-curvature-converges" class="level2">
+<h2 class="anchored" data-anchor-id="region-averaged-curvature-converges">6. Region-averaged curvature converges</h2>
+<p>We split each surface into 8 fixed sectors and test <span class="math inline">\(\int_P A\,dA=\int_P A\,dA/\int_P dA\)</span> using the <strong>un-normalised</strong> (integrated) estimators — <span class="math inline">\(\int_P H\,dA\approx\sum_{i\in P}\)</span> <code>get_mean_curvature_*(..., normalize=False)</code>, <span class="math inline">\(\int_P K\,dA\approx\sum_{i\in P}(2\pi-\sum\theta)_i\)</span>, patch area <span class="math inline">\(\sum_{i\in P}A_i\)</span> — for the torus, ellipsoid, and saddle. We plot the median error over the 8 sectors of the mean and Gaussian curvatures.</p>
+<div id="9c86ee57" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-23T15:07:50.823933Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-23T15:07:50.823858Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-23T15:08:10.696579Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-23T15:08:10.696130Z&quot;}}">
+<div class="cell-output cell-output-stderr">
+<pre><code>findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="convergence_tests_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Region averages converge</strong>, at roughly the <span class="math inline">\(O(h)\)</span> rate the measure theory predicts, for all three surfaces — in contrast to the flat pointwise estimates. Two torus converges more slowly than the others — its mesh is the least regular.</p>
+</section>
+<section id="region-averaged-metric-and-second-fundamental-form" class="level2">
+<h2 class="anchored" data-anchor-id="region-averaged-metric-and-second-fundamental-form">7. Region-averaged metric and second fundamental form</h2>
+<p>The same holds for the first and second fundamental forms. We test the <strong>patch area</strong> from the metric (<span class="math inline">\(\sum_{f\in P}\tfrac12\sqrt{\det g}\)</span> vs <span class="math inline">\(\int_P dA\)</span>) and the <strong>patch mean curvature</strong> from the shape operator <span class="math inline">\(S=g^{-1}b\)</span> built with <code>elastic.get_second_fundamental_form</code> (an area-weighted per-face average <span class="math inline">\(\sum_f H_f\,A_f/\sum_f A_f\)</span> vs <span class="math inline">\(\int_P H\,dA\)</span>). Faces are assigned to sectors by their centroid.</p>
+<div id="1e53eb17" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-23T15:08:10.697876Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-23T15:08:10.697791Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-23T15:08:27.013688Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-23T15:08:27.013222Z&quot;}}">
+<div class="cell-output cell-output-stderr">
+<pre><code>findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.
+findfont: Font family 'normal' not found.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="convergence_tests_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Both converge under region averaging:</strong> the metric area at <span class="math inline">\(O(h^2)\)</span>, and the second-fundamental- form mean curvature at <span class="math inline">\(\sim O(h)\)</span> — even though the mid-edge-normal second fundamental form has an <span class="math inline">\(O(1)\)</span> per-face noise floor pointwise. Averaging over a fixed region recovers a convergent quantity, consistent with the measure-convergence picture of §5.</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>quantity</th>
+<th>operator</th>
+<th>pointwise</th>
+<th>region-averaged</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gradient</td>
+<td><code>linops.compute_gradient_3d</code></td>
+<td><span class="math inline">\(O(h)\)</span> (exact on flat)</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Laplace–Beltrami</td>
+<td><code>linops.compute_cotan_laplace</code></td>
+<td><span class="math inline">\(O(h)\)</span> (exact on flat)</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>Gaussian curvature <span class="math inline">\(K\)</span></td>
+<td><code>geom.get_gaussian_curvature</code></td>
+<td>stable, non-convergent</td>
+<td><span class="math inline">\(O(h)\)</span></td>
+</tr>
+<tr class="even">
+<td>mean curvature <span class="math inline">\(H\)</span></td>
+<td><code>geom.get_mean_curvature_laplace</code></td>
+<td>stable, non-convergent</td>
+<td><span class="math inline">\(O(h)\)</span></td>
+</tr>
+<tr class="odd">
+<td>mean curvature (barycentric)</td>
+<td>dihedral / barycentric area</td>
+<td>worst pointwise</td>
+<td><span class="math inline">\(O(h)\)</span> after averaging</td>
+</tr>
+<tr class="even">
+<td>metric / area</td>
+<td><code>elastic.get_metric</code></td>
+<td>area exact per triangle</td>
+<td>patch area <span class="math inline">\(O(h^2)\)</span></td>
+</tr>
+<tr class="odd">
+<td>2nd fundamental form</td>
+<td><code>elastic.get_second_fundamental_form</code></td>
+<td><span class="math inline">\(O(1)\)</span> per-face noise</td>
+<td>patch <span class="math inline">\(H\)</span> <span class="math inline">\(\sim O(h)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The differential operators (gradient, Laplace–Beltrami) converge pointwise. The curvature estimators do <strong>not</strong> converge pointwise on general meshes — but they are pointwise <em>stable</em> and converge in the <strong>measure / weak</strong> sense, i.e.&nbsp;integrated over fixed regions (Cohen-Steiner–Morvan 2003; Hildebrandt–Polthier–Wardetzky 2006). Delaunay-flipping the deformed meshes and normalising the error by the surface-mean magnitude <span class="math inline">\(\overline{|A|}\)</span> are what make these trends clean and well-defined. No operator showed a bug: all match <code>igl</code> to machine precision.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nikolas-claussen\.github\.io\/triangulax");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nikolas-claussen/triangulax/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

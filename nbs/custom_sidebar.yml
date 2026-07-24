@@ -3,6 +3,7 @@ website:
     collapse-level: 1
     contents:
       - index.ipynb
+      - convergence_tests.ipynb
       - section: Modules & API reference
         contents:
           - src/00_trigonometry.ipynb

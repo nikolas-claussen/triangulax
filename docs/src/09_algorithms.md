@@ -174,7 +174,7 @@ assert jnp.all(delaunay[hemesh.is_bdry_edge])  # boundary edges are always Delau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L155"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L154"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### fix_delaunay
@@ -194,6 +194,9 @@ def fix_delaunay(
 Each iteration identifies non-Delaunay interior edges and flips them
 using `topology.flip_all`. Stops when no more flips are needed or
 `max_iters` is reached.
+
+Important: when JIT-compiling, use jax.jit with
+static_argnames=\[‘max_iters’\].
 
 ``` python
 # Test fix_delaunay: perturb vertices to create non-Delaunay edges, then fix
@@ -254,7 +257,7 @@ Smoothing](https://geometry-central.net/surface/algorithms/remeshing/#tangential
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L197"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L198"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### smooth_vertices_laplacian
