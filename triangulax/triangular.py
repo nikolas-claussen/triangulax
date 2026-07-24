@@ -195,19 +195,19 @@ class TriMesh:
         if texture_verts.size == 0 or texture_fcs.size == 0:
             tex_v, tex_f = (None, None)
         else:
-            tex_v = jnp.array(texture_verts[:, :2], dtype=jnp.float64)
-            tex_f = jnp.array(texture_fcs, dtype=jnp.int64)
+            tex_v = jnp.array(texture_verts[:, :2], dtype=float)
+            tex_f = jnp.array(texture_fcs, dtype=int)
 
-        verts = jnp.array(vertices[:, :dim], dtype=jnp.float64)
+        verts = jnp.array(vertices[:, :dim], dtype=float)
         if has_inf_comment:
             verts = jnp.where(jnp.abs(verts) > _INF_SENTINEL,
                               jnp.inf * jnp.ones_like(verts), verts)
 
         if read_face_positions:
-            return TriMesh(verts, jnp.array(faces, dtype=jnp.int64),
-                           face_positions=jnp.array(normals[:, :dim], dtype=jnp.float64),
+            return TriMesh(verts, jnp.array(faces, dtype=int),
+                           face_positions=jnp.array(normals[:, :dim], dtype=float),
                            texture_vertices=tex_v, texture_faces=tex_f)
-        mesh = TriMesh(verts, jnp.array(faces, dtype=jnp.int64), face_positions=None,
+        mesh = TriMesh(verts, jnp.array(faces, dtype=int), face_positions=None,
                        texture_vertices=tex_v, texture_faces=tex_f)
         if dim == 2:
             mesh.set_voronoi()
@@ -366,7 +366,12 @@ def compute_per_face_jacobian(source_vertices: Float[jax.Array, "n_source_vertic
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #71736c3c-c197-48f0-8cd3-c5ba9fba9713
 def generate_ginibre_points(n_vertices: int) -> Float[jax.Array, "n_vertices 2"]:
-    """Sample n_vertices points from the Ginibre ensemble. Points are scaled to unit disk."""
+    """Sample n_vertices points from the Ginibre ensemble.
+
+    Points are rescaled so their *mean* radius is 1 (the cloud extends to radius ~1.5).
+    Uses the global `numpy` RNG, so results are not reproducible via a jax PRNG key,
+    and cost is O(n_vertices^3) (a dense complex eigendecomposition).
+    """
     M = np.random.normal(size=(n_vertices, n_vertices)) + 1j*np.random.normal(size=(n_vertices, n_vertices))
     vals = np.linalg.eigvals(M)
     pos = np.stack([vals.real, vals.imag], axis=-1)
@@ -374,7 +379,9 @@ def generate_ginibre_points(n_vertices: int) -> Float[jax.Array, "n_vertices 2"]
     pos /= np.linalg.norm(pos, axis=1).mean()
     return jnp.array(pos)
 
-def generate_poisson_points(n_vertices: int, limit_x: float = 1, limit_y: float = 1
+def generate_poisson_points(n_vertices: int,
+                            limit_x: float | Float[jax.Array, ""] = 1,
+                            limit_y: float | Float[jax.Array, ""] = 1
                            ) -> Float[jax.Array, "n_vertices 2"]:
     """Sample n_vertices points from the Poisson ensemble in rectangle
     [-limit_x/2, limit_x/2] * [-limit_y/2, limit_y/2]."""
@@ -382,7 +389,7 @@ def generate_poisson_points(n_vertices: int, limit_x: float = 1, limit_y: float 
                     np.random.uniform(size=n_vertices, low=-limit_y/2, high=limit_y/2)])
     return jnp.array(pos.T)
 
-def generate_triangular_lattice(nx: int, ny: int) -> Float[jax.Array, "nx*ny 2"]:
+def generate_triangular_lattice(nx: int, ny: int) -> Float[jax.Array, "n_points 2"]:
     """Get points for rectangular patch of triangular lattice with nx, ny points."""
     y = np.arange(0, ny)*np.sqrt(3)/2
     x = np.arange(nx).astype(float)
@@ -414,6 +421,16 @@ def get_periodic_delaunay_faces(points: Float[jax.Array, "n_vertices 2"], L: Flo
     -------
     faces : Int[jax.Array, "n_faces 3"]
         Triangle indices for the periodic Delaunay triangulation of the wrapped points.
+
+    Raises
+    ------
+    AssertionError
+        If the point set is too coarse for the box. A face list of global vertex ids
+        cannot represent a periodic triangulation in which two distinct triangles use
+        the same three vertices (in different periodic images), which happens routinely
+        below roughly 30 points. Rather than silently dropping one of them -- which
+        leaves a hole, and yields a non-manifold mesh with the wrong Euler
+        characteristic -- this is detected and raised. Use more points, or a smaller box.
     """
     points_np = np.asarray(points, dtype=float)
     L_np = np.asarray(L, dtype=float)
@@ -437,8 +454,16 @@ def get_periodic_delaunay_faces(points: Float[jax.Array, "n_vertices 2"], L: Flo
     distinct_vertices = np.all(np.diff(np.sort(faces, axis=1), axis=1) > 0, axis=1)
     faces = faces[distinct_vertices]
 
+    n_before_dedup = faces.shape[0]
     _, unique_idx = np.unique(np.sort(faces, axis=1), axis=0, return_index=True)
     faces = faces[np.sort(unique_idx)]
+    # a torus triangulation has exactly 2*n_vertices faces (Euler characteristic 0).
+    # Any shortfall means distinct triangles collided on the same vertex triple.
+    assert faces.shape[0] == n_before_dedup == 2 * n_vertices, (
+        f"point set too coarse for a periodic Delaunay triangulation: got {faces.shape[0]} "
+        f"faces, expected {2 * n_vertices}. Two distinct triangles share the same vertex "
+        "triple in different periodic images, which a global-index face list cannot "
+        "represent. Use more points or a smaller box.")
 
     edge_ab = wrapped_points[faces[:, 1]] - wrapped_points[faces[:, 0]]
     edge_ac = wrapped_points[faces[:, 2]] - wrapped_points[faces[:, 0]]
@@ -452,13 +477,14 @@ def get_periodic_delaunay_faces(points: Float[jax.Array, "n_vertices 2"], L: Flo
     faces = np.array(faces, copy=True)
     flip = signed_area < 0
     faces[flip] = faces[flip][:, [0, 2, 1]]
-    return jnp.array(faces, dtype=jnp.int64)
+    return jnp.array(faces, dtype=int)
 
 # %% ../nbs/src/01_triangular_meshes.ipynb #ff7da388
 def get_faces_crossing_periodic_boundaries(vertices: Float[jax.Array, "n_vertices 2"],
                                            faces: Int[jax.Array, "n_faces 3"],
-                                           L_x: float, L_y: float,
-                                           ) -> Int[jax.Array, "n_faces"]:
+                                           L_x: float | Float[jax.Array, ""],
+                                           L_y: float | Float[jax.Array, ""],
+                                           ) -> Bool[jax.Array, " n_faces"]:
     """Return a boolean mask for faces that cross a periodic box boundary.
 
     A face is marked as boundary-crossing if at least one of its edges is shorter
