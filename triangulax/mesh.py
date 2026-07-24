@@ -328,9 +328,16 @@ class HeMesh:
 
     @property
     def bdry_loops(self) -> list[Int[jax.Array, " loop_length"]]:
+        """Boundary loops, as arrays of vertex indices.
+
+        Loops are oriented consistently with the face orientation under both
+        boundary conventions (heface == -1 and vertices at infinity).
+        """
         if not self.has_inf_vertex:
-            return igl.boundary_loop_all(self.faces)
-        return [self.dest[self.iterate_around_vertex(v)] for v in jnp.array(self.inf_vertices)]
+            return [jnp.asarray(loop) for loop in igl.boundary_loop_all(np.asarray(self.faces, dtype=np.int64))]
+        # iterate_around_vertex traverses the infinity vertex the other way round,
+        # so reverse to match the orientation of the heface == -1 convention.
+        return [self.dest[self.iterate_around_vertex(v)][::-1] for v in self.inf_vertices]
         
     # copying, saving, and loading
 
@@ -358,26 +365,48 @@ class HeMesh:
             return False          
         if not self.inf_vertices == other.inf_vertices:
             return False
-        return jax.tree_util.tree_all(jax.tree.map(jnp.allclose, dataclasses.asdict(self), dataclasses.asdict(other))) # compares all array values
+        return jax.tree_util.tree_all(jax.tree.map(jnp.array_equal, dataclasses.asdict(self), dataclasses.asdict(other))) # exact comparison: these are integer index arrays
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #f9d0be63
-def test_mesh_validity(h: HeMesh):
-    """Test if a mesh is valid. Returns True if valid, fails otherwise."""
+def test_mesh_validity(h: HeMesh) -> bool:
+    """Test if a mesh is valid. Returns True if valid, raises AssertionError otherwise.
+
+    All comparisons are exact: these are integer index arrays, so a tolerance-based
+    comparison would hide off-by-one errors for indices above ~1e5.
+
+    Parameters
+    ----------
+    h : HeMesh
+        Half-edge mesh to validate.
+
+    Returns
+    -------
+    bool
+        True if the mesh is valid.
+    """
+    ar = jnp.arange(h.n_hes)
     assert h.orig.shape == h.dest.shape == h.nxt.shape == h.prv.shape == h.twin.shape == h.heface.shape, "shapes failed"
-    assert jnp.allclose(h.twin[h.twin], jnp.arange(h.n_hes)), "twin.twin failed"
-    assert jnp.allclose((h.prv[h.prv[h.prv]])[~h.is_bdry_edge], jnp.arange(h.n_hes)[~h.is_bdry_edge]), "prv.prv.prv failed"
-    assert jnp.allclose((h.nxt[h.nxt[h.nxt]])[~h.is_bdry_edge], jnp.arange(h.n_hes)[~h.is_bdry_edge]), "nxt.nxt.nxt failed"
-    assert jnp.allclose(h.heface[h.nxt], h.heface[h.prv]), "face.nxt vs face.prv failed"
-    assert jnp.allclose(h.orig[h.incident], jnp.arange(h.n_vertices)), "orig.incident failed"
-    assert jnp.allclose(h.heface[h.face_incident], jnp.arange(h.n_faces)), "face.face_incident failed"
-    assert jnp.allclose(h.orig, h.dest[h.twin]), "orig vs dest.twin failed"
-    assert igl.is_edge_manifold(h.faces)[0] and igl.is_vertex_manifold(h.faces)[0], "igl manifold failed"
+    assert jnp.array_equal(h.twin[h.twin], ar), "twin.twin failed"
+    assert jnp.array_equal((h.prv[h.prv[h.prv]])[~h.is_bdry_edge], ar[~h.is_bdry_edge]), "prv.prv.prv failed"
+    assert jnp.array_equal((h.nxt[h.nxt[h.nxt]])[~h.is_bdry_edge], ar[~h.is_bdry_edge]), "nxt.nxt.nxt failed"
+    # nxt/prv must be mutually inverse everywhere, including along boundary loops,
+    # which the masked cubing checks above do not constrain at all.
+    assert jnp.array_equal(h.nxt[h.prv], ar), "nxt.prv failed"
+    assert jnp.array_equal(h.prv[h.nxt], ar), "prv.nxt failed"
+    assert jnp.array_equal(h.dest, h.orig[h.nxt]), "dest vs orig.nxt failed"
+    assert jnp.array_equal(h.heface[h.nxt], h.heface), "face.nxt failed"
+    assert jnp.array_equal(h.heface[h.nxt], h.heface[h.prv]), "face.nxt vs face.prv failed"
+    assert jnp.array_equal(h.orig[h.incident], jnp.arange(h.n_vertices)), "orig.incident failed"
+    assert jnp.array_equal(h.heface[h.face_incident], jnp.arange(h.n_faces)), "face.face_incident failed"
+    assert jnp.array_equal(h.orig, h.dest[h.twin]), "orig vs dest.twin failed"
+    faces_np = np.asarray(h.faces, dtype=np.int64)  # igl requires int64
+    assert igl.is_edge_manifold(faces_np)[0] and igl.is_vertex_manifold(faces_np)[0], "igl manifold failed"
 
     return True
 
 def _canonical_faces_np(F: np.ndarray) -> np.ndarray:
     """Helper function to canonicalize faces for testing."""
-    F = np.asarray(F, dtype=np.int32)
+    F = np.asarray(F, dtype=np.int64)  # int32 overflows the base-(max+1) key above ~1300 vertices
     F = np.sort(F, axis=1)
     keys = F[:, 0] * (F[:, 2].max() + 1) ** 2 + F[:, 1] * (F[:, 2].max() + 1) + F[:, 2]
     return F[np.argsort(keys)]
@@ -412,7 +441,7 @@ def connect_boundary_to_infinity(vertices: Float[jax.Array, "n_vertices 2"], fac
         Indices of infinity vertices in new_vertices.
         Will be (n_vertices, n_vertices+1, ..., n_vertices+n_boundaries-1).
     """
-    boundary_loops = igl.boundary_loop_all(faces)
+    boundary_loops = igl.boundary_loop_all(np.asarray(faces, dtype=np.int64))  # igl requires int64
     new_vertices = jnp.copy(vertices)
     new_faces = jnp.copy(faces)
 
