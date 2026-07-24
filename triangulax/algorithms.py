@@ -5,21 +5,18 @@ __all__ = ['kabsch_align', 'get_face_angles', 'get_mesh_quality_stats', 'is_loca
            'smooth_vertices_laplacian']
 
 # %% ../nbs/src/09_algorithms.ipynb #eb9cca6d
-import numpy as np
+#| export
+
 
 # %% ../nbs/src/09_algorithms.ipynb #d16e3883
 import jax
 import jax.numpy as jnp
-import jax.experimental.sparse as jsparse
-
-import functools
 
 # %% ../nbs/src/09_algorithms.ipynb #adff06cb
 from jaxtyping import Float, Bool, Int
 
 # %% ../nbs/src/09_algorithms.ipynb #598702c5
 from . import trigonometry as trig
-from .triangular import TriMesh
 from . import mesh as msh
 from . import adjacency as adj
 from . import geometry as geom
@@ -27,11 +24,14 @@ from . import topology as topo
 
 # %% ../nbs/src/09_algorithms.ipynb #3e45e7b3
 def kabsch_align(v: Float[jax.Array, "n_vertices dim"], v_ref: Float[jax.Array, "n_vertices dim"]
-                 ) -> Float[jax.Array,"n _vertices dim"]:
+                 ) -> tuple[Float[jax.Array, "n_vertices dim"],
+                            Float[jax.Array, "dim dim"],
+                            Float[jax.Array, " dim"]]:
     """Optimally rotate/translate v onto v_ref (differentiable Kabsch algorithm).
 
     The resulting rotation R is proper (det(R) = 1), so no reflections are allowed.
-    The alignment is compatible with jax.jit and jax.grad. 
+    Works in any dimension, and is compatible with jax.jit and jax.grad.
+    The convention is ``aligned == v @ R + d``.
 
     Parameters
     ----------
@@ -53,20 +53,20 @@ def kabsch_align(v: Float[jax.Array, "n_vertices dim"], v_ref: Float[jax.Array, 
     d2 = v_ref.mean(axis=0)
     vc = v - d1
     rc = v_ref - d2
-    U, _, Vt = jnp.linalg.svd(vc.T @ rc, full_matrices=False)
-    d = jnp.sign(jnp.linalg.det(U @ Vt))
-    R = (U * jnp.array([1.0, 1.0, d])) @ Vt
+    U, _, Vt = jnp.linalg.svd(vc.T @ rc, full_matrices=False)  # full_matrices=False: full SVD has no JVP rule
+    sign = jnp.sign(jnp.linalg.det(U @ Vt))
+    # flip the last singular direction if needed, so that det(R) = +1 in any dimension
+    R = (U * jnp.ones(U.shape[-1]).at[-1].set(sign)) @ Vt
     aligned = vc @ R + d2
-    d = -d1 @ R + d2
+    d = -d1 @ R + d2  # note: shadows the reflection sign above
     return aligned, R, d
 
 # %% ../nbs/src/09_algorithms.ipynb #27c5404b
 def get_face_angles(vertices: Float[jax.Array, "n_vertices dim"],
                         hemesh: msh.HeMesh) -> Float[jax.Array, "n_faces 3"]:
-    """Get corner angle per face (radians).
+    """Get the three corner angles of every face (radians).
 
-    Uses the half-edge corner angles and takes the max over the three
-    corners of every face.
+    Uses the half-edge corner angles. Angles within a face sum to pi.
 
     Parameters
     ----------
@@ -77,8 +77,8 @@ def get_face_angles(vertices: Float[jax.Array, "n_vertices dim"],
 
     Returns
     -------
-    Float[Array, "n_faces"]
-        Maximum interior angle per triangle.
+    Float[Array, "n_faces 3"]
+        The three interior angles of each triangle.
     """
     angles = geom.get_corner_angles(vertices, hemesh)
     fi = hemesh.face_incident
@@ -221,7 +221,9 @@ def smooth_vertices_laplacian(vertices: Float[jax.Array, "n_vertices dim"], heme
         Updated vertex positions.
     """
     triangle_areas = geom.get_triangle_areas(vertices, hemesh)
-    weights = triangle_areas[hemesh.heface] + triangle_areas[hemesh.heface[hemesh.twin]]
+    # heface == -1 on boundary half-edges, which would silently pick up the last face's area
+    area_of = lambda he: jnp.where(hemesh.heface[he] == -1, 0.0, triangle_areas[hemesh.heface[he]])
+    weights = area_of(jnp.arange(hemesh.n_hes)) + area_of(hemesh.twin)
     normalization = adj.sum_he_to_vertex_incoming(hemesh, weights)
     average_neighbor = adj.sum_he_to_vertex_incoming(hemesh, weights[:, None] * vertices[hemesh.orig])
     average_neighbor = average_neighbor/ normalization[:, None]
@@ -232,13 +234,20 @@ def smooth_vertices_laplacian(vertices: Float[jax.Array, "n_vertices dim"], heme
         normals = geom.get_vertex_normals(vertices, hemesh)
         step = jax.vmap(trig.project_out_vector)(step, normals)
 
+    if bc not in ('fixed', 'free', 'slide'):
+        raise ValueError(f"unknown bc {bc!r}; expected 'fixed', 'free' or 'slide'")
+
     if bc == 'fixed':
         step = jnp.where(hemesh.is_bdry[:, None], 0.0, step)
 
     if bc == 'slide':
         edges = vertices[hemesh.orig]-vertices[hemesh.dest]
         boundary_tangents = adj.sum_he_to_vertex_incoming(hemesh, edges * hemesh.is_bdry_he[:, None])
-        boundary_tangents = boundary_tangents / jnp.linalg.norm(boundary_tangents, axis=-1, keepdims=True)
+        # the tangent is exactly zero at interior vertices. jnp.linalg.norm has a NaN
+        # gradient at 0, so guard the argument of the sqrt as well as the division.
+        sq = jnp.sum(boundary_tangents**2, axis=-1, keepdims=True)
+        safe_sq = jnp.where(sq > 0, sq, 1.0)
+        boundary_tangents = jnp.where(sq > 0, boundary_tangents / jnp.sqrt(safe_sq), 0.0)
         step = jnp.where(hemesh.is_bdry[:, None], jax.vmap(trig.project_on_vector)(step, boundary_tangents), step)
     
     return vertices + step
