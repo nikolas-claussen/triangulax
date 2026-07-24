@@ -2,7 +2,9 @@
 
 # %% auto #0
 __all__ = ['label_plot', 'get_half_edge_arrays_vectorized', 'HeMesh', 'test_mesh_validity', 'connect_boundary_to_infinity',
-           'GeomMesh', 'Mesh', 'cellplot', 'tree_stack', 'tree_unstack']
+           'get_real_faces', 'is_closed', 'get_n_boundary_loops', 'get_n_vertices_edges_faces',
+           'get_euler_characteristic', 'get_n_connected_components', 'get_genus', 'GeomMesh', 'Mesh', 'cellplot',
+           'tree_stack', 'tree_unstack']
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -494,6 +496,65 @@ def connect_boundary_to_infinity(vertices: Float[jax.Array, "n_vertices 2"], fac
         new_faces = jnp.vstack([new_faces, inf_faces])
     
     return new_vertices, new_faces, tuple(range(vertices.shape[0], new_vertices.shape[0]))
+
+# %% ../nbs/src/02_halfedge_datastructure.ipynb #topohelpers
+def get_real_faces(hemesh: HeMesh) -> Int[np.ndarray, "n_real_faces 3"]:
+    """Faces as an int64 numpy array, with fictitious (infinity) faces removed.
+
+    Useful to hand a mesh to `igl`, which requires int64 and has no notion of the
+    "vertex at infinity" boundary convention.
+    """
+    faces = np.asarray(hemesh.faces, dtype=np.int64)
+    if hemesh.has_inf_vertex:
+        faces = faces[~np.asarray(hemesh.is_inf_face)]
+    return faces
+
+
+def is_closed(hemesh: HeMesh) -> bool:
+    """True if the mesh has no boundary."""
+    return not bool(hemesh.is_bdry_he.any())
+
+
+def get_n_boundary_loops(hemesh: HeMesh) -> int:
+    """Number of boundary loops (0 for a closed mesh, 1 for a disk, 2 for a cylinder)."""
+    return len(hemesh.bdry_loops)
+
+
+def get_n_vertices_edges_faces(hemesh: HeMesh) -> tuple[int, int, int]:
+    """Counts of real (non-fictitious) vertices, edges, and faces."""
+    faces = get_real_faces(hemesh)
+    n_vertices = hemesh.n_vertices - len(hemesh.inf_vertices)
+    return n_vertices, int(igl.edges(faces).shape[0]), int(faces.shape[0])
+
+
+def get_euler_characteristic(hemesh: HeMesh) -> int:
+    """Euler characteristic chi = V - E + F.
+
+    2 for a sphere, 1 for a disk, 0 for a torus.
+    """
+    n_vertices, n_edges, n_faces = get_n_vertices_edges_faces(hemesh)
+    return n_vertices - n_edges + n_faces
+
+
+def get_n_connected_components(hemesh: HeMesh) -> int:
+    """Number of edge-connected components of the mesh."""
+    return int(igl.facet_components(get_real_faces(hemesh))[0])
+
+
+def get_genus(hemesh: HeMesh) -> int:
+    """Genus of the surface, from chi = 2*n_components - 2*genus - n_boundary_loops.
+
+    0 for a sphere or disk, 1 for a torus. Assumes an orientable mesh (which the
+    half-edge construction guarantees). Raises if the result is not an integer, which
+    indicates an invalid mesh.
+    """
+    chi = get_euler_characteristic(hemesh)
+    numerator = 2 * get_n_connected_components(hemesh) - chi - get_n_boundary_loops(hemesh)
+    if numerator % 2 != 0:
+        raise ValueError(f"non-integer genus from chi={chi}; the mesh is not a valid "
+                         "orientable surface")
+    return numerator // 2
+
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #c7c0e33c-a06d-4a93-9d88-6aa0716bdf5b
 @jax.tree_util.register_dataclass

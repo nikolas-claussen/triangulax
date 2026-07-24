@@ -2,9 +2,11 @@
 
 # %% auto #0
 __all__ = ['scipy_to_bcoo', 'bcoo_to_scipy', 'diag_jsparse', 'compute_cotan_laplace', 'cotan_laplace_sparse',
-           'compute_periodic_cotan_laplace', 'mass_matrix_sparse', 'mass_matrix_inv_sparse', 'compute_gradient_2d',
-           'compute_gradient_3d', 'gradient_sparse_2d', 'gradient_sparse_3d', 'reshape_face_gradient',
-           'compute_divergence_2d', 'compute_divergence_3d', 'linear_op_to_sparse']
+           'compute_periodic_cotan_laplace', 'mass_matrix_sparse', 'mass_matrix_inv_sparse',
+           'periodic_cotan_laplace_sparse', 'periodic_mass_matrix_sparse', 'periodic_mass_matrix_inv_sparse',
+           'compute_gradient_2d', 'compute_gradient_3d', 'gradient_sparse_2d', 'gradient_sparse_3d',
+           'reshape_face_gradient', 'compute_divergence_2d', 'compute_divergence_3d', 'compute_normal_derivative',
+           'normal_derivative_sparse', 'linear_op_to_sparse']
 
 # %% ../nbs/src/06_linear_operators.ipynb #d159edd4-4456-41f8-b520-8b1b69219c67
 import numpy as np
@@ -246,6 +248,88 @@ def mass_matrix_inv_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
                          "expected 'voronoi', 'voronoi_exact' or 'barycentric'")
     return diag_jsparse(1.0 / cell_areas)
 
+# %% ../nbs/src/06_linear_operators.ipynb #persparse
+def periodic_cotan_laplace_sparse(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,
+                                  displacement_fn: Callable) -> jsparse.BCOO:
+    """Assemble the periodic cotangent Laplacian as a sparse matrix (BCOO).
+
+    Periodic counterpart of `cotan_laplace_sparse`. Same (negative semi-definite) sign
+    convention, so ``periodic_cotan_laplace_sparse(v, h, d) @ u`` equals
+    ``compute_periodic_cotan_laplace(v, h, u, d)``.
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices 2"]
+        Vertex positions in the periodic box.
+    hemesh : HeMesh
+        Half-edge mesh.
+    displacement_fn : Callable
+        Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``.
+
+    Returns
+    -------
+    jsparse.BCOO
+        Sparse matrix of shape ``(n_vertices, n_vertices)``.
+    """
+    w_edge = per.get_periodic_cotan_weights_per_edge(vertices, hemesh, displacement_fn)
+    unique = hemesh.is_unique
+
+    i, j, w = hemesh.orig[unique], hemesh.dest[unique], w_edge[unique]
+    rows = jnp.concatenate([i, j, i, j])
+    cols = jnp.concatenate([j, i, i, j])
+    data = jnp.concatenate([w, w, -w, -w])
+
+    mat = jsparse.BCOO((data, jnp.stack([rows, cols], axis=1)),
+                       shape=(hemesh.n_vertices, hemesh.n_vertices))
+    return mat.sum_duplicates()
+
+
+def periodic_mass_matrix_sparse(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,
+                                displacement_fn: Callable,
+                                area_type: str = "voronoi") -> jsparse.BCOO:
+    """Assemble the periodic lumped (diagonal) mass matrix as a sparse matrix (BCOO).
+
+    Periodic counterpart of `mass_matrix_sparse`, with the same area conventions:
+    ``"voronoi"`` is the mixed (Meyer et al.) area, always positive; ``"voronoi_exact"``
+    is the exact circumcentric area, which can be negative on obtuse triangles;
+    ``"barycentric"`` is a simpler always-positive approximation.
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices 2"]
+        Vertex positions in the periodic box.
+    hemesh : HeMesh
+        Half-edge mesh.
+    displacement_fn : Callable
+        Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``.
+    area_type : {"voronoi", "voronoi_exact", "barycentric"}, default="voronoi"
+        Choice of dual-cell area definition used on the diagonal.
+
+    Returns
+    -------
+    jsparse.BCOO
+        Diagonal sparse mass matrix of shape ``(n_vertices, n_vertices)``.
+    """
+    if area_type == "voronoi":
+        cell_areas = per.get_periodic_voronoi_areas_robust(vertices, hemesh, displacement_fn)
+    elif area_type == "voronoi_exact":
+        cell_areas = per.get_periodic_voronoi_areas(vertices, hemesh, displacement_fn)
+    elif area_type == "barycentric":
+        cell_areas = per.get_periodic_barycentric_cell_areas(vertices, hemesh, displacement_fn)
+    else:
+        raise ValueError(f"unknown area_type {area_type!r}; "
+                         "expected 'voronoi', 'voronoi_exact' or 'barycentric'")
+    return diag_jsparse(cell_areas)
+
+
+def periodic_mass_matrix_inv_sparse(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,
+                                    displacement_fn: Callable,
+                                    area_type: str = "voronoi") -> jsparse.BCOO:
+    """Inverse of `periodic_mass_matrix_sparse`. See that function for the area conventions."""
+    mass = periodic_mass_matrix_sparse(vertices, hemesh, displacement_fn, area_type=area_type)
+    return diag_jsparse(1.0 / mass.data)
+
+
 # %% ../nbs/src/06_linear_operators.ipynb #e2587568
 def _fe_grad_phi_2d(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh,
                  ) -> Float[jax.Array, "n_faces 3 2"]:
@@ -454,6 +538,75 @@ def compute_divergence_3d(vertices: Float[jax.Array, "n_vertices 3"], hemesh: ms
     for corner in range(3):
         result = result.at[faces[:, corner]].add(contrib[:, corner])
     return result
+
+# %% ../nbs/src/06_linear_operators.ipynb #normalderiv
+def compute_normal_derivative(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
+                              vertex_field: Float[jax.Array, "n_vertices ..."],
+                              ) -> Float[jax.Array, "n_hes ..."]:
+    """Integrated normal derivative (flux) of a vertex field across each half-edge.
+
+    For half-edge ``he`` inside a face, this is the flux of the piecewise-linear gradient
+    through the dual edge segment of that face:
+    ``D[he] = cot(theta_opposite(he)) / 2 * (u[dest[he]] - u[orig[he]])``,
+    where ``theta_opposite`` is the corner angle opposite ``he``. It is 0 on boundary
+    half-edges, which have no face.
+
+    This is the per-half-edge quantity the cotangent Laplacian is assembled from. The twin
+    half-edge measures the same edge from the adjacent face and with the opposite sign of
+    ``u[dest] - u[orig]``, so the total flux across an edge is ``D - D[twin]`` and
+
+        ``compute_cotan_laplace(v, h, u) == -sum_he_to_vertex_incoming(h, D - D[twin])``
+
+    holds to machine precision. Note the *raw* sum of ``D`` over all half-edges is not zero:
+    the two half-edges of an edge carry different opposite angles, and it is the combination
+    ``D - D[twin]`` that cancels pairwise. Summing that over a set of vertices gives the net
+    flux across the set's boundary (the discrete divergence theorem); over a closed mesh it
+    is zero.
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices dim"]
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh.
+    vertex_field : Float[Array, "n_vertices ..."]
+        Per-vertex scalar, vector, or tensor field.
+
+    Returns
+    -------
+    Float[Array, "n_hes ..."]
+        Integrated normal derivative per half-edge, 0 on boundary half-edges.
+    """
+    w_he = geom.get_cotan_weights_per_he(vertices, hemesh) / 2
+    diff = vertex_field[hemesh.dest] - vertex_field[hemesh.orig]
+    return (w_he * diff.T).T
+
+
+def normal_derivative_sparse(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                             ) -> jsparse.BCOO:
+    """Sparse matrix form of `compute_normal_derivative`, of shape ``(n_hes, n_vertices)``.
+
+    ``normal_derivative_sparse(v, h) @ u == compute_normal_derivative(v, h, u)``.
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices dim"]
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh.
+
+    Returns
+    -------
+    jsparse.BCOO
+        Sparse matrix of shape ``(n_hes, n_vertices)``.
+    """
+    w_he = geom.get_cotan_weights_per_he(vertices, hemesh) / 2
+    rows = jnp.arange(hemesh.n_hes, dtype=jnp.int32)
+    data = jnp.concatenate([w_he, -w_he])
+    indices = jnp.concatenate([jnp.stack([rows, hemesh.dest.astype(jnp.int32)], axis=1),
+                               jnp.stack([rows, hemesh.orig.astype(jnp.int32)], axis=1)], axis=0)
+    return jsparse.BCOO((data, indices), shape=(hemesh.n_hes, hemesh.n_vertices))
+
 
 # %% ../nbs/src/06_linear_operators.ipynb #3d9366df
 def linear_op_to_sparse(op: Callable,

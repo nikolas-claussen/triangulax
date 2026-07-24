@@ -7,9 +7,9 @@ __all__ = ['get_he_length', 'get_face_centroids', 'get_triangle_areas', 'get_ori
            'set_voronoi_face_positions', 'get_dual_he_length', 'get_oriented_dual_he_length', 'get_corner_angles',
            'get_angle_sum', 'get_cotan_weights_per_he', 'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths',
            'get_voronoi_corner_areas', 'get_voronoi_areas', 'get_voronoi_perimeters', 'get_voronoi_areas_robust',
-           'get_gaussian_curvature', 'get_mean_curvature_dihedral', 'get_mean_curvature_laplace',
-           'get_corner_scaled_angles', 'get_face_edge_basis', 'get_face_tangent_basis', 'get_vertex_tangent_basis',
-           'get_transport_across_halfedge', 'get_transport_along_halfedge']
+           'get_gaussian_curvature', 'get_geodesic_curvature', 'get_mean_curvature_dihedral',
+           'get_mean_curvature_laplace', 'get_corner_scaled_angles', 'get_face_edge_basis', 'get_face_tangent_basis',
+           'get_vertex_tangent_basis', 'get_transport_across_halfedge', 'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #ffed5003
 #| export
@@ -363,6 +363,47 @@ def get_gaussian_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
     angle_defect = 2 * jnp.pi - get_angle_sum(vertices, hemesh)
     cell_areas = get_voronoi_areas_robust(vertices, hemesh)
     return angle_defect / cell_areas
+
+# %% ../nbs/src/05_geometric_quantities.ipynb #geodesic
+def get_geodesic_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
+                           normalize: bool = True) -> Float[jax.Array, " n_vertices"]:
+    """Discrete geodesic curvature at boundary vertices: ``kappa_g = pi - sum(theta)``.
+
+    This is the exterior turning angle of the boundary curve. Interior vertices get 0,
+    since geodesic curvature is only defined on the boundary.
+
+    Together with the angle defect it satisfies the discrete Gauss-Bonnet theorem:
+    ``sum_interior (2*pi - sum theta) + sum_boundary (pi - sum theta) == 2*pi*chi``,
+    with ``chi`` the Euler characteristic (`mesh.get_euler_characteristic`).
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices dim"]
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh.
+    normalize : bool, optional
+        If True (default), divide by the dual boundary length at each vertex (half the
+        sum of its two incident boundary edge lengths), giving a curvature density in
+        1/length. If False, return the integrated (dimensionless) turning angle.
+
+    Returns
+    -------
+    Float[Array, "n_vertices"]
+        Per-vertex geodesic curvature, 0 at interior vertices.
+    """
+    turning = jnp.pi - get_angle_sum(vertices, hemesh)
+    turning = jnp.where(hemesh.is_bdry, turning, 0.0)
+    if not normalize:
+        return turning
+    # dual boundary length: half the sum of the incident boundary edge lengths
+    lengths = get_he_length(vertices, hemesh)
+    is_bdry_edge_he = hemesh.is_bdry_edge & hemesh.is_unique
+    per_vertex = (adj.sum_he_to_vertex_incoming(hemesh, jnp.where(is_bdry_edge_he, lengths, 0.0))
+                  + adj.sum_he_to_vertex_outgoing(hemesh, jnp.where(is_bdry_edge_he, lengths, 0.0)))
+    dual_length = per_vertex / 2
+    return jnp.where(dual_length > 0, turning / jnp.where(dual_length > 0, dual_length, 1.0), 0.0)
+
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #621feb80
 def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMesh,

@@ -5,7 +5,9 @@ __all__ = ['displacement_periodic', 'displacement_periodic_twisted', 'get_period
            'get_periodic_area', 'get_periodic_barycentric_cell_areas', 'get_periodic_face_centroids',
            'get_periodic_face_corner_angles', 'get_periodic_corner_angles', 'get_periodic_face_corner_cotangents',
            'get_periodic_cotan_weights_per_he', 'get_periodic_cotan_weights_per_edge', 'get_periodic_voronoi_areas',
-           'get_periodic_voronoi_face_positions', 'get_periodic_dual_he_length', 'get_periodic_voronoi_perimeters']
+           'get_periodic_voronoi_face_positions', 'get_periodic_dual_he_length', 'get_periodic_voronoi_perimeters',
+           'get_periodic_oriented_triangle_areas', 'get_periodic_triangle_orientations',
+           'get_periodic_voronoi_areas_robust']
 
 # %% ../nbs/src/05b_geometric_quantities_periodic_bcs.ipynb #48f4c00d
 import jax
@@ -271,3 +273,77 @@ def get_periodic_voronoi_perimeters(
     """Compute Voronoi cell perimeters by summing dual edge lengths per vertex."""
     dual_lengths = get_periodic_dual_he_length(vertices, hemesh, displacement_fn)
     return adj.sum_he_to_vertex_incoming(hemesh, dual_lengths)
+
+# %% ../nbs/src/05b_geometric_quantities_periodic_bcs.ipynb #perareas
+def get_periodic_oriented_triangle_areas(
+    vertices: Float[jax.Array, "n_vertices 2"],
+    hemesh: HeMesh,
+    displacement_fn: Callable[[Float[jax.Array, "2"], Float[jax.Array, "2"]], Float[jax.Array, "2"]],
+) -> Float[jax.Array, " n_faces"]:
+    """Signed triangle areas under periodic boundary conditions.
+
+    Positive for counter-clockwise (positively oriented) triangles, negative for inverted
+    ones. Unlike `get_periodic_triangle_areas`, which goes through Heron's formula on
+    minimum-image edge lengths and is therefore unconditionally non-negative, this
+    detects triangle inversion -- the event a vertex-model simulation has to watch for.
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices 2"]
+        Vertex positions in the periodic box.
+    hemesh : HeMesh
+        Half-edge mesh.
+    displacement_fn : Callable
+        Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``.
+
+    Returns
+    -------
+    Float[Array, "n_faces"]
+        Signed area per face.
+    """
+    face_hes = hemesh.face_incident
+    ab = jax.vmap(displacement_fn)(vertices[hemesh.orig[face_hes]], vertices[hemesh.dest[face_hes]])
+    bc = jax.vmap(displacement_fn)(vertices[hemesh.orig[hemesh.nxt[face_hes]]],
+                                   vertices[hemesh.dest[hemesh.nxt[face_hes]]])
+    # signed area = cross(ab, ac) / 2 with ac = ab + bc
+    return jnp.cross(ab, ab + bc) / 2
+
+
+def get_periodic_triangle_orientations(
+    vertices: Float[jax.Array, "n_vertices 2"],
+    hemesh: HeMesh,
+    displacement_fn: Callable[[Float[jax.Array, "2"], Float[jax.Array, "2"]], Float[jax.Array, "2"]],
+) -> Float[jax.Array, " n_faces"]:
+    """Per-face orientation (+1, -1 or 0) under periodic boundary conditions.
+
+    Periodic counterpart of `geometry.get_triangle_orientations`.
+    """
+    return jnp.sign(get_periodic_oriented_triangle_areas(vertices, hemesh, displacement_fn))
+
+
+def get_periodic_voronoi_areas_robust(
+    vertices: Float[jax.Array, "n_vertices 2"],
+    hemesh: HeMesh,
+    displacement_fn: Callable[[Float[jax.Array, "2"], Float[jax.Array, "2"]], Float[jax.Array, "2"]],
+) -> Float[jax.Array, " n_vertices"]:
+    """Mixed (Meyer et al.) Voronoi cell areas under periodic boundary conditions.
+
+    Periodic counterpart of `geometry.get_voronoi_areas_robust`. Unlike
+    `get_periodic_voronoi_areas`, which computes the exact circumcentric area, this is
+    always positive even on obtuse triangles -- required for a well-posed mass matrix.
+    """
+    edge_lengths = get_periodic_he_lengths(vertices, hemesh, displacement_fn)
+    cot_per_he = get_periodic_cotan_weights_per_he(vertices, hemesh, displacement_fn)
+    voronoi_per_tri = (edge_lengths**2 * cot_per_he
+                       + edge_lengths[hemesh.nxt]**2 * cot_per_he[hemesh.nxt]) / 8
+    tri_areas = get_periodic_triangle_areas(vertices, hemesh, displacement_fn)[hemesh.heface]
+
+    corner_angles = get_periodic_corner_angles(vertices, hemesh, displacement_fn)
+    is_obtuse_at_x = corner_angles[hemesh.prv] > jnp.pi/2
+    is_obtuse_elsewhere = (corner_angles > jnp.pi/2) | (corner_angles[hemesh.nxt] > jnp.pi/2)
+
+    amixed = jnp.select([is_obtuse_at_x, is_obtuse_elsewhere],
+                        [tri_areas / 2, tri_areas / 4], default=voronoi_per_tri)
+    amixed = jnp.where(hemesh.is_bdry_he, 0.0, amixed)
+    return adj.sum_he_to_vertex_incoming(hemesh, amixed)
+
