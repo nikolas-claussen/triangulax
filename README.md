@@ -141,8 +141,8 @@ details):
 - `periodic`: geometry computations under periodic boundary conditions
 - `linops`: discrete differential operators (Laplacian, mass matrix,
   gradient)
-- `interp`: linear interpolation and closes-point queries
-- `elasticity`: discrete elastic energies for shells and membranes
+- `interp`: linear interpolation and closest-point queries
+- `elastic`: discrete elastic energies for shells and membranes
 - `algorithms`: Delaunay flipping, mesh quality improvement
 - `simulation`: Utilities for time-dependent simulations and
   checkpointing

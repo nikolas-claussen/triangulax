@@ -7,11 +7,21 @@ name = "triangulax"
 dynamic = ["version"]
 description = "JAX-compatible triangular meshes and triangular-mesh-based simulations"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
 authors = [{name = "Nikolas Claussen", email = "nhclaussen@gmail.com"}]
-keywords = ['nbdev', 'jupyter', 'notebook', 'python']
-classifiers = ["Natural Language :: English", "Intended Audience :: Developers", "Development Status :: 3 - Alpha", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3 :: Only"]
+keywords = ['jax', 'geometry-processing', 'triangular-mesh', 'half-edge', 'differentiable-simulation', 'computational-geometry']
+classifiers = ["Natural Language :: English",
+               "Intended Audience :: Developers",
+               "Intended Audience :: Science/Research",
+               "Topic :: Scientific/Engineering :: Mathematics",
+               "Topic :: Scientific/Engineering :: Physics",
+               "Development Status :: 3 - Alpha",
+               "Programming Language :: Python :: 3",
+               "Programming Language :: Python :: 3 :: Only",
+               "Programming Language :: Python :: 3.10",
+               "Programming Language :: Python :: 3.11",
+               "Programming Language :: Python :: 3.12",]
 dependencies = [
     "numpy",
     "jax",
@@ -19,7 +29,6 @@ dependencies = [
     "jaxtyping",
     "scipy",
     "libigl",
-    "lineax",
     "matplotlib",
 ]
 
