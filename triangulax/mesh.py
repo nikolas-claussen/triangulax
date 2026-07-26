@@ -2,7 +2,7 @@
 
 # %% auto #0
 __all__ = ['label_plot', 'get_half_edge_arrays_vectorized', 'HeMesh', 'test_mesh_validity', 'connect_boundary_to_infinity',
-           'get_real_faces', 'is_closed', 'get_n_boundary_loops', 'get_n_vertices_edges_faces',
+           'get_real_faces', 'get_n_vertices_edges_faces', 'is_closed', 'get_n_boundary_loops',
            'get_euler_characteristic', 'get_n_connected_components', 'get_genus', 'GeomMesh', 'Mesh', 'cellplot',
            'tree_stack', 'tree_unstack']
 
@@ -24,11 +24,6 @@ from pathlib import Path
 from enum import IntEnum
 
 import dataclasses
-
-# %% ../nbs/src/02_halfedge_datastructure.ipynb #cef3ff0a
-#| export
-
-
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #45616576-ecbd-46f3-998b-ff82c6aa7bef
 def label_plot(vertices: Float[jax.Array, "n_vertices 2"],
@@ -60,6 +55,7 @@ def label_plot(vertices: Float[jax.Array, "n_vertices 2"],
 def get_half_edge_arrays_vectorized(n_vertices: int, faces: Int[jax.Array, "n_faces 3"]) -> list[Int[jax.Array, " n"]]:
     """
     Get half-edge data structure arrays from faces (vectorized). Returned arrays are dtype int32.
+    For internal use to construct HeMesh objects.
 
     Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident
     """
@@ -152,12 +148,12 @@ class HeMesh:
     Half-edge mesh data structure for triangular meshes.
 
     A half-edge mesh is described by a set of half-edges and several
-    arrays that specify their connectivity (see markup explanation above).
+    arrays that specify their connectivity (see full explanation in `mesh` module docs).
     This class serves as a container for multiple arrays.
-    For future compatibility with JAX, after initialization, do not
+    For compatibility with JAX, after initialization, do not
     modify these arrays in-place; always return a new HeMesh object.
-    The mesh vertices may live in whatever dimension - this
-    does not affect the connectivity bookkeeping.
+    The mesh vertices may live in whatever dimension (or in periodic BC)
+    - this does not affect the connectivity bookkeeping.
 
     Half-edge meshes are initialized from a list of triangles and a 
     number of vertices, and can return the original triangles (e.g., to save as a .obj).
@@ -166,6 +162,9 @@ class HeMesh:
     HeMesh class does _not_ contain the vertex or face positions.
     These are saved in the GeomHeMesh class that combines
     a HeMesh (combinatorics) with a couple of other arrays (geometry).
+
+    Comparing two HeMeshes checks for equality of all arrays they contain,
+    not for graph isomorphism (equivalence up to vertex renaming).
 
     ---Conventions---
     
@@ -178,6 +177,7 @@ class HeMesh:
          are "at infinity". They should have coordinates [np.inf, np.inf].
          Each infinity vertex corresponds to one boundary. For a single
          boundary, the vertex at infinity is, by convention, the final one.
+    Mixing the two conventions will lead to errors.
 
     Starting from a set of triangles, the half-edges are initialized as follows:
     The 1st N_edges half-edges are (origin_vertex, destination_vertex), in lexicographic order, with 
@@ -232,6 +232,9 @@ class HeMesh:
     **Static methods**
 
     from_triangles : tuple[int, Int[jax.Array, "n_faces 3"], Int[jax.Array, "n_boundaries"] -> HeMesh
+
+    The arguments are the number of vertices, the n_faces * 3 array of faces, and, optionally,
+    a list of "infinity" vertices.   
 
     **Class methods**
 
@@ -353,7 +356,7 @@ class HeMesh:
             raise ValueError(f"vertex {v} has no outgoing half-edge "
                              "(it is not referenced by any face)")
         polygon_edges = [self.incident[v]]
-        while True: # this while loop is challenging to rewrite using jax.lax since the output shape is not known!
+        while True: # this while loop is hard to rewrite using jax.lax since the output shape is not known!
             next_edge = self.twin[self.prv[polygon_edges[-1]]]
             if next_edge == polygon_edges[0]:
                 break
@@ -412,41 +415,72 @@ class HeMesh:
         return jax.tree_util.tree_all(jax.tree.map(jnp.array_equal, dataclasses.asdict(self), dataclasses.asdict(other))) # exact comparison: these are integer index arrays
 
 # %% ../nbs/src/02_halfedge_datastructure.ipynb #f9d0be63
-def test_mesh_validity(h: HeMesh) -> bool:
-    """Test if a mesh is valid. Returns True if valid, raises AssertionError otherwise.
+def test_mesh_validity(h: HeMesh, verbose: bool=False) -> bool:
+    """Test if a mesh is valid. Returns True if valid, optionally, returns message.
 
-    All comparisons are exact: these are integer index arrays, so a tolerance-based
-    comparison would hide off-by-one errors for indices above ~1e5.
+    Checks both for consistency of the HeMesh datastructure AND whether the mesh is edge- and vertex 
+    manifold (defines a 2D surface).
 
     Parameters
     ----------
     h : HeMesh
         Half-edge mesh to validate.
-
+    verbose : bool
+        Return diagnostic message.
+        
     Returns
     -------
-    bool
-        True if the mesh is valid.
+    bool OR (bool, str)
+        True if the mesh is valid. Also returns a string with a message if verbose = True
     """
     ar = jnp.arange(h.n_hes)
-    assert h.orig.shape == h.dest.shape == h.nxt.shape == h.prv.shape == h.twin.shape == h.heface.shape, "shapes failed"
-    assert jnp.array_equal(h.twin[h.twin], ar), "twin.twin failed"
-    assert jnp.array_equal((h.prv[h.prv[h.prv]])[~h.is_bdry_edge], ar[~h.is_bdry_edge]), "prv.prv.prv failed"
-    assert jnp.array_equal((h.nxt[h.nxt[h.nxt]])[~h.is_bdry_edge], ar[~h.is_bdry_edge]), "nxt.nxt.nxt failed"
+    message = ""
+    valid = True
+    if not h.orig.shape == h.dest.shape == h.nxt.shape == h.prv.shape == h.twin.shape == h.heface.shape:
+        valid = False
+        message += "shapes failed. "
+    if not jnp.array_equal(h.twin[h.twin], ar):
+       valid = False
+       message += "twin.twin failed. "
+    if not jnp.array_equal((h.prv[h.prv[h.prv]])[~h.is_bdry_edge], ar[~h.is_bdry_edge]):
+        valid = False
+        message +=  "prv.prv.prv failed."
+    if not jnp.array_equal((h.nxt[h.nxt[h.nxt]])[~h.is_bdry_edge], ar[~h.is_bdry_edge]):
+        valid = False
+        message += "nxt.nxt.nxt failed. "
     # nxt/prv must be mutually inverse everywhere, including along boundary loops,
     # which the masked cubing checks above do not constrain at all.
-    assert jnp.array_equal(h.nxt[h.prv], ar), "nxt.prv failed"
-    assert jnp.array_equal(h.prv[h.nxt], ar), "prv.nxt failed"
-    assert jnp.array_equal(h.dest, h.orig[h.nxt]), "dest vs orig.nxt failed"
-    assert jnp.array_equal(h.heface[h.nxt], h.heface), "face.nxt failed"
-    assert jnp.array_equal(h.heface[h.nxt], h.heface[h.prv]), "face.nxt vs face.prv failed"
-    assert jnp.array_equal(h.orig[h.incident], jnp.arange(h.n_vertices)), "orig.incident failed"
-    assert jnp.array_equal(h.heface[h.face_incident], jnp.arange(h.n_faces)), "face.face_incident failed"
-    assert jnp.array_equal(h.orig, h.dest[h.twin]), "orig vs dest.twin failed"
+    if not jnp.array_equal(h.nxt[h.prv], ar):
+        valid = False
+        message += "nxt.prv failed. "
+    if not jnp.array_equal(h.prv[h.nxt], ar):
+        valid = False
+        message += "prv.nxt failed. "
+    if not jnp.array_equal(h.dest, h.orig[h.nxt]):
+        valid = False
+        message += "dest vs orig.nxt failed. "
+    if not jnp.array_equal(h.heface[h.nxt], h.heface):
+        valid = False
+        message += "face.nxt failed. "
+    if not jnp.array_equal(h.heface[h.nxt], h.heface[h.prv]):
+        valid = False
+        message += "face.nxt vs face.prv failed. "
+    if not jnp.array_equal(h.orig[h.incident], jnp.arange(h.n_vertices)):
+        valid = False
+        message += "orig.incident failed. "
+    if not jnp.array_equal(h.heface[h.face_incident], jnp.arange(h.n_faces)):
+        valid = False
+        message += "face.face_incident failed. "
+    if not jnp.array_equal(h.orig, h.dest[h.twin]):
+        valid = False
+        message += "orig vs dest.twin failed. "
     faces_np = np.asarray(h.faces, dtype=np.int64)  # igl requires int64
-    assert igl.is_edge_manifold(faces_np)[0] and igl.is_vertex_manifold(faces_np)[0], "igl manifold failed"
-
-    return True
+    if not igl.is_edge_manifold(faces_np)[0] and igl.is_vertex_manifold(faces_np)[0]:
+        valid = False
+        message += "manifold check failed. "
+    if verbose:
+        return valid, message
+    return valid
 
 def _canonical_faces_np(F: np.ndarray) -> np.ndarray:
     """Helper function to canonicalize faces for testing."""
@@ -510,6 +544,13 @@ def get_real_faces(hemesh: HeMesh) -> Int[np.ndarray, "n_real_faces 3"]:
     return faces
 
 
+def get_n_vertices_edges_faces(hemesh: HeMesh) -> tuple[int, int, int]:
+    """Counts of real (non-fictitious) vertices, edges, and faces."""
+    faces = get_real_faces(hemesh)
+    n_vertices = hemesh.n_vertices - len(hemesh.inf_vertices)
+    return n_vertices, int(igl.edges(faces).shape[0]), int(faces.shape[0])
+
+
 def is_closed(hemesh: HeMesh) -> bool:
     """True if the mesh has no boundary."""
     return not bool(hemesh.is_bdry_he.any())
@@ -518,13 +559,6 @@ def is_closed(hemesh: HeMesh) -> bool:
 def get_n_boundary_loops(hemesh: HeMesh) -> int:
     """Number of boundary loops (0 for a closed mesh, 1 for a disk, 2 for a cylinder)."""
     return len(hemesh.bdry_loops)
-
-
-def get_n_vertices_edges_faces(hemesh: HeMesh) -> tuple[int, int, int]:
-    """Counts of real (non-fictitious) vertices, edges, and faces."""
-    faces = get_real_faces(hemesh)
-    n_vertices = hemesh.n_vertices - len(hemesh.inf_vertices)
-    return n_vertices, int(igl.edges(faces).shape[0]), int(faces.shape[0])
 
 
 def get_euler_characteristic(hemesh: HeMesh) -> int:
@@ -565,8 +599,8 @@ class GeomMesh:
     To be combined with a HeMesh to specify the connectivity.
 
     One array (for vertex positions) must always be present. A second,
-    but optional, standard entry is a set of positions for each face.
-    The mesh coordinates can live in 2d or 3d.
+    optional, standard entry is a set of positions for each face.
+    The mesh coordinates can live in any dimension
 
     Optionally, vertices, half-edges, and faces can have attributes (stored as dictionaries).
     The keys of the dictionary should be taken from a suitable 'enum'. The values are
@@ -577,12 +611,11 @@ class GeomMesh:
     per-mesh attributes may be updated directly (e.g. during a simulation step),
     whereas mesh connectivity (`HeMesh`) should never be edited by hand.
 
-    This class deliberately stores no element counts of its own: the number of vertices,
-    half-edges, and faces belongs to the `HeMesh`, and duplicating it here can only drift.
-    Use `check_compatibility(hemesh)` to confirm a geometry and a connectivity match.
+    This class stores no element counts of its own: the number of vertices,
+    half-edges, and faces belongs to the `HeMesh`. Use `check_compatibility(hemesh)`
+    to confirm a geometry and a connectivity match.
 
-    See documentation on HeMesh
-
+    
     **Attributes**
 
     vertices : Float[jax.Array, "n_vertices dim"]
@@ -744,8 +777,7 @@ class GeomMesh:
         leaves_other, tree_other = jax.tree_util.tree_flatten(other)
         if tree_self != tree_other:   # different attribute keys / optional data present
             return False
-        # shapes must match before comparing values: allclose would raise on a mismatch,
-        # and __eq__ must return False rather than propagate an exception
+        # shapes must match before comparing values:
         if any(a.shape != b.shape for a, b in zip(leaves_self, leaves_other)):
             return False
         return jax.tree_util.tree_all(jax.tree.map(jnp.array_equal, leaves_self, leaves_other))

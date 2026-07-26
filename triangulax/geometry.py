@@ -7,19 +7,18 @@ __all__ = ['get_he_length', 'get_face_centroids', 'get_triangle_areas', 'get_ori
            'set_voronoi_face_positions', 'get_dual_he_length', 'get_oriented_dual_he_length', 'get_corner_angles',
            'get_angle_sum', 'get_cotan_weights_per_he', 'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths',
            'get_voronoi_corner_areas', 'get_voronoi_areas', 'get_voronoi_perimeters', 'get_voronoi_areas_robust',
-           'get_gaussian_curvature', 'get_geodesic_curvature', 'get_mean_curvature_dihedral',
-           'get_mean_curvature_laplace', 'get_corner_scaled_angles', 'get_face_edge_basis', 'get_face_tangent_basis',
-           'get_vertex_tangent_basis', 'get_transport_across_halfedge', 'get_transport_along_halfedge']
+           'get_angle_defect', 'get_gaussian_curvature', 'get_boundary_angle_defect', 'get_geodesic_curvature',
+           'get_mean_curvature_dihedral', 'get_mean_curvature_laplace', 'get_corner_scaled_angles',
+           'get_face_edge_basis', 'get_face_tangent_basis', 'get_vertex_tangent_basis', 'get_transport_across_halfedge',
+           'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #ffed5003
-#| export
+import dataclasses
 
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #9f1cb15c-86cd-4e64-8f21-d4726216cd2f
 import jax
 import jax.numpy as jnp
-
-import dataclasses
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #723a50d1-f5c2-435c-9026-39b6067f426d
 from jaxtyping import Float 
@@ -100,7 +99,6 @@ def get_triangle_orientations(vertices: Float[jax.Array, "n_vertices 2"], hemesh
     Float[Array, "n_faces"]
         Orientation (+1/-1/0) per face.
     """
-    assert vertices.shape[-1] == 2, "get_triangle_orientations requires a 2d mesh; use get_triangle_normals in 3d"
     return jnp.sign(get_oriented_triangle_areas(vertices, hemesh))
 
 def get_vertex_normals(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMesh
@@ -179,16 +177,14 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.
     return jnp.where(hemesh.is_bdry_edge, 0.0, jnp.arctan2(sin_theta, cos_theta))
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #cbaf37c7
-def get_volume(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+def get_volume(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
+               origin: Float[jax.Array, " dim"] | float =0
               ) -> Float[jax.Array, ""]:
-    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to the origin).
+    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to `origin`).
 
-    Requires a closed, consistently oriented mesh. On an open mesh the result is not a
-    volume at all and depends on where the origin is, so this is checked.
+    The result is a mathematically meaningful volume only for a closed, consistently oriented mesh.
     """
-    assert not bool(hemesh.is_bdry_he.any()), (
-        "get_volume requires a closed mesh; this one has boundary half-edges")
-    v0, v1, v2 = vertices[hemesh.faces.T]
+    v0, v1, v2 = vertices[hemesh.faces.T]-origin
     return trig.get_tetrahedron_volume(v0, v1, v2).sum()
 
 def get_area(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
@@ -356,18 +352,30 @@ def _get_cell_areas_traversal(geommesh: msh.GeomMesh, hemesh: msh.HeMesh) -> Flo
     return areas
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #fbebd977-9ea6-4ab9-8188-d833f1bbba60
+def get_angle_defect(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
+                     ) -> Float[jax.Array, " n_vertices"]:
+    """Angle defect at vertices: ``(2π - Σθ_i) / A_i``.
+
+    Angle defect represents the discrete Gaussian curvature integrated over a vertex.
+
+    Angle defect at boundary vertices is set to zero (since it is not meaningful there).
+    """
+    angle_defect = 2 * jnp.pi - get_angle_sum(vertices, hemesh)
+    return jnp.where(hemesh.is_bdry, 0, angle_defect)
+
+
 def get_gaussian_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                            ) -> Float[jax.Array, " n_vertices"]:
     """Discrete Gaussian curvature via the angle defect: ``(2π - Σθ_i) / A_i``.
     """
-    angle_defect = 2 * jnp.pi - get_angle_sum(vertices, hemesh)
+    angle_defect = get_angle_defect(vertices, hemesh)
     cell_areas = get_voronoi_areas_robust(vertices, hemesh)
     return angle_defect / cell_areas
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #geodesic
-def get_geodesic_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
-                           normalize: bool = True) -> Float[jax.Array, " n_vertices"]:
-    """Discrete geodesic curvature at boundary vertices: ``kappa_g = pi - sum(theta)``.
+def get_boundary_angle_defect(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
+                              ) -> Float[jax.Array, " n_vertices"]:
+    """Discrete curvature at boundary vertices: ``kappa_g = pi - sum(theta)``.
 
     This is the exterior turning angle of the boundary curve. Interior vertices get 0,
     since geodesic curvature is only defined on the boundary.
@@ -382,10 +390,6 @@ def get_geodesic_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
         Vertex positions.
     hemesh : HeMesh
         Half-edge mesh.
-    normalize : bool, optional
-        If True (default), divide by the dual boundary length at each vertex (half the
-        sum of its two incident boundary edge lengths), giving a curvature density in
-        1/length. If False, return the integrated (dimensionless) turning angle.
 
     Returns
     -------
@@ -394,8 +398,37 @@ def get_geodesic_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
     """
     turning = jnp.pi - get_angle_sum(vertices, hemesh)
     turning = jnp.where(hemesh.is_bdry, turning, 0.0)
-    if not normalize:
-        return turning
+    return turning
+
+
+def get_geodesic_curvature(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
+                           ) -> Float[jax.Array, " n_vertices"]:
+    """Discrete geodesic curvature at boundary vertices: ``kappa_g = (pi - sum(theta)) / l``.
+
+    Curvature is the exterior turning angle of the boundary curve. Interior vertices get 0,
+    since geodesic curvature is only defined on the boundary.
+
+    The turning angle is divided by the dual boundary length at each vertex (half the
+    sum of its two incident boundary edge lengths), giving a curvature density in
+    1/length. 
+
+    Together with the angle defect it satisfies the discrete Gauss-Bonnet theorem:
+    ``sum_interior (2*pi - sum theta) + sum_boundary (pi - sum theta) == 2*pi*chi``,
+    with ``chi`` the Euler characteristic (`mesh.get_euler_characteristic`).
+
+    Parameters
+    ----------
+    vertices : Float[Array, "n_vertices dim"]
+        Vertex positions.
+    hemesh : HeMesh
+        Half-edge mesh.
+
+    Returns
+    -------
+    Float[Array, "n_vertices"]
+        Per-vertex geodesic curvature, 0 at interior vertices.
+    """
+    turning = get_boundary_angle_defect(vertices, hemesh)
     # dual boundary length: half the sum of the incident boundary edge lengths
     lengths = get_he_length(vertices, hemesh)
     is_bdry_edge_he = hemesh.is_bdry_edge & hemesh.is_unique

@@ -378,8 +378,8 @@ def generate_ginibre_points(n_vertices: int) -> Float[jax.Array, "n_vertices 2"]
     """Sample n_vertices points from the Ginibre ensemble.
 
     Points are rescaled so their *mean* radius is 1 (the cloud extends to radius ~1.5).
-    Uses the global `numpy` RNG, so results are not reproducible via a jax PRNG key,
-    and cost is O(n_vertices^3) (a dense complex eigendecomposition).
+    Uses the global `numpy` RNG (not JAX RNG), and cost is O(n_vertices^3)
+    (a dense complex eigendecomposition).
     """
     M = np.random.normal(size=(n_vertices, n_vertices)) + 1j*np.random.normal(size=(n_vertices, n_vertices))
     vals = np.linalg.eigvals(M)
@@ -393,7 +393,8 @@ def generate_poisson_points(n_vertices: int,
                             limit_y: float | Float[jax.Array, ""] = 1
                            ) -> Float[jax.Array, "n_vertices 2"]:
     """Sample n_vertices points from the Poisson ensemble in rectangle
-    [-limit_x/2, limit_x/2] * [-limit_y/2, limit_y/2]."""
+    [-limit_x/2, limit_x/2] * [-limit_y/2, limit_y/2].
+    Uses the global `numpy` RNG (not JAX RNG)."""
     pos = np.stack([np.random.uniform(size=n_vertices, low=-limit_x/2, high=limit_x/2),
                     np.random.uniform(size=n_vertices, low=-limit_y/2, high=limit_y/2)])
     return jnp.array(pos.T)
@@ -434,12 +435,10 @@ def get_periodic_delaunay_faces(points: Float[jax.Array, "n_vertices 2"], L: Flo
     Raises
     ------
     AssertionError
-        If the point set is too coarse for the box. A face list of global vertex ids
-        cannot represent a periodic triangulation in which two distinct triangles use
+        If the point set is too coarse for the box. A face list of vertex ids
+        cannot represent a _non-regular_ periodic triangulation in which two different triangles use
         the same three vertices (in different periodic images), which happens routinely
-        below roughly 30 points. Rather than silently dropping one of them -- which
-        leaves a hole, and yields a non-manifold mesh with the wrong Euler
-        characteristic -- this is detected and raised. Use more points, or a smaller box.
+        below roughly 30 points. This is detected and raised. Use more points, or a smaller box.
     """
     points_np = np.asarray(points, dtype=float)
     L_np = np.asarray(L, dtype=float)
