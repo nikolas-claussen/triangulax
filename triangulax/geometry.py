@@ -3,14 +3,14 @@
 # %% auto #0
 __all__ = ['get_he_length', 'get_face_centroids', 'get_triangle_areas', 'get_oriented_triangle_areas',
            'get_barycentric_cell_areas', 'get_triangle_normals', 'get_triangle_orientations', 'get_vertex_normals',
-           'get_edge_normals', 'get_dihedral_angles', 'get_volume', 'get_area', 'get_voronoi_face_positions',
-           'set_voronoi_face_positions', 'get_dual_he_length', 'get_oriented_dual_he_length', 'get_corner_angles',
-           'get_angle_sum', 'get_cotan_weights_per_he', 'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths',
-           'get_voronoi_corner_areas', 'get_voronoi_areas', 'get_voronoi_perimeters', 'get_voronoi_areas_robust',
-           'get_angle_defect', 'get_gaussian_curvature', 'get_boundary_angle_defect', 'get_geodesic_curvature',
-           'get_mean_curvature_dihedral', 'get_mean_curvature_laplace', 'get_corner_scaled_angles',
-           'get_face_edge_basis', 'get_face_tangent_basis', 'get_vertex_tangent_basis', 'get_transport_across_halfedge',
-           'get_transport_along_halfedge']
+           'get_edge_normals', 'get_dihedral_angles', 'get_area', 'get_volume', 'f_jac_vec_prod',
+           'get_voronoi_face_positions', 'set_voronoi_face_positions', 'get_dual_he_length',
+           'get_oriented_dual_he_length', 'get_corner_angles', 'get_angle_sum', 'get_cotan_weights_per_he',
+           'get_cotan_weights_per_edge', 'get_voronoi_edge_lengths', 'get_voronoi_corner_areas', 'get_voronoi_areas',
+           'get_voronoi_perimeters', 'get_voronoi_areas_robust', 'get_angle_defect', 'get_gaussian_curvature',
+           'get_boundary_angle_defect', 'get_geodesic_curvature', 'get_mean_curvature_dihedral',
+           'get_mean_curvature_laplace', 'get_corner_scaled_angles', 'get_face_edge_basis', 'get_face_tangent_basis',
+           'get_vertex_tangent_basis', 'get_transport_across_halfedge', 'get_transport_along_halfedge']
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #ffed5003
 import dataclasses
@@ -102,7 +102,7 @@ def get_triangle_orientations(vertices: Float[jax.Array, "n_vertices 2"], hemesh
 
 def get_vertex_normals(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMesh
                        ) -> Float[jax.Array, "n_vertices 3"]:
-    """Compute per-vertex unit normals by area-weighted averaging over adjacent faces.
+    """Compute per-vertex unit normals by summing vector-areas of adjacent faces.
 
     Note: 3d meshes only.
     """
@@ -175,20 +175,40 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.
     return jnp.where(hemesh.is_bdry_edge, 0.0, jnp.arctan2(sin_theta, cos_theta))
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #cbaf37c7
-def get_volume(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh,
-               origin: Float[jax.Array, " dim"] | float =0
-              ) -> Float[jax.Array, ""]:
-    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to `origin`).
-
-    The result is a mathematically meaningful volume only for a closed, consistently oriented mesh.
-    """
-    v0, v1, v2 = vertices[hemesh.faces.T]-origin
-    return trig.get_tetrahedron_volume(v0, v1, v2).sum()
-
 def get_area(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
             ) -> Float[jax.Array, ""]:
     """Total surface area."""
     return get_triangle_areas(vertices, hemesh).sum()
+
+
+@jax.custom_jvp
+def get_volume(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh) -> Float[jax.Array, ""]:
+    """Signed volume of a closed triangulated surface (sums tetrahedra volumes relative to the origin [0., 0., 0.]).
+
+    The result is a mathematically meaningful volume only for a closed, consistently oriented mesh.
+    For an open surface, the result will depend on the location of the origin.
+
+    The gradient of the volume w.r.t. vertex positions r_i is
+    dV / dr_i = 1/3 * a_i * n_i, where a_i is the Voronoi area around vertex i,
+    and n_i is the vertex normal. This is implemented via a custom JVP rule.
+    Direct autodiff of the volume can lead to artifacts near topological defects in a mesh.
+    """
+    v0, v1, v2 = vertices[hemesh.faces.T]
+    return trig.get_tetrahedron_volume(v0, v1, v2).sum()
+
+
+@get_volume.defjvp
+def f_jac_vec_prod(primals, tangents):
+    vertices, hemesh = primals
+    vertices_dot, _ = tangents
+
+    v0, v1, v2 = vertices[hemesh.faces.T]
+    volume = trig.get_tetrahedron_volume(v0, v1, v2).sum()
+
+    normals = get_vertex_normals(vertices, hemesh)
+    areas = get_voronoi_areas_robust(vertices, hemesh)
+
+    return volume, (areas * jnp.linalg.vecdot(normals, vertices_dot)).sum()
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #b30791e6
 def get_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
