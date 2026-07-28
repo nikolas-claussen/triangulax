@@ -430,4 +430,8 @@ d = { 'settings': { 'branch': 'main',
                                          'triangulax.trigonometry.quaternion_to_rot_mat': ( 'src/trigonometry.html#quaternion_to_rot_mat',
                                                                                             'triangulax/trigonometry.py'),
                                          'triangulax.trigonometry.rotate_around_axis': ( 'src/trigonometry.html#rotate_around_axis',
-                                                                                         'triangulax/trigonometry.py')}}}
+                                                                                         'triangulax/trigonometry.py'),
+                                         'triangulax.trigonometry.safe_divide': ( 'src/trigonometry.html#safe_divide',
+                                                                                  'triangulax/trigonometry.py'),
+                                         'triangulax.trigonometry.safe_normalize': ( 'src/trigonometry.html#safe_normalize',
+                                                                                     'triangulax/trigonometry.py')}}}
