@@ -103,27 +103,10 @@ over faces/vertices, normalised as above. Because the flat-mesh error is
 at machine precision while the curved-surface error is *O*(*h*), the
 *y*-axis is **broken** into two ranges.
 
-    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_76998/2921015705.py:57: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+    /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/ipykernel_24157/1943862201.py:64: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
       plt.tight_layout(pad=0.1, w_pad=0.4, h_pad=0.1)
     findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
+    findfont: Font family ['normal'] not found. Falling back to DejaVu Sans.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
@@ -171,36 +154,6 @@ def get_mean_curvature_dihedral_barycentric(vertices, hemesh):
     return H_dihedral / geom.get_barycentric_cell_areas(vertices, hemesh)
 ```
 
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
@@ -277,24 +230,6 @@ the mean and Gaussian curvatures.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
 
 ![](convergence_tests_files/figure-commonmark/cell-7-output-2.png)
 
@@ -314,28 +249,6 @@ operator *S* = *g*<sup>−1</sup>*b* built with
 vs ∫<sub>*P*</sub>*H* *d**A*). Faces are assigned to sectors by their
 centroid.
 
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
-    findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.
     findfont: Font family 'normal' not found.

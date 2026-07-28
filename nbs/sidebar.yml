@@ -3,9 +3,6 @@ website:
     contents:
       - index.ipynb
       - convergence_tests.ipynb
-      - section: previous_projects
-        contents:
-          - previous_projects/01 Simulation of non-reciprocal Cahn Hillard 1D.ipynb
       - section: src
         contents:
           - src/00_trigonometry.ipynb

@@ -29,7 +29,7 @@ triangulation.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L52"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L51"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### write_obj
@@ -49,7 +49,7 @@ Only writes vertices and faces.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L27"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L26"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### read_obj
@@ -58,7 +58,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def read_obj(
     filename:Union, # filename
-    dim:int=2, # Dimension - can be 2 or 3. If 2, the z-coordinate is ignored.
+    dim:int=3, # Dimension - can be 2 or 3. If 2, the z-coordinate is ignored.
 )->tuple:
 
 ```
@@ -73,7 +73,7 @@ files containing a single object only. If the file contains a
 sentinel values are converted back to `inf`.
 
 ``` python
-vertices, faces = read_obj("../test_meshes/disk.obj")
+vertices, faces = read_obj("../test_meshes/disk.obj", dim=2)
 filename = "../test_meshes/disk_write_test.obj"
 write_obj(vertices, faces, filename)
 ```
@@ -129,7 +129,7 @@ Laplacian eigenvectors) to the UV domain for 2D visualization.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L87"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L86"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TriMesh
@@ -143,8 +143,18 @@ def TriMesh(
 
 ```
 
-*Simple class for reading, holding, transforming, and saving triangular
-meshes.*
+*NOTE: unlike `mesh.HeMesh` and `mesh.GeomMesh`, TriMesh is deliberately
+NOT* registered as a JAX pytree, and is mutable. It is an input/output
+container for reading and writing .obj files, not a data structure to
+compute with: it cannot be passed through `jax.jit`/`jax.vmap` or
+differentiated. Convert to arrays plus a
+[`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh)
+(and optionally a
+[`GeomMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh))
+before doing any numerical work.
+
+Simple class for reading, holding, transforming, and saving triangular
+meshes.
 
 A TriMesh comprises vertices and faces, describing a surface in 2d or
 3d. In addition, there can be a 2d/3d position for every face (think
@@ -212,7 +222,7 @@ write_obj : str -\> None
 ``` python
 # test reading a mesh
 
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 ```
 
     Warning: readOBJ() ignored non-comment line 3:
@@ -231,7 +241,7 @@ jnp.allclose(dists[:,0], dists[:,1]) and jnp.allclose(dists[:,1], dists[:,2])
 ``` python
 # test writing face positions to vn entries
 
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 filename = "../test_meshes/disk_write_test.obj"
 mesh.write_obj(filename, save_face_positions=True)
 mesh = TriMesh.read_obj(filename, read_face_positions=True)
@@ -293,7 +303,7 @@ print("UV write/read roundtrip: OK")
 ``` python
 # test that 2D meshes without UV still work as before
 
-mesh2d = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh2d = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 assert not mesh2d.has_texture
 assert mesh2d.face_positions is not None  # Voronoi computed automatically
 print("2D mesh (no UV) backward compatibility: OK")
@@ -304,10 +314,12 @@ print("2D mesh (no UV) backward compatibility: OK")
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
 
+### Maps between meshes
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L321"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L330"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_per_face_jacobian
@@ -352,7 +364,7 @@ Some functions for plotting meshes:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L385"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L402"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_triangular_lattice
@@ -361,7 +373,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def generate_triangular_lattice(
     nx:int, ny:int
-)->Float[Array, 'nx*ny 2']:
+)->Float[Array, 'n_points 2']:
 
 ```
 
@@ -371,7 +383,7 @@ points.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L377"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L391"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_poisson_points
@@ -379,18 +391,19 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def generate_poisson_points(
-    n_vertices:int, limit_x:float=1, limit_y:float=1
+    n_vertices:int, limit_x:Union=1, limit_y:Union=1
 )->Float[Array, 'n_vertices 2']:
 
 ```
 
 *Sample n_vertices points from the Poisson ensemble in rectangle*
-\[-limit_x/2, limit_x/2\] \* \[-limit_y/2, limit_y/2\].
+\[-limit_x/2, limit_x/2\] \* \[-limit_y/2, limit_y/2\]. Uses the global
+`numpy` RNG (not JAX RNG).
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L368"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L377"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_ginibre_points
@@ -403,8 +416,11 @@ def generate_ginibre_points(
 
 ```
 
-*Sample n_vertices points from the Ginibre ensemble. Points are scaled
-to unit disk.*
+*Sample n_vertices points from the Ginibre ensemble.*
+
+Points are rescaled so their *mean* radius is 1 (the cloud extends to
+radius ~1.5). Uses the global `numpy` RNG (not JAX RNG), and cost is
+O(n_vertices^3) (a dense complex eigendecomposition).
 
 ``` python
 #points = generate_triangular_lattice(10, 10)
@@ -418,10 +434,10 @@ plt.scatter(*points.T)
 plt.axis("equal")
 ```
 
-    (np.float64(-1.5158254775951099),
-     np.float64(1.6648836832643656),
-     np.float64(-1.5647768086089484),
-     np.float64(1.5000093386295263))
+    (np.float64(-1.744589454843027),
+     np.float64(1.6169785747441034),
+     np.float64(-1.6131782734146998),
+     np.float64(1.6754399586724618))
 
 ![](01_triangular_meshes_files/figure-commonmark/cell-17-output-2.png)
 
@@ -430,7 +446,7 @@ plt.axis("equal")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L397"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L414"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_delaunay_faces
@@ -455,7 +471,7 @@ mapped back to the original vertex ids.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L458"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L491"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_faces_crossing_periodic_boundaries
@@ -466,8 +482,8 @@ def get_faces_crossing_periodic_boundaries(
     vertices:Float[Array, 'n_vertices 2'], # Vertex positions. They may lie outside the fundamental domain and are wrapped
 into ``[0, L_x) x [0, L_y)`` internally.
     faces:Int[Array, 'n_faces 3'], # Triangle indices.
-    L_x:float, L_y:float
-)->Int[Array, 'n_faces']: # Boolean mask whose entry ``i`` is True when ``faces[i]`` crosses a domain boundary.
+    L_x:Union, L_y:Union
+)->Bool[Array, 'n_faces']: # Boolean mask whose entry ``i`` is True when ``faces[i]`` crosses a domain boundary.
 
 ```
 
@@ -502,52 +518,43 @@ plt.title("Periodic Delaunay triangulation")
 ![](01_triangular_meshes_files/figure-commonmark/cell-20-output-2.png)
 
 ``` python
+# A periodic (torus) triangulation must be manifold, boundary-free, and have
+# exactly 2*n_vertices faces (Euler characteristic 0).
+np.random.seed(0)  # generate_poisson_points uses the global numpy RNG
 for n_vertices in [32, 64, 96]:
     L = jnp.array([1.7, 1.1])
     points = generate_poisson_points(n_vertices, *L)
     wrapped_points = jnp.mod(points, L[None, :])
-    faces = np.array(get_periodic_delaunay_faces(points, L))
-    crosses_boundary = np.array(get_faces_crossing_periodic_boundaries(wrapped_points, faces, *L))
+    faces = get_periodic_delaunay_faces(points, L)
+    crosses_boundary = get_faces_crossing_periodic_boundaries(wrapped_points, faces, *L)
+    faces_np = np.asarray(faces, dtype=np.int64)
 
     assert faces.ndim == 2 and faces.shape[1] == 3
-    assert np.all(np.diff(np.sort(faces, axis=1), axis=1) > 0)
+    assert np.all(np.diff(np.sort(faces_np, axis=1), axis=1) > 0)
     assert crosses_boundary.shape == (faces.shape[0],)
     assert (~crosses_boundary).any()
-    assert igl.is_edge_manifold(faces)[0]
-    assert igl.is_vertex_manifold(faces)[0]
-    assert len(igl.boundary_loop_all(faces)) == 0
+    assert igl.is_edge_manifold(faces_np)[0]
+    assert igl.is_vertex_manifold(faces_np)[0]
+    assert len(igl.boundary_loop_all(faces_np)) == 0
+    # Euler characteristic of a torus is 0, i.e. V - E + F == 0 and F == 2V
+    assert faces.shape[0] == 2 * n_vertices
+    assert n_vertices - len(igl.edges(faces_np)) + faces.shape[0] == 0
 
 print("Periodic Delaunay triangulations are manifold and boundary-free.")
+
+# Too few points: distinct triangles collide on the same vertex triple, which a
+# global-index face list cannot represent. This must fail loudly, not silently
+# return a mesh with a hole.
+np.random.seed(0)
+n_raised = 0
+for n_vertices in [8, 10, 12]:
+    try:
+        get_periodic_delaunay_faces(generate_poisson_points(n_vertices, *L), L)
+    except AssertionError:
+        n_raised += 1
+assert n_raised > 0, "coarse point sets should be rejected"
+print(f"Coarse point sets rejected: {n_raised}/3")
 ```
 
     Periodic Delaunay triangulations are manifold and boundary-free.
-
-### Elementary book-keeping using list-of-triangles data structure
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L500"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_adjacent_vertex_indices
-
-``` python
-
-def get_adjacent_vertex_indices(
-    faces:Int[Array, 'n_faces 3'], n_vertices:int
-)->list:
-
-```
-
-*For each vertex, get the indices of the adjacent vertices in correct
-order.* For boundary vertices, this list contains the vertex itself.
-
-``` python
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
-
-neighbors = get_adjacent_vertex_indices(mesh.faces, mesh.n_vertices)
-```
-
-    Warning: readOBJ() ignored non-comment line 3:
-      o flat_tri_ecmc
+    Coarse point sets rejected: 3/3

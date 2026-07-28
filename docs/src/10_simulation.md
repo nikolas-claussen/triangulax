@@ -63,7 +63,8 @@ Signature: ``step_fn(state, next_time) -> new_state``.
 Signature: ``measure_fn(state) -> log``.
 The returned pytree is stacked along axis 0 across all time steps.
     init:State, # Initial simulation state (any JAX pytree).
-    timepoints:Float[Array, 'n_steps'], # Time points to step through. `step_fn` receives consecutive pairs.
+    timepoints:Float[Array, 'n_steps'], # Time points to step through. `step_fn` receives a single scalar time per
+step (the time being stepped *to*), not a pair.
 )->tuple: # The simulation state after the last time step.
 
 ```
@@ -125,20 +126,6 @@ print(f"Final x={final_state.x:.4f}, energy decayed from {logs.energy[0]:.4f} to
 
     Final x=0.0985, energy decayed from 0.5000 to 0.0054
 
-``` python
-# verify against manual scan
-def _manual_scan_fn(state, t_next):
-    new_state = osc_step(state, t_next)
-    log = osc_measure(new_state)
-    return new_state, log
-
-final_ref, logs_ref = jax.lax.scan(_manual_scan_fn, init, timepoints)
-
-assert jnp.allclose(logs.x, logs_ref.x)
-assert jnp.allclose(logs.energy, logs_ref.energy)
-assert jnp.allclose(final_state.x, final_ref.x)
-```
-
 #### JIT and vmap compatibility
 
 ``` python
@@ -176,7 +163,7 @@ incurs a small dispatch overhead.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/simulation.py#L60"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/simulation.py#L62"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### chunked_simulate
@@ -190,7 +177,7 @@ def chunked_simulate(
     timepoints:Float[Array, 'n_steps'], # Time points to step through.
     chunk_size:int, # Number of time steps per chunk.
     on_chunk:Union=None, # Callback invoked after each chunk with ``(state, chunk_logs, chunk_index)``.
-Runs in Python (not JIT'd), so it can do I/O.
+Runs in Python (not JIT'd), so it can do I/O. Its return value is ignored.
 )->tuple: # The simulation state after the last time step.
 
 ```
@@ -198,8 +185,16 @@ Runs in Python (not JIT'd), so it can do I/O.
 *Run a simulation in chunks, with an optional callback between chunks.*
 
 Each chunk is executed as a single `jax.lax.scan`. Between chunks, the
-`on_chunk` callback is called in Python, enabling checkpointing,
-progress reporting, or early stopping.
+`on_chunk` callback is called in Python, enabling checkpointing or
+progress reporting. Its return value is ignored, so it cannot stop the
+simulation early.
+
+Produces exactly the same trajectory as
+:func:[`simulate`](https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate),
+including when `n_steps` is not a multiple of `chunk_size`. Note all
+chunk logs are accumulated and concatenated at the end, so this saves no
+log memory relative to
+:func:[`simulate`](https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate).
 
 #### Test: chunked simulation matches single-pass
 
@@ -275,8 +270,8 @@ final_ckpt, logs_ckpt = chunked_simulate(
 assert jnp.allclose(logs_ckpt.x, logs.x)
 ```
 
-      Chunk 0: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmpfj_ii7hd/chunk_0000
-      Chunk 1: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmpfj_ii7hd/chunk_0001
+      Chunk 0: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmp3v_jyqaz/chunk_0000
+      Chunk 1: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmp3v_jyqaz/chunk_0001
 
 ``` python
 # Restore from the last checkpoint and verify it matches the final state
@@ -300,7 +295,9 @@ from triangulax.mesh import HeMesh
 ```
 
 ``` python
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+# (needs orbax, an optional 'tutorials' dependency, and the cells above)
+
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 
 

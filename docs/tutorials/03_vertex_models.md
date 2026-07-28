@@ -103,9 +103,9 @@ from importlib import reload
 ### Read in test data
 
 ``` python
-mesh = TriMesh.read_obj("tutorial_meshes/disk.obj") # try disk_fine for an example with 10x more cells
+mesh = TriMesh.read_obj("tutorial_meshes/disk.obj", dim=2) # try disk_fine for an example with 10x more cells
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommesh = GeomMesh(*hemesh.n_items, vertices=mesh.vertices)
+geommesh = GeomMesh(vertices=mesh.vertices)
 geommesh = geom.set_voronoi_face_positions(geommesh, hemesh)
 
 hemesh, geommesh
@@ -114,7 +114,7 @@ hemesh, geommesh
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
 
-    (HeMesh(N_V=131, N_HE=708, N_F=224), GeomMesh(D=2,N_V=131, N_HE=708, N_F=224))
+    (HeMesh(N_V=131, N_HE=708, N_F=224), GeomMesh(D=2, N_V=131, N_HE=N/A, N_F=224))
 
 ``` python
 fig, ax = plt.subplots(figsize=(4, 4))
@@ -309,19 +309,14 @@ hemesh_next, cooldown_counter, did_flip = apply_flips(geommesh, hemesh, l_min_T1
 did_flip.sum()
 ```
 
-    /Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/ops/scatter.py:108: FutureWarning: scatter inputs have incompatible types: cannot safely cast value from dtype=int64 to dtype=int32 with jax_numpy_dtype_promotion='standard'. In future JAX releases this will result in an error.
-      warnings.warn(
-
-    Array(3, dtype=int64)
+    Array(4, dtype=int64)
 
 ``` python
-_ = apply_flips(geommesh, hemesh, l_min_T1=0.0, cooldown_counter=jnp.zeros(hemesh.n_hes, dtype=jnp.int32), cooldown_steps=5,
-                 max_flips=10) 
-                 
-# 100mus for single flip. 110 mus for 10 flips/tpt, 600 mus for scanning over and flipping all edges.
+_ = apply_flips(geommesh, hemesh, l_min_T1=0.0, cooldown_counter=jnp.zeros(hemesh.n_hes, dtype=jnp.int32),
+                cooldown_steps=5, max_flips=10)
 ```
 
-    97.6 μs ± 2.65 μs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+    116 μs ± 3.83 μs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
 
 ### Energy relaxation (no self-propulsion)
 
@@ -385,9 +380,6 @@ init = ((geommesh, hemesh), cooldown_counter)
 
 energy, flip_count = logs.T
 ```
-
-    /Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/ops/scatter.py:108: FutureWarning: scatter inputs have incompatible types: cannot safely cast value from dtype=int64 to dtype=int32 with jax_numpy_dtype_promotion='standard'. In future JAX releases this will result in an error.
-      warnings.warn(
 
 ``` python
 fig = plt.figure(figsize=(4, 3))
@@ -606,12 +598,6 @@ def scan_fun(state: SimState, tnext: Float[jax.Array, ""],) -> tuple[SimState, L
 final_state, logs = jax.lax.scan(scan_fun, init, timepoints)
 ```
 
-``` python
-timepoints[-1]
-```
-
-    Array(99.98, dtype=float64, weak_type=True)
-
 #### Numerical efficiency
 
 `%%timeit` shows that the simulation run above take about 1.7s. - The
@@ -626,7 +612,7 @@ to greatly accelerate the simulation.
 final_state, logs = jax.lax.scan(scan_fun, init, timepoints)
 ```
 
-    1.71 s ± 7.39 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    1.67 s ± 40.5 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 ### Visualize trajectory
 
@@ -641,7 +627,6 @@ hemesh_traj = msh.tree_unstack(logs.hemesh)
 # total displacement - about 50% of a cell distance
 
 mean_edge_len = geom.get_he_length(geommesh.vertices, hemesh).mean()
-
 np.linalg.norm(geommesh_traj[0].vertices-geommesh_traj[-1].vertices, axis=-1).mean() / mean_edge_len
 ```
 
@@ -662,7 +647,7 @@ ax2.set_ylabel("cumulative flips", color="orange")
 ax2.set_ylim([0,logs.n_flips.sum()+1])
 ```
 
-![](03_vertex_models_files/figure-commonmark/cell-36-output-1.png)
+![](03_vertex_models_files/figure-commonmark/cell-35-output-1.png)
 
 ``` python
 # angle dynamics are stochastic
@@ -679,7 +664,7 @@ plt.ylabel("orientation")
 
     Text(0, 0.5, 'orientation')
 
-![](03_vertex_models_files/figure-commonmark/cell-37-output-2.png)
+![](03_vertex_models_files/figure-commonmark/cell-36-output-2.png)
 
 ``` python
 # plot initial and final mesh
@@ -699,7 +684,7 @@ ax.set_aspect("equal")
 ax.autoscale_view();
 ```
 
-![](03_vertex_models_files/figure-commonmark/cell-38-output-1.png)
+![](03_vertex_models_files/figure-commonmark/cell-37-output-1.png)
 
 ``` python
 ## plot trajectories of vertices (color = time: blue → red)
@@ -711,7 +696,7 @@ T = X.shape[0]
 
 # Build line segments connecting consecutive time points for each vertex.
 segments = np.stack([X[:-1], X[1:]], axis=2).reshape(-1, 2, 2)
-t_idx = np.repeat(np.arange(T - 1), logs.geommesh.n_vertices)
+t_idx = np.repeat(np.arange(T - 1), hemesh.n_vertices)
 
 cmap = mpl.colors.LinearSegmentedColormap.from_list("blue_to_red", ["blue", "red"])
 norm = mpl.colors.Normalize(vmin=0, vmax=T - 2)
@@ -730,4 +715,4 @@ ax.set_ylabel("y")
 cbar = fig.colorbar(lc, ax=ax, fraction=0.046, pad=0.04)
 ```
 
-![](03_vertex_models_files/figure-commonmark/cell-39-output-1.png)
+![](03_vertex_models_files/figure-commonmark/cell-38-output-1.png)

@@ -154,21 +154,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">triangulax</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./convergence_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Convergence of the discrete differential-geometry operators</span></a>
-  </div>
-</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
- <span class="menu-text">Modules &amp; API reference</span></a>
+ <span class="menu-text">Discrete differential geometry</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./convergence_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Convergence of the discrete differential-geometry operators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Modules &amp; API reference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
@@ -245,13 +256,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
@@ -267,7 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems (toy examples)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -421,21 +432,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>geometry</code>: angles, edge lengths, triangle areas, Voronoi areas, curvatures</li>
 <li><code>periodic</code>: geometry computations under periodic boundary conditions</li>
 <li><code>linops</code>: discrete differential operators (Laplacian, mass matrix, gradient)</li>
-<li><code>interp</code>: linear interpolation and closes-point queries</li>
-<li><code>elasticity</code>: discrete elastic energies for shells and membranes</li>
+<li><code>interp</code>: linear interpolation and closest-point queries</li>
+<li><code>elastic</code>: discrete elastic energies for shells and membranes</li>
 <li><code>algorithms</code>: Delaunay flipping, mesh quality improvement</li>
 <li><code>simulation</code>: Utilities for time-dependent simulations and checkpointing</li>
 </ul>
 <section id="minimal-example" class="level3">
 <h3 class="anchored" data-anchor-id="minimal-example">Minimal example</h3>
-<div id="77c4444a" class="cell" data-execution_count="1">
+<div id="ed6f8774" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> triangular, mesh, geometry</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># load example mesh and convert to half-edge mesh</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>vertices, faces <span class="op">=</span> triangular.read_obj(<span class="st">"test_meshes/disk.obj"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>vertices, faces <span class="op">=</span> triangular.read_obj(<span class="st">"test_meshes/disk.obj"</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> mesh.HeMesh.from_triangles(vertices.shape[<span class="dv">0</span>], faces)</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># with the half-edge mesh, you can carry out various operations, for example</span></span>

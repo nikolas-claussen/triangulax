@@ -156,7 +156,7 @@ from triangulax import triangular, mesh, geometry
 
 # load example mesh and convert to half-edge mesh
 
-vertices, faces = triangular.read_obj("test_meshes/disk.obj")
+vertices, faces = triangular.read_obj("test_meshes/disk.obj", dim=2)
 hemesh = mesh.HeMesh.from_triangles(vertices.shape[0], faces)
 
 # with the half-edge mesh, you can carry out various operations, for example

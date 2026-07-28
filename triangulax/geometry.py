@@ -447,12 +447,11 @@ def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices 3"], heme
     where theta_ij is the dihedral angle between faces adjacent to edge ij, l_ij is the length of edge ij,
     and A_i is the robust Voronoi cell area around vertex i.
 
-    Note: like all discrete curvature estimators, this can produce inaccurate results on
-    poorly conditioned (non-Delaunay, highly anisotropic) meshes; consider `algorithms.fix_delaunay`
-    and `algorithms.get_mesh_quality_stats` first.
+    The mean curvature of boundary vertices is set to 0.
 
-    Boundary vertices use the interior convention and are not meaningful there
-    (the dihedral angle is undefined on boundary edges and is set to 0).
+    Note: discrete curvature estimators can produce inaccurate results on poorly conditioned
+    (non-Delaunay, highly anisotropic) meshes; consider `algorithms.fix_delaunay`
+    and `algorithms.get_mesh_quality_stats` first.
 
     Parameters
     ----------
@@ -461,7 +460,8 @@ def get_mean_curvature_dihedral(vertices: Float[jax.Array, "n_vertices 3"], heme
     hemesh : HeMesh
         Half-edge mesh.
     normalize : bool, optional
-        Whether to normalize by the robust Voronoi cell area. If False, returns the integrated mean curvature.
+        Whether to normalize by the robust Voronoi cell area. If False, returns the
+        mean curvature integrated over the Voronoi cell around each vertex.
 
     Returns
     -------
@@ -482,12 +482,12 @@ def get_mean_curvature_laplace(vertices: Float[jax.Array, "n_vertices 3"], hemes
                                normalize: bool = True) -> Float[jax.Array, " n_vertices"]:
     """Compute mean curvature from the cotangent Laplacian: ``Δx = 2Hn``.
 
-    Generally more accurate than the dihedral method, but can be unstable for meshes with
-    very deformed (non-Delaunay) triangles.
+    The mean curvature of boundary vertices is set to 0.
 
-    Note: like all discrete curvature estimators, this can produce inaccurate results on
-    poorly conditioned (non-Delaunay, highly anisotropic) meshes; consider `algorithms.fix_delaunay`
-    and `algorithms.get_mesh_quality_stats` first.
+    Note: discrete curvature estimators can produce inaccurate results on poorly conditioned
+    (non-Delaunay, highly anisotropic) meshes; consider `algorithms.fix_delaunay`
+    and `algorithms.get_mesh_quality_stats` first. This method uses the cotangent Laplacian
+    and is especially sensitive to non-Delaunay triangles (Laplacian loses positive-definiteness).
 
     Parameters
     ----------
@@ -496,8 +496,8 @@ def get_mean_curvature_laplace(vertices: Float[jax.Array, "n_vertices 3"], hemes
     hemesh : HeMesh
         Half-edge mesh.
     normalize : bool, optional
-        Whether to normalize by the Voronoi cell area. If False, returns the integrated mean curvature.
-
+        Whether to normalize by the robust Voronoi cell area. If False, returns the
+        mean curvature integrated over the Voronoi cell around each vertex.
 
     Returns
     -------
@@ -509,6 +509,7 @@ def get_mean_curvature_laplace(vertices: Float[jax.Array, "n_vertices 3"], hemes
     l_vec = -adj.sum_he_to_vertex_incoming(hemesh, w_edge[:, None] * diff)
     n_vec = get_vertex_normals(vertices, hemesh)
     result = -jnp.linalg.vecdot(l_vec, n_vec) / 2
+    result = jnp.where(hemesh.is_bdry, 0.0, result)
     if normalize:
         cell_areas = get_voronoi_areas_robust(vertices, hemesh)
         return result / cell_areas

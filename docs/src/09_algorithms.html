@@ -115,12 +115,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/src/09_algorithms_files/figure-html/cell-12-output-2.png">
 <meta property="og:site_name" content="triangulax">
 <meta property="og:image:height" content="413">
-<meta property="og:image:width" content="578">
+<meta property="og:image:width" content="568">
 <meta name="twitter:title" content="triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/src/09_algorithms_files/figure-html/cell-12-output-2.png">
 <meta name="twitter:image-height" content="413">
-<meta name="twitter:image-width" content="578">
+<meta name="twitter:image-width" content="568">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -163,21 +163,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">triangulax</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Discrete differential geometry</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../convergence_tests.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Convergence of the discrete differential-geometry operators</span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Modules &amp; API reference</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
@@ -254,13 +265,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
@@ -276,7 +287,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems (toy examples)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -346,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="mesh-and-point-to-point-alignment">Mesh and point-to-point alignment</h3>
 <p><a href="https://en.wikipedia.org/wiki/Kabsch_algorithm">Kabsch alignment</a> finds the optimal (proper) rotation and translation between two matched sets of points. Here, we provide a JAX-compatible version.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L29" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L26" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="kabsch_align" class="level3">
 <h3 class="anchored" data-anchor-id="kabsch_align">kabsch_align</h3>
@@ -354,17 +365,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> kabsch_align(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    v:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># vertices to be aligned</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    v_ref:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># reference vertices</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n _vertices dim'</span>]: <span class="co"># v optimally aligned to v_ref</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">tuple</span>: <span class="co"># v optimally aligned to v_ref</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Optimally rotate/translate v onto v_ref (differentiable Kabsch algorithm).</em></p>
-<p>The resulting rotation R is proper (det(R) = 1), so no reflections are allowed. The alignment is compatible with jax.jit and jax.grad.</p>
+<p>The resulting rotation R is proper (det(R) = 1), so no reflections are allowed. Works in any dimension, and is compatible with jax.jit and jax.grad. The convention is <code>aligned == v @ R + d</code>.</p>
 </section>
 <section id="smoothing-and-remeshing" class="level3">
 <h3 class="anchored" data-anchor-id="smoothing-and-remeshing">Smoothing and remeshing</h3>
 <p>Two operations to improve mesh quality without altering surface shape: 1. Tangential smoothing moves mesh vertices to the area-weighted average of the neighbors, along the tangential direction only 2. Delaunay flips improve triangle aspect ratio by edge flips. This modifies the mesh topology, but leaves the vertex set unchanged.</p>
-<div id="deda9367" class="cell" data-execution_count="10">
+<div id="deda9367" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load test mesh</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> msh.HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>vertices <span class="op">=</span> mesh.vertices</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -377,7 +388,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="mesh-quality-assessment">Mesh quality assessment</h3>
 <p>Functions to evaluate triangle mesh quality: per-face maximum corner angle, summary statistics, and a human-readable quality report.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L64" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L65" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_face_angles" class="level3">
 <h3 class="anchored" data-anchor-id="get_face_angles">get_face_angles</h3>
@@ -385,10 +396,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_face_angles(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 3'</span>]: <span class="co"># Maximum interior angle per triangle.</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_faces 3'</span>]: <span class="co"># The three interior angles of each triangle.</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>Get corner angle per face (radians).</em></p>
-<p>Uses the half-edge corner angles and takes the max over the three corners of every face.</p>
+<p><em>Get the three corner angles of every face (radians).</em></p>
+<p>Uses the half-edge corner angles. Angles within a face sum to pi.</p>
 <div id="0f0bd53c" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test get_face_max_angles</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>angles <span class="op">=</span> get_face_angles(vertices, hemesh)</span>
@@ -473,54 +484,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><em>Flip non-Delaunay edges iteratively until convergence.</em></p>
 <p>Each iteration identifies non-Delaunay interior edges and flips them using <code>topology.flip_all</code>. Stops when no more flips are needed or <code>max_iters</code> is reached.</p>
 <p>Important: when JIT-compiling, use jax.jit with static_argnames=[‘max_iters’].</p>
-<div id="a15637be" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test fix_delaunay: perturb vertices to create non-Delaunay edges, then fix</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">42</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> <span class="fl">0.025</span> <span class="op">*</span> jax.random.normal(key, shape<span class="op">=</span>vertices.shape)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>noisy_vertices <span class="op">=</span> vertices <span class="op">+</span> noise</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>n_bad_before <span class="op">=</span> (<span class="op">~</span>is_locally_delaunay(noisy_vertices, hemesh) <span class="op">&amp;</span> hemesh.is_unique <span class="op">&amp;</span> <span class="op">~</span>hemesh.is_bdry_edge).<span class="bu">sum</span>()</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Non-Delaunay edges before: </span><span class="sc">{</span>n_bad_before<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>hemesh_fixed, n_flips <span class="op">=</span> fix_delaunay(noisy_vertices, hemesh, max_iters<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>n_bad_after <span class="op">=</span> (<span class="op">~</span>is_locally_delaunay(noisy_vertices, hemesh_fixed) <span class="op">&amp;</span> hemesh_fixed.is_unique <span class="op">&amp;</span> <span class="op">~</span>hemesh_fixed.is_bdry_edge).<span class="bu">sum</span>()</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Flips performed: </span><span class="sc">{</span>n_flips<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Non-Delaunay edges after:  </span><span class="sc">{</span>n_bad_after<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Before fix_delaunay:"</span>)</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(noisy_vertices, hemesh))</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">After fix_delaunay:"</span>)</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(noisy_vertices, hemesh_fixed))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Non-Delaunay edges before: 15
-Flips performed: 15
-Non-Delaunay edges after:  0
-
-Before fix_delaunay:
-{'areas_min': 0.00301, 'areas_max': 0.02994, 'areas_cv': 0.32373, 'max_angle': 126.89138, 'min_angle': 9.82493, 'angles_std': 18.8009, 'n_degenerate': 0, 'n_total_faces': 224}
-
-After fix_delaunay:
-{'areas_min': 0.00301, 'areas_max': 0.03013, 'areas_cv': 0.32043, 'max_angle': 120.57028, 'min_angle': 9.82493, 'angles_std': 17.33338, 'n_degenerate': 0, 'n_total_faces': 224}</code></pre>
-</div>
-</div>
-<div id="41e11e0e" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plt.triplot(noisy_vertices[:, <span class="dv">0</span>], noisy_vertices[:, <span class="dv">1</span>], hemesh.faces)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(noisy_vertices[:, <span class="dv">0</span>], noisy_vertices[:, <span class="dv">1</span>], hemesh_fixed.faces)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'equal'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
-<pre><code>(np.float64(-1.0870901427296413),
- np.float64(1.097853572442067),
- np.float64(-1.1177076607221643),
- np.float64(1.1221007508660394))</code></pre>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="09_algorithms_files/figure-html/cell-12-output-2.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
 </section>
 <section id="tangential-vertex-smoothing" class="level3">
 <h3 class="anchored" data-anchor-id="tangential-vertex-smoothing">Tangential vertex smoothing</h3>
@@ -532,88 +495,55 @@ After fix_delaunay:
 </section>
 <section id="smooth_vertices_laplacian" class="level3">
 <h3 class="anchored" data-anchor-id="smooth_vertices_laplacian">smooth_vertices_laplacian</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> smooth_vertices_laplacian(</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    step_size:<span class="bu">float</span><span class="op">=</span><span class="fl">1.0</span>, <span class="co"># Fraction of displacement to apply (1 = full step).</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    bc:<span class="bu">str</span><span class="op">=</span><span class="st">'fixed'</span>, <span class="co"># Boundary condition: 'fixed' freezes boundary vertices,</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="st">'free'</span> allows them to move, <span class="kw">and</span> <span class="st">'slide'</span> allows them to</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>move only tangentially along the boundary.</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices dim'</span>]: <span class="co"># Updated vertex positions.</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> smooth_vertices_laplacian(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    vertices:Float[Array, <span class="st">'n_vertices dim'</span>], <span class="co"># Vertex positions.</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># Half-edge mesh connectivity.</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    step_size:<span class="bu">float</span><span class="op">=</span><span class="fl">1.0</span>, <span class="co"># Fraction of displacement to apply (1 = full step).</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    bc:<span class="bu">str</span><span class="op">=</span><span class="st">'fixed'</span>, <span class="co"># Boundary condition: 'fixed' freezes boundary vertices,</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="st">'free'</span> allows them to move, <span class="kw">and</span> <span class="st">'slide'</span> allows them to</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>move only tangentially along the boundary.</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Float[Array, <span class="st">'n_vertices dim'</span>]: <span class="co"># Updated vertex positions.</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>One step of tangential Laplacian vertex smoothing.</em></p>
 <p>Moves each vertex towards the mean position of its neighbours. For 3D meshes, the displacement is projected onto the tangent plane.</p>
-<div id="7882cf18" class="cell" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test Laplacian smoothing on a noisy 2D mesh</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> <span class="fl">0.05</span> <span class="op">*</span> jax.random.normal(key, shape<span class="op">=</span>vertices.shape)</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>noisy_v <span class="op">=</span> vertices <span class="op">+</span> jnp.where(hemesh.is_bdry[:, <span class="va">None</span>], <span class="fl">0.0</span>, noise)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>n_iter <span class="op">=</span> <span class="dv">10</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>bc <span class="op">=</span> <span class="st">'slide'</span>  <span class="co"># try 'fixed', 'free', 'slide'</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Before smoothing:"</span>)</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(noisy_v, hemesh))</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>smoothed_v <span class="op">=</span> noisy_v</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_iter):</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    smoothed_v <span class="op">=</span> smooth_vertices_laplacian(smoothed_v, hemesh, step_size<span class="op">=</span><span class="fl">0.5</span>, bc<span class="op">=</span>bc)</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">After 10 Laplacian smoothing steps:"</span>)</span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(smoothed_v, hemesh))</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Boundary vertices should not have moved if bc='fixed', but should have moved otherwise</span></span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> bc <span class="op">==</span> <span class="st">'fixed'</span>:</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> jnp.allclose(smoothed_v[hemesh.is_bdry], noisy_v[hemesh.is_bdry])</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="op">~</span>jnp.allclose(smoothed_v[hemesh.is_bdry], noisy_v[hemesh.is_bdry])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Before smoothing:
-{'areas_min': 0.00012, 'areas_max': 0.04031, 'areas_cv': 0.56271, 'max_angle': 178.81132, 'min_angle': 0.47529, 'angles_std': 30.37956, 'n_degenerate': 4, 'n_total_faces': 224}
-
-After 10 Laplacian smoothing steps:
-{'areas_min': 0.00831, 'areas_max': 0.01891, 'areas_cv': 0.14408, 'max_angle': 100.82169, 'min_angle': 28.69297, 'angles_std': 9.49095, 'n_degenerate': 0, 'n_total_faces': 224}</code></pre>
-</div>
-</div>
-<div id="1d9e9ab1" class="cell" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>plt.triplot(noisy_v[:, <span class="dv">0</span>], noisy_v[:, <span class="dv">1</span>], hemesh.faces)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(smoothed_v[:, <span class="dv">0</span>], smoothed_v[:, <span class="dv">1</span>], hemesh.faces)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'equal'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div id="1d9e9ab1" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>plt.triplot(noisy_v[:, <span class="dv">0</span>], noisy_v[:, <span class="dv">1</span>], hemesh.faces)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(smoothed_v[:, <span class="dv">0</span>], smoothed_v[:, <span class="dv">1</span>], hemesh.faces)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'equal'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>(np.float64(-1.10003475),
  np.float64(1.09628575),
- np.float64(-1.0993484814751877),
- np.float64(1.090674110978944))</code></pre>
+ np.float64(-1.0993421965883812),
+ np.float64(1.0905421283560033))</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="09_algorithms_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="09_algorithms_files/figure-html/cell-12-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="ed8b6fc8" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test 3D tangential smoothing on a sphere</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>mesh_3d <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>hemesh_3d <span class="op">=</span> msh.HeMesh.from_triangles(mesh_3d.vertices.shape[<span class="dv">0</span>], mesh_3d.faces)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>verts_3d <span class="op">=</span> mesh_3d.vertices</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">1</span>)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>noise_3d <span class="op">=</span> <span class="fl">0.1</span> <span class="op">*</span> jax.random.normal(key, shape<span class="op">=</span>verts_3d.shape)</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>noisy_3d <span class="op">=</span> verts_3d <span class="op">+</span> noise_3d</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Before 3D smoothing:"</span>)</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(noisy_3d, hemesh_3d))</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>smoothed_3d <span class="op">=</span> noisy_3d</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    smoothed_3d <span class="op">=</span> smooth_vertices_laplacian(smoothed_3d, hemesh_3d, step_size<span class="op">=</span><span class="fl">0.3</span>, bc<span class="op">=</span><span class="st">'free'</span>)</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">After 5 Laplacian smoothing steps (3D):"</span>)</span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(smoothed_3d, hemesh_3d))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ed8b6fc8" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test 3D tangential smoothing on a sphere</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>mesh_3d <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/sphere.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>hemesh_3d <span class="op">=</span> msh.HeMesh.from_triangles(mesh_3d.vertices.shape[<span class="dv">0</span>], mesh_3d.faces)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>verts_3d <span class="op">=</span> mesh_3d.vertices</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">1</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>noise_3d <span class="op">=</span> <span class="fl">0.1</span> <span class="op">*</span> jax.random.normal(key, shape<span class="op">=</span>verts_3d.shape)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>noisy_3d <span class="op">=</span> verts_3d <span class="op">+</span> noise_3d</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Before 3D smoothing:"</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(noisy_3d, hemesh_3d))</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>smoothed_3d <span class="op">=</span> noisy_3d</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    smoothed_3d <span class="op">=</span> smooth_vertices_laplacian(smoothed_3d, hemesh_3d, step_size<span class="op">=</span><span class="fl">0.3</span>, bc<span class="op">=</span><span class="st">'free'</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">After 5 Laplacian smoothing steps (3D):"</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_mesh_quality_stats(smoothed_3d, hemesh_3d))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o Icosphere</code></pre>
@@ -626,16 +556,16 @@ After 5 Laplacian smoothing steps (3D):
 {'areas_min': 0.10323, 'areas_max': 0.20764, 'areas_cv': 0.13673, 'max_angle': 79.5562, 'min_angle': 45.60472, 'angles_std': 7.12533, 'n_degenerate': 0, 'n_total_faces': 80}</code></pre>
 </div>
 </div>
-<div id="6167a5f3" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> meshplot.plot(noisy_3d, hemesh_3d.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>p.add_mesh(smoothed_3d <span class="op">+</span> np.array([<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>]), hemesh_3d.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="6167a5f3" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> meshplot.plot(noisy_3d, hemesh_3d.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>}, return_plot<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>p.add_mesh(smoothed_3d <span class="op">+</span> np.array([<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>]), hemesh_3d.faces, shading<span class="op">=</span>{<span class="st">"wireframe"</span>:<span class="va">True</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"fa44a9ce39a34cff89563441ee08cff5","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"ebad20941cfe421eadd25a9612809e65","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="25">
 <pre><code>1</code></pre>
 </div>
 </div>

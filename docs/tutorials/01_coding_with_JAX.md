@@ -53,7 +53,7 @@ requirements. JAX distinguishes two types of variables: dynamic and
 static. Control flow cannot depend on the *value* of dynamic variables,
 only on their shape.
 
-Upshots: 1. Replace `if` with `jax.lax.cond` / `jnp.where` (full
+Upshots: 1. Replace `if` with `jax.lax.cond` / `jnp.where` (fully
 autodiff compatible), and `while` with `jax.lax.while_loop` (forward
 autodiff only). 2. Mark variables which are not going to change during
 simulation as static.

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tutorial: Mesh optimization and inverse problems – triangulax</title>
+<title>Tutorial: Mesh optimization and inverse problems (toy examples) – triangulax</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -139,13 +139,13 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Tutorial: Mesh optimization and inverse problems – triangulax">
+<meta property="og:title" content="Tutorial: Mesh optimization and inverse problems (toy examples) – triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization_files/figure-html/cell-9-output-1.png">
 <meta property="og:site_name" content="triangulax">
 <meta property="og:image:height" content="351">
 <meta property="og:image:width" content="382">
-<meta name="twitter:title" content="Tutorial: Mesh optimization and inverse problems – triangulax">
+<meta name="twitter:title" content="Tutorial: Mesh optimization and inverse problems (toy examples) – triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based simulations">
 <meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/tutorials/02_mesh_optimization_files/figure-html/cell-9-output-1.png">
 <meta name="twitter:image-height" content="351">
@@ -174,7 +174,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and inverse problems</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and inverse problems (toy examples)</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -192,21 +192,32 @@ window.Quarto = {
  <span class="menu-text">triangulax</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../convergence_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Convergence of the discrete differential-geometry operators</span></a>
-  </div>
-</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
- <span class="menu-text">Modules &amp; API reference</span></a>
+ <span class="menu-text">Discrete differential geometry</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../convergence_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Convergence of the discrete differential-geometry operators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Modules &amp; API reference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
@@ -283,13 +294,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
@@ -305,7 +316,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems (toy examples)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -353,9 +364,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and inverse problems</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_triangular_meshes.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/02_mesh_optimization.html">Tutorial: Mesh optimization and inverse problems (toy examples)</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Tutorial: Mesh optimization and inverse problems</h1>
+<h1 class="title">Tutorial: Mesh optimization and inverse problems (toy examples)</h1>
 </div>
 
 
@@ -399,14 +410,14 @@ window.Quarto = {
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># equinox has automated "filtering" of JAX-transforms. So we can work with objects which are not just pytrees of arrays</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># (like neural networks) and appy jit, vmap etc</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="723a50d1-f5c2-435c-9026-39b6067f426d" class="cell" data-execution_count="5">
+<div id="723a50d1-f5c2-435c-9026-39b6067f426d" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jaxtyping <span class="im">import</span> Float</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Tuple</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dataclasses</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> functools</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell" data-execution_count="6">
+<div id="8832360d-b1aa-407f-9687-fba83222a08f" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import previously defined modules</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> trigonometry <span class="im">as</span> trg</span>
@@ -417,21 +428,21 @@ window.Quarto = {
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax <span class="im">import</span> linops <span class="im">as</span> lin</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Load example mesh</strong></p>
-<div id="a1466484-c167-4d4e-97fc-3f622728062d" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/disk.obj"</span>)</span>
+<div id="a1466484-c167-4d4e-97fc-3f622728062d" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"tutorial_meshes/disk.obj"</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(<span class="op">*</span>hemesh.n_items, vertices<span class="op">=</span>mesh.vertices)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>geommesh <span class="op">=</span> GeomMesh(vertices<span class="op">=</span>mesh.vertices)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>hemesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>HeMesh(N_V=131, N_HE=708, N_F=224)</code></pre>
 </div>
 </div>
-<div id="82e699dd-6ad6-4fcd-aa23-bdfdb170fe0a" class="cell" data-execution_count="8">
+<div id="82e699dd-6ad6-4fcd-aa23-bdfdb170fe0a" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, mesh.faces)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -446,7 +457,7 @@ window.Quarto = {
 <section id="forward-pass---minimize-energy" class="level3">
 <h3 class="anchored" data-anchor-id="forward-pass---minimize-energy">Forward pass - minimize energy</h3>
 <p>We write the energy_function using a <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> as an argument, which serves as wrapper for the various arrays that describe mesh geometry and properties.</p>
-<div id="740a9d2c" class="cell" data-execution_count="26">
+<div id="740a9d2c" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> energy_function(geommesh: GeomMesh, hemesh: HeMesh, ell_0: <span class="bu">float</span><span class="op">=</span><span class="dv">1</span>):</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    edge_lengths <span class="op">=</span> geom.get_he_length(geommesh.vertices, hemesh)</span>
@@ -459,27 +470,27 @@ window.Quarto = {
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this is how you can print inside a JITed-function</span></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> edge_energy <span class="op">+</span> area_energy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="95cf9ba7-78da-40df-b2b2-aeeeadb2250c" class="cell" data-execution_count="27">
+<div id="95cf9ba7-78da-40df-b2b2-aeeeadb2250c" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>val, grad <span class="op">=</span> jax.value_and_grad(energy_function)(geommesh, hemesh) <span class="co"># computing value and gradient of the energy</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>val, grad, grad.vertices.shape <span class="co"># the gradient is another GeomMesh. 1.60519339</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>(Array(1.60519339, dtype=float64),
- GeomMesh(D=2,N_V=131, N_HE=708, N_F=224),
+ GeomMesh(D=2, N_V=131, N_HE=N/A, N_F=N/A),
  (131, 2))</code></pre>
 </div>
 </div>
-<div id="498b6da3-da6f-45d0-b3b7-7b7a90575069" class="cell" data-execution_count="28">
+<div id="498b6da3-da6f-45d0-b3b7-7b7a90575069" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>connectivity_grad <span class="op">=</span> jax.grad(energy_function, argnums<span class="op">=</span><span class="dv">1</span>, allow_int<span class="op">=</span><span class="va">True</span>)(geommesh, hemesh)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># we can even compute the gradient w.r.t to the connectivity matrix. It is also a HeMesh</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>connectivity_grad, connectivity_grad.dest[<span class="dv">0</span>] <span class="co"># whatever that means</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>(HeMesh(N_V=131, N_HE=708, N_F=224), np.void((b'',), dtype=[('float0', 'V')]))</code></pre>
 </div>
 </div>
 <section id="energy-optimization" class="level4">
 <h4 class="anchored" data-anchor-id="energy-optimization">Energy optimization</h4>
 <p>Let’s follow the patterns described in the JAX tutorial to write a simulation time-stepping loop.</p>
-<div id="a3f097d9" class="cell" data-execution_count="29">
+<div id="a3f097d9" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># time-stepping function</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_step(geommesh: GeomMesh, hemesh: HeMesh,</span>
@@ -489,7 +500,7 @@ window.Quarto = {
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    geommesh <span class="op">=</span> dataclasses.replace(geommesh, vertices<span class="op">=</span>updated_vertices)</span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (geommesh, hemesh), loss <span class="co"># explicitly return the hemesh - may need to be updated by flips!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="42641806-1873-4d07-ba52-0a8374f31965" class="cell" data-execution_count="30">
+<div id="42641806-1873-4d07-ba52-0a8374f31965" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulation timesteps</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>step_size <span class="op">=</span> <span class="fl">0.02</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>N_steps <span class="op">=</span> <span class="dv">20000</span></span>
@@ -507,11 +518,11 @@ window.Quarto = {
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    (geommesh, hemesh), loss <span class="op">=</span> make_step(geommesh, hemesh, current_time, next_time, ell_0<span class="op">=</span>ell_0)</span>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ((geommesh, hemesh), next_time), loss <span class="co"># log the loss/energy</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="b5118f03" class="cell" data-execution_count="31">
+<div id="b5118f03" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run the simulation</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>((geommesh_optimized, hemesh_optimized), _), loss <span class="op">=</span> jax.lax.scan(scan_function, init, timepoints)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="daab7173-68b8-4856-a6ee-316ab1768611" class="cell" data-execution_count="32">
+<div id="daab7173-68b8-4856-a6ee-316ab1768611" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">3</span>))</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>plt.plot(loss)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
@@ -522,7 +533,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="c6a4ed26-9893-401d-bd9f-8b0ae861c416" class="cell" data-execution_count="92">
+<div id="c6a4ed26-9893-401d-bd9f-8b0ae861c416" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh.vertices.T, hemesh.faces)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>geommesh_optimized.vertices.T, hemesh_optimized.faces)</span>
@@ -541,7 +552,7 @@ window.Quarto = {
 <p>Above, we implemented “gradient descent” for the pseudo-energy, or, equivalently, a basic forward-Euler scheme for the ODE <span class="math inline">\(\partial_t \mathbf{v}_i = - \nabla_{\mathbf{v}_i} E\)</span>. For more complicated models, and to minimize coding effort, it makes sense to use a pre-made ODE solver instead. The <code>diffrax</code> library implements ODE and SDE solvers in JAX and is compatible with autodiff (you can differentiate through the solver), since it was designed for neural differential equations.</p>
 <p>For “adiabatic” dynamics, which involve minimizing an energy at every time step, we can use the <code>optimistix</code> library.</p>
 <p>The below is based on the <a href="https://docs.kidger.site/diffrax/usage/manual-stepping/">Stepping through a solver</a> tutorial in <code>diffrax</code>. The reason we want to step through the solver one-by-one is to carry out T1s (in future simulations).</p>
-<div id="5c60209a" class="cell" data-execution_count="33">
+<div id="5c60209a" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the RHS for the ODE solver</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vector_field(t, y, args):</span>
@@ -561,27 +572,138 @@ window.Quarto = {
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> diffrax.Tsit5()</span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y0</span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> solver.init(term, t0, t0<span class="op">+</span>dt, y0, args)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/_eval_shape.py:35: UserWarning: A JAX array is being set as static! This can result in unexpected behavior and is usually a mistake to do.
+  return _dynamic_out, Static(_static_out)</code></pre>
 </div>
-<div id="04bcddd8" class="cell" data-execution_count="34">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan through the solve</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan_fun(carry, t):</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    state, y, tprev <span class="op">=</span> carry </span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    y, _, _, state, _ <span class="op">=</span> solver.step(term, tprev, t, y, args, state, made_jump<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (state, y, t), <span class="va">None</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>init <span class="op">=</span> (state, y0, t0)</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>(state, y, t), _ <span class="op">=</span> jax.lax.scan(scan_fun, init, step_times[<span class="dv">1</span>:])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="e7a6f101" class="cell" data-execution_count="35">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>y0.vertices.T, hemesh.faces)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>y.vertices.T, hemesh.faces)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="89ea47b5" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>solver.step(term, t0, t0, t0<span class="op">+</span>dt, y, args, state)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[36]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">solver</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">step</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">term</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">t0</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">t0</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">t0</span><span class="ansi-yellow-bg">+</span><span class="ansi-yellow-bg">dt</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">y</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">state</span><span class="ansi-yellow-bg">)</span>
+
+    <span class="ansi-red-fg">[... skipping hidden 1 frame]</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/miniforge3/envs/triangulax/lib/python3.14/site-packages/diffrax/_solver/runge_kutta.py:685</span>, in <span class="ansi-cyan-fg">AbstractRungeKutta.step</span><span class="ansi-blue-fg">(self, terms, t0, t1, y0, args, solver_state, made_jump)</span>
+<span class="ansi-green-fg">    683</span> <span style="font-weight:bold;color:rgb(0,135,0)">assert</span> solver_state <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    684</span> first_step, f0 = solver_state
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">685</span> eval_first_stage = eqxi.unvmap_any(<span class="ansi-yellow-bg">first_step</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">|</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">made_jump</span>)
+<span class="ansi-green-fg">    686</span> init_stage_index = jnp.where(eval_first_stage, <span class="ansi-green-fg">0</span>, <span class="ansi-green-fg">1</span>)
+<span class="ansi-green-fg">    687</span> <span style="font-style:italic;color:rgb(95,135,135)"># We do `fs.at[0].set(f0)` below. If we're actually going to evaluate the</span>
+<span class="ansi-green-fg">    688</span> <span style="font-style:italic;color:rgb(95,135,135)"># first stage, then zero out `f0` so that that is a no-op.</span>
+
+<span class="ansi-red-fg">TypeError</span>: unsupported operand type(s) for |: 'HeMesh' and 'tuple'</pre>
+</div>
+</div>
+</div>
+<div id="04bcddd8" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan through the solve</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan_fun(carry, t):</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    state, y, tprev <span class="op">=</span> carry </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    y, _, _, state, _ <span class="op">=</span> solver.step(term, tprev, t, y, args, state, made_jump<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (state, y, t), <span class="va">None</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>init <span class="op">=</span> (state, y0, t0)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>(state, y, t), _ <span class="op">=</span> jax.lax.scan(scan_fun, init, step_times[<span class="dv">1</span>:])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/_ad.py:708: UserWarning: A JAX array is being set as static! This can result in unexpected behavior and is usually a mistake to do.
+  closure_converted = _ClosureConvert(
+/Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/_make_jaxpr.py:41: UserWarning: A JAX array is being set as static! This can result in unexpected behavior and is usually a mistake to do.
+  return _out_dynamic, Static(_out_static)</code></pre>
+</div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">UnexpectedTracerError</span>                     Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 9</span>
+<span class="ansi-green-fg">      6</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> (state, y, t), <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">      8</span> init = (state, y0, t0)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">9</span> (state, y, t), _ = <span class="ansi-yellow-bg">jax</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">lax</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">scan</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">scan_fun</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">init</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">step_times</span><span class="ansi-yellow-bg">[</span><span class="ansi-green-fg ansi-yellow-bg">1</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">)</span>
+
+    <span class="ansi-red-fg">[... skipping hidden 10 frame]</span>
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 5</span>, in <span class="ansi-cyan-fg">scan_fun</span><span class="ansi-blue-fg">(carry, t)</span>
+<span class="ansi-green-fg">      3</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">scan_fun</span>(carry, t):
+<span class="ansi-green-fg">      4</span>     state, y, tprev = carry 
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span>     y, _, _, state, _ = <span class="ansi-yellow-bg">solver</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">step</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">term</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">tprev</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">y</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">state</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">made_jump</span><span class="ansi-yellow-bg">=</span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">False</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">      6</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> (state, y, t), <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+
+    <span class="ansi-red-fg">[... skipping hidden 1 frame]</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/miniforge3/envs/triangulax/lib/python3.14/site-packages/diffrax/_solver/runge_kutta.py:1149</span>, in <span class="ansi-cyan-fg">AbstractRungeKutta.step</span><span class="ansi-blue-fg">(***failed resolving arguments***)</span>
+<span class="ansi-green-fg">   1142</span> const_result = const_result_sentinel = <span style="color:rgb(0,135,0)">object</span>()
+<span class="ansi-green-fg">   1143</span> <span style="font-style:italic;color:rgb(95,135,135)"># Needs to be an `eqxi.while_loop` as:</span>
+<span class="ansi-green-fg">   1144</span> <span style="font-style:italic;color:rgb(95,135,135)"># (a) we may have variable length: e.g. an FSAL explicit RK scheme will have one</span>
+<span class="ansi-green-fg">   1145</span> <span style="font-style:italic;color:rgb(95,135,135)">#     more stage on the first step.</span>
+<span class="ansi-green-fg">   1146</span> <span style="font-style:italic;color:rgb(95,135,135)"># (b) to work around a limitation of JAX's autodiff being unable to express</span>
+<span class="ansi-green-fg">   1147</span> <span style="font-style:italic;color:rgb(95,135,135)">#     "triangular computations" (every stage depends on all previous stages)</span>
+<span class="ansi-green-fg">   1148</span> <span style="font-style:italic;color:rgb(95,135,135)">#     without spurious copies.</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1149</span> final_val = <span class="ansi-yellow-bg">eqxi</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">while_loop</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   1150</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">cond_stage</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1151</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">rk_stage</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1152</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">init_val</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1153</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">max_steps</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">num_stages</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1154</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">buffers</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">buffers</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1155</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">kind</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">checkpointed</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">if</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">scan_kind</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(175,0,255)" class="ansi-yellow-bg">is</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">None</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">else</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">scan_kind</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1156</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">checkpoints</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">num_stages</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1157</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">base</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">num_stages</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1158</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1159</span> _, y1, f1_for_fsal, _, _, fs, ks, result = final_val
+<span class="ansi-green-fg">   1160</span> <span style="font-weight:bold;color:rgb(0,135,0)">assert</span> const_result <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> const_result_sentinel
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/internal/_loop/loop.py:107</span>, in <span class="ansi-cyan-fg">while_loop</span><span class="ansi-blue-fg">(***failed resolving arguments***)</span>
+<span class="ansi-green-fg">    105</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> kind == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">checkpointed</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">    106</span>     <span style="font-weight:bold;color:rgb(0,135,0)">del</span> kind, base
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">107</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">checkpointed_while_loop</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    108</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">cond_fun</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    109</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">body_fun</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    110</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">init_val</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    111</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">max_steps</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">max_steps</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    112</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">buffers</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">buffers</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    113</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">checkpoints</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">checkpoints</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    114</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    115</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> kind == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">bounded</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">    116</span>     <span style="font-weight:bold;color:rgb(0,135,0)">del</span> kind, checkpoints
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/internal/_loop/checkpointed.py:249</span>, in <span class="ansi-cyan-fg">checkpointed_while_loop</span><span class="ansi-blue-fg">(***failed resolving arguments***)</span>
+<span class="ansi-green-fg">    247</span> body_fun_ = filter_closure_convert(body_fun_, init_val_)
+<span class="ansi-green-fg">    248</span> vjp_arg = (init_val_, body_fun_)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">249</span> final_val_ = <span class="ansi-yellow-bg">_checkpointed_while_loop</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    250</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">vjp_arg</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">cond_fun_</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">checkpoints</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">buffers_</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">max_steps</span>
+<span class="ansi-green-fg">    251</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    252</span> _, _, _, final_val = _stop_gradient_on_unperturbed(init_val_, final_val_, body_fun_)
+<span class="ansi-green-fg">    253</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> final_val
+
+    <span class="ansi-red-fg">[... skipping hidden 3 frame]</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/custom_derivatives.py:830</span>, in <span class="ansi-cyan-fg">_check_for_tracers</span><span class="ansi-blue-fg">(x)</span>
+<span class="ansi-green-fg">    822</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">isinstance</span>(leaf, core.Tracer):
+<span class="ansi-green-fg">    823</span>   msg = (<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Found a JAX Tracer object passed as an argument to a custom_vjp </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">    824</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">function in a position indicated by nondiff_argnums as </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">    825</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">non-differentiable. Tracers cannot be passed as non-differentiable </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    828</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">e.g. function-valued arguments. In particular, array-valued </span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">    829</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">arguments should typically not be indicated as nondiff_argnums.</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">830</span>   <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> UnexpectedTracerError(msg)
+
+<span class="ansi-red-fg">UnexpectedTracerError</span>: Found a JAX Tracer object passed as an argument to a custom_vjp function in a position indicated by nondiff_argnums as non-differentiable. Tracers cannot be passed as non-differentiable arguments to custom_vjp functions; instead, nondiff_argnums should only be used for arguments that can't be or contain JAX tracers, e.g. function-valued arguments. In particular, array-valued arguments should typically not be indicated as nondiff_argnums.
+See https://docs.jax.dev/en/latest/errors.html#jax.errors.UnexpectedTracerError</pre>
+</div>
+</div>
+</div>
+<div id="e7a6f101" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>y0.vertices.T, hemesh.faces)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>y.vertices.T, hemesh.faces)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02_mesh_optimization_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_mesh_optimization_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -593,43 +715,43 @@ window.Quarto = {
 <p>One use case for JAX is <em>differentiating through</em> a scientific simulation to optimize the simulation parameters towards some desired behavior. For example, we may wish to find a triangulation dynamics that creates some target shape.</p>
 <p>As a toy example, let’s take the above “dynamics” which minimizes the pseudo-energy to make all triangles equilateral. It depends on the parameter <span class="math inline">\(\ell_0\)</span>. Relaxation of the pseudo-energy for some number of steps defines our “forward pass”. Let’s optimize <span class="math inline">\(\ell_0\)</span> so that the mesh has some target size at the end of the energy relaxation (of course, this is a contrived problem, since we know the solution from the start).</p>
 <p>First, we wrap our dynamical model as an <code>eqx.Module</code>, so we can optimize it just like a neural net.</p>
-<div id="7d7790ad-a9e3-4947-8a2d-eca63aa611af" class="cell" data-execution_count="36">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> RelaxationDynamics(eqx.Module):</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    ell_0: jax.Array</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    step_size : <span class="bu">float</span> <span class="op">=</span> eqx.field(static<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    N_steps : <span class="bu">int</span> <span class="op">=</span> eqx.field(static<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, initial_geommesh: GeomMesh, initial_hemesh: HeMesh) <span class="op">-&gt;</span> Tuple[GeomMesh, HeMesh]:</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>        init <span class="op">=</span> ((initial_geommesh, initial_hemesh), <span class="dv">0</span>)</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> scan_fun(i, carry):</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>            (geommesh, hemesh), _ <span class="op">=</span> carry</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> make_step(geommesh, hemesh, ell_0<span class="op">=</span><span class="va">self</span>.ell_0,</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>                             current_time<span class="op">=</span>i<span class="op">*</span><span class="va">self</span>.step_size, next_time<span class="op">=</span>(i<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span><span class="va">self</span>.step_size)</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        (geommesh_optimized, hemesh_optimized), _ <span class="op">=</span> jax.lax.fori_loop(<span class="dv">0</span>, N_steps, scan_fun, init, unroll<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> geommesh_optimized, hemesh_optimized</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7d7790ad-a9e3-4947-8a2d-eca63aa611af" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> RelaxationDynamics(eqx.Module):</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    ell_0: jax.Array</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    step_size : <span class="bu">float</span> <span class="op">=</span> eqx.field(static<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    N_steps : <span class="bu">int</span> <span class="op">=</span> eqx.field(static<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, initial_geommesh: GeomMesh, initial_hemesh: HeMesh) <span class="op">-&gt;</span> Tuple[GeomMesh, HeMesh]:</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        init <span class="op">=</span> ((initial_geommesh, initial_hemesh), <span class="dv">0</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> scan_fun(i, carry):</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>            (geommesh, hemesh), _ <span class="op">=</span> carry</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> make_step(geommesh, hemesh, ell_0<span class="op">=</span><span class="va">self</span>.ell_0,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                             current_time<span class="op">=</span>i<span class="op">*</span><span class="va">self</span>.step_size, next_time<span class="op">=</span>(i<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span><span class="va">self</span>.step_size)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        (geommesh_optimized, hemesh_optimized), _ <span class="op">=</span> jax.lax.fori_loop(<span class="dv">0</span>, N_steps, scan_fun, init, unroll<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> geommesh_optimized, hemesh_optimized</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="define-meta-training-loss" class="level4">
 <h4 class="anchored" data-anchor-id="define-meta-training-loss">Define Meta-training loss</h4>
 <p>Now we need to define our meta-training loss. In this case, it’s just the deviation of the average edge length from the total. Note how the meta-loss is <em>distinct</em> from the pseudo-energy we minimize during the forward pass.</p>
 <p>Let’s use the <code>equinox</code> library to handle our problem, in anticipation of more complex ones down the line.</p>
-<div id="af2694a6-0ad5-4204-8752-6ba0a13c8a40" class="cell" data-execution_count="39">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the meta-loss</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> meta_loss(model: RelaxationDynamics, initial_geommesh: GeomMesh, initial_hemesh: HeMesh,  meta_ell0: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    geommesh_optimized, hemesh_optimized <span class="op">=</span> model(initial_geommesh, initial_hemesh)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    lengths <span class="op">=</span> geom.get_he_length(geommesh_optimized.vertices,  hemesh_optimized)</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean((lengths<span class="op">/</span>meta_ell0<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="af2694a6-0ad5-4204-8752-6ba0a13c8a40" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the meta-loss</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> meta_loss(model: RelaxationDynamics, initial_geommesh: GeomMesh, initial_hemesh: HeMesh,  meta_ell0: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    geommesh_optimized, hemesh_optimized <span class="op">=</span> model(initial_geommesh, initial_hemesh)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    lengths <span class="op">=</span> geom.get_he_length(geommesh_optimized.vertices,  hemesh_optimized)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean((lengths<span class="op">/</span>meta_ell0<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="0c33f24a-4410-496d-abb9-d16613f4ae8b" class="cell" data-execution_count="40">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize the model, and test the meta loss</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>initial_ell0 <span class="op">=</span> <span class="fl">0.4</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>meta_ell0 <span class="op">=</span> <span class="fl">0.3</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>model_initial <span class="op">=</span> RelaxationDynamics(ell_0<span class="op">=</span>jnp.array([initial_ell0]), step_size<span class="op">=</span>step_size, N_steps<span class="op">=</span>N_steps)</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>model_initial(geommesh, hemesh), meta_loss(model_initial, geommesh, hemesh, meta_ell0<span class="op">=</span>meta_ell0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="40">
-<pre><code>((GeomMesh(D=2,N_V=131, N_HE=708, N_F=224),
+<div id="0c33f24a-4410-496d-abb9-d16613f4ae8b" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize the model, and test the meta loss</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>initial_ell0 <span class="op">=</span> <span class="fl">0.4</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>meta_ell0 <span class="op">=</span> <span class="fl">0.3</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>model_initial <span class="op">=</span> RelaxationDynamics(ell_0<span class="op">=</span>jnp.array([initial_ell0]), step_size<span class="op">=</span>step_size, N_steps<span class="op">=</span>N_steps)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>model_initial(geommesh, hemesh), meta_loss(model_initial, geommesh, hemesh, meta_ell0<span class="op">=</span>meta_ell0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>((GeomMesh(D=2, N_V=131, N_HE=N/A, N_F=N/A),
   HeMesh(N_V=131, N_HE=708, N_F=224)),
  Array(0.13074658, dtype=float64))</code></pre>
 </div>
@@ -638,68 +760,68 @@ window.Quarto = {
 <section id="batching" class="level4">
 <h4 class="anchored" data-anchor-id="batching">Batching</h4>
 <p>To evaluate the loss, we want to average over a bunch of initial conditions. These are analogous to <em>batches</em> in a normal ML problem.</p>
-<div id="a35a2157-3448-4a79-ae88-acf204948f89" class="cell" data-execution_count="41">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let's create a bunch of meshes with different initial positions and see if we can batch over them using vmap</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>sigma <span class="op">=</span> <span class="fl">0.02</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>N_batch <span class="op">=</span> <span class="dv">3</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>batch_geom <span class="op">=</span> []</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>batch_he <span class="op">=</span> []</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N_batch):</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    key, subkey <span class="op">=</span> jax.random.split(key)</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    random_noise <span class="op">=</span> jax.random.normal(subkey, shape<span class="op">=</span>geommesh.vertices.shape)</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    batch_geom.append(dataclasses.replace(geommesh, vertices<span class="op">=</span>geommesh.vertices<span class="op">+</span>sigma<span class="op">*</span>random_noise))</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    batch_he.append(copy.copy(hemesh))</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co"># we use a jax.tree.map to "push" the list axis into the underlying arrays.</span></span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># the result is a single mesh object with batch axes</span></span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>batch_he_array <span class="op">=</span> msh.tree_stack(batch_he)</span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>batch_geom_array <span class="op">=</span> msh.tree_stack(batch_geom)</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>batch_geom_array, batch_geom_array.vertices.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="41">
-<pre><code>(GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), (3, 131, 2))</code></pre>
-</div>
-</div>
-<div id="fd1b046f-a28e-4d20-a0a5-03a71e992e4e" class="cell" data-execution_count="42">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can apply the simulation and upack the results into a list</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>batch_geom_array_out, batch_he_array_out <span class="op">=</span> jax.vmap(model_initial)(batch_geom_array, batch_he_array) </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>batch_geom_out <span class="op">=</span> msh.tree_unstack(batch_geom_array_out)</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>batch_he_out <span class="op">=</span> msh.tree_unstack(batch_he_array_out)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="ab19b28b-7c70-4b30-ad73-e9de2eacb8e8" class="cell" data-execution_count="43">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># still works</span></span>
+<div id="a35a2157-3448-4a79-ae88-acf204948f89" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Let's create a bunch of meshes with different initial positions and see if we can batch over them using vmap</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>batch_geom[i].vertices.T, batch_he[i].faces)</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>batch_geom_out[i].vertices.T, batch_he_out[i].faces)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.key(<span class="dv">0</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>sigma <span class="op">=</span> <span class="fl">0.02</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>N_batch <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>batch_geom <span class="op">=</span> []</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>batch_he <span class="op">=</span> []</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N_batch):</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    key, subkey <span class="op">=</span> jax.random.split(key)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    random_noise <span class="op">=</span> jax.random.normal(subkey, shape<span class="op">=</span>geommesh.vertices.shape)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    batch_geom.append(dataclasses.replace(geommesh, vertices<span class="op">=</span>geommesh.vertices<span class="op">+</span>sigma<span class="op">*</span>random_noise))</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    batch_he.append(copy.copy(hemesh))</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co"># we use a jax.tree.map to "push" the list axis into the underlying arrays.</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="co"># the result is a single mesh object with batch axes</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>batch_he_array <span class="op">=</span> msh.tree_stack(batch_he)</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>batch_geom_array <span class="op">=</span> msh.tree_stack(batch_geom)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>batch_geom_array, batch_geom_array.vertices.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>(GeomMesh(D=2, N_V=3, N_HE=N/A, N_F=3), (3, 131, 2))</code></pre>
+</div>
+</div>
+<div id="fd1b046f-a28e-4d20-a0a5-03a71e992e4e" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can apply the simulation and upack the results into a list</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>batch_geom_array_out, batch_he_array_out <span class="op">=</span> jax.vmap(model_initial)(batch_geom_array, batch_he_array) </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>batch_geom_out <span class="op">=</span> msh.tree_unstack(batch_geom_array_out)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>batch_he_out <span class="op">=</span> msh.tree_unstack(batch_he_array_out)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="ab19b28b-7c70-4b30-ad73-e9de2eacb8e8" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># still works</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>batch_geom[i].vertices.T, batch_he[i].faces)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>plt.triplot(<span class="op">*</span>batch_geom_out[i].vertices.T, batch_he_out[i].faces)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"equal"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02_mesh_optimization_files/figure-html/cell-26-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_mesh_optimization_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <section id="compute-the-batched-loss" class="level5">
 <h5 class="anchored" data-anchor-id="compute-the-batched-loss">Compute the batched loss</h5>
-<div id="3db6ad4d-59f7-4ef9-b634-4f6290ca80cb" class="cell" data-execution_count="44">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the right way to vmap the loss</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>jax.vmap(meta_loss, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="va">None</span>))(model_initial, batch_geom_array, batch_he_array, <span class="fl">0.8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="44">
+<div id="3db6ad4d-59f7-4ef9-b634-4f6290ca80cb" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the right way to vmap the loss</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>jax.vmap(meta_loss, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="va">None</span>))(model_initial, batch_geom_array, batch_he_array, <span class="fl">0.8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
 <pre><code>Array([0.24862355, 0.24863542, 0.24863226], dtype=float64)</code></pre>
 </div>
 </div>
-<div id="de3303c5-baa1-4b9c-ba68-28e2f311b45c" class="cell" data-execution_count="45">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check against non-vmapped version. pretty similar, floating point errors likely at origin of differences</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>[meta_loss(model_initial, batch_geom_out[i], batch_he_out[i], <span class="fl">0.8</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="45">
+<div id="de3303c5-baa1-4b9c-ba68-28e2f311b45c" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check against non-vmapped version. pretty similar, floating point errors likely at origin of differences</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>[meta_loss(model_initial, batch_geom_out[i], batch_he_out[i], <span class="fl">0.8</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>[Array(0.24848931, dtype=float64),
  Array(0.24848805, dtype=float64),
  Array(0.2484898, dtype=float64)]</code></pre>
@@ -710,33 +832,35 @@ window.Quarto = {
 <section id="meta-optimization" class="level4">
 <h4 class="anchored" data-anchor-id="meta-optimization">Meta-optimization</h4>
 <p>Now we are in a position to “optimize” our model parameter <code>ell_0</code>. Based on <a href="https://docs.kidger.site/equinox/examples/mnist/#training">equinox CNN tutorial</a>.</p>
-<div id="5b0282a2-9cbd-4d35-9648-09695a64feef" class="cell" data-execution_count="46">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> batched_meta_loss(model, batch_geom_array, batch_he_array, meta_ell0):</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean(jax.vmap(meta_loss, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="dv">0</span>,<span class="dv">0</span>, <span class="va">None</span>))(model, batch_geom_array, batch_he_array, meta_ell0))</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>batched_meta_loss_jit <span class="op">=</span> jax.jit(batched_meta_loss)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5b0282a2-9cbd-4d35-9648-09695a64feef" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> batched_meta_loss(model, batch_geom_array, batch_he_array, meta_ell0):</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.mean(jax.vmap(meta_loss, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="dv">0</span>,<span class="dv">0</span>, <span class="va">None</span>))(model, batch_geom_array, batch_he_array, meta_ell0))</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>batched_meta_loss_jit <span class="op">=</span> jax.jit(batched_meta_loss)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="34be4913-0f58-402a-8a3b-dfde5c87dc17" class="cell" data-execution_count="47">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hyper-parameters for the outer learning step.</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>LEARNING_RATE <span class="op">=</span> <span class="fl">1e-2</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>LEARNING_STEPS <span class="op">=</span> <span class="dv">20</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>print_every <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>step_size <span class="op">=</span> <span class="fl">0.01</span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>N_steps <span class="op">=</span> <span class="dv">20000</span></span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>META_ELL0 <span class="op">=</span> <span class="fl">0.4</span></span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>initial_ell0 <span class="op">=</span> <span class="fl">0.2</span></span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>model_initial <span class="op">=</span> RelaxationDynamics(ell_0<span class="op">=</span>jnp.array([initial_ell0]), step_size<span class="op">=</span>step_size, N_steps<span class="op">=</span>N_steps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="34be4913-0f58-402a-8a3b-dfde5c87dc17" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hyper-parameters for the outer learning step.</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>LEARNING_RATE <span class="op">=</span> <span class="fl">1e-2</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>LEARNING_STEPS <span class="op">=</span> <span class="dv">20</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>print_every <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>step_size <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>N_steps <span class="op">=</span> <span class="dv">20000</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>META_ELL0 <span class="op">=</span> <span class="fl">0.4</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>initial_ell0 <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>model_initial <span class="op">=</span> RelaxationDynamics(ell_0<span class="op">=</span>jnp.array([initial_ell0]), step_size<span class="op">=</span>step_size, N_steps<span class="op">=</span>N_steps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="f117bfab-9fba-413c-a3d5-3735d94ba486" class="cell" data-execution_count="48">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>loss, grads <span class="op">=</span> eqx.filter_jit(eqx.filter_value_and_grad(batched_meta_loss))(model_initial,</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                                                                           batch_geom_array, batch_he_array, META_ELL0)</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>loss, grads, grads.ell_0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="48">
+<div id="f117bfab-9fba-413c-a3d5-3735d94ba486" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>loss, grads <span class="op">=</span> eqx.filter_jit(eqx.filter_value_and_grad(batched_meta_loss))(model_initial,</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                                                                           batch_geom_array,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                                                                           batch_he_array,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                                                                           META_ELL0)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>loss, grads, grads.ell_0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
 <pre><code>(Array(0.24848878, dtype=float64),
  RelaxationDynamics(ell_0=f64[1], step_size=0.01, N_steps=20000),
  Array([-2.48070057], dtype=float64))</code></pre>
@@ -747,37 +871,37 @@ window.Quarto = {
 <h4 class="anchored" data-anchor-id="forward-and-reverse-mode-autodiff">Forward and reverse mode autodiff</h4>
 <p>Since we are differentiation w.r.t. a small number of parameters (just 1: <span class="math inline">\(\ell_0\)</span>), we can use forward mode automatic differentiation for increased efficiency. This may be the case more generally: if we want to learn “translationally invariant” models, where the parameters for all cells are equal, the parameter count we want to differentiate by may be small. Forward mode autodiff is also somewhat more “forgiving” when it comes to control flow.</p>
 <p>See: https://docs.jax.dev/en/latest/notebooks/autodiff_cookbook.html</p>
-<div id="b687e2fc-9866-4b55-867e-5812a10711ef" class="cell" data-execution_count="49">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="at">@eqx.filter_jit</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> outer_optimizer_step(model: RelaxationDynamics,</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                         batch_geom: GeomMesh, batch_he: HeMesh) <span class="op">-&gt;</span> Tuple[RelaxationDynamics, <span class="bu">float</span>]:</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute loss and grad on batch</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    loss, grads <span class="op">=</span> eqx.filter_value_and_grad(batched_meta_loss)(model, batch_geom_array, batch_he_array, META_ELL0)</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    updates <span class="op">=</span> jax.tree.<span class="bu">map</span>(<span class="kw">lambda</span> g: <span class="va">None</span> <span class="cf">if</span> g <span class="kw">is</span> <span class="va">None</span> <span class="cf">else</span> <span class="op">-</span>LEARNING_RATE <span class="op">*</span> g, grads)</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> eqx.apply_updates(model, updates)</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># grads is a PyTree with the same leaves as the trainable arrays of the model</span></span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># same story, but using forward mode autodiff</span></span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">#loss, grads = eqx.filter_jvp(lambda model: batched_meta_loss(model, batch_geom_array, batch_he_array, META_ELL0),</span></span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#                             primals=[model,], tangents=[model,])</span></span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#grads = grads/model.ell_0 # we used the current model values as a tangent vector, so we need to normalize</span></span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#model = dataclasses.replace(model, ell_0=model.ell_0-LEARNING_RATE*grads)</span></span>
-<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model, loss</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="b687e2fc-9866-4b55-867e-5812a10711ef" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="at">@eqx.filter_jit</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> outer_optimizer_step(model: RelaxationDynamics,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>                         batch_geom: GeomMesh, batch_he: HeMesh) <span class="op">-&gt;</span> Tuple[RelaxationDynamics, <span class="bu">float</span>]:</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute loss and grad on batch</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    loss, grads <span class="op">=</span> eqx.filter_value_and_grad(batched_meta_loss)(model, batch_geom_array, batch_he_array, META_ELL0)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    updates <span class="op">=</span> jax.tree.<span class="bu">map</span>(<span class="kw">lambda</span> g: <span class="va">None</span> <span class="cf">if</span> g <span class="kw">is</span> <span class="va">None</span> <span class="cf">else</span> <span class="op">-</span>LEARNING_RATE <span class="op">*</span> g, grads)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> eqx.apply_updates(model, updates)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># grads is a PyTree with the same leaves as the trainable arrays of the model</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># same story, but using forward mode autodiff</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">#loss, grads = eqx.filter_jvp(lambda model: batched_meta_loss(model, batch_geom_array, batch_he_array, META_ELL0),</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#                             primals=[model,], tangents=[model,])</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#grads = grads/model.ell_0 # we used the current model values as a tangent vector, so we need to normalize</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#model = dataclasses.replace(model, ell_0=model.ell_0-LEARNING_RATE*grads)</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model, loss</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="69a0b5b2-6e9d-466a-8e69-483669109251" class="cell" data-execution_count="50">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model_initial</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> tqdm(<span class="bu">range</span>(LEARNING_STEPS)): <span class="co"># in the future, could also iterate over the initial conditions/batches</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    model, loss <span class="op">=</span> outer_optimizer_step(model, batch_geom_array, batch_he_array)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (step <span class="op">%</span> print_every) <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Step: </span><span class="sc">{</span>step<span class="sc">}</span><span class="ss">, loss: </span><span class="sc">{</span>loss<span class="sc">}</span><span class="ss">, param: </span><span class="sc">{</span>model<span class="sc">.</span>ell_0<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 19s with forward mode vs 32s with reverse mode.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="69a0b5b2-6e9d-466a-8e69-483669109251" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model_initial</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> tqdm(<span class="bu">range</span>(LEARNING_STEPS)): <span class="co"># in the future, could also iterate over the initial conditions/batches</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    model, loss <span class="op">=</span> outer_optimizer_step(model, batch_geom_array, batch_he_array)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (step <span class="op">%</span> print_every) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Step: </span><span class="sc">{</span>step<span class="sc">}</span><span class="ss">, loss: </span><span class="sc">{</span>loss<span class="sc">}</span><span class="ss">, param: </span><span class="sc">{</span>model<span class="sc">.</span>ell_0<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 19s with forward mode vs 32s with reverse mode.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"5b3fcc2f6d0c4553a423cf6c09989f8a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"ca764bf39d434753a6d823ebb8c6bf8d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -793,17 +917,11 @@ Step: 16, loss: 0.01182824053575723, param: [0.37449757]
 Step: 18, loss: 0.010471449413490624, param: [0.37924151]</code></pre>
 </div>
 </div>
-<p>Looks good - the optimizer converges to the correct value of <span class="math inline">\(\ell_0\)</span>.</p>
 </section>
 </section>
 <section id="next-steps" class="level3">
 <h3 class="anchored" data-anchor-id="next-steps">Next steps</h3>
-<p>Success: we can solve this (stupid) toy problem. Our JAX-compatible infrastructure for vertex models seems to work, and we can autodiff through a simulation. Next steps:</p>
-<ol type="1">
-<li>Toy simulations <em>with T1s</em></li>
-<li>More complex models - say, the area-perimeter vertex model</li>
-<li>Play around with neural ODEs and neural optimizers more generally.</li>
-</ol>
+<p>Looks good - the optimizer converges to the correct value of <span class="math inline">\(\ell_0\)</span>. We have solved our toy problem. The next tutorials simulate more interesting physical models using <code>triangulax</code>, and tutorial 6 looks at a non-trivial inverse problem (design of a shape-shifting material).</p>
 
 
 </section>

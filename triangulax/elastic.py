@@ -300,10 +300,10 @@ def get_helfrich_energy(vertices: Float[jax.Array, "n_vertices 3"],
     vertices : Float[Array, "n_vertices 3"]
         Vertex positions.
     args : tuple
-        (hemesh, H0, kappa_H, kappa_K): the spontaneous curvature H0
-        (units: 1/length), the bending modulus kappa_H >= 0 and the Gaussian
-        (saddle-splay) modulus kappa_K (units: energy). All three can be
-        scalars or per-vertex arrays.
+        (hemesh, H0, kappa_H, kappa_K):
+        the mesh connectivity, the spontaneous curvature H0 (units: 1/length),
+        the bending modulus kappa_H >= 0 and the Gaussian modulus kappa_K (units: energy).
+        H0, kappa_H, kappa_K can be scalars or per-vertex arrays.
 
     Returns
     -------

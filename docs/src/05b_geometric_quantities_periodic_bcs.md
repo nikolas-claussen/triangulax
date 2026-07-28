@@ -54,7 +54,7 @@ a scalar distance.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L40"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L53"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### displacement_periodic_twisted
@@ -63,7 +63,9 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def displacement_periodic_twisted(
     r_1:Float[Array, '2'], r_2:Float[Array, '2'], L:Float[Array, '2'], # Box lengths [L_x, L_y].
-    s:float, # Shear factor: wrapping in y shifts x by ``s * L_x``.
+    s:float, # Shear factor: wrapping in y shifts x by ``s * L_x``. This corresponds to vertex
+positions carrying the shear as ``x -> x - s * y``; the opposite sign stretches
+the edges instead of shearing them.
 )->Float[Array, '2']:
 
 ```
@@ -74,7 +76,7 @@ def displacement_periodic_twisted(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L25"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L26"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### displacement_periodic
@@ -83,11 +85,19 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def displacement_periodic(
     r_1:Float[Array, '2'], r_2:Float[Array, '2'], L:Float[Array, '2'], # Box lengths [L_x, L_y].
-)->Float[Array, '2']:
+)->Float[Array, '2']: # Displacement ``r_2 - r_1`` under the minimum-image convention.
 
 ```
 
 *Return the minimum-image displacement on a rectangular torus.*
+
+IMPORTANT: the minimum-image convention always returns the *shortest*
+periodic image, so it only reproduces the intended mesh edge when every
+edge is shorter than `min(L)/2`. For a longer edge it silently returns
+the displacement to a different periodic image, giving wrong lengths,
+areas and angles with no error raised. Check with
+`get_periodic_he_lengths(...).max() < L.min()/2`. This matters for
+coarse periodic meshes and for a shrinking or strongly sheared box.
 
 ``` python
 L = jnp.array([2.0, 3.0])
@@ -192,7 +202,7 @@ areas = jax.vmap(trig.get_triangle_area_from_lengths)(la, lb, lc)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L179"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L200"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_cotan_weights_per_edge
@@ -214,7 +224,7 @@ Returns `(cot_he + cot_twin) / 2` (same convention as
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L164"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L185"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_cotan_weights_per_he
@@ -236,7 +246,7 @@ Returns a per-half-edge array (same convention as
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L152"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L173"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_face_corner_cotangents
@@ -261,7 +271,7 @@ for per-half-edge indexing.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L137"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L158"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_corner_angles
@@ -283,7 +293,7 @@ Returns a per-half-edge array (same convention as
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L124"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L145"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_face_corner_angles
@@ -308,7 +318,7 @@ for per-half-edge indexing.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L107"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L128"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_face_centroids
@@ -330,7 +340,7 @@ the periodic box.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L96"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L117"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_barycentric_cell_areas
@@ -351,7 +361,7 @@ Defined as 1/3 \* sum of adjacent triangle areas.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L89"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L110"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_area
@@ -369,7 +379,7 @@ def get_periodic_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L81"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L102"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_triangle_areas
@@ -387,7 +397,7 @@ def get_periodic_triangle_areas(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L73"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L94"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_he_lengths
@@ -481,7 +491,7 @@ positions using displacement vectors that respect the periodicity.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L238"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L268"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_perimeters
@@ -500,7 +510,7 @@ vertex.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L225"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L252"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_dual_he_length
@@ -515,12 +525,15 @@ def get_periodic_dual_he_length(
 
 *Voronoi dual edge lengths computed from cotangent weights.*
 
-Equivalent to `cotan_weights_per_edge * he_length`.
+Equivalent to `cotan_weights_per_edge * he_length`. Note this is the
+periodic counterpart of `geometry.get_voronoi_edge_lengths`, not of the
+similarly named `geometry.get_dual_he_length` (which takes explicit face
+positions and measures a Euclidean distance).
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L201"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L222"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_face_positions
@@ -536,10 +549,19 @@ def get_periodic_voronoi_face_positions(
 *Compute periodic Voronoi dual positions (circumcenters) from intrinsic
 barycentric coordinates.*
 
+Like
+[`get_periodic_face_centroids`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_face_centroids),
+the returned positions are NOT wrapped back into the periodic box: each
+is expressed in the image of its own face. Do not feed them to
+`geometry.get_dual_he_length` or `mesh.cellplot`, which assume unwrapped
+Euclidean coordinates – use
+[`get_periodic_dual_he_length`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_dual_he_length)
+instead.
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L190"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L211"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_areas
@@ -607,3 +629,116 @@ print("periodic Voronoi tests passed")
 ```
 
     periodic Voronoi tests passed
+
+### Oriented areas and robust Voronoi areas
+
+Two periodic counterparts that were missing. The *signed* triangle area
+detects inverted triangles (the unsigned one, computed from Heron’s
+formula on minimum-image edge lengths, cannot), and the *mixed* Voronoi
+area is always positive and is what a periodic mass matrix needs.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L324"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_voronoi_areas_robust
+
+``` python
+
+def get_periodic_voronoi_areas_robust(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_vertices']:
+
+```
+
+*Mixed (Meyer et al.) Voronoi cell areas under periodic boundary
+conditions.*
+
+Periodic counterpart of `geometry.get_voronoi_areas_robust`. Unlike
+[`get_periodic_voronoi_areas`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_voronoi_areas),
+which computes the exact circumcentric area, this is always positive
+even on obtuse triangles – required for a well-posed mass matrix.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L312"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_triangle_orientations
+
+``` python
+
+def get_periodic_triangle_orientations(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable
+)->Float[Array, 'n_faces']:
+
+```
+
+*Per-face orientation (+1, -1 or 0) under periodic boundary conditions.*
+
+Periodic counterpart of `geometry.get_triangle_orientations`.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L278"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_periodic_oriented_triangle_areas
+
+``` python
+
+def get_periodic_oriented_triangle_areas(
+    vertices:Float[Array, 'n_vertices 2'], # Vertex positions in the periodic box.
+    hemesh:HeMesh, # Half-edge mesh.
+    displacement_fn:Callable, # Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``.
+)->Float[Array, 'n_faces']: # Signed area per face.
+
+```
+
+*Signed triangle areas under periodic boundary conditions.*
+
+Positive for counter-clockwise (positively oriented) triangles, negative
+for inverted ones. Unlike
+[`get_periodic_triangle_areas`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_triangle_areas),
+which goes through Heron’s formula on minimum-image edge lengths and is
+therefore unconditionally non-negative, this detects triangle inversion
+– the event a vertex-model simulation has to watch for.
+
+``` python
+# Periodic oriented areas detect inversion; the unsigned ones cannot.
+disp = lambda a, b: displacement_periodic(a, b, L)
+signed = get_periodic_oriented_triangle_areas(vertices, hemesh, disp)
+unsigned = get_periodic_triangle_areas(vertices, hemesh, disp)
+assert jnp.allclose(jnp.abs(signed), unsigned, atol=1e-10)
+assert jnp.all(get_periodic_triangle_orientations(vertices, hemesh, disp) == jnp.sign(signed))
+# consistent orientation over the whole mesh
+assert jnp.all(signed > 0) or jnp.all(signed < 0)
+
+# robust (mixed) Voronoi areas: always positive, and they sum to the total area
+areas_robust = get_periodic_voronoi_areas_robust(vertices, hemesh, disp)
+assert jnp.all(areas_robust > 0)
+assert jnp.allclose(areas_robust.sum(), unsigned.sum(), rtol=1e-10)
+# the exact version agrees with the robust one when no triangle is obtuse
+areas_exact = get_periodic_voronoi_areas(vertices, hemesh, disp)
+assert jnp.allclose(areas_exact.sum(), unsigned.sum(), rtol=1e-10)
+
+# with a huge box, every periodic quantity must reduce to its non-periodic counterpart
+big_L = jnp.array([1e6, 1e6])
+disp_big = lambda a, b: displacement_periodic(a, b, big_L)
+disk = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
+disk_h = HeMesh.from_triangles(disk.vertices.shape[0], disk.faces)
+assert jnp.allclose(get_periodic_oriented_triangle_areas(disk.vertices, disk_h, disp_big),
+                    geom.get_oriented_triangle_areas(disk.vertices, disk_h), atol=1e-10)
+assert jnp.allclose(get_periodic_voronoi_areas_robust(disk.vertices, disk_h, disp_big),
+                    geom.get_voronoi_areas_robust(disk.vertices, disk_h), atol=1e-10)
+print("periodic oriented areas and robust Voronoi areas OK")
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc
+
+    periodic oriented areas and robust Voronoi areas OK

@@ -44,16 +44,19 @@ The first task is to create a helper function to plot mesh connectivity,
 and to create the half-edge connectivity matrices from the more
 conventional list-of-triangles format. The latter is somewhat involved.
 
-For JAX compatibility, we use `jax.numpy` instead of standard `numpy`
-for all numerical arrays, follow a functional programming style (no
-in-place mutation), and register our dataclasses as JAX pytrees (this
-enables automatic differentiation and JIT-compilation with custom
-datastructures).
+For JAX compatibility, the `mesh` module uses `jax.numpy` instead of
+standard `numpy` for all numerical arrays, follows a functional
+programming style (no in-place mutation), and registers the
+[`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh)
+and
+[`GeomMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh)
+dataclasses as JAX pytrees (this enables automatic differentiation and
+JIT-compilation with custom datastructures).
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L31"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L29"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### label_plot
@@ -72,7 +75,7 @@ black/blue.* If hemesh is not None, the connectivity info from it is
 used to plot the half-edge labels.
 
 ``` python
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 
 plt.triplot(*mesh.vertices.T, mesh.faces)
 label_plot(mesh.vertices, mesh.faces, fontsize=10)
@@ -92,7 +95,7 @@ plt.axis("equal")
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L57"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L55"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_half_edge_arrays_vectorized
@@ -106,13 +109,13 @@ def get_half_edge_arrays_vectorized(
 ```
 
 *Get half-edge data structure arrays from faces (vectorized). Returned
-arrays are dtype int32.*
+arrays are dtype int32.* For internal use to construct HeMesh objects.
 
 Returns: incident, orig, dest, twin, nxt, prv, heface, face_incident
 
 ``` python
 mesh_high_res = TriMesh.read_obj("../test_meshes/torus_high_resolution.obj")
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 ```
 
     Warning: readOBJ() ignored non-comment line 3:
@@ -121,15 +124,14 @@ mesh = TriMesh.read_obj("../test_meshes/disk.obj")
       o flat_tri_ecmc
 
 ``` python
-results = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
 ```
 
-    UsageError: Line magic function `%%timeit` not found.
+    59.5 ms ± 968 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 ``` python
 # test vectorized vs reference implementation for two meshes
 
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 ref = get_half_edge_arrays(mesh.vertices.shape[0], mesh.faces)
 fast = get_half_edge_arrays_vectorized(mesh.vertices.shape[0], mesh.faces)
 
@@ -153,18 +155,12 @@ print("Equal?", all([jnp.array_equal(a, b) for a, b in zip(ref, fast)]))
 ``` python
 ```
 
-    1.11 ms ± 43 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
-
-``` python
-```
-
-    CPU times: user 211 ms, sys: 12.6 ms, total: 224 ms
-    Wall time: 221 ms
+    1.08 ms ± 29.6 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L139"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L146"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HeMesh
@@ -182,12 +178,12 @@ def HeMesh(
 *Half-edge mesh data structure for triangular meshes.*
 
 A half-edge mesh is described by a set of half-edges and several arrays
-that specify their connectivity (see markup explanation above). This
-class serves as a container for multiple arrays. For future
+that specify their connectivity (see full explanation in `mesh` module
+docs). This class serves as a container for multiple arrays. For
 compatibility with JAX, after initialization, do not modify these arrays
 in-place; always return a new HeMesh object. The mesh vertices may live
-in whatever dimension - this does not affect the connectivity
-bookkeeping.
+in whatever dimension (or in periodic BC) - this does not affect the
+connectivity bookkeeping.
 
 Half-edge meshes are initialized from a list of triangles and a number
 of vertices, and can return the original triangles (e.g., to save as a
@@ -197,6 +193,9 @@ All information and methods are purely “combinatorial”. The HeMesh class
 does *not* contain the vertex or face positions. These are saved in the
 GeomHeMesh class that combines a HeMesh (combinatorics) with a couple of
 other arrays (geometry).
+
+Comparing two HeMeshes checks for equality of all arrays they contain,
+not for graph isomorphism (equivalence up to vertex renaming).
 
 —Conventions—
 
@@ -208,7 +207,8 @@ are assigned heface=-1. 2. Initialize from a triangulation without
 boundary, where certain vertices are “at infinity”. They should have
 coordinates \[np.inf, np.inf\]. Each infinity vertex corresponds to one
 boundary. For a single boundary, the vertex at infinity is, by
-convention, the final one.
+convention, the final one. Mixing the two conventions will lead to
+errors.
 
 Starting from a set of triangles, the half-edges are initialized as
 follows: The 1st N_edges half-edges are (origin_vertex,
@@ -266,6 +266,9 @@ is_bdry : Bool\[jax.Array, “n_vertices”\]
 from_triangles : tuple\[int, Int\[jax.Array, “n_faces 3”\],
 Int\[jax.Array, “n_boundaries”\] -\> HeMesh
 
+The arguments are the number of vertices, the n_faces \* 3 array of
+faces, and, optionally, a list of “infinity” vertices.
+
 **Class methods**
 
 iterate_around_vertex : int -\> Int\[jax.Array, “n_neighbors”\]
@@ -279,7 +282,7 @@ load : str -\> HeMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L364"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L418"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### test_mesh_validity
@@ -287,15 +290,20 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def test_mesh_validity(
-    h:HeMesh
-):
+    h:HeMesh, # Half-edge mesh to validate.
+    verbose:bool=False, # Return diagnostic message.
+)->bool: # True if the mesh is valid. Also returns a string with a message if verbose = True
 
 ```
 
-*Test if a mesh is valid. Returns True if valid, fails otherwise.*
+*Test if a mesh is valid. Returns True if valid, optionally, returns
+message.*
+
+Checks both for consistency of the HeMesh datastructure AND whether the
+mesh is edge- and vertex manifold (defines a 2D surface).
 
 ``` python
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 ```
 
@@ -312,34 +320,46 @@ test_mesh_validity(hemesh)
 # hemeshes can be compared for equality and are registered as pytrees
 
 leafs, ts = jax.tree_util.tree_flatten(hemesh)
+assert len(leafs) == 8                                  # the 8 connectivity arrays
+assert jax.tree_util.tree_unflatten(ts, leafs) == hemesh
 
-hemesh, hemesh == hemesh
+assert hemesh == hemesh
+assert not (hemesh == "not a mesh")
+
+# equality must be EXACT: these are integer index arrays, so a tolerance-based
+# comparison would silently accept an off-by-one index on a large mesh.
+corrupted = HeMesh(hemesh.incident, hemesh.orig, hemesh.dest,
+                   hemesh.twin.at[0].set(hemesh.twin[0] + 1),
+                   hemesh.nxt, hemesh.prv, hemesh.heface, hemesh.face_incident, hemesh.inf_vertices)
+assert not (hemesh == corrupted)
+
+hemesh
 ```
 
-    (HeMesh(N_V=131, N_HE=708, N_F=224), True)
+    HeMesh(N_V=131, N_HE=708, N_F=224)
 
 ``` python
 # test iteration around vertex
 hemesh.dest[hemesh.iterate_around_vertex(69)], hemesh.orig[hemesh.iterate_around_vertex(56)]
 ```
 
-    (Array([80, 68, 56, 46], dtype=int64),
-     Array([56, 56, 56, 56, 56, 56, 56], dtype=int64))
+    (Array([80, 68, 56, 46], dtype=int32),
+     Array([56, 56, 56, 56, 56, 56, 56], dtype=int32))
 
 ``` python
 # boundary in cc-wise order
 (hemesh.orig[187], hemesh.dest[187]), hemesh.heface[187], hemesh.is_bdry_he[187],
 ```
 
-    ((Array(58, dtype=int64), Array(70, dtype=int64)),
-     Array(-1, dtype=int64),
+    ((Array(58, dtype=int32), Array(70, dtype=int32)),
+     Array(-1, dtype=int32),
      Array(True, dtype=bool))
 
 ``` python
 hemesh.is_bdry_he[187], hemesh.is_bdry_he[541], hemesh.heface[541]
 ```
 
-    (Array(True, dtype=bool), Array(False, dtype=bool), Array(145, dtype=int64))
+    (Array(True, dtype=bool), Array(False, dtype=bool), Array(145, dtype=int32))
 
 ``` python
 # to model mesh boundaries, we can add an "infinity" vertex. Not done here, see below
@@ -361,11 +381,11 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](02_halfedge_datastructure_files/figure-commonmark/cell-19-output-2.png)
+![](02_halfedge_datastructure_files/figure-commonmark/cell-18-output-2.png)
 
 ``` python
-# here is how you would do mesh traversal with jax.lax. The issues is that the output size needs to be fixed
-# ahead of time, so 
+# here is how you would do traversal of vertex neighbors with jax.lax. In JAX, the output size needs to be fixed
+# ahead of time, so this requires padding and setting a cap on vertex valence (inefficient and error-prone).
 
 self = hemesh
 max_valence = 10
@@ -424,7 +444,7 @@ latter are listed in the `inf_vertices` attribute of a
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L387"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L494"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### connect_boundary_to_infinity
@@ -445,7 +465,7 @@ New vertices are appended to the end of vertex array and have
 coordinates \[np.inf, np.inf\].
 
 ``` python
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 ```
 
@@ -469,12 +489,201 @@ _ = igl.remove_unreferenced(new_vertices, np.asarray(hemesh_infty.faces[~hemesh_
 ```
 
 ``` python
-test_mesh_validity(hemesh_infty), (hemesh.is_bdry == (hemesh_infty.is_bdry[:-1] >0)).all()
+# the "vertex at infinity" convention must agree with the heface == -1 convention
+assert test_mesh_validity(hemesh_infty)
+assert (hemesh.is_bdry == (hemesh_infty.is_bdry[:-1] > 0)).all()
+assert hemesh_infty.has_inf_vertex and not hemesh.has_inf_vertex
+
+# boundary loops must have the same vertices AND the same orientation under both
+# conventions (the inf-vertex traversal runs the other way round and is reversed)
+loop_a, loop_b = np.asarray(hemesh.bdry_loops[0]), np.asarray(hemesh_infty.bdry_loops[0])
+assert set(loop_a) == set(loop_b)
+shift = np.where(loop_b == loop_a[0])[0][0]
+assert (np.roll(loop_b, -shift) == loop_a).all(), "boundary loop orientation differs between conventions"
 ```
 
-    (True, Array(True, dtype=bool))
+### Topological summary
 
-## Mesh geometry and per-mesh variables
+These are combinatorial invariants of the connectivity: they take a
+[`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh)
+and return a plain Python `int`/`bool`. They are host-side helpers (not
+jittable), which is fine since connectivity is static. Fictitious faces
+and vertices from the “vertex at infinity” boundary convention are
+excluded, so both boundary conventions give the same answer.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L578"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_genus
+
+``` python
+
+def get_genus(
+    hemesh:HeMesh
+)->int:
+
+```
+
+*Genus of the surface, from chi = 2*n_components - 2*genus -
+n_boundary_loops.*
+
+0 for a sphere or disk, 1 for a torus. Assumes an orientable mesh (which
+the half-edge construction guarantees). Raises if the result is not an
+integer, which indicates an invalid mesh.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L573"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_n_connected_components
+
+``` python
+
+def get_n_connected_components(
+    hemesh:HeMesh
+)->int:
+
+```
+
+*Number of edge-connected components of the mesh.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L564"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_euler_characteristic
+
+``` python
+
+def get_euler_characteristic(
+    hemesh:HeMesh
+)->int:
+
+```
+
+*Euler characteristic chi = V - E + F.*
+
+2 for a sphere, 1 for a disk, 0 for a torus.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L559"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_n_boundary_loops
+
+``` python
+
+def get_n_boundary_loops(
+    hemesh:HeMesh
+)->int:
+
+```
+
+*Number of boundary loops (0 for a closed mesh, 1 for a disk, 2 for a
+cylinder).*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L554"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### is_closed
+
+``` python
+
+def is_closed(
+    hemesh:HeMesh
+)->bool:
+
+```
+
+*True if the mesh has no boundary.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L547"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_n_vertices_edges_faces
+
+``` python
+
+def get_n_vertices_edges_faces(
+    hemesh:HeMesh
+)->tuple:
+
+```
+
+*Counts of real (non-fictitious) vertices, edges, and faces.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L535"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_real_faces
+
+``` python
+
+def get_real_faces(
+    hemesh:HeMesh
+)->Int[ndarray, 'n_real_faces 3']:
+
+```
+
+*Faces as an int64 numpy array, with fictitious (infinity) faces
+removed.*
+
+Useful to hand a mesh to `igl`, which requires int64 and has no notion
+of the “vertex at infinity” boundary convention.
+
+``` python
+# sphere: chi = 2, genus 0, closed;  disk: chi = 1, one boundary loop;  torus: chi = 0, genus 1
+_s = TriMesh.read_obj("../test_meshes/sphere.obj", dim=3)
+_t = TriMesh.read_obj("../test_meshes/torus.obj", dim=3)
+sphere_h = HeMesh.from_triangles(_s.vertices.shape[0], _s.faces)
+torus_h = HeMesh.from_triangles(_t.vertices.shape[0], _t.faces)
+
+assert (get_euler_characteristic(sphere_h), get_genus(sphere_h), is_closed(sphere_h)) == (2, 0, True)
+assert (get_euler_characteristic(torus_h), get_genus(torus_h), is_closed(torus_h)) == (0, 1, True)
+assert (get_euler_characteristic(hemesh), get_genus(hemesh), is_closed(hemesh)) == (1, 0, False)
+
+assert get_n_boundary_loops(sphere_h) == 0 and get_n_boundary_loops(hemesh) == 1
+assert get_n_connected_components(sphere_h) == 1
+
+# V - E + F, with E consistent with the half-edge count (no infinity vertices here)
+for h in [sphere_h, torus_h, hemesh]:
+    n_v, n_e, n_f = get_n_vertices_edges_faces(h)
+    assert (n_v, n_e, n_f) == (h.n_vertices, h.n_hes // 2, h.n_faces)
+
+# the two boundary conventions must agree on every invariant
+assert get_euler_characteristic(hemesh_infty) == get_euler_characteristic(hemesh)
+assert get_n_boundary_loops(hemesh_infty) == get_n_boundary_loops(hemesh)
+assert get_genus(hemesh_infty) == get_genus(hemesh)
+assert not is_closed(hemesh_infty)
+print("topology:  sphere chi=2 g=0 | disk chi=1 b=1 | torus chi=0 g=1")
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o Icosphere
+    Warning: readOBJ() ignored non-comment line 3:
+      o Torus
+
+    topology:  sphere chi=2 g=0 | disk chi=1 b=1 | torus chi=0 g=1
+
+### Mesh geometry and per-mesh variables
 
 Mesh geometry (vertex and face positions) and per-mesh-item (per-face,
 per-half-edge, per-vertex) variables are combined into a second data
@@ -484,7 +693,7 @@ class, the
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L430"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L596"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GeomMesh
@@ -492,9 +701,8 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def GeomMesh(
-    n_vertices:int, n_hes:int, n_faces:int, vertices:Float[Array, '*batch n_vertices dim'],
-    face_positions:Float[Array, '*batch n_faces 2']=<factory>, vertex_attribs:dict=<factory>,
-    he_attribs:dict=<factory>, face_attribs:dict=<factory>
+    vertices:Float[Array, '*batch n_vertices dim'], face_positions:Float[Array, '*batch n_faces dim']=<factory>,
+    vertex_attribs:dict=<factory>, he_attribs:dict=<factory>, face_attribs:dict=<factory>
 )->None:
 
 ```
@@ -502,9 +710,9 @@ def GeomMesh(
 *Data class for holding mesh geometry and mesh-associated variables.* To
 be combined with a HeMesh to specify the connectivity.
 
-One array (for vertex positions) must always be present. A second, but
+One array (for vertex positions) must always be present. A second,
 optional, standard entry is a set of positions for each face. The mesh
-coordinates can live in 2d or 3d.
+coordinates can live in any dimension
 
 Optionally, vertices, half-edges, and faces can have attributes (stored
 as dictionaries). The keys of the dictionary should be taken from a
@@ -520,29 +728,33 @@ whereas mesh connectivity
 ([`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh))
 should never be edited by hand.
 
-See documentation on HeMesh
+This class stores no element counts of its own: the number of vertices,
+half-edges, and faces belongs to the
+[`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh).
+Use `check_compatibility(hemesh)` to confirm a geometry and a
+connectivity match.
 
 **Attributes**
 
-vertices : Float\[jax.Array, “n_vertices 2”\]
+vertices : Float\[jax.Array, “n_vertices dim”\]
 
-face_positions : Float\[jax.Array, “n_faces 2”\]
+face_positions : Float\[jax.Array, “n_faces dim”\]
 
-vertex_attribs : dict\[IntEnum, Float\[jax.Array, “n_vertices \*”\]\]
+vertex_attribs : dict\[IntEnum, Float\[jax.Array, “n_vertices …”\]\]
 
-he_attribs : dict\[IntEnum, Float\[jax.Array, “n_hes \*”\]\]
+he_attribs : dict\[IntEnum, Float\[jax.Array, “n_hes …”\]\]
 
-face_attribs : dict\[IntEnum, Float\[jax.Array, “n_faces \*”\]\]
+face_attribs : dict\[IntEnum, Float\[jax.Array, “n_faces …”\]\]
 
 **Property methods (use like attributes)**
-
-n_items : tuple\[int, int, int\]
 
 dim : int
 
 **Class methods**
 
-validate_dimensions : bool
+validate_dimensions : None
+
+check_compatibility : HeMesh -\> bool
 
 **Static methods**
 
@@ -551,7 +763,7 @@ load : str -\> GeomMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L581"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L787"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -567,9 +779,9 @@ def Mesh(
 *Combine geometric and connectivity info into a single object.*
 
 ``` python
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
+geommesh = GeomMesh(mesh.vertices, mesh.face_positions)
 combined_mesh = Mesh(geommesh, hemesh)
 combined_mesh
 ```
@@ -577,25 +789,25 @@ combined_mesh
     Warning: readOBJ() ignored non-comment line 3:
       o flat_tri_ecmc
 
-    Mesh(geommesh=GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), hemesh=HeMesh(N_V=131, N_HE=708, N_F=224))
+    Mesh(geommesh=GeomMesh(D=2, N_V=131, N_HE=N/A, N_F=224), hemesh=HeMesh(N_V=131, N_HE=708, N_F=224))
 
 ``` python
 leafs, ts = jax.tree_util.tree_flatten(geommesh) # also a pytree
 ts
 ```
 
-    PyTreeDef(CustomNode(GeomMesh[(131, 708, 224)], [*, *, {}, {}, {}]))
+    PyTreeDef(CustomNode(GeomMesh[()], [*, *, {}, {}, {}]))
 
 ``` python
-geommesh, geommesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibility(hemesh), geommesh == geommesh
+geommesh, hemesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibility(hemesh), geommesh == geommesh
 ```
 
-    (GeomMesh(D=2,N_V=131, N_HE=708, N_F=224), 131, (131, 2), True, True)
+    (GeomMesh(D=2, N_V=131, N_HE=N/A, N_F=224), 131, (131, 2), True, True)
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L587"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L793"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -628,7 +840,7 @@ plt.axis("equal")
      np.float64(-1.09934025),
      np.float64(1.09050125))
 
-![](02_halfedge_datastructure_files/figure-commonmark/cell-33-output-2.png)
+![](02_halfedge_datastructure_files/figure-commonmark/cell-40-output-2.png)
 
 ### Vertex, half-edge, and face properties
 
@@ -644,9 +856,9 @@ respectively. To keep track of the possible attributes, we use
 JAX).
 
 ``` python
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommmesh = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
+geommmesh = GeomMesh(mesh.vertices, mesh.face_positions)
 ```
 
     Warning: readOBJ() ignored non-comment line 3:
@@ -692,9 +904,9 @@ key1 = jax.random.key(0)
 _, key2 = jax.random.split(key1)
 _, key3 = jax.random.split(key2)
 
-geommmesh = dataclasses.replace(geommmesh, vertex_attribs={VertexAttribs.TARGET_AREA: jax.random.normal(key=key1,shape=geommmesh.n_vertices),
-                                                           VertexAttribs.TARGET_PERIMETER: jax.random.normal(key=key2, shape=geommmesh.n_vertices)})
-geommmesh = dataclasses.replace(geommmesh, he_attribs={HeAttribs.EDGE_TENSION: jax.random.normal(key=key3, shape=geommmesh.n_hes)})
+geommmesh = dataclasses.replace(geommmesh, vertex_attribs={VertexAttribs.TARGET_AREA: jax.random.normal(key=key1,shape=hemesh.n_vertices),
+                                                           VertexAttribs.TARGET_PERIMETER: jax.random.normal(key=key2, shape=hemesh.n_vertices)})
+geommmesh = dataclasses.replace(geommmesh, he_attribs={HeAttribs.EDGE_TENSION: jax.random.normal(key=key3, shape=hemesh.n_hes)})
 ```
 
 ``` python
@@ -703,25 +915,24 @@ geommmesh.he_attribs.keys()
 
     dict_keys([<HeAttribs.EDGE_TENSION: 1>])
 
-## Batching
+### Batching
 
 In our simulations, we may want to “batch” over several initial
 conditions/random seeds/etc. (analogous to batching over training data
-in normal ML). In JAX, we can efficiently and concisely vectorize
-operations over such “batch axes” with `jax.vmap`.
+in normal ML). JAX can efficiently and concisely vectorize operations
+over such “batch axes” with `jax.vmap`.
 
-To batch over our custom data structures, we need to pull a small
-trick - convert a list of
+To batch over our custom data structures, we need to convert a list of
 [`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh)/`GeomMeshe`
 instances into a single mesh with a batch axis for the various arrays.
 Luckily, this can be [done using JAX’s pytree
 tools](https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees).
-The resulting meshes have an extra “batch” axis in all their array.
+The resulting meshes have an extra “batch” axis in all their arrays.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L622"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L828"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -739,7 +950,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L618"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L824"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack
@@ -774,7 +985,7 @@ for i in range(3):
 
 def test_function(geommesh: GeomMesh, hemesh: HeMesh) -> Float[jax.Array, " n_vertices"]:
     """Dummy test function."""
-    return jnp.ones(geommesh.n_vertices)
+    return jnp.ones(hemesh.n_vertices)
 ```
 
 ``` python
@@ -802,7 +1013,7 @@ batch_he_array, batch_geom_array, batch_geom_array.vertices.shape
 ```
 
     (HeMesh(N_V=131, N_HE=708, N_F=224),
-     GeomMesh(D=2,N_V=131, N_HE=708, N_F=224),
+     GeomMesh(D=2, N_V=3, N_HE=3, N_F=3),
      (3, 131, 2))
 
 ``` python
@@ -822,7 +1033,7 @@ isinstance(tree_unstack(batch_out), list)
 
     True
 
-## Saving to disk
+### Saving to disk
 
 We save and load
 [`TriMesh`](https://nikolas-claussen.github.io/triangulax/src/triangular_meshes.html#trimesh)
@@ -837,7 +1048,7 @@ from tempfile import TemporaryFile
 ```
 
 ``` python
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 ```
 
@@ -870,10 +1081,10 @@ hemesh.save(outfile)
 _ = outfile.seek(0) # simulates closing & reopening file
 reloaded = HeMesh.load(outfile)
 
-np.allclose(reloaded.faces, hemesh.faces)
+assert np.allclose(reloaded.faces, hemesh.faces)
+assert reloaded == hemesh                       # every connectivity array round-trips
+assert reloaded.inf_vertices == hemesh.inf_vertices
 ```
-
-    True
 
 ``` python
 # test GeomMesh save/load round-trip with IntEnum keys
@@ -884,9 +1095,9 @@ class _TestVA(IntEnum):
 class _TestHA(IntEnum):
     C = 1
 
-mesh = TriMesh.read_obj("test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-gm = GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions,
+gm = GeomMesh(mesh.vertices, mesh.face_positions,
               vertex_attribs={_TestVA.A: jnp.ones(hemesh.n_vertices),
                               _TestVA.B: jnp.zeros(hemesh.n_vertices)},
               he_attribs={_TestHA.C: jnp.ones(hemesh.n_hes)})
@@ -908,3 +1119,8 @@ assert all(isinstance(k, str) for k in gm_str.vertex_attribs), "expected string 
 
 print("GeomMesh save/load round-trip OK")
 ```
+
+    GeomMesh save/load round-trip OK
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o flat_tri_ecmc

@@ -65,12 +65,9 @@ import optimistix
 ```
 
 ``` python
-from triangulax import geometry as geom
-from triangulax import linops as lin
 from triangulax.triangular import TriMesh
-from triangulax.mesh import HeMesh, GeomMesh
-from triangulax.linops import (cotan_laplace_sparse, mass_matrix_sparse,
-                               mass_matrix_inv_sparse, diag_jsparse)
+from triangulax.mesh import HeMesh
+from triangulax.linops import cotan_laplace_sparse, mass_matrix_sparse, mass_matrix_inv_sparse
 ```
 
 ### Load mesh and build operators
@@ -92,10 +89,10 @@ M = mass_matrix_sparse(trimesh.vertices, hemesh)      # lumped mass matrix
 M_inv = mass_matrix_inv_sparse(trimesh.vertices, hemesh)  # inverse mass matrix
 ```
 
-    Torus: 576 vertices, 1152 faces
-
     Warning: readOBJ() ignored non-comment line 3:
       o Torus
+
+    Torus: 576 vertices, 1152 faces
 
 ``` python
 # Visualize the torus mesh

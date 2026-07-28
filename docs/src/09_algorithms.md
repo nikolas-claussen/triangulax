@@ -16,7 +16,7 @@ of points. Here, we provide a JAX-compatible version.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L29"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L26"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### kabsch_align
@@ -26,7 +26,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def kabsch_align(
     v:Float[Array, 'n_vertices dim'], # vertices to be aligned
     v_ref:Float[Array, 'n_vertices dim'], # reference vertices
-)->Float[Array, 'n _vertices dim']: # v optimally aligned to v_ref
+)->tuple: # v optimally aligned to v_ref
 
 ```
 
@@ -34,7 +34,8 @@ def kabsch_align(
 algorithm).*
 
 The resulting rotation R is proper (det(R) = 1), so no reflections are
-allowed. The alignment is compatible with jax.jit and jax.grad.
+allowed. Works in any dimension, and is compatible with jax.jit and
+jax.grad. The convention is `aligned == v @ R + d`.
 
 ### Smoothing and remeshing
 
@@ -46,7 +47,7 @@ modifies the mesh topology, but leaves the vertex set unchanged.
 
 ``` python
 # Load test mesh
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
 vertices = mesh.vertices
 ```
@@ -62,7 +63,7 @@ angle, summary statistics, and a human-readable quality report.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L64"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/algorithms.py#L65"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_angles
@@ -72,14 +73,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def get_face_angles(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
     hemesh:HeMesh, # Half-edge mesh connectivity.
-)->Float[Array, 'n_faces 3']: # Maximum interior angle per triangle.
+)->Float[Array, 'n_faces 3']: # The three interior angles of each triangle.
 
 ```
 
-*Get corner angle per face (radians).*
+*Get the three corner angles of every face (radians).*
 
-Uses the half-edge corner angles and takes the max over the three
-corners of every face.
+Uses the half-edge corner angles. Angles within a face sum to pi.
 
 ``` python
 # Test get_face_max_angles
@@ -198,49 +198,6 @@ using `topology.flip_all`. Stops when no more flips are needed or
 Important: when JIT-compiling, use jax.jit with
 static_argnames=\[‘max_iters’\].
 
-``` python
-# Test fix_delaunay: perturb vertices to create non-Delaunay edges, then fix
-key = jax.random.PRNGKey(42)
-noise = 0.025 * jax.random.normal(key, shape=vertices.shape)
-noisy_vertices = vertices + noise
-
-n_bad_before = (~is_locally_delaunay(noisy_vertices, hemesh) & hemesh.is_unique & ~hemesh.is_bdry_edge).sum()
-print(f"Non-Delaunay edges before: {n_bad_before}")
-
-hemesh_fixed, n_flips = fix_delaunay(noisy_vertices, hemesh, max_iters=1)
-n_bad_after = (~is_locally_delaunay(noisy_vertices, hemesh_fixed) & hemesh_fixed.is_unique & ~hemesh_fixed.is_bdry_edge).sum()
-print(f"Flips performed: {n_flips}")
-print(f"Non-Delaunay edges after:  {n_bad_after}")
-
-print("\nBefore fix_delaunay:")
-print(get_mesh_quality_stats(noisy_vertices, hemesh))
-print("\nAfter fix_delaunay:")
-print(get_mesh_quality_stats(noisy_vertices, hemesh_fixed))
-```
-
-    Non-Delaunay edges before: 15
-    Flips performed: 15
-    Non-Delaunay edges after:  0
-
-    Before fix_delaunay:
-    {'areas_min': 0.00301, 'areas_max': 0.02994, 'areas_cv': 0.32373, 'max_angle': 126.89138, 'min_angle': 9.82493, 'angles_std': 18.8009, 'n_degenerate': 0, 'n_total_faces': 224}
-
-    After fix_delaunay:
-    {'areas_min': 0.00301, 'areas_max': 0.03013, 'areas_cv': 0.32043, 'max_angle': 120.57028, 'min_angle': 9.82493, 'angles_std': 17.33338, 'n_degenerate': 0, 'n_total_faces': 224}
-
-``` python
-plt.triplot(noisy_vertices[:, 0], noisy_vertices[:, 1], hemesh.faces)
-plt.triplot(noisy_vertices[:, 0], noisy_vertices[:, 1], hemesh_fixed.faces)
-plt.axis('equal')
-```
-
-    (np.float64(-1.0870901427296413),
-     np.float64(1.097853572442067),
-     np.float64(-1.1177076607221643),
-     np.float64(1.1221007508660394))
-
-![](09_algorithms_files/figure-commonmark/cell-12-output-2.png)
-
 ### Tangential vertex smoothing
 
 Vertex smoothing moves each vertex towards the average of its
@@ -281,39 +238,6 @@ Moves each vertex towards the mean position of its neighbours. For 3D
 meshes, the displacement is projected onto the tangent plane.
 
 ``` python
-# Test Laplacian smoothing on a noisy 2D mesh
-
-key = jax.random.PRNGKey(0)
-noise = 0.05 * jax.random.normal(key, shape=vertices.shape)
-noisy_v = vertices + jnp.where(hemesh.is_bdry[:, None], 0.0, noise)
-
-n_iter = 10
-bc = 'slide'  # try 'fixed', 'free', 'slide'
-
-print("Before smoothing:")
-print(get_mesh_quality_stats(noisy_v, hemesh))
-
-smoothed_v = noisy_v
-for _ in range(n_iter):
-    smoothed_v = smooth_vertices_laplacian(smoothed_v, hemesh, step_size=0.5, bc=bc)
-
-print("\nAfter 10 Laplacian smoothing steps:")
-print(get_mesh_quality_stats(smoothed_v, hemesh))
-
-# Boundary vertices should not have moved if bc='fixed', but should have moved otherwise
-if bc == 'fixed':
-    assert jnp.allclose(smoothed_v[hemesh.is_bdry], noisy_v[hemesh.is_bdry])
-else:
-    assert ~jnp.allclose(smoothed_v[hemesh.is_bdry], noisy_v[hemesh.is_bdry])
-```
-
-    Before smoothing:
-    {'areas_min': 0.00012, 'areas_max': 0.04031, 'areas_cv': 0.56271, 'max_angle': 178.81132, 'min_angle': 0.47529, 'angles_std': 30.37956, 'n_degenerate': 4, 'n_total_faces': 224}
-
-    After 10 Laplacian smoothing steps:
-    {'areas_min': 0.00831, 'areas_max': 0.01891, 'areas_cv': 0.14408, 'max_angle': 100.82169, 'min_angle': 28.69297, 'angles_std': 9.49095, 'n_degenerate': 0, 'n_total_faces': 224}
-
-``` python
 plt.triplot(noisy_v[:, 0], noisy_v[:, 1], hemesh.faces)
 plt.triplot(smoothed_v[:, 0], smoothed_v[:, 1], hemesh.faces)
 plt.axis('equal')
@@ -321,10 +245,10 @@ plt.axis('equal')
 
     (np.float64(-1.10003475),
      np.float64(1.09628575),
-     np.float64(-1.0993484814751877),
-     np.float64(1.090674110978944))
+     np.float64(-1.0993421965883812),
+     np.float64(1.0905421283560033))
 
-![](09_algorithms_files/figure-commonmark/cell-15-output-2.png)
+![](09_algorithms_files/figure-commonmark/cell-12-output-2.png)
 
 ``` python
 # Test 3D tangential smoothing on a sphere

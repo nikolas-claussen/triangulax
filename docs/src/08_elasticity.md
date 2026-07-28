@@ -75,7 +75,7 @@ runtime (see the benchmark below).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L67"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L70"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_two_x_two_inverse
@@ -96,7 +96,7 @@ Much faster than jnp.linalg.inv/solve for 2x2 matrices.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L52"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L54"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_area_from_metric
@@ -114,7 +114,7 @@ def get_area_from_metric(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L29"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L31"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_metric
@@ -133,20 +133,6 @@ basis.*
 
 For a triangle with vertices a, b, c, the basis is the pair of side
 vectors u = b - a, v = c - a, so g = \[\[u.u, u.v\], \[u.v, v.v\]\].
-
-``` python
-# benchmark: jnp.linalg.solve dispatches to a general LU solver even for 2x2
-# matrices and dominated the energy runtime; the closed-form inverse is ~10x faster
-metric_ref = get_metric(sphere.vertices, sphere_hemesh)
-metric = get_metric(sphere.vertices * jnp.array([1.05, 0.95, 1]), sphere_hemesh)
-
-solve = jax.jit(jnp.linalg.solve)
-inverse = jax.jit(lambda g0, g: get_two_x_two_inverse(g0) @ g)
-_ = solve(metric_ref, metric), inverse(metric_ref, metric)
-```
-
-    177 μs ± 2.22 μs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
-    16.9 μs ± 256 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
 
 ``` python
 # the reference areas computed from the metric agree with the triangle areas
@@ -169,7 +155,7 @@ assert np.allclose(inverse_metric, jnp.linalg.inv(metric))
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L114"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L119"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_neo_hookean_energy
@@ -193,7 +179,7 @@ and W the neo-Hookean density (see
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L90"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L93"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_neo_hookean_energy_density
@@ -238,7 +224,7 @@ assert np.isclose(E_inhom, (areas * mods/2 * (s**2-1)**2).sum())
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L144"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L149"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_st_venant_kirchhoff_energy
@@ -287,7 +273,7 @@ angle, and *κ* is the bending modulus (units: energy). This is the
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L175"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L180"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_dihedral_bending_energy
@@ -357,7 +343,7 @@ convention *b* = *n* ⋅ ∂<sub>*i*</sub>∂<sub>*j*</sub>*x*).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L208"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L217"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_second_fundamental_form
@@ -407,7 +393,7 @@ assert np.allclose(b, jnp.transpose(b, axes=(0, 2, 1)), atol=1e-12)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L246"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L255"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_svk_bending_energy
@@ -458,9 +444,9 @@ are fluid in-plane: material can redistribute within a membrane to relax
 in-plane stresses through viscosity. However, membranes can still resist
 out-of-plane bending deformation.
 
-The *Helfrich energy* is an elegant, geometric model of bending energy.
-It uses the mean and Gaussian curvatures *H*, *K* of the surface ℳ. The
-energy reads:
+The *Helfrich energy* is a geometric model of bending energy. It uses
+the mean and Gaussian curvatures *H*, *K* of the surface ℳ. The energy
+reads:
 
 $$E_H  =\int dA \left( \frac{\kappa_H}{2}(H-H_0)^2 + \kappa_G K \right) $$
 
@@ -472,7 +458,7 @@ is a topological invariant by the Gauss-Bonnet theorem,
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L279"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L288"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_helfrich_energy
@@ -481,10 +467,10 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def get_helfrich_energy(
     vertices:Float[Array, 'n_vertices 3'], # Vertex positions.
-    args:tuple, # (hemesh, H0, kappa_H, kappa_K): the spontaneous curvature H0
-(units: 1/length), the bending modulus kappa_H >= 0 and the Gaussian
-(saddle-splay) modulus kappa_K (units: energy). All three can be
-scalars or per-vertex arrays.
+    args:tuple, # (hemesh, H0, kappa_H, kappa_K):
+the mesh connectivity, the spontaneous curvature H0 (units: 1/length),
+the bending modulus kappa_H >= 0 and the Gaussian modulus kappa_K (units: energy).
+H0, kappa_H, kappa_K can be scalars or per-vertex arrays.
 )->Float[Array, '']: # Total bending energy.
 
 ```
@@ -497,7 +483,7 @@ Voronoi cell areas A_i. On a closed mesh the Gaussian curvature term is
 exactly 2*pi*chi\*kappa_K (Gauss-Bonnet) and exerts no forces.
 
 ``` python
-# On the unit sphere, the H-term gives ~2*pi*kappa_H (the exact smooth value),
+# On the unit sphere, up to discretization error, the H-term gives ~2*pi*kappa_H (the exact smooth value),
 # and the K-term is exactly 4*pi*kappa_K = 2*pi*chi*kappa_K (discrete Gauss-Bonnet)
 E_H = get_helfrich_energy(sphere.vertices, (sphere_hemesh, 0.0, 1.0, 0.0))
 assert np.isclose(E_H, 2*np.pi, rtol=0.02)
@@ -514,6 +500,97 @@ E_H0 = get_helfrich_energy(sphere.vertices, (sphere_hemesh, 1.0, 1.0, 0.0))
 assert E_H0 < 1e-2 * E_H
 ```
 
+### Area and volume constraints
+
+Quadratic penalties on the *total* surface area and the enclosed volume.
+These are the usual companions to a bending energy: the Helfrich
+functional is scale-invariant at *H*<sub>0</sub> = 0.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L350"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_volume_constraint_energy
+
+``` python
+
+def get_volume_constraint_energy(
+    vertices:Float[Array, 'n_vertices 3'], # Vertex positions.
+    args:tuple, # ``(hemesh, volume_0, modulus)``: the target enclosed volume V0 (units: length^3)
+and the penalty modulus (units: energy/length^6).
+)->Float[Array, '']: # Constraint energy. Zero exactly when the enclosed volume equals V0.
+
+```
+
+*Quadratic penalty on the enclosed volume:* E = modulus/2 \* (V - V0)^2
+
+Requires a closed, consistently oriented mesh (`geometry.get_volume`
+checks this). The volume is signed, so V0 should have the same sign as
+the initial configuration’s volume – positive for outward-oriented
+faces.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L323"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_area_constraint_energy
+
+``` python
+
+def get_area_constraint_energy(
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    args:tuple, # ``(hemesh, area_0, modulus)``: the target total area A0 (units: length^2) and the
+penalty modulus (units: energy/length^4).
+)->Float[Array, '']: # Constraint energy. Zero exactly when the total area equals A0.
+
+```
+
+*Quadratic penalty on the total surface area:* E = modulus/2 \* (A -
+A0)^2
+
+Note this is a *global* constraint on the total area, not a per-face
+one. Combine it with a bending energy yourself; the energies in this
+module are deliberately separate so they can be mixed and weighted
+freely.
+
+``` python
+from triangulax import trigonometry as _trig
+```
+
+``` python
+# area/volume constraints: zero at the reference, correct scaling, rigid-invariant
+A0 = geom.get_area(sphere.vertices, sphere_hemesh)
+V0 = geom.get_volume(sphere.vertices, sphere_hemesh)
+
+assert jnp.allclose(get_area_constraint_energy(sphere.vertices, (sphere_hemesh, A0, 1.0)), 0.0, atol=1e-20)
+assert jnp.allclose(get_volume_constraint_energy(sphere.vertices, (sphere_hemesh, V0, 1.0)), 0.0, atol=1e-20)
+
+# a uniform dilation by s scales area by s^2 and volume by s^3
+s = 1.1
+assert jnp.allclose(get_area_constraint_energy(s*sphere.vertices, (sphere_hemesh, A0, 1.0)),
+                    0.5*(s**2 - 1)**2 * A0**2, rtol=1e-10)
+assert jnp.allclose(get_volume_constraint_energy(s*sphere.vertices, (sphere_hemesh, V0, 1.0)),
+                    0.5*(s**3 - 1)**2 * V0**2, rtol=1e-10)
+
+# invariant under rigid motion, and the gradient vanishes at the reference
+R = _trig.quaternion_to_rot_mat(jnp.array([0.3, 0.5, -0.2, 0.8]))
+moved = sphere.vertices @ R.T + jnp.array([1.5, -2.0, 0.7])
+for fn, ref in [(get_area_constraint_energy, A0), (get_volume_constraint_energy, V0)]:
+    assert jnp.allclose(fn(moved, (sphere_hemesh, ref, 1.0)), 0.0, atol=1e-16), fn.__name__
+    assert jnp.abs(jax.grad(fn)(sphere.vertices, (sphere_hemesh, ref, 1.0))).max() < 1e-12, fn.__name__
+    # finite and non-zero away from the reference
+    g_off = jax.grad(fn)(1.05*sphere.vertices, (sphere_hemesh, ref, 1.0))
+    assert jnp.isfinite(g_off).all() and jnp.abs(g_off).max() > 0, fn.__name__
+
+print(f"area/volume constraints OK (unit sphere A0={A0:.4f} vs 4*pi={4*jnp.pi:.4f}, V0={V0:.4f} vs 4/3*pi={4/3*jnp.pi:.4f})")
+```
+
+    area/volume constraints OK (unit sphere A0=12.5062 vs 4*pi=12.5664, V0=4.1527 vs 4/3*pi=4.1888)
+
 #### Normal/tangential energies
 
 The helper functions below “project” any energy into a function of only
@@ -528,7 +605,7 @@ motion to preserver mesh quality.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L343"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L439"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### vertices_from_tangential
@@ -536,19 +613,20 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def vertices_from_tangential(
-    v0, t, basis
-):
+    v0:Float[Array, 'n 3'], t:Float[Array, 'n 2'], basis:Float[Array, '2 n 3']
+)->Float[Array, 'n 3']:
 
 ```
 
-*Reconstruct vertices from base + tangential displacement.* The
-tangential basis can be computed using the geometry module,
-geom.get_vertex_tangent_basis(vertices, hemesh).
+*Reconstruct vertices from base positions + tangential displacement.*
+
+`basis` is expected in the `(2, n_vertices, 3)` layout returned by
+`geom.get_vertex_tangent_basis(vertices, hemesh)`.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L338"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L433"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### vertices_from_normal
@@ -556,17 +634,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def vertices_from_normal(
-    v0, h, normals
-):
+    v0:Float[Array, 'n 3'], h:Float[Array, 'n'], normals:Float[Array, 'n 3']
+)->Float[Array, 'n 3']:
 
 ```
 
-*Reconstruct vertices from base + normal displacement.*
+*Reconstruct vertices from base positions + normal displacement.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L322"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L403"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### make_tangential_energy
@@ -574,15 +652,19 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def make_tangential_energy(
-    energy_fn, v0:Float[Array, 'n 3'], basis:Float[Array, 'n 2 3']
-):
+    energy_fn:Callable, # Energy with signature ``energy_fn(vertices, args) -> scalar``.
+    v0:Float[Array, 'n 3'], # Base vertex positions.
+    basis:Float[Array, '2 n 3'], # Tangent basis, in the ``(2, n_vertices, 3)`` layout returned by
+`geom.get_vertex_tangent_basis`.
+)->Callable: # Energy with signature ``energy(t, args) -> scalar``.
 
 ```
 
 *Wrap energy_fn(vertices, args) to optimize over tangent coords t ∈
 ℝⁿˣ².*
 
-vertices(t) = v0 + einsum(‘vi,vid-\>vd’, t, basis).
+vertices(t) = v0 + einsum(‘vi,ivd-\>vd’, t, basis), see
+[`vertices_from_tangential`](https://nikolas-claussen.github.io/triangulax/src/elasticity.html#vertices_from_tangential).
 
 Any basis (orthonormal or not) which spans the tangent plane is valid,
 but the same basis must be used in make_tangential_energy and in
@@ -591,7 +673,7 @@ vertices_from_tangential to recover the 3D vertex positions.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L311"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/elastic.py#L378"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### make_normal_energy
@@ -599,14 +681,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def make_normal_energy(
-    energy_fn, v0:Float[Array, 'n 3'], normals:Float[Array, 'n 3']
-):
+    energy_fn:Callable, # Energy with signature ``energy_fn(vertices, args) -> scalar``.
+    v0:Float[Array, 'n 3'], # Base vertex positions.
+    normals:Float[Array, 'n 3'], # Per-vertex displacement directions, e.g. `geom.get_vertex_normals`.
+)->Callable: # Energy with signature ``energy(h, args) -> scalar``.
 
 ```
 
 *Wrap energy_fn(vertices, args) to optimize over normal heights h ∈ ℝⁿ.*
 
-vertices(h) = v0 + h\[:, None\] \* normals.
+vertices(h) = v0 + h\[:, None\] \* normals, see
+[`vertices_from_normal`](https://nikolas-claussen.github.io/triangulax/src/elasticity.html#vertices_from_normal).
 
 ### JAX-compatibility
 

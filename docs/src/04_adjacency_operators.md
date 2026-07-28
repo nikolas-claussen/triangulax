@@ -4,9 +4,9 @@
 
 ## `adjacency`: Adjacency-based operators on half-edge meshes
 
-Using the
+The
 [`HeMesh`](https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh)
-data structure, we can efficiently “traverse” our mesh. Using such
+data structure enables efficient mesh “traversal”. Using such
 traversals, one can express many *adjacency-based operators*, for
 example:
 
@@ -40,12 +40,12 @@ from triangulax.triangular import TriMesh
 ``` python
 # load test data
 
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommesh = msh.GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
+geommesh = msh.GeomMesh(mesh.vertices, mesh.face_positions)
 
 mesh_3d = TriMesh.read_obj("../test_meshes/disk.obj", dim=3)
-geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_positions)
+geommesh_3d = msh.GeomMesh(mesh_3d.vertices, mesh_3d.face_positions)
 ```
 
     Warning: readOBJ() ignored non-comment line 3:
@@ -105,18 +105,21 @@ v_field = jax.random.uniform(jax.random.PRNGKey(0), (hemesh.n_vertices,))
 he_gradient = get_exterior_gradient(hemesh, v_field)
 f_circulation = get_exterior_circulation(hemesh, he_gradient)
 
-hemesh, he_gradient.shape, f_circulation.shape, jnp.allclose(f_circulation, 0 )
+assert he_gradient.shape == (hemesh.n_hes,)
+assert f_circulation.shape == (hemesh.n_faces,)
+# d^2 = 0: the circulation of a gradient vanishes
+assert jnp.allclose(f_circulation, 0, atol=1e-12)
+# the exterior gradient is antisymmetric under the twin map
+assert jnp.allclose(he_gradient + he_gradient[hemesh.twin], 0, atol=1e-12)
 ```
-
-    (HeMesh(N_V=131, N_HE=708, N_F=224), (708,), (224,), Array(True, dtype=bool))
 
 ### Summing over adjacent mesh elements
 
 A second important class of operation is summing over adjacent mesh
-elements. For example, to get the coordination number of a vertex, you
-want to sum the value 1 over all incoming half-edges. For computing
-things like cell areas, it’s also useful to sum over half-edges
-*opposite* to a vertex.
+elements. For example, to get the coordination number of a vertex, one
+sums the value 1 over all incoming half-edges. For computing things like
+cell areas, it’s also useful to sum over half-edges *opposite* to a
+vertex.
 
 ------------------------------------------------------------------------
 
@@ -446,7 +449,15 @@ semi-definite.*
 
 laplace_mat = get_uniform_laplacian(hemesh)
 
-jnp.allclose(laplace_mat @ v_field, compute_uniform_laplacian(hemesh, v_field)), jnp.dot(laplace_mat@v_field, v_field) > 0
+assert jnp.allclose(laplace_mat @ v_field, compute_uniform_laplacian(hemesh, v_field), atol=1e-12)
+# the uniform Laplacian is symmetric, positive semi-definite, with vanishing row sums
+dense = laplace_mat.todense()
+assert jnp.allclose(dense, dense.T, atol=1e-12)
+assert jnp.allclose(dense.sum(axis=1), 0, atol=1e-12)
+assert jnp.linalg.eigvalsh(dense).min() > -1e-10
+assert jnp.dot(laplace_mat @ v_field, v_field) > 0
+# and equals D - A from igl
+deg = jnp.diag(get_coordination_number(hemesh))
+A_igl = jnp.array(igl.adjacency_matrix(np.asarray(hemesh.faces, dtype=np.int64)).todense())
+assert jnp.allclose(dense, deg - A_igl, atol=1e-12)
 ```
-
-    (Array(True, dtype=bool), Array(True, dtype=bool))

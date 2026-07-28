@@ -53,7 +53,7 @@ loading and saving meshes, plotting them, and interfacing with external
 geometry-processing tools.
 
 ``` python
-disk = TriMesh.read_obj("tutorial_meshes/disk.obj")
+disk = TriMesh.read_obj("tutorial_meshes/disk.obj", dim=2)
 torus = TriMesh.read_obj("tutorial_meshes/torus.obj", dim=3)
 
 manual_mesh = TriMesh(
@@ -257,7 +257,7 @@ disk_hemesh = HeMesh.from_triangles(disk.vertices.shape[0], disk.faces)
 
 voronoi_face_positions = geom.get_voronoi_face_positions(disk.vertices, disk_hemesh)
 voronoi_areas = geom.get_voronoi_areas(disk.vertices, disk_hemesh)
-disk_geommesh = GeomMesh(*disk_hemesh.n_items, vertices=disk.vertices, face_positions=voronoi_face_positions)
+disk_geommesh = GeomMesh(vertices=disk.vertices, face_positions=voronoi_face_positions)
 ```
 
 ``` python

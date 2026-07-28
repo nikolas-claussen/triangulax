@@ -39,18 +39,14 @@ tutorial](https://libigl.github.io/libigl-python-bindings/tut-chapter1/),
 using the test mesh and some random test fields.
 
 ``` python
-from triangulax.triangular import TriMesh
-```
-
-``` python
 # load test data
 
-mesh = TriMesh.read_obj("../test_meshes/disk.obj")
+mesh = TriMesh.read_obj("../test_meshes/disk.obj", dim=2)
 hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommesh = msh.GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
+geommesh = msh.GeomMesh(mesh.vertices, mesh.face_positions)
 
 mesh_3d = TriMesh.read_obj("../test_meshes/disk.obj", dim=3)
-geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_positions)
+geommesh_3d = msh.GeomMesh(mesh_3d.vertices, mesh_3d.face_positions)
 ```
 
     Warning: readOBJ() ignored non-comment line 3:
@@ -63,7 +59,7 @@ geommesh_3d = msh.GeomMesh(*hemesh.n_items, mesh_3d.vertices, mesh_3d.face_posit
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L82"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L79"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### diag_jsparse
@@ -81,7 +77,7 @@ def diag_jsparse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L61"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L58"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bcoo_to_scipy
@@ -99,7 +95,7 @@ def bcoo_to_scipy(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L36"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L33"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### scipy_to_bcoo
@@ -137,7 +133,7 @@ assembles *L* as a sparse BCOO matrix.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L92"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L89"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_cotan_laplace
@@ -160,7 +156,7 @@ conditions).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L124"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L121"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cotan_laplace_sparse
@@ -194,6 +190,13 @@ lap_igl_vec = L @ np.asarray(u_vec)
 
 rel_err_vec = np.linalg.norm(np.asarray(lap_jax_vec) - lap_igl_vec) / np.linalg.norm(lap_igl_vec)
 print("vector field rel. error:", rel_err_vec)
+
+assert rel_err < 1e-10, rel_err
+assert rel_err_vec < 1e-10, rel_err_vec
+# the sign convention must match igl's (negative semi-definite), not just the magnitude
+assert np.allclose(np.asarray(lap_jax), lap_igl, atol=1e-10)
+# constants are in the kernel, including at boundary vertices
+assert jnp.allclose(compute_cotan_laplace(geommesh.vertices, hemesh, jnp.ones(hemesh.n_vertices)), 0, atol=1e-10)
 ```
 
     scalar field rel. error: 1.8736262663712947e-16
@@ -214,29 +217,37 @@ lap_apply = compute_cotan_laplace(geommesh.vertices, hemesh, u_test)
 
 rel_err_sparse = jnp.linalg.norm(lap_sparse - lap_apply) / jnp.linalg.norm(lap_apply)
 print("cotan sparse vs apply rel. error:", rel_err_sparse)
+
+assert rel_err_sparse < 1e-10, rel_err_sparse
+# the sparse operator must be symmetric with vanishing row sums
+assert jnp.allclose(L_sparse.todense(), L_sparse.todense().T, atol=1e-12)
+assert jnp.allclose(L_sparse.todense().sum(axis=1), 0, atol=1e-10)
 ```
 
     cotan sparse vs apply rel. error: 1.2664010004128622e-16
 
 ``` python
-bcoo_to_scipy(L_sparse), (scipy_to_bcoo(bcoo_to_scipy(L_sparse)).todense() == L_sparse.todense()).all()
-```
+# scipy <-> BCOO round trip must be exact
+assert (scipy_to_bcoo(bcoo_to_scipy(L_sparse)).todense() == L_sparse.todense()).all()
+assert bcoo_to_scipy(L_sparse).shape == L_sparse.shape
 
-    (<Compressed Sparse Row sparse matrix of dtype 'float64'
-        with 839 stored elements and shape (131, 131)>,
-     Array(True, dtype=bool))
+# diag_jsparse must match np.diag for zero and non-zero offsets, and be jittable
+for k in [0, 1, -1, 2]:
+    assert jnp.allclose(diag_jsparse(jnp.arange(1., 6.), k).todense(), jnp.diag(jnp.arange(1., 6.), k))
+assert jnp.allclose(jax.jit(diag_jsparse)(jnp.arange(1., 6.)).todense(), jnp.diag(jnp.arange(1., 6.)))
+```
 
 ### Periodic cotan-Laplacian (2D)
 
 For meshes on a periodic domain (torus), edge vectors must be computed
 with a periodic distance function. The function below takes a
-`distance_function` argument (as in `triangulax.periodic`) and uses
+`displacement_fn` argument (as in `triangulax.periodic`) and uses
 periodic cotangent weights.
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L144"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L141"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_periodic_cotan_laplace
@@ -247,8 +258,9 @@ def compute_periodic_cotan_laplace(
     vertices:Float[Array, 'n_vertices 2'], # Vertex positions, shape (n_vertices, 2).
     hemesh:HeMesh, # Half-edge mesh connectivity.
     vertex_field:Float[Array, 'n_vertices ...'], # Per-vertex scalar, vector, or tensor field.
-    distance_function:Callable, # Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``,
-e.g. :func:[`triangulax.periodic.displacement_periodic`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#displacement_periodic).
+    displacement_fn:Callable, # Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``,
+e.g. :func:[`triangulax.periodic.displacement_periodic`](https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#displacement_periodic). Note this returns a
+displacement *vector*, not a scalar distance.
     normalize:bool=False, # If True, divide by periodic Voronoi cell area at each vertex.
 )->Float[Array, 'n_vertices ...']: # Cotangent Laplacian applied to the field, same shape as ``vertex_field``.
 
@@ -258,6 +270,35 @@ e.g. :func:[`triangulax.periodic.displacement_periodic`](https://nikolas-clausse
 
 Uses a periodic distance function to compute edge cotangent weights,
 suitable for meshes on a torus.
+
+``` python
+# Test the periodic cotan Laplacian. With a huge box the periodic wrap never triggers,
+# so it must reduce exactly to the non-periodic operator.
+big_L = jnp.array([1e6, 1e6])
+disp_big = lambda a, b: per.displacement_periodic(a, b, big_L)
+u_per = jax.random.normal(jax.random.PRNGKey(3), (hemesh.n_vertices,))
+assert jnp.allclose(compute_periodic_cotan_laplace(geommesh.vertices, hemesh, u_per, disp_big),
+                    compute_cotan_laplace(geommesh.vertices, hemesh, u_per), atol=1e-8)
+
+# On an actual periodic mesh: constants are in the kernel, and a Fourier mode is an
+# approximate eigenfunction with eigenvalue -2*(2*pi)^2.
+mesh_per = TriMesh.read_obj("../test_meshes/torus_2d.obj", dim=2)
+hemesh_per = msh.HeMesh.from_triangles(mesh_per.vertices.shape[0], mesh_per.faces)
+L_box = jnp.array([1., 1.])
+disp = lambda a, b: per.displacement_periodic(a, b, L_box)
+
+ones = jnp.ones(hemesh_per.n_vertices)
+assert jnp.allclose(compute_periodic_cotan_laplace(mesh_per.vertices, hemesh_per, ones, disp), 0, atol=1e-10)
+
+f = jnp.sin(2*jnp.pi*mesh_per.vertices[:, 0]) * jnp.cos(2*jnp.pi*mesh_per.vertices[:, 1])
+lap_f = compute_periodic_cotan_laplace(mesh_per.vertices, hemesh_per, f, disp, normalize=True)
+exact = -2 * (2*jnp.pi)**2 * f
+rel_err_per = float(jnp.linalg.norm(lap_f - exact) / jnp.linalg.norm(exact))
+print("periodic Laplacian rel. error vs -2k^2 f:", rel_err_per)
+assert rel_err_per < 0.05, rel_err_per
+```
+
+    periodic Laplacian rel. error vs -2k^2 f: 0.012032811490690435
 
 ### Mass matrix (lumped)
 
@@ -269,7 +310,7 @@ Voronoi area associated with vertex *i*.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L213"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L220"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### mass_matrix_inv_sparse
@@ -279,7 +320,9 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 def mass_matrix_inv_sparse(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
     hemesh:HeMesh, # Half-edge mesh connectivity.
-    area_type:str='voronoi', # Choice of dual-cell area definition used on the diagonal.
+    area_type:str='voronoi', # Choice of dual-cell area definition used on the diagonal. See
+[`mass_matrix_sparse`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#mass_matrix_sparse). ``"voronoi"`` (mixed) is always positive; the other
+choices can produce zero or negative areas, and hence a divergent inverse.
 )->BCOO: # Diagonal sparse inverse mass matrix.
 
 ```
@@ -289,7 +332,7 @@ def mass_matrix_inv_sparse(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L183"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L181"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### mass_matrix_sparse
@@ -300,8 +343,12 @@ def mass_matrix_sparse(
     vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
     hemesh:HeMesh, # Half-edge mesh connectivity.
     area_type:str='voronoi', # Choice of dual-cell area definition used on the diagonal.
-Use ``"voronoi"`` for the cotangent Laplacian; ``"barycentric"``
-for a simpler (always positive) approximation.
+``"voronoi"`` is the *mixed* Voronoi area of Meyer et al., which is what
+``igl.massmatrix(..., MASSMATRIX_TYPE_VORONOI)`` computes and is always
+positive; this is the right choice for the cotangent Laplacian.
+``"voronoi_exact"`` is the exact (signed) circumcentric area, which can be
+NEGATIVE on obtuse triangles and then destroys positive-definiteness of
+``M - dt*L``. ``"barycentric"`` is a simpler always-positive approximation.
 )->BCOO: # Diagonal sparse mass matrix.
 
 ```
@@ -323,10 +370,152 @@ print("mass matrix rel. error:", rel_err_mass)
 M_inv_jax = mass_matrix_inv_sparse(geommesh.vertices, hemesh)
 identity_check = M_jax @ M_inv_jax.todense()
 print("M @ M_inv ~ I error:", np.linalg.norm(identity_check - np.eye(hemesh.n_vertices)))
+
+assert rel_err_mass < 1e-12, rel_err_mass
+assert np.linalg.norm(identity_check - np.eye(hemesh.n_vertices)) < 1e-10
+
+# The default 'voronoi' area is Meyer's robust Voronoi area, which is what igl computes and is
+# always positive. On a mesh with obtuse triangles the exact circumcentric area differs.
+mesh_obtuse = TriMesh.read_obj("../test_meshes/sphere_fine_poor.obj", dim=3)
+hemesh_obtuse = msh.HeMesh.from_triangles(mesh_obtuse.vertices.shape[0], mesh_obtuse.faces)
+M_obtuse = mass_matrix_sparse(mesh_obtuse.vertices, hemesh_obtuse).todense().diagonal()
+M_obtuse_igl = igl.massmatrix(np.asarray(mesh_obtuse.vertices), np.asarray(hemesh_obtuse.faces),
+                              igl.MASSMATRIX_TYPE_VORONOI).diagonal()
+assert np.abs(M_obtuse - M_obtuse_igl).max() < 1e-12
+assert (M_obtuse > 0).all()
+
+try:
+    mass_matrix_sparse(geommesh.vertices, hemesh, area_type='nonsense')
+    raise AssertionError('expected ValueError')
+except ValueError:
+    pass
 ```
 
-    mass matrix rel. error: 0.021744009243191195
-    M @ M_inv ~ I error: 4.2998752849492583e-16
+    mass matrix rel. error: 1.6744291479307003e-16
+    M @ M_inv ~ I error: 4.710277376051325e-16
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o Icosphere
+
+### Periodic sparse operators
+
+Sparse counterparts of the cotangent Laplacian and mass matrix under
+periodic boundary conditions, so the implicit-diffusion system
+demonstrated above can also be assembled on a periodic mesh – the main
+use case for the 2d tissue simulations this library targets.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L325"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### periodic_mass_matrix_inv_sparse
+
+``` python
+
+def periodic_mass_matrix_inv_sparse(
+    vertices:Float[Array, 'n_vertices 2'], hemesh:HeMesh, displacement_fn:Callable, area_type:str='voronoi'
+)->BCOO:
+
+```
+
+*Inverse of
+[`periodic_mass_matrix_sparse`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#periodic_mass_matrix_sparse).
+See that function for the area conventions.*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L287"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### periodic_mass_matrix_sparse
+
+``` python
+
+def periodic_mass_matrix_sparse(
+    vertices:Float[Array, 'n_vertices 2'], # Vertex positions in the periodic box.
+    hemesh:HeMesh, # Half-edge mesh.
+    displacement_fn:Callable, # Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``.
+    area_type:str='voronoi', # Choice of dual-cell area definition used on the diagonal.
+)->BCOO: # Diagonal sparse mass matrix of shape ``(n_vertices, n_vertices)``.
+
+```
+
+*Assemble the periodic lumped (diagonal) mass matrix as a sparse matrix
+(BCOO).*
+
+Periodic counterpart of
+[`mass_matrix_sparse`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#mass_matrix_sparse),
+with the same area conventions: `"voronoi"` is the mixed (Meyer et al.)
+area, always positive; `"voronoi_exact"` is the exact circumcentric
+area, which can be negative on obtuse triangles; `"barycentric"` is a
+simpler always-positive approximation.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L252"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### periodic_cotan_laplace_sparse
+
+``` python
+
+def periodic_cotan_laplace_sparse(
+    vertices:Float[Array, 'n_vertices 2'], # Vertex positions in the periodic box.
+    hemesh:HeMesh, # Half-edge mesh.
+    displacement_fn:Callable, # Periodic displacement function ``(r1, r2) -> r2 - r1 (mod L)``.
+)->BCOO: # Sparse matrix of shape ``(n_vertices, n_vertices)``.
+
+```
+
+*Assemble the periodic cotangent Laplacian as a sparse matrix (BCOO).*
+
+Periodic counterpart of
+[`cotan_laplace_sparse`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#cotan_laplace_sparse).
+Same (negative semi-definite) sign convention, so
+`periodic_cotan_laplace_sparse(v, h, d) @ u` equals
+`compute_periodic_cotan_laplace(v, h, u, d)`.
+
+``` python
+# periodic sparse operators, on an actual periodic mesh
+mesh_p = TriMesh.read_obj("../test_meshes/torus_2d.obj", dim=2)
+hemesh_p = msh.HeMesh.from_triangles(mesh_p.vertices.shape[0], mesh_p.faces)
+L_p = jnp.array([1., 1.])
+disp_p = lambda a, b: per.displacement_periodic(a, b, L_p)
+u_p = jax.random.normal(jax.random.PRNGKey(5), (hemesh_p.n_vertices,))
+
+Lp = periodic_cotan_laplace_sparse(mesh_p.vertices, hemesh_p, disp_p)
+# the sparse and matrix-free versions must agree
+assert jnp.allclose(Lp @ u_p, compute_periodic_cotan_laplace(mesh_p.vertices, hemesh_p, u_p, disp_p), atol=1e-10)
+# symmetric, negative semi-definite, constants in the kernel
+dense_p = Lp.todense()
+assert jnp.allclose(dense_p, dense_p.T, atol=1e-12)
+assert jnp.allclose(dense_p.sum(axis=1), 0, atol=1e-10)
+assert jnp.linalg.eigvalsh(dense_p).max() < 1e-10
+
+Mp = periodic_mass_matrix_sparse(mesh_p.vertices, hemesh_p, disp_p)
+assert jnp.all(Mp.data > 0)                                     # mixed areas are positive
+assert jnp.allclose(Mp.data.sum(), per.get_periodic_triangle_areas(mesh_p.vertices, hemesh_p, disp_p).sum(), rtol=1e-10)
+Mp_inv = periodic_mass_matrix_inv_sparse(mesh_p.vertices, hemesh_p, disp_p)
+assert jnp.allclose(Mp.todense() @ Mp_inv.todense(), jnp.eye(hemesh_p.n_vertices), atol=1e-10)
+
+# an implicit diffusion step is now assemblable on a periodic mesh: (M - dt*L) must be PD
+A_p = Mp.todense() - 0.01 * dense_p
+assert jnp.linalg.eigvalsh(A_p).min() > 0
+
+# with a huge box everything reduces to the non-periodic operators
+disp_big2 = lambda a, b: per.displacement_periodic(a, b, jnp.array([1e6, 1e6]))
+assert jnp.allclose(periodic_cotan_laplace_sparse(geommesh.vertices, hemesh, disp_big2).todense(),
+                    cotan_laplace_sparse(geommesh.vertices, hemesh).todense(), atol=1e-8)
+assert jnp.allclose(periodic_mass_matrix_sparse(geommesh.vertices, hemesh, disp_big2).data,
+                    mass_matrix_sparse(geommesh.vertices, hemesh).data, atol=1e-8)
+print("periodic sparse Laplacian and mass matrix OK; (M - dt L) is positive definite")
+```
+
+    periodic sparse Laplacian and mass matrix OK; (M - dt L) is positive definite
 
 ### Finite-element gradient
 
@@ -336,7 +525,7 @@ only depend on mesh connectivity, not geometry.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L287"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L388"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_3d
@@ -354,7 +543,7 @@ def compute_gradient_3d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L277"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L378"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_gradient_2d
@@ -372,7 +561,7 @@ def compute_gradient_2d(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L325"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L426"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_3d
@@ -398,7 +587,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L297"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L398"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gradient_sparse_2d
@@ -424,7 +613,7 @@ blocks).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L352"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L453"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### reshape_face_gradient
@@ -464,6 +653,11 @@ grad_jax = compute_gradient_2d(geommesh.vertices, hemesh, u)
 
 rel_err_grad = np.linalg.norm(np.asarray(grad_jax) - grad_igl) / np.linalg.norm(grad_igl)
 print("gradient rel. error:", rel_err_grad)
+
+assert rel_err_grad < 1e-10, rel_err_grad
+# the FE gradient is exact on a linear field
+lin = geommesh.vertices @ jnp.array([2., -3.])
+assert jnp.allclose(compute_gradient_2d(geommesh.vertices, hemesh, lin), jnp.array([2., -3.]), atol=1e-10)
 ```
 
     gradient rel. error: 1.413315746703021e-16
@@ -479,6 +673,8 @@ grad_jax_3d = compute_gradient_3d(geommesh_3d.vertices, hemesh, u)
 
 rel_err_grad_3d = np.linalg.norm(np.asarray(grad_jax_3d) - grad_igl_3d) / np.linalg.norm(grad_igl_3d)
 print("gradient rel. error:", rel_err_grad_3d)
+
+assert rel_err_grad_3d < 1e-10, rel_err_grad_3d
 ```
 
     gradient rel. error: 1.5657863888820882e-16
@@ -506,6 +702,10 @@ g2_vec = reshape_face_gradient(G2 @ u_vec, hemesh.n_faces, dim=2)
 g2_vec_apply = compute_gradient_2d(geommesh.vertices, hemesh, u_vec)
 rel_err_g2_vec = jnp.linalg.norm(g2_vec - g2_vec_apply) / jnp.linalg.norm(g2_vec_apply)
 print("2D grad (vector field) sparse vs apply rel. error:", rel_err_g2_vec)
+
+assert rel_err_g2 < 1e-10, rel_err_g2
+assert rel_err_g3 < 1e-10, rel_err_g3
+assert rel_err_g2_vec < 1e-10, rel_err_g2_vec
 ```
 
     2D grad sparse vs apply rel. error: 8.71017994729607e-17
@@ -527,7 +727,7 @@ cotan-Laplacian). In matrix form, `div = -G^T @ diag(face_areas)`.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L419"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L522"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_divergence_3d
@@ -550,7 +750,7 @@ but for surfaces embedded in 3D.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L381"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L482"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### compute_divergence_2d
@@ -591,10 +791,140 @@ lap_3d_via_div = compute_divergence_3d(geommesh_3d.vertices, hemesh, grad_u_3d)
 
 rel_err_div_3d = jnp.linalg.norm(lap_3d_direct - lap_3d_via_div) / jnp.linalg.norm(lap_3d_direct)
 print("div(grad u) vs L u rel. error (3D):", rel_err_div_3d)
+
+assert rel_err_div < 1e-10, rel_err_div
+assert rel_err_div_3d < 1e-10, rel_err_div_3d
+
+# divergence must also accept the vector/tensor face fields that the gradient produces
+u_vec_div = geommesh.vertices
+grad_vec = compute_gradient_2d(geommesh.vertices, hemesh, u_vec_div)
+div_vec = compute_divergence_2d(geommesh.vertices, hemesh, grad_vec)
+assert div_vec.shape == u_vec_div.shape
+assert jnp.allclose(div_vec, compute_cotan_laplace(geommesh.vertices, hemesh, u_vec_div), atol=1e-10)
+
+# adjointness: <grad u, grad u>_A == -<u, div grad u>
+areas = geom.get_triangle_areas(geommesh.vertices, hemesh)
+lhs = float(((grad_u * grad_u).sum(-1) * areas).sum())
+rhs = -float((u_div * lap_via_div).sum())
+assert abs(lhs - rhs) / abs(lhs) < 1e-10, (lhs, rhs)
 ```
 
     div(grad u) vs L u rel. error: 1.9619010887668085e-16
     div(grad u) vs L u rel. error (3D): 1.7564257633615683e-16
+
+### Normal derivative (flux across an edge)
+
+The normal derivative gives the flux of ∇*u* across each half-edge,
+integrated along the dual edge segment inside the corresponding face. It
+is the per-half-edge quantity from which the cotangent Laplacian is
+assembled, and is what you need to impose Neumann boundary conditions or
+to evaluate a discrete divergence theorem over a sub-region.
+
+Compare
+[`igl.normal_derivative`](https://libigl.github.io/libigl-python-bindings/igl_docs/#normal_derivative).
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L585"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### normal_derivative_sparse
+
+``` python
+
+def normal_derivative_sparse(
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    hemesh:HeMesh, # Half-edge mesh.
+)->BCOO: # Sparse matrix of shape ``(n_hes, n_vertices)``.
+
+```
+
+*Sparse matrix form of
+[`compute_normal_derivative`](https://nikolas-claussen.github.io/triangulax/src/linear_operators.html#compute_normal_derivative),
+of shape `(n_hes, n_vertices)`.*
+
+`normal_derivative_sparse(v, h) @ u == compute_normal_derivative(v, h, u)`.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L543"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### compute_normal_derivative
+
+``` python
+
+def compute_normal_derivative(
+    vertices:Float[Array, 'n_vertices dim'], # Vertex positions.
+    hemesh:HeMesh, # Half-edge mesh.
+    vertex_field:Float[Array, 'n_vertices ...'], # Per-vertex scalar, vector, or tensor field.
+)->Float[Array, 'n_hes ...']: # Integrated normal derivative per half-edge, 0 on boundary half-edges.
+
+```
+
+*Integrated normal derivative (flux) of a vertex field across each
+half-edge.*
+
+For half-edge `he` inside a face, this is the flux of the
+piecewise-linear gradient through the dual edge segment of that face:
+`D[he] = cot(theta_opposite(he)) / 2 * (u[dest[he]] - u[orig[he]])`,
+where `theta_opposite` is the corner angle opposite `he`. It is 0 on
+boundary half-edges, which have no face.
+
+This is the per-half-edge quantity the cotangent Laplacian is assembled
+from. The twin half-edge measures the same edge from the adjacent face
+and with the opposite sign of `u[dest] - u[orig]`, so the total flux
+across an edge is `D - D[twin]` and
+
+    ``compute_cotan_laplace(v, h, u) == -sum_he_to_vertex_incoming(h, D - D[twin])``
+
+holds to machine precision. Note the *raw* sum of `D` over all
+half-edges is not zero: the two half-edges of an edge carry different
+opposite angles, and it is the combination `D - D[twin]` that cancels
+pairwise. Summing that over a set of vertices gives the net flux across
+the set’s boundary (the discrete divergence theorem); over a closed mesh
+it is zero.
+
+``` python
+# the normal derivative is the per-half-edge quantity the Laplacian is assembled from
+u_nd = jax.random.normal(jax.random.PRNGKey(11), (hemesh.n_vertices,))
+D = compute_normal_derivative(geommesh.vertices, hemesh, u_nd)
+assert D.shape == (hemesh.n_hes,)
+assert jnp.all(D[hemesh.is_bdry_he] == 0.0)          # no face -> no flux
+
+# combining the two face contributions of each edge recovers the cotan Laplacian.
+# D[twin] carries the opposite sign of (u[dest] - u[orig]), hence the minus.
+lap_from_flux = -adj.sum_he_to_vertex_incoming(hemesh, D - D[hemesh.twin])
+assert jnp.allclose(lap_from_flux, compute_cotan_laplace(geommesh.vertices, hemesh, u_nd), atol=1e-10)
+
+# the sparse form agrees with the matrix-free one, for scalar and vector fields
+Dm = normal_derivative_sparse(geommesh.vertices, hemesh)
+assert Dm.shape == (hemesh.n_hes, hemesh.n_vertices)
+assert jnp.allclose(Dm @ u_nd, D, atol=1e-12)
+u_nd_vec = jax.random.normal(jax.random.PRNGKey(12), (hemesh.n_vertices, 3))
+assert jnp.allclose(Dm @ u_nd_vec, compute_normal_derivative(geommesh.vertices, hemesh, u_nd_vec), atol=1e-12)
+
+# a constant field has zero flux everywhere
+assert jnp.allclose(compute_normal_derivative(geommesh.vertices, hemesh, jnp.ones(hemesh.n_vertices)), 0, atol=1e-12)
+
+# divergence theorem on a CLOSED mesh: the total integrated Laplacian vanishes, because
+# each edge's flux enters its two endpoints with opposite signs.
+_cm = TriMesh.read_obj("../test_meshes/sphere.obj", dim=3)
+_ch = msh.HeMesh.from_triangles(_cm.vertices.shape[0], _cm.faces)
+u_c = jax.random.normal(jax.random.PRNGKey(13), (_ch.n_vertices,))
+D_c = compute_normal_derivative(_cm.vertices, _ch, u_c)
+flux_div = -adj.sum_he_to_vertex_incoming(_ch, D_c - D_c[_ch.twin])
+assert jnp.allclose(flux_div.sum(), 0.0, atol=1e-10)
+assert jnp.allclose(flux_div, compute_cotan_laplace(_cm.vertices, _ch, u_c), atol=1e-10)
+print("normal derivative: reproduces the cotan Laplacian and the sparse form matches")
+```
+
+    Warning: readOBJ() ignored non-comment line 3:
+      o Icosphere
+
+    normal derivative: reproduces the cotan Laplacian and the sparse form matches
 
 ### Wrapping as linear operators
 
@@ -668,12 +998,12 @@ u1 = lineax.linear_solve(A_op, rhs, solver=lineax.CG(rtol=1e-6, atol=1e-10)).val
 print("implicit Euler step completed, |u1|_2 =", jnp.linalg.norm(u1))
 ```
 
-    implicit Euler step completed, |u1|_2 = 5.586351266552912
+    implicit Euler step completed, |u1|_2 = 5.576995473050827
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L439"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/linops.py#L612"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### linear_op_to_sparse
@@ -681,15 +1011,15 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ``` python
 
 def linear_op_to_sparse(
-    op:callable, in_shape:tuple, out_shape:tuple, dtype:Union=None, chunk_size:int=256, tol:float=0.0
-)->BCOO:
+    op:Callable, # Linear map taking and returning 1d arrays.
+    in_shape:tuple, out_shape:tuple, dtype:Union=None, # Output dtype. Inferred from ``op`` if None.
+    chunk_size:int=256, # Number of one-hot probes evaluated per batch.
+    tol:float=0.0, # Entries with ``|value| <= tol`` are dropped.
+)->BCOO: # Sparse matrix of shape ``(n_out, n_in)``.
 
 ```
 
 *Build a sparse matrix for a linear map using batched one-hot probes.*
-
-Note: this function is general, but not necessarily very efficient for
-large matrix sizes.
 
 ``` python
 # compare sparse construction to lineax dense matrix (small meshes only)
@@ -703,6 +1033,7 @@ if hemesh.n_vertices <= 2000:
     print("sparse vs lineax rel. error:", rel_err_sparse)
 else:
     print("Skipping dense comparison for large mesh.")
+    assert rel_err_sparse < 1e-10, rel_err_sparse
 ```
 
     sparse vs lineax rel. error: 0.0
@@ -712,7 +1043,7 @@ else:
 
 mesh = TriMesh.read_obj("../test_meshes/torus_high_resolution.obj")
 hemesh = msh.HeMesh.from_triangles(mesh.vertices.shape[0], mesh.faces)
-geommesh = msh.GeomMesh(*hemesh.n_items, mesh.vertices, mesh.face_positions)
+geommesh = msh.GeomMesh(mesh.vertices, mesh.face_positions)
 
 laplace_op = jax.jit(functools.partial(compute_cotan_laplace, geommesh.vertices, hemesh))
 ```
@@ -721,5 +1052,7 @@ laplace_op = jax.jit(functools.partial(compute_cotan_laplace, geommesh.vertices,
       o Torus
 
 ``` python
+# ~25 s on this 36k-vertex mesh
+
 sparse_laplace_op = linear_op_to_sparse(laplace_op, (hemesh.n_vertices,), (hemesh.n_vertices,))
 ```

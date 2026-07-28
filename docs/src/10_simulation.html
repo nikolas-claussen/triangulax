@@ -182,21 +182,32 @@ window.Quarto = {
  <span class="menu-text">triangulax</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Discrete differential geometry</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../convergence_tests.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Convergence of the discrete differential-geometry operators</span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Modules &amp; API reference</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
@@ -273,13 +284,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/00_triangular_meshes.html" class="sidebar-item-text sidebar-link">
@@ -295,7 +306,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/02_mesh_optimization.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorial: Mesh optimization and inverse problems</span></a>
+ <span class="menu-text">Tutorial: Mesh optimization and inverse problems (toy examples)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -388,19 +399,20 @@ window.Quarto = {
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Signature: ``measure_fn(state) <span class="op">-&gt;</span> log``.</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>The returned pytree <span class="kw">is</span> stacked along axis <span class="dv">0</span> across <span class="bu">all</span> time steps.</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    init:State, <span class="co"># Initial simulation state (any JAX pytree).</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    timepoints:Float[Array, <span class="st">'n_steps'</span>], <span class="co"># Time points to step through. `step_fn` receives consecutive pairs.</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">tuple</span>: <span class="co"># The simulation state after the last time step.</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    timepoints:Float[Array, <span class="st">'n_steps'</span>], <span class="co"># Time points to step through. `step_fn` receives a single scalar time per</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>step (the time being stepped <span class="op">*</span>to<span class="op">*</span>), <span class="kw">not</span> a pair.</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">tuple</span>: <span class="co"># The simulation state after the last time step.</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Run a simulation by scanning <code>step_fn</code> over <code>timepoints</code>, logging via <code>measure_fn</code>.</em></p>
 <p>Wraps <code>jax.lax.scan</code>. Fully JIT- and vmap-compatible.</p>
 </section>
 <section id="test-damped-harmonic-oscillator" class="level3">
 <h3 class="anchored" data-anchor-id="test-damped-harmonic-oscillator">Test: damped harmonic oscillator</h3>
 <p>As a simple test, simulate the damped harmonic oscillator <span class="math inline">\(\ddot x = -x - 0.1 \dot x\)</span> via forward Euler, and verify that <a href="https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate"><code>simulate</code></a> gives identical results to a manual <code>jax.lax.scan</code>. For illustration purposes, we create a <code>dataclass</code> to describe the current state (position <span class="math inline">\(x\)</span>, velocity <span class="math inline">\(v\)</span>, and time <span class="math inline">\(t\)</span>) of the oscillator.</p>
-<div id="c6b9fa82" class="cell">
+<div id="c6b9fa82" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dataclasses</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="dfcaa01f" class="cell">
+<div id="dfcaa01f" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.tree_util.register_dataclass</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclasses.dataclass</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> OscState:</span>
@@ -427,7 +439,7 @@ window.Quarto = {
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> OscLog(x<span class="op">=</span>state.x,</span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                  energy<span class="op">=</span><span class="fl">0.5</span> <span class="op">*</span> state.x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> state.v<span class="op">**</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="27a11010" class="cell" data-execution_count="8">
+<div id="27a11010" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dt <span class="op">=</span> <span class="fl">0.01</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>timepoints <span class="op">=</span> jnp.arange(<span class="fl">0.0</span>, <span class="fl">50.0</span>, dt)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>init <span class="op">=</span> OscState(x<span class="op">=</span>jnp.array(<span class="fl">1.0</span>), v<span class="op">=</span>jnp.array(<span class="fl">0.0</span>), t<span class="op">=</span>timepoints[<span class="dv">0</span>])</span>
@@ -438,38 +450,25 @@ window.Quarto = {
 <pre><code>Final x=0.0985, energy decayed from 0.5000 to 0.0054</code></pre>
 </div>
 </div>
-<div id="22fe1c85" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify against manual scan</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _manual_scan_fn(state, t_next):</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    new_state <span class="op">=</span> osc_step(state, t_next)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    log <span class="op">=</span> osc_measure(new_state)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new_state, log</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>final_ref, logs_ref <span class="op">=</span> jax.lax.scan(_manual_scan_fn, init, timepoints)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs.x, logs_ref.x)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs.energy, logs_ref.energy)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(final_state.x, final_ref.x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 <section id="jit-and-vmap-compatibility" class="level4">
 <h4 class="anchored" data-anchor-id="jit-and-vmap-compatibility">JIT and vmap compatibility</h4>
-<div id="4d3c4401" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># JIT</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>simulate_jit <span class="op">=</span> jax.jit(simulate, static_argnums<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>final_jit, logs_jit <span class="op">=</span> simulate_jit(osc_step, osc_measure, init, timepoints)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_jit.x, logs.x)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># vmap over batch of initial conditions</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>init_batch <span class="op">=</span> OscState(x<span class="op">=</span>jnp.array([<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>]),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                      v<span class="op">=</span>jnp.zeros(<span class="dv">3</span>),</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                      t<span class="op">=</span>jnp.zeros(<span class="dv">3</span>))</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>final_batch, logs_batch <span class="op">=</span> jax.vmap(simulate, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="va">None</span>, <span class="dv">0</span>, <span class="va">None</span>))(</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init_batch, timepoints)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> logs_batch.x.shape <span class="op">==</span> (<span class="dv">3</span>, <span class="bu">len</span>(timepoints))</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># first batch element should match the single-run result</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_batch.x[<span class="dv">0</span>], logs.x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="4d3c4401" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># JIT</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>simulate_jit <span class="op">=</span> jax.jit(simulate, static_argnums<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>final_jit, logs_jit <span class="op">=</span> simulate_jit(osc_step, osc_measure, init, timepoints)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_jit.x, logs.x)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># vmap over batch of initial conditions</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>init_batch <span class="op">=</span> OscState(x<span class="op">=</span>jnp.array([<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>]),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                      v<span class="op">=</span>jnp.zeros(<span class="dv">3</span>),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                      t<span class="op">=</span>jnp.zeros(<span class="dv">3</span>))</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>final_batch, logs_batch <span class="op">=</span> jax.vmap(simulate, in_axes<span class="op">=</span>(<span class="va">None</span>, <span class="va">None</span>, <span class="dv">0</span>, <span class="va">None</span>))(</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init_batch, timepoints)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> logs_batch.x.shape <span class="op">==</span> (<span class="dv">3</span>, <span class="bu">len</span>(timepoints))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># first batch element should match the single-run result</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_batch.x[<span class="dv">0</span>], logs.x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -478,49 +477,50 @@ window.Quarto = {
 <p><code>jax.lax.scan</code> compiles the entire loop, so there is no opportunity to run Python code (save to disk, print progress, etc.) mid-simulation. <a href="https://nikolas-claussen.github.io/triangulax/src/simulation.html#chunked_simulate"><code>chunked_simulate</code></a> splits the time points into chunks and runs <code>jax.lax.scan</code> on each chunk in a Python loop. Between chunks, an optional <code>on_chunk</code> callback is called with the current state, chunk logs, and chunk index — useful for checkpointing, logging, or early stopping.</p>
 <p><strong>Trade-off</strong>: Smaller chunks = more frequent callbacks, but each chunk incurs a small dispatch overhead.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/simulation.py#L60" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/simulation.py#L62" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="chunked_simulate" class="level3">
 <h3 class="anchored" data-anchor-id="chunked_simulate">chunked_simulate</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> chunked_simulate(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    step_fn:Callable, <span class="co"># Advances the simulation state. Same as :func:[`simulate`](https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate).</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    measure_fn:Callable, <span class="co"># Extracts measurements. Same as :func:[`simulate`](https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate).</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    init:State, <span class="co"># Initial simulation state.</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    timepoints:Float[Array, <span class="st">'n_steps'</span>], <span class="co"># Time points to step through.</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    chunk_size:<span class="bu">int</span>, <span class="co"># Number of time steps per chunk.</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    on_chunk:Union<span class="op">=</span><span class="va">None</span>, <span class="co"># Callback invoked after each chunk with ``(state, chunk_logs, chunk_index)``.</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>Runs <span class="kw">in</span> Python (<span class="kw">not</span> JIT<span class="st">'d), so it can do I/O.</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="er">)-&gt;tuple: # The simulation state after the last time step.</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> chunked_simulate(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    step_fn:Callable, <span class="co"># Advances the simulation state. Same as :func:[`simulate`](https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate).</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    measure_fn:Callable, <span class="co"># Extracts measurements. Same as :func:[`simulate`](https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate).</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    init:State, <span class="co"># Initial simulation state.</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    timepoints:Float[Array, <span class="st">'n_steps'</span>], <span class="co"># Time points to step through.</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    chunk_size:<span class="bu">int</span>, <span class="co"># Number of time steps per chunk.</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    on_chunk:Union<span class="op">=</span><span class="va">None</span>, <span class="co"># Callback invoked after each chunk with ``(state, chunk_logs, chunk_index)``.</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>Runs <span class="kw">in</span> Python (<span class="kw">not</span> JIT<span class="st">'d), so it can do I/O. Its return value is ignored.</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="er">)-&gt;tuple: # The simulation state after the last time step.</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Run a simulation in chunks, with an optional callback between chunks.</em></p>
-<p>Each chunk is executed as a single <code>jax.lax.scan</code>. Between chunks, the <code>on_chunk</code> callback is called in Python, enabling checkpointing, progress reporting, or early stopping.</p>
+<p>Each chunk is executed as a single <code>jax.lax.scan</code>. Between chunks, the <code>on_chunk</code> callback is called in Python, enabling checkpointing or progress reporting. Its return value is ignored, so it cannot stop the simulation early.</p>
+<p>Produces exactly the same trajectory as :func:<a href="https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate"><code>simulate</code></a>, including when <code>n_steps</code> is not a multiple of <code>chunk_size</code>. Note all chunk logs are accumulated and concatenated at the end, so this saves no log memory relative to :func:<a href="https://nikolas-claussen.github.io/triangulax/src/simulation.html#simulate"><code>simulate</code></a>.</p>
 <section id="test-chunked-simulation-matches-single-pass" class="level4">
 <h4 class="anchored" data-anchor-id="test-chunked-simulation-matches-single-pass">Test: chunked simulation matches single-pass</h4>
-<div id="a30abacb" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># chunked simulation with chunk_size=1000 should match single-pass exactly</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>chunk_log <span class="op">=</span> []</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> on_chunk_cb(state, logs, chunk_idx):</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    chunk_log.append(chunk_idx)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>final_chunked, logs_chunked <span class="op">=</span> chunked_simulate(</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init, timepoints, chunk_size<span class="op">=</span><span class="dv">1000</span>, on_chunk<span class="op">=</span>on_chunk_cb)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_chunked.x, logs.x)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_chunked.energy, logs.energy)</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(final_chunked.x, final_state.x)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(chunk_log) <span class="op">==</span> <span class="dv">5</span>  <span class="co"># 5000 steps / 1000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a30abacb" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># chunked simulation with chunk_size=1000 should match single-pass exactly</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>chunk_log <span class="op">=</span> []</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> on_chunk_cb(state, logs, chunk_idx):</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    chunk_log.append(chunk_idx)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>final_chunked, logs_chunked <span class="op">=</span> chunked_simulate(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init, timepoints, chunk_size<span class="op">=</span><span class="dv">1000</span>, on_chunk<span class="op">=</span>on_chunk_cb)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_chunked.x, logs.x)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_chunked.energy, logs.energy)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(final_chunked.x, final_state.x)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(chunk_log) <span class="op">==</span> <span class="dv">5</span>  <span class="co"># 5000 steps / 1000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="091e63f8" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test with non-divisible chunk size</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>final_chunked2, logs_chunked2 <span class="op">=</span> chunked_simulate(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init, timepoints, chunk_size<span class="op">=</span><span class="dv">1500</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> logs_chunked2.x.shape <span class="op">==</span> logs.x.shape</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_chunked2.x, logs.x)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Non-divisible chunks: shape </span><span class="sc">{</span>logs_chunked2<span class="sc">.</span>x<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">, results match."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="091e63f8" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test with non-divisible chunk size</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>final_chunked2, logs_chunked2 <span class="op">=</span> chunked_simulate(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init, timepoints, chunk_size<span class="op">=</span><span class="dv">1500</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> logs_chunked2.x.shape <span class="op">==</span> logs.x.shape</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_chunked2.x, logs.x)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Non-divisible chunks: shape </span><span class="sc">{</span>logs_chunked2<span class="sc">.</span>x<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">, results match."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Non-divisible chunks: shape (5000,), results match.</code></pre>
 </div>
@@ -531,70 +531,72 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="example-checkpointing-to-disk-with-orbax">Example: checkpointing to disk with orbax</h3>
 <p>A common use case for <code>on_chunk</code> is saving the simulation state to disk between chunks, so a long simulation can be resumed after a crash. The <a href="https://orbax.readthedocs.io/en/latest/">orbax-checkpoint</a> library (maintained by the JAX team) handles serialization of arbitrary JAX pytrees, including registered dataclasses like <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> or <code>SimState</code> Alternatively, the <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a> and <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#geommesh"><code>GeomMesh</code></a> classes have their own <code>.save()</code> / <code>.load()</code> methods that write to <code>.npz</code> archives.</p>
 <p>Below is a minimal example using orbax. Note: <code>orbax</code> is an optional dependency — it is not required by <code>triangulax</code> itself.</p>
-<div id="6770a72e" class="cell" data-execution_count="37">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tempfile, os</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> orbax.checkpoint <span class="im">as</span> ocp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="6770a72e" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tempfile, os</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> orbax.checkpoint <span class="im">as</span> ocp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a580534f" class="cell" data-execution_count="38">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a temporary directory for checkpoints</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ckpt_dir <span class="op">=</span> tempfile.mkdtemp()</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define an on_chunk callback that saves the state after each chunk</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>checkpointer <span class="op">=</span> ocp.StandardCheckpointer()</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> checkpoint_callback(state, chunk_logs, chunk_idx):</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    path <span class="op">=</span> os.path.join(ckpt_dir, <span class="ss">f"chunk_</span><span class="sc">{</span>chunk_idx<span class="sc">:04d}</span><span class="ss">"</span>)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    checkpointer.save(path, state)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Chunk </span><span class="sc">{</span>chunk_idx<span class="sc">}</span><span class="ss">: saved checkpoint to </span><span class="sc">{</span>path<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Run chunked simulation with checkpointing</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>final_ckpt, logs_ckpt <span class="op">=</span> chunked_simulate(</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init, timepoints, chunk_size<span class="op">=</span><span class="dv">2500</span>,</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    on_chunk<span class="op">=</span>checkpoint_callback)</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_ckpt.x, logs.x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a580534f" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a temporary directory for checkpoints</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ckpt_dir <span class="op">=</span> tempfile.mkdtemp()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define an on_chunk callback that saves the state after each chunk</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>checkpointer <span class="op">=</span> ocp.StandardCheckpointer()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> checkpoint_callback(state, chunk_logs, chunk_idx):</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    path <span class="op">=</span> os.path.join(ckpt_dir, <span class="ss">f"chunk_</span><span class="sc">{</span>chunk_idx<span class="sc">:04d}</span><span class="ss">"</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    checkpointer.save(path, state)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Chunk </span><span class="sc">{</span>chunk_idx<span class="sc">}</span><span class="ss">: saved checkpoint to </span><span class="sc">{</span>path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Run chunked simulation with checkpointing</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>final_ckpt, logs_ckpt <span class="op">=</span> chunked_simulate(</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    osc_step, osc_measure, init, timepoints, chunk_size<span class="op">=</span><span class="dv">2500</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    on_chunk<span class="op">=</span>checkpoint_callback)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(logs_ckpt.x, logs.x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Chunk 0: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmpfj_ii7hd/chunk_0000
-  Chunk 1: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmpfj_ii7hd/chunk_0001</code></pre>
+<pre><code>  Chunk 0: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmp3v_jyqaz/chunk_0000
+  Chunk 1: saved checkpoint to /var/folders/vm/1jl6rjln6n9cjt54vsr9n4800000gr/T/tmp3v_jyqaz/chunk_0001</code></pre>
 </div>
 </div>
-<div id="e184d163" class="cell" data-execution_count="39">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore from the last checkpoint and verify it matches the final state</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>restored <span class="op">=</span> checkpointer.restore(os.path.join(ckpt_dir, <span class="st">"chunk_0001"</span>), init)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(restored.x, final_ckpt.x)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(restored.v, final_ckpt.v)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Restored state matches final state: x=</span><span class="sc">{</span>restored<span class="sc">.</span>x<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># To resume a simulation from a checkpoint, pass the restored state as `init`:</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># final_state, logs = simulate(step_fn, measure_fn, restored_state, remaining_timepoints)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e184d163" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore from the last checkpoint and verify it matches the final state</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>restored <span class="op">=</span> checkpointer.restore(os.path.join(ckpt_dir, <span class="st">"chunk_0001"</span>), init)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(restored.x, final_ckpt.x)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> jnp.allclose(restored.v, final_ckpt.v)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Restored state matches final state: x=</span><span class="sc">{</span>restored<span class="sc">.</span>x<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># To resume a simulation from a checkpoint, pass the restored state as `init`:</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># final_state, logs = simulate(step_fn, measure_fn, restored_state, remaining_timepoints)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Restored state matches final state: x=0.0985</code></pre>
 </div>
 </div>
 <p>You can also use <code>orbax</code> to save meshes, like so:</p>
-<div id="0449a859" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.triangular <span class="im">import</span> TriMesh</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.mesh <span class="im">import</span> HeMesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0449a859" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.triangular <span class="im">import</span> TriMesh</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.mesh <span class="im">import</span> HeMesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="06bff701" class="cell" data-execution_count="36">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>ckpt_dir <span class="op">=</span> tempfile.mkdtemp()</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>path_hemesh <span class="op">=</span> os.path.join(ckpt_dir, <span class="st">"mesh-orbax"</span>)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>checkpointer.save(path_hemesh, hemesh)</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>restored_hemesh <span class="op">=</span> HeMesh(<span class="op">**</span>checkpointer.restore(path_hemesh,))</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">==</span> restored_hemesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="06bff701" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># (needs orbax, an optional 'tutorials' dependency, and the cells above)</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>mesh <span class="op">=</span> TriMesh.read_obj(<span class="st">"../test_meshes/disk.obj"</span>, dim<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">=</span> HeMesh.from_triangles(mesh.vertices.shape[<span class="dv">0</span>], mesh.faces)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>ckpt_dir <span class="op">=</span> tempfile.mkdtemp()</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>path_hemesh <span class="op">=</span> os.path.join(ckpt_dir, <span class="st">"mesh-orbax"</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>checkpointer.save(path_hemesh, hemesh)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>restored_hemesh <span class="op">=</span> HeMesh(<span class="op">**</span>checkpointer.restore(path_hemesh,))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>hemesh <span class="op">==</span> restored_hemesh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o flat_tri_ecmc</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="36">
+<div class="cell-output cell-output-display" data-execution_count="19">
 <pre><code>True</code></pre>
 </div>
 </div>

@@ -17,9 +17,10 @@ In 3D, query points off the surface are assigned the value at the
 closest surface point.
 
 Everything is compatible with `jax.jit` and automatic differentiation.
-Note that the brute-force search is less efficient than a spatial data
-structure (e.g. kD-tree or AABB tree), which are unfortunately is hard
-to express efficiently in JAX.
+We use brute-force search to find the closest point, which less
+efficient than a spatial data structure (e.g. kD-tree or AABB tree).
+These are unfortunately is harder to implement efficiently in JAX, and
+currently out of scope.
 
 ### Closest-point helpers
 
@@ -90,7 +91,7 @@ assert jnp.allclose(get_closest_point_on_triangle(jnp.array([2., 0.25, 0.25]), *
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/interp.py#L129"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/interp.py#L135"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### find_closest_faces
@@ -135,7 +136,7 @@ assert jnp.allclose(closest3d[0], jnp.array([0.2, 0.3, 0.]), atol=1e-10)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/interp.py#L173"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/interp.py#L182"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### interpolate_barycentric
@@ -240,14 +241,14 @@ precision is acceptable.
 ``` python
 ```
 
-    4.26 ms ± 67 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+    4.37 ms ± 118 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)
 
 ``` python
 interpolate_barycentric_jit = jax.jit(interpolate_barycentric)
 _ = interpolate_barycentric_jit(points3d, vertices3d, faces3d, values3d)
 ```
 
-    18.6 ms ± 165 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+    19.2 ms ± 245 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)
 
 ``` python
 points3d_f32, vertices3d_f32 = points3d.astype(jnp.float32), vertices3d.astype(jnp.float32)
@@ -255,4 +256,4 @@ values3d_f32 = values3d.astype(jnp.float32)
 _ = interpolate_barycentric_jit(points3d_f32, vertices3d_f32, faces3d, values3d_f32)
 ```
 
-    14.5 ms ± 117 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+    15.5 ms ± 132 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)

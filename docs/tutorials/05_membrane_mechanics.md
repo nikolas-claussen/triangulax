@@ -327,6 +327,19 @@ jnp.abs(H_laplace).mean()
 
     Array(0.06962044, dtype=float64)
 
+``` python
+np.abs(H_laplace[hemesh.is_bdry]).max(), np.abs(H_laplace[~hemesh.is_bdry]).max()
+```
+
+    (np.float64(0.5390202171396088), np.float64(0.002757286242960365))
+
+``` python
+p = meshplot.plot(vertices_iterated[-1], hemesh.faces, np.array(H_laplace),
+                  shading={"wireframe":True}, return_plot=True)
+```
+
+    Renderer(camera=PerspectiveCamera(children=(DirectionalLight(color='white', intensity=0.6, position=(-0.001874…
+
 ### Helfrich energy
 
 Next, let’s consider a membrane for which the surface tension is
@@ -389,10 +402,13 @@ Gaussian curvature, and the cell areas from the geometry module to
 discretize the energy integral:
 
 ``` python
-cell_areas = geom.get_voronoi_areas_robust(vertices, hemesh)
-H = geom.get_mean_curvature_dihedral(vertices, hemesh, normalize=True)
-K = geom.get_gaussian_curvature(vertices, hemesh)
-energy = ((kappa_H/2 * (H - H0)**2 + kappa_K * K) * cell_areas).sum()
+def get_helfrich_energy(vertices, args):
+    hemesh, H0, kappa_H, kappa_K = args
+    cell_areas = geom.get_voronoi_areas_robust(vertices, hemesh)
+    H = geom.get_mean_curvature_dihedral(vertices, hemesh, normalize=True)
+    K = geom.get_gaussian_curvature(vertices, hemesh)
+    energy = ((kappa_H/2 * (H - H0)**2 + kappa_K * K) * cell_areas).sum()
+    return energy
 ```
 
 As you can see, defining modified energies from the geometric building
@@ -407,7 +423,7 @@ get_helfrich_energy = jax.jit(elastic.get_helfrich_energy)
 # args = (hemesh, H0, kappa_H, kappa_K). We set the Gaussian modulus kappa_K = 0:
 
 args = (hemesh, 0.0, 1.0, 0.0)
-# exact helfrich for a sphere is 2*pi, here smaller due to discretization error. The energy is scale invariant.
+# exact helfrich for a sphere is 2*pi (note the discretization error). The energy is scale invariant.
 get_helfrich_energy(trimesh.vertices, args), get_helfrich_energy(2*trimesh.vertices, args), 2*np.pi
 ```
 
@@ -486,7 +502,6 @@ can compute using JAX. Here, we use the JAX-based optimization library
 `optimistix`.
 
 ``` python
-#solver = optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=0.5*1e-2)
 solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
 
 y0 = deformed_vertices
@@ -502,7 +517,7 @@ print("Initial/final/minimal energy:", get_helfrich_energy(y0, args),
                                        get_helfrich_energy(trimesh.vertices, args))
 ```
 
-    Initial/final/minimal energy: 7.118657237550065 6.294315988091331 6.293261081171555
+    Initial/final/minimal energy: 7.118657237550065 6.294327240862531 6.293261081171555
 
 ``` python
 # displacement from initial condition.
@@ -510,7 +525,7 @@ print("Initial/final/minimal energy:", get_helfrich_energy(y0, args),
 jnp.linalg.norm(y0-sol.value, axis=-1).mean(), jnp.linalg.norm(y0-trimesh.vertices, axis=-1).mean()
 ```
 
-    (Array(0.04972836, dtype=float64), Array(0.12507872, dtype=float64))
+    (Array(0.049651, dtype=float64), Array(0.12507872, dtype=float64))
 
 ``` python
 # after minimization, the deviation from being a perfect sphere is fairly low
@@ -521,7 +536,7 @@ Rs =  jnp.linalg.norm(vertices_final - center, axis=1)
 Rs.std() / Rs.mean()
 ```
 
-    Array(0.0003852, dtype=float64)
+    Array(0.000438, dtype=float64)
 
 ``` python
 p = meshplot.plot(np.array(y0), np.array(hemesh.faces), np.array(grad_norm),shading={"wireframe":True},
@@ -595,6 +610,7 @@ V0 = 0.8 * geom.get_volume(trimesh.vertices, hemesh)
 kappa, H0 = 1.0, 0.0
 mu_A = 300.0
 mu_V = 600.0
+
 args = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
 
 y0 = trimesh.vertices * np.array([1, 1.05, 1]) # start from stretched configuration to break symmetrty
@@ -602,8 +618,6 @@ y0 = trimesh.vertices * np.array([1, 1.05, 1]) # start from stretched configurat
 
 ``` python
 solver = optimistix.GradientDescent(rtol=1e-8, atol=1e-8, learning_rate=1e-3)
-#solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
-
 sol = optimistix.minimise(get_helfrich_energy_with_penalty, solver, y0, args, max_steps=10000, throw=False)
 
 vertices_final = sol.value
@@ -617,6 +631,8 @@ geom.get_area(vertices_final, hemesh)/A0, geom.get_volume(vertices_final, hemesh
     (Array(0.99227256, dtype=float64), Array(1.03085984, dtype=float64))
 
 ``` python
+grad_norm = jnp.linalg.norm(jax.grad(get_helfrich_energy_with_penalty)(y0, args), axis=-1)
+
 p = meshplot.plot(np.array(y0), np.array(hemesh.faces), np.array(grad_norm),
                   shading={"wireframe":True}, return_plot=True)
 
@@ -644,13 +660,13 @@ IFrame(src="tutorial_plots/05_constrained_optimization.html", width="100%", heig
 ### Regularization tangential mesh motion
 
 If you play around with the above code, you will notice that it is
-rather unstable (try using a different minimizer). The reason is the
-*reparametrization* invariance of the Helfrich energy - moving vertices
-in the local tangent plane does not change the energy. This means the
-optimization landscape has flat directions that cause mesh degeneration,
-leading to numerical instability. To avoid this, we can add a smoothing
-step that repositions the vertices tangentially to improve mesh quality
-between energy minimization steps.
+rather unstable. The reason is the *reparametrization* invariance of the
+Helfrich energy - moving vertices in the local tangent plane does not
+change the energy. This means the optimization landscape has flat
+directions that cause mesh degeneration, leading to numerical
+instability. To avoid this, we can add a smoothing step that repositions
+the vertices tangentially to improve mesh quality between energy
+minimization steps.
 
 ``` python
 solver = optimistix.NonlinearCG(rtol=1e-8, atol=1e-8)
@@ -673,7 +689,7 @@ for i in range(n_iterations):
 geom.get_area(vertices_smoothed, hemesh)/A0, geom.get_volume(vertices_smoothed, hemesh)/V0
 ```
 
-    (Array(0.99570047, dtype=float64), Array(1.01750478, dtype=float64))
+    (Array(0.99569104, dtype=float64), Array(1.01753752, dtype=float64))
 
 ``` python
 p = meshplot.plot(np.array(y0), np.array(hemesh.faces), np.array(grad_norm),
@@ -775,17 +791,17 @@ where *P*<sub>**n**</sub> = **n** ⊗ **n** is the projecion operator
 
 ``` python
 A0 = geom.get_area(trimesh.vertices, hemesh)
-V0 = 0.75 * geom.get_volume(trimesh.vertices, hemesh)
+V0 = 0.8 * geom.get_volume(trimesh.vertices, hemesh)
 metric_orig = elastic.get_metric(trimesh.vertices, hemesh)
 
 kappa, H0 = 1.0, 0.0
-mu_A, mu_V = 300.0, 600.0
+mu_A, mu_V = 300, 600
 args_helfrich_penalty = (hemesh, H0, kappa, mu_A, mu_V, A0, V0)
 
 mod_bulk, mod_shear = 1.0, 1.0 # strength of regularization
 args_elastic = (hemesh, metric_orig, mod_bulk, mod_shear)
 
-step_size = 0.5*1e-3
+step_size = 1e-3
 
 @jax.jit
 def get_step(vertices):
@@ -801,7 +817,7 @@ def get_step(vertices):
 ``` python
 n_iterations = 20000
 
-vertices_initial = trimesh.vertices * np.array([0.95, 1.1, 0.95]) # start from a stretched configuration
+vertices_initial = trimesh.vertices * np.array([1, 1.05, 1]) # start from a stretched configuration
 v_opt = jnp.copy(vertices_initial)
 for t in range(n_iterations):
     v_opt = v_opt - step_size * get_step(v_opt)
@@ -817,16 +833,16 @@ print(f"Helfrich energy: {get_helfrich_energy(v_opt, (hemesh, H0, kappa, 0.0)):.
 algo.get_mesh_quality_stats(v_opt, hemesh)
 ```
 
-    Physical energy gradient norm: 0.0039
-    A/A0 = 0.9950,  V/V0 = 1.0204
-    Helfrich energy: 9.1663
+    Physical energy gradient norm: 0.0004
+    A/A0 = 0.9957,  V/V0 = 1.0175
+    Helfrich energy: 8.4896
 
-    {'areas_min': 0.00451,
-     'areas_max': 0.01958,
-     'areas_cv': 0.50785,
-     'max_angle': 96.26808,
-     'min_angle': 33.31538,
-     'angles_std': 16.72197,
+    {'areas_min': 0.00529,
+     'areas_max': 0.0167,
+     'areas_cv': 0.36477,
+     'max_angle': 93.18212,
+     'min_angle': 34.72675,
+     'angles_std': 14.39114,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -975,16 +991,16 @@ v_opt, history = alternating_minimize(
         3 | E_phys=16.9878 | E_param=0.714379 | angles=[40.6°, 80.5°] | degen=0
         4 | E_phys=15.8328 | E_param=0.816525 | angles=[39.5°, 80.1°] | degen=0
         5 | E_phys=14.9033 | E_param=0.975853 | angles=[38.4°, 81.9°] | degen=0
-        6 | E_phys=13.5897 | E_param=1.896049 | angles=[33.4°, 85.8°] | degen=0
-        7 | E_phys=11.5697 | E_param=1.978953 | angles=[35.4°, 90.0°] | degen=0
-        8 | E_phys=11.0483 | E_param=2.002730 | angles=[33.9°, 90.0°] | degen=0
-        9 | E_phys=10.7725 | E_param=2.026758 | angles=[33.3°, 90.4°] | degen=0
-       10 | E_phys=9.7762 | E_param=2.436826 | angles=[32.6°, 93.7°] | degen=0
-       11 | E_phys=9.6403 | E_param=2.428811 | angles=[32.4°, 95.7°] | degen=0
-       12 | E_phys=9.5278 | E_param=2.569646 | angles=[32.1°, 96.4°] | degen=0
-       13 | E_phys=9.4946 | E_param=2.589421 | angles=[31.9°, 97.0°] | degen=0
-       14 | E_phys=9.4817 | E_param=2.596742 | angles=[31.7°, 97.3°] | degen=0
-       15 | E_phys=9.3556 | E_param=3.064751 | angles=[30.9°, 99.9°] | degen=0
+        6 | E_phys=13.5897 | E_param=1.896048 | angles=[33.4°, 85.8°] | degen=0
+        7 | E_phys=11.5697 | E_param=1.978956 | angles=[35.4°, 90.0°] | degen=0
+        8 | E_phys=11.0484 | E_param=2.002722 | angles=[33.9°, 90.0°] | degen=0
+        9 | E_phys=10.7718 | E_param=2.026574 | angles=[33.3°, 90.4°] | degen=0
+       10 | E_phys=9.7942 | E_param=2.561799 | angles=[31.4°, 93.0°] | degen=0
+       11 | E_phys=9.5167 | E_param=2.547801 | angles=[32.5°, 96.5°] | degen=0
+       12 | E_phys=9.4445 | E_param=2.738448 | angles=[31.7°, 98.5°] | degen=0
+       13 | E_phys=9.3988 | E_param=2.775340 | angles=[31.2°, 98.6°] | degen=0
+       14 | E_phys=9.3833 | E_param=2.791059 | angles=[31.1°, 98.8°] | degen=0
+       15 | E_phys=9.3610 | E_param=2.868348 | angles=[30.8°, 99.0°] | degen=0
 
 ``` python
 # check constraints and mesh quality
@@ -995,16 +1011,16 @@ print(f"Helfrich energy: {get_helfrich_energy(v_opt, (hemesh, H0, kappa, 0.0)):.
 algo.get_mesh_quality_stats(v_opt, hemesh)
 ```
 
-    gradient norm: 0.0632
-    A/A0 = 0.9949,  V/V0 = 1.0182
-    Helfrich energy: 9.2071
+    gradient norm: 0.2236
+    A/A0 = 0.9937,  V/V0 = 1.0260
+    Helfrich energy: 9.0851
 
-    {'areas_min': 0.00481,
-     'areas_max': 0.0179,
-     'areas_cv': 0.4205,
-     'max_angle': 99.88617,
-     'min_angle': 30.88945,
-     'angles_std': 17.94072,
+    {'areas_min': 0.00511,
+     'areas_max': 0.01742,
+     'areas_cv': 0.39952,
+     'max_angle': 99.0213,
+     'min_angle': 30.7824,
+     'angles_std': 17.5942,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -1024,7 +1040,7 @@ axes[2].legend()
 fig.tight_layout()
 ```
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-64-output-1.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-66-output-1.png)
 
 ``` python
 # visualize initial and optimized shape
@@ -1224,12 +1240,12 @@ v_al, lam_al, history_al = augmented_lagrangian_method(
     mu0=10.0, mu_growth=2.0, max_outer=6, atol=1e-4)
 ```
 
-      AL  0 | obj=7.8166 | c=[-1.94e-01, 4.28e-01] | |∇L|=8.87e-01 | λ=[0.0000, 0.0000] | μ=10.0
-      AL  1 | obj=9.0543 | c=[-2.56e-02, 1.05e-01] | |∇L|=9.85e-01 | λ=[1.9412, -4.2842] | μ=20.0
-      AL  2 | obj=9.6483 | c=[1.78e-02, -4.01e-02] | |∇L|=7.95e-01 | λ=[2.4531, -6.3784] | μ=40.0
-      AL  3 | obj=9.5120 | c=[3.65e-03, -1.14e-02] | |∇L|=1.30e-01 | λ=[1.7404, -4.7747] | μ=80.0
-      AL  4 | obj=9.4639 | c=[9.27e-05, -1.69e-04] | |∇L|=3.44e-02 | λ=[1.4487, -3.8633] | μ=160.0
-      AL  5 | obj=9.4635 | c=[2.67e-05, -8.93e-05] | |∇L|=1.33e-02 | λ=[1.4339, -3.8362] | μ=320.0
+      AL  0 | obj=7.8482 | c=[-1.98e-01, 4.15e-01] | |∇L|=1.33e+00 | λ=[0.0000, 0.0000] | μ=10.0
+      AL  1 | obj=9.3718 | c=[1.07e-02, 2.89e-02] | |∇L|=8.15e-01 | λ=[1.9847, -4.1544] | μ=20.0
+      AL  2 | obj=9.5386 | c=[6.76e-03, -1.71e-02] | |∇L|=1.54e-01 | λ=[1.7711, -4.7321] | μ=40.0
+      AL  3 | obj=9.4749 | c=[8.02e-04, -2.82e-03] | |∇L|=9.13e-02 | λ=[1.5006, -4.0467] | μ=80.0
+      AL  4 | obj=9.4635 | c=[5.53e-05, -8.34e-05] | |∇L|=3.63e-02 | λ=[1.4364, -3.8207] | μ=160.0
+      AL  5 | obj=9.4632 | c=[9.12e-06, -2.47e-06] | |∇L|=1.32e-02 | λ=[1.4276, -3.8074] | μ=320.0
 
 ``` python
 # --- Diagnostics ---
@@ -1242,17 +1258,17 @@ print(f"Final μ: {history_al[-1]['mu']:.1f}")
 algo.get_mesh_quality_stats(v_al, hemesh)
 ```
 
-    Helfrich energy: 9.4635
-    A/A0 = 1.000002,  V/V0 = 0.999971
-    Lagrange multipliers (tension, pressure): λ = [ 1.42534983 -3.80762343]
+    Helfrich energy: 9.4632
+    A/A0 = 1.000001,  V/V0 = 0.999999
+    Lagrange multipliers (tension, pressure): λ = [ 1.42464761 -3.80661506]
     Final μ: 320.0
 
     {'areas_min': 0.005,
      'areas_max': 0.01798,
-     'areas_cv': 0.43516,
-     'max_angle': 103.60756,
-     'min_angle': 26.86507,
-     'angles_std': 19.67602,
+     'areas_cv': 0.43509,
+     'max_angle': 103.60329,
+     'min_angle': 26.86942,
+     'angles_std': 19.6744,
      'n_degenerate': 0,
      'n_total_faces': 1280}
 
@@ -1285,7 +1301,7 @@ axes[3].set(xlabel="AL iteration", ylabel="$\\mu$", title="Penalty parameter")
 fig.tight_layout()
 ```
 
-![](05_membrane_mechanics_files/figure-commonmark/cell-71-output-1.png)
+![](05_membrane_mechanics_files/figure-commonmark/cell-73-output-1.png)
 
 ``` python
 # --- Visualize initial and AL-optimized shape ---
