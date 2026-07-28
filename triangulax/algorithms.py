@@ -153,14 +153,14 @@ def is_locally_delaunay(vertices: Float[jax.Array, "n_vertices dim"],
 # %% ../nbs/src/09_algorithms.ipynb #7f69059d
 def fix_delaunay(vertices: Float[jax.Array, "n_vertices dim"],
                  hemesh: msh.HeMesh,
-                 max_iters: int = 2) -> tuple[msh.HeMesh, Int[jax.Array, ""]]:
+                 max_iters: int = 2, max_flips: int = 10) -> tuple[msh.HeMesh, Int[jax.Array, ""]]:
     """Flip non-Delaunay edges iteratively until convergence.
 
     Each iteration identifies non-Delaunay interior edges and flips them
-    using ``topology.flip_all``.  Stops when no more flips are needed
+    using ``topology.flip_by_score``.  Stops when no more flips are needed
     or ``max_iters`` is reached.
 
-    Important: when JIT-compiling, use jax.jit with static_argnames=['max_iters'].
+    Important: when JIT-compiling, use jax.jit with static_argnames=['max_iters', 'max_flips'].
 
     Parameters
     ----------
@@ -170,7 +170,8 @@ def fix_delaunay(vertices: Float[jax.Array, "n_vertices dim"],
         Half-edge mesh connectivity.
     max_iters : int
         Maximum number of sweep iterations.
-
+    max_flips : int
+        Maximum number of flips at each iteration.
     Returns
     -------
     hemesh_new : HeMesh
@@ -184,10 +185,10 @@ def fix_delaunay(vertices: Float[jax.Array, "n_vertices dim"],
 
     def body_fun(state):
         hemesh_s, n_flips, i, _ = state
-        delaunay = is_locally_delaunay(vertices, hemesh_s)
-        to_flip = ~delaunay & hemesh_s.is_unique & ~hemesh_s.is_bdry_edge
-        n_new = to_flip.sum()
-        hemesh_s = topo.flip_all(hemesh_s, to_flip)
+        delaunay_score = geom.get_cotan_weights_per_edge(vertices, hemesh_s)
+        hemesh_s, did_flip = topo.flip_by_score(hemesh_s, edge_score=delaunay_score,
+                                                threshold=0.0, max_flips=max_flips)
+        n_new = did_flip.sum() // 2
         return (hemesh_s, n_flips + n_new, i + 1, n_new > 0)
 
     init_state = (hemesh, jnp.array(0), jnp.array(0), jnp.array(True))
