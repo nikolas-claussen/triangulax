@@ -134,7 +134,8 @@ def get_periodic_face_centroids(vertices: Float[jax.Array, "n_vertices 2"], heme
     """
     face_hes = hemesh.face_incident
     a = vertices[hemesh.orig[face_hes]]
-    ab = jax.vmap(displacement_fn)(vertices[hemesh.orig[face_hes]], vertices[hemesh.dest[face_hes]])
+    ab = jax.vmap(displacement_fn)(vertices[hemesh.orig[face_hes]],
+                                   vertices[hemesh.dest[face_hes]])
     bc = jax.vmap(displacement_fn)(vertices[hemesh.orig[hemesh.nxt[face_hes]]],
                                    vertices[hemesh.dest[hemesh.nxt[face_hes]]])
     b = a + ab
