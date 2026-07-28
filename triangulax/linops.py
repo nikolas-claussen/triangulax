@@ -342,7 +342,7 @@ def _fe_grad_phi_2d(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMe
     v0, v1, v2 = (vertices[faces[:, 0]], vertices[faces[:, 1]], vertices[faces[:, 2]])
 
     area2 = jnp.cross(v1 - v0, v2 - v0)[:, None]
-    mask = jnp.abs(area2) > 1e-12
+    mask = area2 != 0
     # the denominator must be made safe *before* dividing: jnp.where masks the value
     # but the reverse-mode rule still differentiates the untaken x/0 branch -> NaN.
     safe_area2 = jnp.where(mask, area2, 1.0)
@@ -365,7 +365,7 @@ def _fe_grad_phi_3d(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMe
 
     n = jnp.cross(v1 - v0, v2 - v0)
     norm_n_sq = jnp.sum(n**2, axis=-1, keepdims=True)  # avoids norm's NaN gradient at 0
-    mask = norm_n_sq > 1e-12
+    mask = norm_n_sq > 0
     # see _fe_grad_phi_2d: the denominator must be safe before the division
     safe_norm_n_sq = jnp.where(mask, norm_n_sq, 1.0)
     grad_phi0 = jnp.where(mask, jnp.cross(v1 - v2, n)/safe_norm_n_sq, 0)

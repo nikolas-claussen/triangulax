@@ -117,7 +117,7 @@ def get_mesh_quality_stats(vertices: Float[jax.Array, "n_vertices dim"],
     return {
         'areas_min': round(float(areas.min()), digits),
         'areas_max': round(float(areas.max()), digits),
-        'areas_cv': round(float(areas.std() / jnp.clip(areas.mean(), 1e-30)), digits),
+        'areas_cv': round(float(trig.safe_divide(areas.std(), areas.mean())), digits),
         'max_angle': round(float(jnp.rad2deg(angles.max())), digits),
         'min_angle': round(float(jnp.rad2deg(angles.min())), digits),
         'angles_std': round(float(jnp.rad2deg(angles.std())), digits),

@@ -73,8 +73,7 @@ def get_triangle_normals(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh
     """
     assert vertices.shape[-1] == 3, "get_triangle_normals requires a 3d mesh; use get_triangle_orientations in 2d"
     oriented_areas = get_oriented_triangle_areas(vertices, hemesh)
-    norm = jnp.maximum(jnp.linalg.norm(oriented_areas, axis=-1), 1e-12)
-    return (oriented_areas.T / norm).T
+    return trig.safe_normalize(oriented_areas)
 
 def get_triangle_orientations(vertices: Float[jax.Array, "n_vertices 2"], hemesh: msh.HeMesh
                               ) -> Float[jax.Array, " n_faces"]:
@@ -110,8 +109,7 @@ def get_vertex_normals(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.H
     assert vertices.shape[-1] == 3, "get_vertex_normals requires a 3d mesh"
     oriented_areas = get_oriented_triangle_areas(vertices, hemesh)
     oriented_areas_vertex = adj.sum_face_to_vertex(hemesh, oriented_areas)
-    norm = jnp.maximum(jnp.linalg.norm(oriented_areas_vertex, axis=-1), 1e-12)
-    return (oriented_areas_vertex.T / norm).T
+    return trig.safe_normalize(oriented_areas_vertex)
 
 def get_edge_normals(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeMesh
                      ) -> Float[jax.Array, "n_hes 3"]:
@@ -140,7 +138,7 @@ def get_edge_normals(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.HeM
     n_twin = jnp.where(hemesh.is_bdry_he[hemesh.twin][:, None],
                        n_self, normals[hemesh.heface[hemesh.twin]])
     n_sum = n_self + n_twin
-    return n_sum / jnp.clip(jnp.linalg.norm(n_sum, axis=-1, keepdims=True), 1e-12)
+    return trig.safe_normalize(n_sum)
 
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #85d9e3bb
@@ -170,7 +168,7 @@ def get_dihedral_angles(vertices: Float[jax.Array, "n_vertices 3"], hemesh: msh.
     n1 = normals[hemesh.heface]
     n2 = normals[hemesh.heface[hemesh.twin]]
     edge = vertices[hemesh.dest] - vertices[hemesh.orig]
-    edge_hat = edge / jnp.clip(jnp.linalg.norm(edge, axis=-1, keepdims=True), 1e-12)
+    edge_hat = trig.safe_normalize(edge)
     sin_theta = jnp.einsum('ei,ei->e', edge_hat, jnp.cross(n1, n2))
     cos_theta = jnp.einsum('ei,ei->e', n1, n2)
     # boundary half-edges have heface == -1, which silently indexes the last face.
@@ -227,7 +225,7 @@ def get_oriented_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
     dual_edges = face_positions[hemesh.heface]-face_positions[hemesh.heface[hemesh.twin]]
 
     edges = vertices[hemesh.orig]-vertices[hemesh.dest]
-    edges_normalized = (edges.T / jnp.linalg.norm(edges, axis=-1)).T
+    edges_normalized = trig.safe_normalize(edges)
     signed_dual_length = jnp.einsum('vi,vi->v', edges_normalized,
                                     dual_edges @ trig.get_rot_mat(-jnp.pi/2))
     signed_dual_length = jnp.where(hemesh.is_bdry_edge, 1, signed_dual_length)
@@ -540,7 +538,7 @@ def get_corner_scaled_angles(vertices: Float[jax.Array, "n_vertices dim"],
     angle_sums = adj.sum_he_to_vertex_opposite(hemesh, angles)
     # scale factor: 2π/sum at interior, π/sum at boundary
     target = jnp.where(hemesh.is_bdry, jnp.pi, 2 * jnp.pi)
-    scale = target / jnp.clip(angle_sums, 1e-10)
+    scale = trig.safe_divide(target, angle_sums)
     # corner_angles[he] is the angle at vertex dest[nxt[he]]
     vertex_of_corner = hemesh.dest[hemesh.nxt]
     return angles * scale[vertex_of_corner]
@@ -593,16 +591,11 @@ def get_face_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemesh:
     Float[Array, "2 n_faces 3"]
         Per-face tangent basis: result[0, f] = basisX, result[1, f] = basisY.
     """
-    def _normalize(x):
-        # scale-free guard: also avoids norm's NaN gradient at zero
-        sq = jnp.sum(x**2, axis=-1, keepdims=True)
-        return jnp.where(sq > 0, x / jnp.sqrt(jnp.where(sq > 0, sq, 1.0)), 0.0)
-
     a, b, c = vertices[hemesh.faces.T]
     u, v = b - a, c - a
-    e1 = _normalize(u)
+    e1 = trig.safe_normalize(u)
     v_perp = v - jnp.sum(v * e1, axis=-1, keepdims=True) * e1
-    e2 = _normalize(v_perp)
+    e2 = trig.safe_normalize(v_perp)
     return jnp.stack([e1, e2], axis=0)
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #0934d60c
@@ -632,7 +625,7 @@ def get_vertex_tangent_basis(vertices: Float[jax.Array, "n_vertices dim"], hemes
     normals = get_vertex_normals(vertices, hemesh)
     edge_vecs = vertices[hemesh.dest[hemesh.incident]] - vertices[hemesh.orig[hemesh.incident]]
     basis_X = jax.vmap(trig.project_out_vector)(edge_vecs, normals)
-    basis_X = basis_X / jnp.maximum(jnp.linalg.norm(basis_X, axis=-1, keepdims=True), 1e-10)
+    basis_X = trig.safe_normalize(basis_X)
     basis_Y = jnp.cross(normals, basis_X)  # right-handed, matching get_face_tangent_basis
     return jnp.stack([basis_X, basis_Y], axis=0)
 

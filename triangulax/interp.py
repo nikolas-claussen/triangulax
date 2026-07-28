@@ -34,7 +34,7 @@ def get_closest_point_on_segment(point: Float[jax.Array, " dim"],
         Closest point on the segment from a to b.
     """
     ab = b - a
-    t = jnp.dot(point - a, ab) / jnp.clip(jnp.dot(ab, ab), 1e-12)
+    t = trig.safe_divide(jnp.dot(point - a, ab), jnp.dot(ab, ab))
     return a + jnp.clip(t, 0.0, 1.0) * ab
 
 
@@ -124,7 +124,7 @@ def _point_triangle_squared_distance(point: Float[jax.Array, " 3"],
 
     def segment_distance(origin: Float[jax.Array, " 3"], edge: Float[jax.Array, " 3"]
                          ) -> Float[jax.Array, ""]:
-        t = jnp.sum((point - origin) * edge) / jnp.clip(jnp.sum(edge ** 2), 1e-12)
+        t = trig.safe_divide(jnp.sum((point - origin) * edge), jnp.sum(edge ** 2))
         return jnp.sum((point - origin - jnp.clip(t, 0.0, 1.0) * edge) ** 2)
 
     edge_distance = jnp.minimum(segment_distance(a, ab),
