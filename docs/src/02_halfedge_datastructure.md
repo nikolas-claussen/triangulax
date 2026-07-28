@@ -763,7 +763,7 @@ load : str -\> GeomMesh
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L787"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L780"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Mesh
@@ -807,7 +807,7 @@ geommesh, hemesh.n_vertices, geommesh.vertices.shape, geommesh.check_compatibili
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L793"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L786"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### cellplot
@@ -932,7 +932,7 @@ The resulting meshes have an extra “batch” axis in all their arrays.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L828"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L821"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_unstack
@@ -950,7 +950,7 @@ def tree_unstack(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L824"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L817"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### tree_stack

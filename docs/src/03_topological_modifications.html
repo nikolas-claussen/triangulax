@@ -188,7 +188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
+ <span class="menu-text">Safe division</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -549,7 +549,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flip_by_score(</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    hemesh:HeMesh, <span class="co"># The half-edge mesh.</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    edge_score:Int[Array, <span class="st">'n_hes'</span>], <span class="co"># Per-half-edge edge scores (e.g., Delaunay criterion).</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    edge_score:Float[Array, <span class="st">'n_hes'</span>], <span class="co"># Per-half-edge edge scores (e.g., Delaunay criterion).</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    threshold:<span class="bu">float</span>, <span class="co"># Edges with scores below this are flipped.</span></span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    max_flips:<span class="bu">int</span><span class="op">=</span><span class="dv">10</span>, <span class="co"># Maximum number of edges to consider. Determines the scan length and hence array</span></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>shapes, so under `jax.jit` it must be a static argument</span>

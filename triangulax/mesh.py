@@ -650,19 +650,6 @@ class GeomMesh:
     he_attribs : dict[IntEnum, Float[jax.Array, "n_hes ..."]] = dataclasses.field(default_factory=dict)
     face_attribs : dict[IntEnum, Float[jax.Array, "n_faces ..."]] = dataclasses.field(default_factory=dict)
 
-    def __post_init__(self):
-        # TriMesh.read_obj returns face_positions=None for 3d meshes, and callers pass it
-        # straight through. Coerce to an empty array so every method below can assume an
-        # array (and so the pytree structure does not depend on whether it was supplied).
-        # Guard on `vertices is not None`: __post_init__ also runs when JAX/equinox
-        # reconstruct the pytree, and the array-free "static" skeleton has every leaf set
-        # to None. Coercing there would put a live array back into the static partition
-        # (equinox warns "A JAX array is being set as static", diffrax then errors). In a
-        # skeleton `vertices` is None too, so this guard skips it; a genuine construction
-        # always has real `vertices`.
-        if self.face_positions is None and self.vertices is not None:
-            self.face_positions = jnp.array([])
-
     @property
     def dim(self) -> int:
         return self.vertices.shape[-1]

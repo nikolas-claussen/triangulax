@@ -217,7 +217,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
+ <span class="menu-text">Safe division</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -875,7 +875,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <p><strong>Static methods</strong></p>
 <p>load : str -&gt; GeomMesh</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L787" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L780" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="mesh" class="level3">
 <h3 class="anchored" data-anchor-id="mesh">Mesh</h3>
@@ -913,7 +913,7 @@ Warning: readOBJ() ignored non-comment line 3:
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L793" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L786" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="cellplot" class="level3">
 <h3 class="anchored" data-anchor-id="cellplot">cellplot</h3>
@@ -1015,7 +1015,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <p>In our simulations, we may want to “batch” over several initial conditions/random seeds/etc. (analogous to batching over training data in normal ML). JAX can efficiently and concisely vectorize operations over such “batch axes” with <code>jax.vmap</code>.</p>
 <p>To batch over our custom data structures, we need to convert a list of <a href="https://nikolas-claussen.github.io/triangulax/src/halfedge_datastructure.html#hemesh"><code>HeMesh</code></a>/<code>GeomMeshe</code> instances into a single mesh with a batch axis for the various arrays. Luckily, this can be <a href="https://stackoverflow.com/questions/79123001/storing-and-jax-vmap-over-pytrees">done using JAX’s pytree tools</a>. The resulting meshes have an extra “batch” axis in all their arrays.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L828" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L821" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="tree_unstack" class="level3">
 <h3 class="anchored" data-anchor-id="tree_unstack">tree_unstack</h3>
@@ -1026,7 +1026,7 @@ Warning: readOBJ() ignored non-comment line 3:
 <span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Unstack a batched pytree along axis into a list of pytrees.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L824" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/mesh.py#L817" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="tree_stack" class="level3">
 <h3 class="anchored" data-anchor-id="tree_stack">tree_stack</h3>

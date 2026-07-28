@@ -220,31 +220,6 @@ y = y0
 state = solver.init(term, t0, t0+dt, y0, args)
 ```
 
-    /Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/_eval_shape.py:35: UserWarning: A JAX array is being set as static! This can result in unexpected behavior and is usually a mistake to do.
-      return _dynamic_out, Static(_static_out)
-
-``` python
-solver.step(term, t0, t0, t0+dt, y, args, state)
-```
-
-    TypeError: unsupported operand type(s) for |: 'HeMesh' and 'tuple'
-    [31m---------------------------------------------------------------------------[39m
-    [31mTypeError[39m                                 Traceback (most recent call last)
-    [36mCell[39m[36m [39m[32mIn[36][39m[32m, line 1[39m
-    [32m----> [39m[32m1[39m [43msolver[49m[43m.[49m[43mstep[49m[43m([49m[43mterm[49m[43m,[49m[43m [49m[43mt0[49m[43m,[49m[43m [49m[43mt0[49m[43m,[49m[43m [49m[43mt0[49m[43m+[49m[43mdt[49m[43m,[49m[43m [49m[43my[49m[43m,[49m[43m [49m[43margs[49m[43m,[49m[43m [49m[43mstate[49m[43m)[49m
-
-        [31m[... skipping hidden 1 frame][39m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/diffrax/_solver/runge_kutta.py:685[39m, in [36mAbstractRungeKutta.step[39m[34m(self, terms, t0, t1, y0, args, solver_state, made_jump)[39m
-    [32m    683[39m [38;5;28;01massert[39;00m solver_state [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m
-    [32m    684[39m first_step, f0 = solver_state
-    [32m--> [39m[32m685[39m eval_first_stage = eqxi.unvmap_any([43mfirst_step[49m[43m [49m[43m|[49m[43m [49m[43mmade_jump[49m)
-    [32m    686[39m init_stage_index = jnp.where(eval_first_stage, [32m0[39m, [32m1[39m)
-    [32m    687[39m [38;5;66;03m# We do `fs.at[0].set(f0)` below. If we're actually going to evaluate the[39;00m
-    [32m    688[39m [38;5;66;03m# first stage, then zero out `f0` so that that is a no-op.[39;00m
-
-    [31mTypeError[39m: unsupported operand type(s) for |: 'HeMesh' and 'tuple'
-
 ``` python
 # scan through the solve
 
@@ -257,88 +232,6 @@ init = (state, y0, t0)
 (state, y, t), _ = jax.lax.scan(scan_fun, init, step_times[1:])
 ```
 
-    /Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/_ad.py:708: UserWarning: A JAX array is being set as static! This can result in unexpected behavior and is usually a mistake to do.
-      closure_converted = _ClosureConvert(
-    /Users/nc1333/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/_make_jaxpr.py:41: UserWarning: A JAX array is being set as static! This can result in unexpected behavior and is usually a mistake to do.
-      return _out_dynamic, Static(_out_static)
-
-    UnexpectedTracerError: Found a JAX Tracer object passed as an argument to a custom_vjp function in a position indicated by nondiff_argnums as non-differentiable. Tracers cannot be passed as non-differentiable arguments to custom_vjp functions; instead, nondiff_argnums should only be used for arguments that can't be or contain JAX tracers, e.g. function-valued arguments. In particular, array-valued arguments should typically not be indicated as nondiff_argnums.
-    See https://docs.jax.dev/en/latest/errors.html#jax.errors.UnexpectedTracerError
-    [31m---------------------------------------------------------------------------[39m
-    [31mUnexpectedTracerError[39m                     Traceback (most recent call last)
-    [36mCell[39m[36m [39m[32mIn[19][39m[32m, line 9[39m
-    [32m      6[39m     [38;5;28;01mreturn[39;00m (state, y, t), [38;5;28;01mNone[39;00m
-    [32m      8[39m init = (state, y0, t0)
-    [32m----> [39m[32m9[39m (state, y, t), _ = [43mjax[49m[43m.[49m[43mlax[49m[43m.[49m[43mscan[49m[43m([49m[43mscan_fun[49m[43m,[49m[43m [49m[43minit[49m[43m,[49m[43m [49m[43mstep_times[49m[43m[[49m[32;43m1[39;49m[43m:[49m[43m][49m[43m)[49m
-
-        [31m[... skipping hidden 10 frame][39m
-
-    [36mCell[39m[36m [39m[32mIn[19][39m[32m, line 5[39m, in [36mscan_fun[39m[34m(carry, t)[39m
-    [32m      3[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mscan_fun[39m(carry, t):
-    [32m      4[39m     state, y, tprev = carry 
-    [32m----> [39m[32m5[39m     y, _, _, state, _ = [43msolver[49m[43m.[49m[43mstep[49m[43m([49m[43mterm[49m[43m,[49m[43m [49m[43mtprev[49m[43m,[49m[43m [49m[43mt[49m[43m,[49m[43m [49m[43my[49m[43m,[49m[43m [49m[43margs[49m[43m,[49m[43m [49m[43mstate[49m[43m,[49m[43m [49m[43mmade_jump[49m[43m=[49m[38;5;28;43;01mFalse[39;49;00m[43m)[49m
-    [32m      6[39m     [38;5;28;01mreturn[39;00m (state, y, t), [38;5;28;01mNone[39;00m
-
-        [31m[... skipping hidden 1 frame][39m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/diffrax/_solver/runge_kutta.py:1149[39m, in [36mAbstractRungeKutta.step[39m[34m(***failed resolving arguments***)[39m
-    [32m   1142[39m const_result = const_result_sentinel = [38;5;28mobject[39m()
-    [32m   1143[39m [38;5;66;03m# Needs to be an `eqxi.while_loop` as:[39;00m
-    [32m   1144[39m [38;5;66;03m# (a) we may have variable length: e.g. an FSAL explicit RK scheme will have one[39;00m
-    [32m   1145[39m [38;5;66;03m#     more stage on the first step.[39;00m
-    [32m   1146[39m [38;5;66;03m# (b) to work around a limitation of JAX's autodiff being unable to express[39;00m
-    [32m   1147[39m [38;5;66;03m#     "triangular computations" (every stage depends on all previous stages)[39;00m
-    [32m   1148[39m [38;5;66;03m#     without spurious copies.[39;00m
-    [32m-> [39m[32m1149[39m final_val = [43meqxi[49m[43m.[49m[43mwhile_loop[49m[43m([49m
-    [32m   1150[39m [43m    [49m[43mcond_stage[49m[43m,[49m
-    [32m   1151[39m [43m    [49m[43mrk_stage[49m[43m,[49m
-    [32m   1152[39m [43m    [49m[43minit_val[49m[43m,[49m
-    [32m   1153[39m [43m    [49m[43mmax_steps[49m[43m=[49m[43mnum_stages[49m[43m,[49m
-    [32m   1154[39m [43m    [49m[43mbuffers[49m[43m=[49m[43mbuffers[49m[43m,[49m
-    [32m   1155[39m [43m    [49m[43mkind[49m[43m=[49m[33;43m"[39;49m[33;43mcheckpointed[39;49m[33;43m"[39;49m[43m [49m[38;5;28;43;01mif[39;49;00m[43m [49m[38;5;28;43mself[39;49m[43m.[49m[43mscan_kind[49m[43m [49m[38;5;129;43;01mis[39;49;00m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m [49m[38;5;28;43;01melse[39;49;00m[43m [49m[38;5;28;43mself[39;49m[43m.[49m[43mscan_kind[49m[43m,[49m
-    [32m   1156[39m [43m    [49m[43mcheckpoints[49m[43m=[49m[43mnum_stages[49m[43m,[49m
-    [32m   1157[39m [43m    [49m[43mbase[49m[43m=[49m[43mnum_stages[49m[43m,[49m
-    [32m   1158[39m [43m[49m[43m)[49m
-    [32m   1159[39m _, y1, f1_for_fsal, _, _, fs, ks, result = final_val
-    [32m   1160[39m [38;5;28;01massert[39;00m const_result [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m const_result_sentinel
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/internal/_loop/loop.py:107[39m, in [36mwhile_loop[39m[34m(***failed resolving arguments***)[39m
-    [32m    105[39m [38;5;28;01melif[39;00m kind == [33m"[39m[33mcheckpointed[39m[33m"[39m:
-    [32m    106[39m     [38;5;28;01mdel[39;00m kind, base
-    [32m--> [39m[32m107[39m     [38;5;28;01mreturn[39;00m [43mcheckpointed_while_loop[49m[43m([49m
-    [32m    108[39m [43m        [49m[43mcond_fun[49m[43m,[49m
-    [32m    109[39m [43m        [49m[43mbody_fun[49m[43m,[49m
-    [32m    110[39m [43m        [49m[43minit_val[49m[43m,[49m
-    [32m    111[39m [43m        [49m[43mmax_steps[49m[43m=[49m[43mmax_steps[49m[43m,[49m
-    [32m    112[39m [43m        [49m[43mbuffers[49m[43m=[49m[43mbuffers[49m[43m,[49m
-    [32m    113[39m [43m        [49m[43mcheckpoints[49m[43m=[49m[43mcheckpoints[49m[43m,[49m
-    [32m    114[39m [43m    [49m[43m)[49m
-    [32m    115[39m [38;5;28;01melif[39;00m kind == [33m"[39m[33mbounded[39m[33m"[39m:
-    [32m    116[39m     [38;5;28;01mdel[39;00m kind, checkpoints
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/equinox/internal/_loop/checkpointed.py:249[39m, in [36mcheckpointed_while_loop[39m[34m(***failed resolving arguments***)[39m
-    [32m    247[39m body_fun_ = filter_closure_convert(body_fun_, init_val_)
-    [32m    248[39m vjp_arg = (init_val_, body_fun_)
-    [32m--> [39m[32m249[39m final_val_ = [43m_checkpointed_while_loop[49m[43m([49m
-    [32m    250[39m [43m    [49m[43mvjp_arg[49m[43m,[49m[43m [49m[43mcond_fun_[49m[43m,[49m[43m [49m[43mcheckpoints[49m[43m,[49m[43m [49m[43mbuffers_[49m[43m,[49m[43m [49m[43mmax_steps[49m
-    [32m    251[39m [43m[49m[43m)[49m
-    [32m    252[39m _, _, _, final_val = _stop_gradient_on_unperturbed(init_val_, final_val_, body_fun_)
-    [32m    253[39m [38;5;28;01mreturn[39;00m final_val
-
-        [31m[... skipping hidden 3 frame][39m
-
-    [36mFile [39m[32m~/miniforge3/envs/triangulax/lib/python3.14/site-packages/jax/_src/custom_derivatives.py:830[39m, in [36m_check_for_tracers[39m[34m(x)[39m
-    [32m    822[39m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(leaf, core.Tracer):
-    [32m    823[39m   msg = ([33m"[39m[33mFound a JAX Tracer object passed as an argument to a custom_vjp [39m[33m"[39m
-    [32m    824[39m         [33m"[39m[33mfunction in a position indicated by nondiff_argnums as [39m[33m"[39m
-    [32m    825[39m         [33m"[39m[33mnon-differentiable. Tracers cannot be passed as non-differentiable [39m[33m"[39m
-    [32m   (...)[39m[32m    828[39m         [33m"[39m[33me.g. function-valued arguments. In particular, array-valued [39m[33m"[39m
-    [32m    829[39m         [33m"[39m[33marguments should typically not be indicated as nondiff_argnums.[39m[33m"[39m)
-    [32m--> [39m[32m830[39m   [38;5;28;01mraise[39;00m UnexpectedTracerError(msg)
-
-    [31mUnexpectedTracerError[39m: Found a JAX Tracer object passed as an argument to a custom_vjp function in a position indicated by nondiff_argnums as non-differentiable. Tracers cannot be passed as non-differentiable arguments to custom_vjp functions; instead, nondiff_argnums should only be used for arguments that can't be or contain JAX tracers, e.g. function-valued arguments. In particular, array-valued arguments should typically not be indicated as nondiff_argnums.
-    See https://docs.jax.dev/en/latest/errors.html#jax.errors.UnexpectedTracerError
-
 ``` python
 fig = plt.figure(figsize=(4, 4))
 plt.triplot(*y0.vertices.T, hemesh.faces)
@@ -346,7 +239,7 @@ plt.triplot(*y.vertices.T, hemesh.faces)
 plt.axis("equal");
 ```
 
-![](02_mesh_optimization_files/figure-commonmark/cell-21-output-1.png)
+![](02_mesh_optimization_files/figure-commonmark/cell-20-output-1.png)
 
 ### Backward pass - inverse problem
 
@@ -464,7 +357,7 @@ plt.triplot(*batch_geom_out[i].vertices.T, batch_he_out[i].faces)
 plt.axis("equal");
 ```
 
-![](02_mesh_optimization_files/figure-commonmark/cell-27-output-1.png)
+![](02_mesh_optimization_files/figure-commonmark/cell-26-output-1.png)
 
 ##### Compute the batched loss
 

@@ -91,7 +91,6 @@ class TriMesh:
     passed through `jax.jit`/`jax.vmap` or differentiated. Convert to arrays plus a
     `HeMesh` (and optionally a `GeomMesh`) before doing any numerical work.
 
-
     Simple class for reading, holding, transforming, and saving triangular meshes.
     
     A TriMesh comprises vertices and faces, describing a surface in 2d or 3d. 

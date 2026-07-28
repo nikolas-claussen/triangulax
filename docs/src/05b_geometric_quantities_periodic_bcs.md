@@ -202,7 +202,7 @@ areas = jax.vmap(trig.get_triangle_area_from_lengths)(la, lb, lc)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L200"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L201"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_cotan_weights_per_edge
@@ -224,7 +224,7 @@ Returns `(cot_he + cot_twin) / 2` (same convention as
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L185"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L186"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_cotan_weights_per_he
@@ -246,7 +246,7 @@ Returns a per-half-edge array (same convention as
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L173"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L174"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_face_corner_cotangents
@@ -271,7 +271,7 @@ for per-half-edge indexing.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L158"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L159"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_corner_angles
@@ -293,7 +293,7 @@ Returns a per-half-edge array (same convention as
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L145"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L146"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_face_corner_angles
@@ -491,7 +491,7 @@ positions using displacement vectors that respect the periodicity.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L268"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L269"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_perimeters
@@ -510,7 +510,7 @@ vertex.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L252"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L253"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_dual_he_length
@@ -533,7 +533,7 @@ positions and measures a Euclidean distance).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L222"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L223"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_face_positions
@@ -561,7 +561,7 @@ instead.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L211"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L212"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_areas
@@ -640,7 +640,7 @@ area is always positive and is what a periodic mass matrix needs.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L324"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L325"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_voronoi_areas_robust
@@ -664,7 +664,7 @@ even on obtuse triangles – required for a well-posed mass matrix.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L312"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L313"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_triangle_orientations
@@ -684,7 +684,7 @@ Periodic counterpart of `geometry.get_triangle_orientations`.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L278"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L279"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_periodic_oriented_triangle_areas

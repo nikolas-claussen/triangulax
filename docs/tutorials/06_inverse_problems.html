@@ -221,7 +221,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
+ <span class="menu-text">Safe division</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -476,7 +476,7 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="load-mesh">Load mesh</h3>
 <p>We start with a very coarse unit sphere (42 vertices) so that experiments run in seconds. The sphere serves as both the initial condition and the rest configuration of the shell.</p>
 <p>Throughout the tutorial, we consider meshes without boundary.</p>
-<div id="8860c85d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.116776Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.116694Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.729821Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.729350Z&quot;}}" data-execution_count="8">
+<div id="8860c85d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.116776Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.116694Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.729821Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.729350Z&quot;}}" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_sphere(name):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Loads, centers, and scales a sphere mesh from the tutorial_meshes/ directory."""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    mesh <span class="op">=</span> TriMesh.read_obj(<span class="ss">f"tutorial_meshes/</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.obj"</span>, dim<span class="op">=</span><span class="dv">3</span>)</span>
@@ -494,7 +494,7 @@ window.Quarto = {
 <pre><code>Warning: readOBJ() ignored non-comment line 3:
   o Icosphere</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="8">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>HeMesh(N_V=42, N_HE=240, N_F=80)</code></pre>
 </div>
 </div>
@@ -502,7 +502,7 @@ window.Quarto = {
 <section id="programming-the-reference-metric-with-nematic-directors" class="level3">
 <h3 class="anchored" data-anchor-id="programming-the-reference-metric-with-nematic-directors">Programming the reference metric with nematic directors</h3>
 <p>We now implement the actuation: per-face director angles <span class="math inline">\(\theta^t, \theta^b \mapsto\)</span> reference metric <span class="math inline">\(g_r\)</span> and reference curvature <span class="math inline">\(b_r\)</span>, following the formulas above.</p>
-<div id="98df0149" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.731077Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.730993Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.733875Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.733345Z&quot;}}" data-execution_count="9">
+<div id="98df0149" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.731077Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.730993Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.733875Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.733345Z&quot;}}" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_face_basis_from_metric(metric):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Per-face upper-triangular B with metric = B^T B (columns = edge vectors u, v</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">    in the orthonormal face frame e1 = u/|u|, e2 in-plane perpendicular)."""</span></span>
@@ -535,7 +535,7 @@ window.Quarto = {
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    g_bot <span class="op">=</span> get_nematic_metric(theta_bot, lam, metric_rest)</span>
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (g_top <span class="op">+</span> g_bot) <span class="op">/</span> <span class="dv">2</span>, b_rest <span class="op">+</span> <span class="dv">3</span> <span class="op">/</span> (<span class="dv">4</span> <span class="op">*</span> thickness) <span class="op">*</span> (g_top <span class="op">-</span> g_bot)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="51d4fb88" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.734983Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.734890Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.883928Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.883297Z&quot;}}" data-execution_count="10">
+<div id="51d4fb88" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.734983Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.734890Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.883928Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.883297Z&quot;}}" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests: B^T B recovers the metric; lam=1 is the identity; actuation is area-preserving</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> get_face_basis_from_metric(metric_rest)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(jnp.einsum(<span class="st">"fji,fjk-&gt;fik"</span>, B, B), metric_rest)</span>
@@ -543,7 +543,7 @@ window.Quarto = {
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>g_nem <span class="op">=</span> get_nematic_metric(jnp.linspace(<span class="dv">0</span>, np.pi, hemesh.n_faces), lam, metric_rest)</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(jnp.linalg.det(g_nem), jnp.linalg.det(metric_rest))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="98ba02e9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.885121Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.885042Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.887372Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.886995Z&quot;}}" data-execution_count="11">
+<div id="98ba02e9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.885121Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.885042Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:56.887372Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:56.886995Z&quot;}}" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to define smooth test patterns and to visualize directors, we need the orthonormal</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># face frames (e1 along the first edge) in 3D world coordinates</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -562,7 +562,7 @@ window.Quarto = {
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    centroids <span class="op">=</span> geom.get_face_centroids(vertices, hemesh) <span class="op">+</span> offset</span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(centroids <span class="op">-</span> scale <span class="op">*</span> d), np.array(centroids <span class="op">+</span> scale <span class="op">*</span> d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="69d54461" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.888369Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.888299Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:57.067296Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:57.066898Z&quot;}}" data-execution_count="12">
+<div id="69d54461" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:56.888369Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:56.888299Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:57.067296Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:57.066898Z&quot;}}" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># example: the projection of the z-axis onto the sphere gives a smooth director</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># field with defects at the poles (a nematic field on a sphere must have defects!)</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>theta_example <span class="op">=</span> angle_from_global_direction(jnp.array([<span class="fl">0.</span>, <span class="fl">0.</span>, <span class="fl">1.</span>]), v0, hemesh)</span>
@@ -573,7 +573,7 @@ window.Quarto = {
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>p.save(<span class="st">"tutorial_plots/06_director_field.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"61b765d7fd7b4c53b41299449779e3f3","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"72547adf33df4eea85fe01f099205d02","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -592,7 +592,7 @@ window.Quarto = {
 <section id="forward-model-elastic-relaxation" class="level3">
 <h3 class="anchored" data-anchor-id="forward-model-elastic-relaxation">Forward model: elastic relaxation</h3>
 <p>The forward model relaxes the shell to its energy minimum for given director fields. The total energy is the sum of the St.-Venant-Kirchhoff in-plane and bending energies with the thickness scaling from above. We minimize with BFGS (the mesh is small; for larger meshes, use <code>optimistix.NonlinearCG</code> or a limited-memory method).</p>
-<div id="d34959df" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:57.071789Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:57.071722Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:57.073983Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:57.073566Z&quot;}}" data-execution_count="14">
+<div id="d34959df" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:57.071789Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:57.071722Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:57.073983Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:57.073566Z&quot;}}" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_shell_energy(vertices, args):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Koiter shell energy: E = h/4 * E_SK(g_r) + h^3/12 * E_B(g_r, b_r)."""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    hemesh, metric_ref, b_ref, thickness <span class="op">=</span> args</span>
@@ -611,7 +611,7 @@ window.Quarto = {
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>                              max_steps<span class="op">=</span><span class="dv">4000</span>, throw<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sol.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="0fc4d03c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:57.074892Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:57.074827Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:58.135551Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:58.135001Z&quot;}}" data-execution_count="15">
+<div id="0fc4d03c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:57.074892Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:57.074827Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:58.135551Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:58.135001Z&quot;}}" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># at lam = 1 (no actuation), the sphere is the exact rest state</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>metric_ref, b_ref <span class="op">=</span> get_bilayer_metric_and_curvature(jnp.zeros(hemesh.n_faces),</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                                                     jnp.zeros(hemesh.n_faces),</span>
@@ -623,7 +623,7 @@ window.Quarto = {
 <section id="what-does-a-nematic-pattern-do" class="level4">
 <h4 class="anchored" data-anchor-id="what-does-a-nematic-pattern-do">What does a nematic pattern do?</h4>
 <p>Let’s actuate the sphere with a simple hand-picked <em>teacher</em> pattern where the top director is along the (projected) <span class="math inline">\(z\)</span>-axis. If the bottom director is parallel to the top, the sphere is stretched along the <span class="math inline">\(z\)</span> axis. Orthogonal directors in the two layers create a large metric mismatch, i.e.&nbsp;mainly a change of the reference <em>curvature</em>. This leads to buckling.</p>
-<div id="fe255828" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.611946Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.611864Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:59.950999Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:59.950526Z&quot;}}" data-execution_count="27">
+<div id="fe255828" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.611946Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.611864Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:59.950999Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:59.950526Z&quot;}}" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>theta_teacher_top <span class="op">=</span> angle_from_global_direction(jnp.array([<span class="fl">0.</span>, <span class="fl">0.</span>, <span class="fl">1.</span>]), v0, hemesh)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#theta_teacher_bot = theta_teacher_top  # equal top and bottom directors</span></span>
@@ -643,10 +643,10 @@ window.Quarto = {
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"3f1e8bf4140c439aa1a20df984adc6c4","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"46b89ad4c00743f98879b45de256e0c8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>1</code></pre>
 </div>
 </div>
@@ -672,10 +672,10 @@ window.Quarto = {
 <h4 class="anchored" data-anchor-id="nd-level-optimizer">2nd-level optimizer</h4>
 <p>To minimize the elastic energy, we used a “classical” optimization algorithm (BFGS, or CG). For the 2nd level of optimization (over the model parameters), we use the ADAM optimizer, a standard choice in machine learning. ADAM is better suited to large-scale problems.</p>
 <p>Classical optimizers like BFGS make multiple function calls at each step (line search) and compute an approximation of the function’s Hessian. This becomes too expensive for large parameter counts and functions which take a long time to evaluate.</p>
-<div id="6d176c05" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.958665Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.958604Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:59.960101Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:59.959790Z&quot;}}" data-execution_count="19">
+<div id="6d176c05" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.958665Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.958604Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:59.960101Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:59.959790Z&quot;}}" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> triangulax.algorithms <span class="im">import</span> kabsch_align</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="7eaafe08" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.961016Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.960960Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:59.963442Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:59.963041Z&quot;}}" data-execution_count="29">
+<div id="7eaafe08" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.961016Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.960960Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:48:59.963442Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:48:59.963041Z&quot;}}" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_nematic_tensor(theta, e1, e2):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute the nematic Q-tensor from a director angle theta and a face basis (e1, e2)."""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> jnp.cos(theta)[:, <span class="va">None</span>] <span class="op">*</span> e1 <span class="op">+</span> jnp.sin(theta)[:, <span class="va">None</span>] <span class="op">*</span> e2</span>
@@ -704,7 +704,7 @@ window.Quarto = {
 <span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="fcffd98c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.964322Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.964266Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:49:02.274809Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:49:02.274304Z&quot;}}" data-execution_count="30">
+<div id="fcffd98c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:48:59.964322Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:48:59.964266Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:49:02.274809Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:49:02.274304Z&quot;}}" data-execution_count="51">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the gradient through the energy minimization against finite differences</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> make_loss(v_teacher, v0, hemesh, metric_rest, b_rest)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> (jnp.zeros(hemesh.n_faces), jnp.zeros(hemesh.n_faces))</span>
@@ -712,16 +712,18 @@ window.Quarto = {
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>v_recovered_initial <span class="op">=</span> relax_shell(<span class="op">*</span>params, v0, hemesh, metric_rest, b_rest)</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>eps <span class="op">=</span> <span class="fl">1e-5</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>L_pert, _ <span class="op">=</span> loss((params[<span class="dv">0</span>].at[<span class="dv">3</span>].add(eps), params[<span class="dv">1</span>]))</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>fd <span class="op">=</span> (L_pert <span class="op">-</span> L) <span class="op">/</span> eps</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"autodiff </span><span class="sc">{</span>grads[<span class="dv">0</span>][<span class="dv">3</span>]<span class="sc">:.6e}</span><span class="ss"> vs finite difference </span><span class="sc">{</span>fd<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.isclose(grads[<span class="dv">0</span>][<span class="dv">3</span>], fd, rtol<span class="op">=</span><span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># important: for very eps, the finite-difference gradient becomes</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># inaccurate due to solver error (and the assert fails). </span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>eps <span class="op">=</span> <span class="fl">1e-3</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>L_pert, _ <span class="op">=</span> loss((params[<span class="dv">0</span>].at[<span class="dv">3</span>].add(eps), params[<span class="dv">1</span>]))</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>fd <span class="op">=</span> (L_pert <span class="op">-</span> L) <span class="op">/</span> eps</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"autodiff </span><span class="sc">{</span>grads[<span class="dv">0</span>][<span class="dv">3</span>]<span class="sc">:.6e}</span><span class="ss"> vs finite difference </span><span class="sc">{</span>fd<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.isclose(grads[<span class="dv">0</span>][<span class="dv">3</span>], fd, rtol<span class="op">=</span><span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>autodiff 1.678055e-05 vs finite difference 1.678099e-05</code></pre>
+<pre><code>autodiff 1.678056e-05 vs finite difference 1.713077e-05</code></pre>
 </div>
 </div>
-<div id="5f500eb9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:49:02.275915Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:49:02.275846Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:49:03.903090Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:49:03.902635Z&quot;}}" data-execution_count="31">
+<div id="5f500eb9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:49:02.275915Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:49:02.275846Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:49:03.903090Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:49:03.902635Z&quot;}}" data-execution_count="52">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ADAM loop. on this coarse mesh, each iteration (forward relaxation + implicit</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># backward pass) takes a few milliseconds once compiled</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>value_and_grad <span class="op">=</span> jax.jit(jax.value_and_grad(loss, has_aux<span class="op">=</span><span class="va">True</span>))</span>
@@ -739,7 +741,7 @@ window.Quarto = {
 <span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"ADAM iteration"</span>)<span class="op">;</span> plt.ylabel(<span class="st">"mean squared vertex distance"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"54c0721e4a7342089280a0e693acc5b3","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"6fcc0e1962234754b4d84b05329e950b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
@@ -750,7 +752,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="3d39bd38" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:49:03.904211Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:49:03.904137Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:49:03.911105Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:49:03.910763Z&quot;}}" data-execution_count="32">
+<div id="3d39bd38" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-07-17T17:49:03.904211Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-07-17T17:49:03.904137Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-07-17T17:49:03.911105Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-07-17T17:49:03.910763Z&quot;}}" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the recovered pattern reproduces the target shape to a fraction of a percent ...</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>v_recovered <span class="op">=</span> relax_shell(<span class="op">*</span>params, v0, hemesh, metric_rest, b_rest)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>err <span class="op">=</span> jnp.linalg.norm(kabsch_align(v_recovered, v_teacher)[<span class="dv">0</span>] <span class="op">-</span> v_teacher, axis<span class="op">=-</span><span class="dv">1</span>)</span>

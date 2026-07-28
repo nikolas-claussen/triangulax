@@ -133,7 +133,7 @@ def get_triangle_areas(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L116"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L114"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_edge_normals
@@ -158,7 +158,7 @@ Note: 3d meshes only.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L104"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L103"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_vertex_normals
@@ -179,7 +179,7 @@ Note: 3d meshes only.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L79"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L78"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_triangle_orientations
@@ -229,7 +229,7 @@ triangle orientation, see
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L147"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L145"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_dihedral_angles
@@ -256,7 +256,7 @@ Note: 3d meshes only.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L190"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L188"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_area
@@ -274,7 +274,7 @@ def get_area(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L180"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L178"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_volume
@@ -311,7 +311,7 @@ a surface into a weighted sum over triangulation vertices,
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L202"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L200"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### set_voronoi_face_positions
@@ -330,7 +330,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L196"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L194"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_face_positions
@@ -349,7 +349,7 @@ defined by hemesh.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L223"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L221"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_oriented_dual_he_length
@@ -368,7 +368,7 @@ Negative sign = flipped edge.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L212"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L210"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_dual_he_length
@@ -424,7 +424,7 @@ jnp.where((dual_length < -0.0) & ~hemesh.is_bdry_edge )[0]
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L276"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L274"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_corner_areas
@@ -446,7 +446,7 @@ area. Computed from cotangent weights. Accurate in any dimension.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L270"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L268"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_edge_lengths
@@ -465,7 +465,7 @@ any dimension.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L262"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L260"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cotan_weights_per_edge
@@ -483,7 +483,7 @@ def get_cotan_weights_per_edge(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L254"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L252"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_cotan_weights_per_he
@@ -501,7 +501,7 @@ def get_cotan_weights_per_he(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L247"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L245"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_sum
@@ -520,7 +520,7 @@ curvature.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L239"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L237"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_corner_angles
@@ -601,7 +601,7 @@ Operators for Triangulated 2-Manifolds”.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L301"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L299"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_perimeters
@@ -620,7 +620,7 @@ lengths.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L289"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L287"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_areas
@@ -644,7 +644,7 @@ discretizing the area integral), prefer get_voronoi_areas_robust.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L309"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L307"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_voronoi_areas_robust
@@ -723,7 +723,7 @@ use the (robust) Voronoi cell area for the normalization
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L367"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L365"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_gaussian_curvature
@@ -741,7 +741,7 @@ def get_gaussian_curvature(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L355"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L353"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_angle_defect
@@ -781,7 +781,7 @@ it satisfies the discrete Gauss-Bonnet theorem.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L404"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L402"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_geodesic_curvature
@@ -814,7 +814,7 @@ with `chi` the Euler characteristic (`mesh.get_euler_characteristic`).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L376"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L374"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_boundary_angle_defect
@@ -887,7 +887,7 @@ normalization *a*<sub>*i*</sub>.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L481"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L479"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_mean_curvature_laplace
@@ -916,7 +916,7 @@ non-Delaunay triangles (Laplacian loses positive-definiteness).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L442"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L440"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_mean_curvature_dihedral
@@ -1094,7 +1094,7 @@ geommesh_s = msh.GeomMesh(sphere.vertices, sphere.face_positions)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L519"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L517"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_corner_scaled_angles
@@ -1131,7 +1131,7 @@ assert jnp.allclose(scaled_sums_disk[hemesh.is_bdry], jnp.pi, atol=1e-10)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L572"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L570"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_tangent_basis
@@ -1161,7 +1161,7 @@ Note: works in 2d and 3d (no cross product is used).
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L549"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L547"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_face_edge_basis
@@ -1204,7 +1204,7 @@ assert jnp.allclose(jax.vmap(jnp.dot)(by, face_normals), 0., atol=1e-10)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L609"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L602"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_vertex_tangent_basis
@@ -1269,7 +1269,7 @@ across (“f”) the half edge.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L640"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L633"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_transport_across_halfedge
@@ -1321,7 +1321,7 @@ for v in [0, 5, 20, 40]:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L678"
+href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/geometry.py#L671"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_transport_along_halfedge

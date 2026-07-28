@@ -517,7 +517,7 @@ print("Initial/final/minimal energy:", get_helfrich_energy(y0, args),
                                        get_helfrich_energy(trimesh.vertices, args))
 ```
 
-    Initial/final/minimal energy: 7.118657237550065 6.294327240862531 6.293261081171555
+    Initial/final/minimal energy: 7.118657237550065 6.294331198248551 6.293261081171555
 
 ``` python
 # displacement from initial condition.
@@ -525,7 +525,7 @@ print("Initial/final/minimal energy:", get_helfrich_energy(y0, args),
 jnp.linalg.norm(y0-sol.value, axis=-1).mean(), jnp.linalg.norm(y0-trimesh.vertices, axis=-1).mean()
 ```
 
-    (Array(0.049651, dtype=float64), Array(0.12507872, dtype=float64))
+    (Array(0.04944896, dtype=float64), Array(0.12507872, dtype=float64))
 
 ``` python
 # after minimization, the deviation from being a perfect sphere is fairly low
@@ -536,7 +536,7 @@ Rs =  jnp.linalg.norm(vertices_final - center, axis=1)
 Rs.std() / Rs.mean()
 ```
 
-    Array(0.000438, dtype=float64)
+    Array(0.00054408, dtype=float64)
 
 ``` python
 p = meshplot.plot(np.array(y0), np.array(hemesh.faces), np.array(grad_norm),shading={"wireframe":True},

@@ -330,7 +330,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 def flip_by_score(
     hemesh:HeMesh, # The half-edge mesh.
-    edge_score:Int[Array, 'n_hes'], # Per-half-edge edge scores (e.g., Delaunay criterion).
+    edge_score:Float[Array, 'n_hes'], # Per-half-edge edge scores (e.g., Delaunay criterion).
     threshold:float, # Edges with scores below this are flipped.
     max_flips:int=10, # Maximum number of edges to consider. Determines the scan length and hence array
 shapes, so under `jax.jit` it must be a static argument

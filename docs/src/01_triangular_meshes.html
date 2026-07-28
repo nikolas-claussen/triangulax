@@ -217,7 +217,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
+ <span class="menu-text">Safe division</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -582,7 +582,7 @@ window.Quarto = {
 <section id="maps-between-meshes" class="level3">
 <h3 class="anchored" data-anchor-id="maps-between-meshes">Maps between meshes</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L330" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L329" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compute_per_face_jacobian" class="level3">
 <h3 class="anchored" data-anchor-id="compute_per_face_jacobian">compute_per_face_jacobian</h3>
@@ -615,7 +615,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <li>Plot cell tesselation</li>
 </ol>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L402" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L401" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_triangular_lattice" class="level3">
 <h3 class="anchored" data-anchor-id="generate_triangular_lattice">generate_triangular_lattice</h3>
@@ -626,7 +626,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Get points for rectangular patch of triangular lattice with nx, ny points.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L391" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L390" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_poisson_points" class="level3">
 <h3 class="anchored" data-anchor-id="generate_poisson_points">generate_poisson_points</h3>
@@ -637,7 +637,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sample n_vertices points from the Poisson ensemble in rectangle</em> [-limit_x/2, limit_x/2] * [-limit_y/2, limit_y/2]. Uses the global <code>numpy</code> RNG (not JAX RNG).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L377" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L376" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_ginibre_points" class="level3">
 <h3 class="anchored" data-anchor-id="generate_ginibre_points">generate_ginibre_points</h3>
@@ -676,7 +676,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <section id="creating-2d-meshes-with-periodic-boundary-conditions-pbcs" class="level3">
 <h3 class="anchored" data-anchor-id="creating-2d-meshes-with-periodic-boundary-conditions-pbcs">Creating 2d meshes with periodic boundary conditions (PBCs)</h3>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L414" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L413" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_delaunay_faces" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_delaunay_faces">get_periodic_delaunay_faces</h3>
@@ -689,7 +689,7 @@ gradient_2d = jnp.einsum('fij,fj-&gt;fi', jac, gradient_3d)</code></pre>
 <p><em>Return faces of the periodic Delaunay triangulation on a rectangular torus.</em></p>
 <p>The input points are first wrapped into the fundamental domain <code>[0, L_x) x [0, L_y)</code>. The point cloud is then tiled into the eight neighboring copies of the box, triangulated in the extended domain, and mapped back to the original vertex ids.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L491" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/triangular.py#L490" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_faces_crossing_periodic_boundaries" class="level3">
 <h3 class="anchored" data-anchor-id="get_faces_crossing_periodic_boundaries">get_faces_crossing_periodic_boundaries</h3>

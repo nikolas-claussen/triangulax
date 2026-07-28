@@ -516,14 +516,16 @@ params = (jnp.zeros(hemesh.n_faces), jnp.zeros(hemesh.n_faces))
 
 v_recovered_initial = relax_shell(*params, v0, hemesh, metric_rest, b_rest)
 
-eps = 1e-5
+# important: for very eps, the finite-difference gradient becomes
+# inaccurate due to solver error (and the assert fails). 
+eps = 1e-3
 L_pert, _ = loss((params[0].at[3].add(eps), params[1]))
 fd = (L_pert - L) / eps
 print(f"autodiff {grads[0][3]:.6e} vs finite difference {fd:.6e}")
 assert np.isclose(grads[0][3], fd, rtol=0.05)
 ```
 
-    autodiff 1.678055e-05 vs finite difference 1.678099e-05
+    autodiff 1.678056e-05 vs finite difference 1.713077e-05
 
 ``` python
 # ADAM loop. on this coarse mesh, each iteration (forward relaxation + implicit

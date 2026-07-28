@@ -217,7 +217,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../src/00_trigonometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><code>trigonometry</code>: Trigonometry</span></a>
+ <span class="menu-text">Safe division</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -527,7 +527,7 @@ window.Quarto = {
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>areas <span class="op">=</span> jax.vmap(trig.get_triangle_area_from_lengths)(la, lb, lc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L200" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L201" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_cotan_weights_per_edge" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_cotan_weights_per_edge">get_periodic_cotan_weights_per_edge</h3>
@@ -539,7 +539,7 @@ window.Quarto = {
 <p><em>Average cotangent weight per edge, using a periodic displacement function.</em></p>
 <p>Returns <code>(cot_he + cot_twin) / 2</code> (same convention as :func:<code>geometry.get_cotan_weights_per_edge</code>).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L185" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L186" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_cotan_weights_per_he" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_cotan_weights_per_he">get_periodic_cotan_weights_per_he</h3>
@@ -551,7 +551,7 @@ window.Quarto = {
 <p><em>Cotangent of the angle opposite to each half-edge, using a periodic displacement function.</em></p>
 <p>Returns a per-half-edge array (same convention as :func:<code>geometry.get_cotan_weights_per_he</code>).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L173" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L174" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_face_corner_cotangents" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_face_corner_cotangents">get_periodic_face_corner_cotangents</h3>
@@ -563,7 +563,7 @@ window.Quarto = {
 <p><em>Compute corner cotangents for each face using a periodic displacement function.</em></p>
 <p>Returns an <code>(n_faces, 3)</code> array (same layout as :func:<a href="https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_face_corner_angles"><code>get_periodic_face_corner_angles</code></a>). See also :func:<a href="https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_cotan_weights_per_he"><code>get_periodic_cotan_weights_per_he</code></a> for per-half-edge indexing.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L158" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L159" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_corner_angles" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_corner_angles">get_periodic_corner_angles</h3>
@@ -575,7 +575,7 @@ window.Quarto = {
 <p><em>Compute the angle opposite to each half-edge, using a periodic displacement function.</em></p>
 <p>Returns a per-half-edge array (same convention as :func:<code>geometry.get_corner_angles</code>).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L145" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L146" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_face_corner_angles" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_face_corner_angles">get_periodic_face_corner_angles</h3>
@@ -715,7 +715,7 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="voronoi-dual">Voronoi dual</h3>
 <p>We can also compute the Voronoi dual for periodic boundary conditions. Since vertex coordinates cannot be subtracted directly across the periodic boundary, we compute the circumcenter in <em>intrinsic</em> (edge-length) barycentric coordinates via <code>trig.get_circumcenter_from_lengths</code>, then map back to Euclidean positions using displacement vectors that respect the periodicity.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L268" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L269" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_voronoi_perimeters" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_voronoi_perimeters">get_periodic_voronoi_perimeters</h3>
@@ -726,7 +726,7 @@ window.Quarto = {
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Compute Voronoi cell perimeters by summing dual edge lengths per vertex.</em></p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L252" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L253" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_dual_he_length" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_dual_he_length">get_periodic_dual_he_length</h3>
@@ -738,7 +738,7 @@ window.Quarto = {
 <p><em>Voronoi dual edge lengths computed from cotangent weights.</em></p>
 <p>Equivalent to <code>cotan_weights_per_edge * he_length</code>. Note this is the periodic counterpart of <code>geometry.get_voronoi_edge_lengths</code>, not of the similarly named <code>geometry.get_dual_he_length</code> (which takes explicit face positions and measures a Euclidean distance).</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L222" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L223" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_voronoi_face_positions" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_voronoi_face_positions">get_periodic_voronoi_face_positions</h3>
@@ -750,7 +750,7 @@ window.Quarto = {
 <p><em>Compute periodic Voronoi dual positions (circumcenters) from intrinsic barycentric coordinates.</em></p>
 <p>Like <a href="https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_face_centroids"><code>get_periodic_face_centroids</code></a>, the returned positions are NOT wrapped back into the periodic box: each is expressed in the image of its own face. Do not feed them to <code>geometry.get_dual_he_length</code> or <code>mesh.cellplot</code>, which assume unwrapped Euclidean coordinates – use <a href="https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_dual_he_length"><code>get_periodic_dual_he_length</code></a> instead.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L211" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L212" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_voronoi_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_voronoi_areas">get_periodic_voronoi_areas</h3>
@@ -818,7 +818,7 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="oriented-areas-and-robust-voronoi-areas">Oriented areas and robust Voronoi areas</h3>
 <p>Two periodic counterparts that were missing. The <em>signed</em> triangle area detects inverted triangles (the unsigned one, computed from Heron’s formula on minimum-image edge lengths, cannot), and the <em>mixed</em> Voronoi area is always positive and is what a periodic mass matrix needs.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L324" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L325" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_voronoi_areas_robust" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_voronoi_areas_robust">get_periodic_voronoi_areas_robust</h3>
@@ -830,7 +830,7 @@ window.Quarto = {
 <p><em>Mixed (Meyer et al.) Voronoi cell areas under periodic boundary conditions.</em></p>
 <p>Periodic counterpart of <code>geometry.get_voronoi_areas_robust</code>. Unlike <a href="https://nikolas-claussen.github.io/triangulax/src/geometric_quantities_periodic_bcs.html#get_periodic_voronoi_areas"><code>get_periodic_voronoi_areas</code></a>, which computes the exact circumcentric area, this is always positive even on obtuse triangles – required for a well-posed mass matrix.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L312" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L313" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_triangle_orientations" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_triangle_orientations">get_periodic_triangle_orientations</h3>
@@ -842,7 +842,7 @@ window.Quarto = {
 <p><em>Per-face orientation (+1, -1 or 0) under periodic boundary conditions.</em></p>
 <p>Periodic counterpart of <code>geometry.get_triangle_orientations</code>.</p>
 <hr>
-<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L278" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/nikolas-claussen/triangulax/blob/main/triangulax/periodic.py#L279" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_periodic_oriented_triangle_areas" class="level3">
 <h3 class="anchored" data-anchor-id="get_periodic_oriented_triangle_areas">get_periodic_oriented_triangle_areas</h3>
