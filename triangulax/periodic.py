@@ -18,8 +18,10 @@ from . import trigonometry as trig
 from .mesh import HeMesh
 
 # %% ../nbs/src/05b_geometric_quantities_periodic_bcs.ipynb #02987b23
-def displacement_periodic(r_1: Float[jax.Array, "2"], r_2: Float[jax.Array, "2"], L: Float[jax.Array, "2"]
-                         ) -> Float[jax.Array, "2"]:
+def displacement_periodic(r_1: Float[jax.Array, " dim"],
+                          r_2: Float[jax.Array, " dim"],
+                          L: Float[jax.Array, " dim"]
+                         ) -> Float[jax.Array, " dim"]:
     """Return the minimum-image displacement on a rectangular torus.
 
     IMPORTANT: the minimum-image convention always returns the *shortest* periodic
@@ -34,20 +36,20 @@ def displacement_periodic(r_1: Float[jax.Array, "2"], r_2: Float[jax.Array, "2"]
     r_1, r_2
         Positions in a periodic box.
     L
-        Box lengths [L_x, L_y].
+        Box lengths ([L_x, L_y] in 2d).
 
     Returns
     -------
-    Float[Array, "2"]
+    Float[Array, " dim"]
         Displacement ``r_2 - r_1`` under the minimum-image convention.
     """
     d = r_2 - r_1
     return d - L * jnp.round(d / L)
 
 
-def displacement_periodic_twisted(r_1: Float[jax.Array, "2"], r_2: Float[jax.Array, "2"],
-                                  L: Float[jax.Array, "2"], s: float
-                                  ) -> Float[jax.Array, "2"]:
+def displacement_periodic_twisted(r_1: Float[jax.Array, " dim"], r_2: Float[jax.Array, " dim"],
+                                  L: Float[jax.Array, " dim"], s: float
+                                  ) -> Float[jax.Array, " dim"]:
     """Return the minimum-image displacement on a sheared periodic torus (Lees-Edwards BCs).
 
     Parameters
@@ -55,7 +57,7 @@ def displacement_periodic_twisted(r_1: Float[jax.Array, "2"], r_2: Float[jax.Arr
     r_1, r_2
         Positions in a periodic box.
     L
-        Box lengths [L_x, L_y].
+        Box lengths ([L_x, L_y] in 2d).
     s
         Shear factor: wrapping in y shifts x by ``s * L_x``. This corresponds to vertex
         positions carrying the shear as ``x -> x - s * y``; the opposite sign stretches
@@ -73,14 +75,14 @@ def displacement_periodic_twisted(r_1: Float[jax.Array, "2"], r_2: Float[jax.Arr
     return d - L * jnp.round(d / L)
 
 # %% ../nbs/src/05b_geometric_quantities_periodic_bcs.ipynb #3381813f
-def get_periodic_edge_vectors(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh,
+def get_periodic_edge_vectors(vertices: Float[jax.Array, "n_vertices dim"], hemesh: HeMesh,
                               displacement_fn: Callable,
-                              ) -> Float[jax.Array, "n_hes 2"]:
+                              ) -> Float[jax.Array, "n_hes dim"]:
     """Edge vectors ``r_dest - r_orig`` per half-edge, using a periodic displacement function.
 
     Parameters
     ----------
-    vertices : Float[Array, "n_vertices 2"]
+    vertices : Float[Array, "n_vertices dim"]
         Vertex positions in the periodic box.
     hemesh : HeMesh
         Half-edge mesh.
@@ -90,13 +92,13 @@ def get_periodic_edge_vectors(vertices: Float[jax.Array, "n_vertices 2"], hemesh
 
     Returns
     -------
-    Float[Array, "n_hes 2"]
+    Float[Array, "n_hes dim"]
         Displacement vector per half-edge.
     """
     return jax.vmap(displacement_fn)(vertices[hemesh.orig], vertices[hemesh.dest])
 
 
-def get_periodic_he_lengths(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh,
+def get_periodic_he_lengths(vertices: Float[jax.Array, "n_vertices dim"], hemesh: HeMesh,
                             displacement_fn: Callable,
                             ) -> Float[jax.Array, " n_hes"]:
     """Get lengths of half-edges using a periodic displacement function.
@@ -108,9 +110,9 @@ def get_periodic_he_lengths(vertices: Float[jax.Array, "n_vertices 2"], hemesh: 
     return trig.safe_norm(get_periodic_edge_vectors(vertices, hemesh, displacement_fn))
 
 # %% ../nbs/src/05b_geometric_quantities_periodic_bcs.ipynb #periodic-pos
-def get_periodic_face_corners(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh,
+def get_periodic_face_corners(vertices: Float[jax.Array, "n_vertices dim"], hemesh: HeMesh,
                               displacement_fn: Callable,
-                              ) -> Float[jax.Array, "n_faces 3 2"]:
+                              ) -> Float[jax.Array, "n_faces 3 dim"]:
     """Vertex positions of each face, unwrapped into a single periodic image.
 
     The first corner is the origin vertex of the face's incident half-edge and keeps its
@@ -123,7 +125,7 @@ def get_periodic_face_corners(vertices: Float[jax.Array, "n_vertices 2"], hemesh
 
     Parameters
     ----------
-    vertices : Float[Array, "n_vertices 2"]
+    vertices : Float[Array, "n_vertices dim"]
         Vertex positions in the periodic box.
     hemesh : HeMesh
         Half-edge mesh.
@@ -132,7 +134,7 @@ def get_periodic_face_corners(vertices: Float[jax.Array, "n_vertices 2"], hemesh
 
     Returns
     -------
-    Float[Array, "n_faces 3 2"]
+    Float[Array, "n_faces 3 dim"]
         Unwrapped positions of the three corners of each face.
     """
     face_hes = hemesh.face_incident
@@ -143,9 +145,9 @@ def get_periodic_face_corners(vertices: Float[jax.Array, "n_vertices 2"], hemesh
     return jnp.stack([a, b, c], axis=1)
 
 
-def get_periodic_face_centroids(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh,
+def get_periodic_face_centroids(vertices: Float[jax.Array, "n_vertices dim"], hemesh: HeMesh,
                                 displacement_fn: Callable,
-                                ) -> Float[jax.Array, "n_faces 2"]:
+                                ) -> Float[jax.Array, "n_faces dim"]:
     """Face centroids (barycenters) using a periodic displacement function.
 
     Returned in the periodic image of their own face, not wrapped back into the box
@@ -154,9 +156,9 @@ def get_periodic_face_centroids(vertices: Float[jax.Array, "n_vertices 2"], heme
     return get_periodic_face_corners(vertices, hemesh, displacement_fn).mean(axis=1)
 
 
-def get_periodic_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh,
+def get_periodic_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices dim"], hemesh: HeMesh,
                                         displacement_fn: Callable,
-                                        ) -> Float[jax.Array, "n_faces 2"]:
+                                        ) -> Float[jax.Array, "n_faces dim"]:
     """Voronoi dual positions (circumcenters) using a periodic displacement function.
 
     The circumcenter is computed in intrinsic barycentric coordinates
@@ -178,7 +180,7 @@ def get_periodic_voronoi_face_positions(vertices: Float[jax.Array, "n_vertices 2
     return jnp.einsum('fi,fij->fj', barycentric, corners)
 
 
-def get_periodic_oriented_triangle_areas(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh,
+def get_periodic_oriented_triangle_areas(vertices: Float[jax.Array, "n_vertices dim"], hemesh: HeMesh,
                                          displacement_fn: Callable,
                                          ) -> Float[jax.Array, " n_faces"]:
     """Signed triangle areas under periodic boundary conditions.
@@ -192,7 +194,7 @@ def get_periodic_oriented_triangle_areas(vertices: Float[jax.Array, "n_vertices 
     return jax.vmap(trig.get_oriented_triangle_area)(*corners.transpose((1, 0, 2)))
 
 
-def get_periodic_triangle_orientations(vertices: Float[jax.Array, "n_vertices 2"], hemesh: HeMesh,
+def get_periodic_triangle_orientations(vertices: Float[jax.Array, "n_vertices dim"], hemesh: HeMesh,
                                        displacement_fn: Callable,
                                        ) -> Float[jax.Array, " n_faces"]:
     """Per-face orientation (+1, -1 or 0) under periodic boundary conditions.
