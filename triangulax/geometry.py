@@ -156,7 +156,9 @@ def get_voronoi_perimeters_intrinsic(he_lengths: Float[jax.Array, " n_hes"], hem
 
 def get_voronoi_areas_robust_intrinsic(he_lengths: Float[jax.Array, " n_hes"], hemesh: msh.HeMesh
                                        ) -> Float[jax.Array, " n_vertices"]:
-    """Mixed Voronoi cell areas (AMixed, Meyer et al.) from edge lengths.
+    """Mixed Voronoi cell areas from edge lengths.
+
+    From Meyer et al. 2003, "Discrete Differential-Geometry Operators for Triangulated 2-Manifolds"
 
     Uses the robust formula that handles obtuse triangles:
     - Non-obtuse triangle: use the Voronoi region area
@@ -412,10 +414,6 @@ def get_oriented_dual_he_length(vertices: Float[jax.Array, "n_vertices 2"],
     return signed_dual_length
 
 # %% ../nbs/src/05_geometric_quantities.ipynb #96c8a576
-# These quantities are intrinsic: they are computed from the edge lengths of the mesh
-# (see "Intrinsic geometry from edge lengths" above), which is also what makes them
-# usable under periodic boundary conditions.
-
 def get_corner_angles(vertices: Float[jax.Array, "n_vertices dim"], hemesh: msh.HeMesh
                       ) -> Float[jax.Array, " n_hes"]:
     """Get angles in mesh corners (opposite to half-edges). 0 for boundary half-edges."""

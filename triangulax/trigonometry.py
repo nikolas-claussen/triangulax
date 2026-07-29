@@ -38,8 +38,8 @@ def safe_norm(x: Float[jax.Array, "... dim"], axis: int = -1) -> Float[jax.Array
     """Return ``|x|``, with a finite (zero) gradient where ``|x| == 0``.
 
     `jnp.linalg.norm` has a NaN gradient at the origin, which propagates into every
-    quantity computed from edge lengths as soon as a single edge collapses - a routine
-    event in a vertex model. The sum of squares is guarded before the square root instead.
+    quantity computed from edge lengths as soon as a single edge collapses.
+    The sum of squares is guarded before the square root instead.
     """
     sq = jnp.sum(x**2, axis=axis)
     nonzero = sq > 0
@@ -287,11 +287,9 @@ def get_triangle_area_from_lengths(la: Float[jax.Array, ""],
 
     The sides are sorted as $a \\geq b \\geq c$ before evaluating
     $A = \\frac{1}{4}\\sqrt{(a+(b+c))(c-(a-b))(c+(a-b))(a+(b-c))}$. The textbook form
-    $\\sqrt{s(s-a)(s-b)(s-c)}$ suffers catastrophic cancellation for needle-like
+    $\\sqrt{s(s-a)(s-b)(s-c)}$ suffers catastrophic cancellation for thin
     triangles: for a triangle of unit side and height $10^{-8}$ it returns exactly 0
     (float64), which silently deletes the triangle from cotangent weights and areas.
-    Sliver triangles of this kind occur routinely in vertex-model simulations as edges
-    shrink, so the stable form matters here.
 
     Returns 0 (with zero gradient, not NaN) when the side lengths violate the triangle
     inequality or describe a degenerate triangle.

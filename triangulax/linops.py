@@ -103,7 +103,7 @@ def compute_cotan_laplace_intrinsic(he_lengths: Float[jax.Array, " n_hes"], heme
         Per-vertex scalar, vector, or tensor field.
     normalize
         If True, return the area-normalized Laplace-Beltrami operator $M^{-1} L u$,
-        dividing by the Voronoi cell area at each vertex.
+        dividing by the robust Voronoi cell area at each vertex.
 
     Returns
     -------
@@ -114,7 +114,7 @@ def compute_cotan_laplace_intrinsic(he_lengths: Float[jax.Array, " n_hes"], heme
     diff = vertex_field[hemesh.dest] - vertex_field[hemesh.orig]
     result = -adj.sum_he_to_vertex_incoming(hemesh, (w_edge*diff.T).T)
     if normalize:
-        areas = geom.get_voronoi_areas_intrinsic(he_lengths, hemesh)
+        areas = geom.get_voronoi_areas_robust_intrinsic(he_lengths, hemesh)
         result = result / jnp.expand_dims(areas, jnp.arange(1, result.ndim)) # for broadcasting
     return result
 

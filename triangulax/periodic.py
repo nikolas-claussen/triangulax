@@ -186,7 +186,7 @@ def get_periodic_oriented_triangle_areas(vertices: Float[jax.Array, "n_vertices 
     Positive for counter-clockwise (positively oriented) triangles, negative for inverted
     ones. Unlike the intrinsic `geometry.get_triangle_areas_intrinsic`, which goes through
     Heron's formula and is therefore unconditionally non-negative, this detects triangle
-    inversion -- the event a vertex-model simulation has to watch for.
+    inversion.
     """
     corners = get_periodic_face_corners(vertices, hemesh, displacement_fn)
     return jax.vmap(trig.get_oriented_triangle_area)(*corners.transpose((1, 0, 2)))
