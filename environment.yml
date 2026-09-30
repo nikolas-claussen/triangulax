@@ -17,6 +17,7 @@ dependencies:
   - equinox
   - lineax
   - optimistix
+  - optax
   - diffrax
   - meshplot
   - pip

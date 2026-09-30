@@ -93,7 +93,7 @@ The `triangulax` package is hosted on
     `conda`:
 
 ``` sh
-$ conda env create -n triangulax 
+$ conda create -n triangulax python=3.11
 $ conda activate triangulax
 ```
 
@@ -104,13 +104,15 @@ to install JAX with GPU support.
 2.  Install with `pip`:
 
 ``` sh
-$ pip install triangulax 
+$ pip install triangulax
 ```
 
-(Optional) Install optional dependencies for running the tutorials:
+(Optional) Install optional dependencies for the tutorials (quote the
+brackets: `zsh` treats them as globs):
 
 ``` sh
-$ pip install triangulax[tutorials]
+$ pip install "triangulax[tutorials]"
+$ conda install -c conda-forge meshplot   # 3D plots in the tutorials; not on PyPI
 ```
 
 3.  Verify installation:
