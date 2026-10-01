@@ -109,11 +109,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="triangulax">
 <meta property="og:description" content="JAX-compatible triangular meshes and triangular-mesh-based biophysics simulations">
-<meta property="og:image" content="https://nikolas-claussen.github.io/triangulax/../curvature_instability.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/nikolas-claussen/triangulax/main/curvature_instability.gif">
 <meta property="og:site_name" content="triangulax">
 <meta name="twitter:title" content="triangulax">
 <meta name="twitter:description" content="JAX-compatible triangular meshes and triangular-mesh-based biophysics simulations">
-<meta name="twitter:image" content="https://nikolas-claussen.github.io/triangulax/../curvature_instability.gif">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/nikolas-claussen/triangulax/main/curvature_instability.gif">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -372,7 +372,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This Python package provides data-structures for triangular meshes, a geometry processing toolkit based on <a href="https://www.cs.cmu.edu/~kmcrane/Projects/DDG/">discrete differential geometry</a>, and tools for simulating membranes, thin shells, and tissue sheets. The code is implemented in <a href="https://docs.jax.dev/en/latest/index.html">JAX</a> and fully compatible with automatic differentiation and just-in-time compilation.</p>
 <p>Many physical and biological systems, like foams, membranes, elastic shells, or tissue sheets, can be mathematically described as 2D surfaces. These surfaces can host complex dynamics, like reaction-diffusion systems, and undergo drastic deformations. Triangulax simulates the systems by discretizing continuous surfaces into triangular meshes. The library can also be applied to inherently discrete systems, like vertex models for epithelial tissues. It combines two features. First, discrete differential geometry provides coordinate-free discretization, which allow simulating strongly deforming surfaces. Second, the library is built on the machine-learning framework JAX, so mesh-based energies and entire simulations can be differentiated automatically. This simplifies multi-physics simulations by computing forces automatically and allows fitting model parameters to experimental data or design objectives. We implement an algorithm to preserve mesh quality in strongly deforming surfaces and apply it to a model of membrane mechanics coupled to an on-membrane concentration field. The discretizations have been validated against exact solutions and existing software. This repository includes tutorials on membrane mechanics, vertex models, and inverse design using machine-learning tools.</p>
 <div>
-<img src="../curvature_instability.gif" width="350">
+<img src="https://raw.githubusercontent.com/nikolas-claussen/triangulax/main/curvature_instability.gif" width="350">
 <figcaption align="center">
 Simulation of membrane mechanics coupled to a concentration pattern (red), based on Leibler, J. Phys. France, 1986
 </figcaption>

@@ -36,7 +36,7 @@ tools.
 
 <div>
 
-<img src="../curvature_instability.gif" width="350"/>
+<img src="https://raw.githubusercontent.com/nikolas-claussen/triangulax/main/curvature_instability.gif" width="350"/>
 <figcaption align="center">
 
 Simulation of membrane mechanics coupled to a concentration pattern
